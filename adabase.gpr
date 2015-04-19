@@ -1,0 +1,24 @@
+project AdaBase is
+
+   for Source_Dirs use ("src/**");
+   for Object_Dir use "obj";
+   for Main use ("killme.adb");
+
+   package Ide is
+      for Vcs_Kind use "Auto";
+   end Ide;
+
+   package Compiler is
+      for Default_Switches ("ada") use ("-gnatyaAbBcdefhiIklnOprsStx", "-gnat12");
+   end Compiler;
+
+   package Pretty_Printer is
+      for Default_Switches ("ada") use ("-aU");
+   end Pretty_Printer;
+
+   package Linker is
+      for Default_Switches ("ada") use ("-g", "-lmySQL50-18");
+   end Linker;
+
+end AdaBase;
+
