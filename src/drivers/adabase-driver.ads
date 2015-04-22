@@ -14,15 +14,16 @@
 --  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --
 
+private
 with Ada.Finalization;
 
 package AdaBase.Driver is
 
-   package FIN renames Ada.Finalization;
-
    type Base_Pure is abstract tagged private;
 
 private
+   package FIN renames Ada.Finalization;
+
    type Base_Pure is abstract new FIN.Controlled with
       record
          null;
