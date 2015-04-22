@@ -93,7 +93,7 @@ package body AdaBase.Connection.Base.MySQL is
    --  description  --
    -------------------
    overriding
-   function description (conn : MySQL_Connection) return AD.textual
+   function description (conn : MySQL_Connection) return String
    is
    begin
       return conn.info_description;
@@ -328,14 +328,13 @@ package body AdaBase.Connection.Base.MySQL is
    --  execute  --
    ---------------
    overriding
-   function  execute (conn : MySQL_Connection; sql : AD.textual)
-                      return AD.AffectedRows
+   function  execute (conn : MySQL_Connection;
+                      sql : String) return AD.AffectedRows
    is
       use type ABM.my_int;
       result : ABM.my_int;
-      query  : constant ABM.ICS.chars_ptr :=
-                        ABM.ICS.New_String (Str => AD.SU.To_String (sql));
-      len    : constant ABM.my_ulong := ABM.my_ulong (AD.SU.Length (sql));
+      query  : constant ABM.ICS.chars_ptr := ABM.ICS.New_String (Str => sql);
+      len    : constant ABM.my_ulong      := ABM.my_ulong (sql'Length);
    begin
       result := ABM.mysql_real_query (handle => conn.handle,
                                       query  => query,
@@ -356,9 +355,8 @@ package body AdaBase.Connection.Base.MySQL is
    is
       use type AD.textual;
       use type AD.TransIsolation;
-      sql : AD.textual := AD.SU.To_Unbounded_String
-            ("SET SESSION TRANSACTION ISOLATION LEVEL ") &
-            AD.SU.To_Unbounded_String (AD.IsoKeywords (isolation));
+      sql : constant String := "SET SESSION TRANSACTION ISOLATION LEVEL " &
+                               AD.IsoKeywords (isolation);
       affected_rows : AD.AffectedRows;
    begin
       if conn.prop_connected then
@@ -428,8 +426,7 @@ package body AdaBase.Connection.Base.MySQL is
    procedure set_character_set (conn : MySQL_Connection)
    is
       use type AD.textual;
-      sql : constant AD.textual :=
-        SUS ("SET CHARACTER SET ") & conn.character_set;
+      sql : constant String := "SET CHARACTER SET " & USS (conn.character_set);
       affected_rows : AD.AffectedRows;
    begin
       if conn.prop_connected then

@@ -53,7 +53,7 @@ package AdaBase.Connection.Base.MySQL is
                                       isolation :     AD.TransIsolation);
 
    overriding
-   function description   (conn : MySQL_Connection) return AD.textual;
+   function description   (conn : MySQL_Connection) return String;
 
    overriding
    function SqlState      (conn : MySQL_Connection) return AD.TSqlState;
@@ -81,8 +81,7 @@ package AdaBase.Connection.Base.MySQL is
 
    overriding
    function  execute      (conn : MySQL_Connection;
-                           sql  : AD.textual)
-                           return AD.AffectedRows;
+                           sql  : String) return AD.AffectedRows;
 
    procedure initializeStatement (conn : MySQL_Connection;
                                   stmt : out AS.MySQL.MySQL_statement);
@@ -102,7 +101,7 @@ private
       prop_compressed  : Boolean := True;
       prop_buffered    : Boolean := True;
       prop_multiquery  : Boolean := False;
-      info_description : AD.textual := SUS ("MySQL 5.5+ native driver");
+      info_description : String (1 .. 24) := "MySQL 5.5+ native driver";
 
       handle           : ABM.MYSQL_Access;
       mrc_host         : AD.textual  := AD.blank;

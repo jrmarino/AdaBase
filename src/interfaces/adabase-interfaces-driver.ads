@@ -46,15 +46,15 @@ package AdaBase.Interfaces.Driver is
    function trait_max_blob_size  (driver : iDriver)
                                   return AD.BLOB_maximum is abstract;
    function trait_driver         (driver : iDriver)
-                                  return AD.textual is abstract;
+                                  return String is abstract;
    function trait_client_info    (driver : iDriver)
-                                  return AD.textual is abstract;
+                                  return String is abstract;
    function trait_client_version (driver : iDriver)
-                                  return AD.textual is abstract;
+                                  return String is abstract;
    function trait_server_info    (driver : iDriver)
-                                  return AD.textual is abstract;
+                                  return String is abstract;
    function trait_server_version (driver : iDriver)
-                                  return AD.textual is abstract;
+                                  return String is abstract;
 
    procedure set_trait_autocommit    (driver : iDriver;
                                       trait  : Boolean) is null;
@@ -77,7 +77,7 @@ package AdaBase.Interfaces.Driver is
                                   return AD.Error_Info is abstract;
 
    function execute              (driver : iDriver;
-                                  sql    : AD.textual)
+                                  sql    : String)
                                   return AD.AffectedRows is abstract;
 
    procedure command_standard_logger (driver : iDriver;
@@ -94,14 +94,14 @@ package AdaBase.Interfaces.Driver is
    ------------------------------------------------------------------------
 
    function query                (driver : iDriver;
-                                  sql    : AD.textual)
-                                  return  AS.Base'Class is abstract;
+                                  sql    : String)
+                                  return AS.Base'Class is abstract;
 
    procedure query_clear_table   (driver : iDriver;
-                                  table  : AD.textual) is abstract;
+                                  table  : String) is abstract;
 
    procedure query_drop_table    (driver      : iDriver;
-                                  tables       : AD.textual;
+                                  tables      : String;
                                   when_exists : Boolean := False;
                                   cascade     : Boolean := False) is abstract;
 

@@ -144,10 +144,10 @@ package body AdaBase.Connection.Base is
    ---------------------
    overriding
    function serverVersion (conn : Base_Connection)
-                           return AD.textual
+                           return String
    is
    begin
-      return conn.info_server_version;
+      return USS (conn.info_server_version);
    end serverVersion;
 
 
@@ -155,10 +155,10 @@ package body AdaBase.Connection.Base is
    --  serverInfo  --
    ------------------
    overriding
-   function serverInfo (conn : Base_Connection) return AD.textual
+   function serverInfo (conn : Base_Connection) return String
    is
    begin
-      return conn.info_server;
+      return USS (conn.info_server);
    end serverInfo;
 
 
@@ -167,10 +167,10 @@ package body AdaBase.Connection.Base is
    ----------------------
    overriding
    function clientVersion (conn : Base_Connection)
-                           return AD.textual
+                           return String
    is
    begin
-      return conn.info_client_version;
+      return USS (conn.info_client_version);
    end clientVersion;
 
 
@@ -178,10 +178,10 @@ package body AdaBase.Connection.Base is
    --  clientInfo  --
    ------------------
    overriding
-   function clientInfo (conn : Base_Connection) return AD.textual
+   function clientInfo (conn : Base_Connection) return String
    is
    begin
-      return conn.info_client;
+      return USS (conn.info_client);
    end clientInfo;
 
    ------------------------------------------------------------------------

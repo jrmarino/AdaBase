@@ -60,19 +60,19 @@ package AdaBase.Connection.Base is
 
    overriding
    function serverVersion (conn : Base_Connection)
-                           return AD.textual;
+                           return String;
 
    overriding
    function serverInfo    (conn : Base_Connection)
-                           return AD.textual;
+                           return String;
 
    overriding
    function clientVersion (conn : Base_Connection)
-                           return AD.textual;
+                           return String;
 
    overriding
    function clientInfo    (conn : Base_Connection)
-                           return AD.textual;
+                           return String;
 
    overriding
    function connected     (conn : Base_Connection) return Boolean;

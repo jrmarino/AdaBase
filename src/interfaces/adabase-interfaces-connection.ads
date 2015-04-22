@@ -79,15 +79,15 @@ package AdaBase.Interfaces.Connection is
                                       return AD.TransIsolation is abstract;
 
    --  properties
-   function serverVersion (conn : iConnection) return AD.textual
+   function serverVersion (conn : iConnection) return String
                            is abstract;
-   function serverInfo    (conn : iConnection) return AD.textual
+   function serverInfo    (conn : iConnection) return String
                            is abstract;
-   function clientVersion (conn : iConnection) return AD.textual
+   function clientVersion (conn : iConnection) return String
                            is abstract;
-   function clientInfo    (conn : iConnection) return AD.textual
+   function clientInfo    (conn : iConnection) return String
                            is abstract;
-   function description   (conn : iConnection) return AD.textual
+   function description   (conn : iConnection) return String
                            is abstract;
    function connected     (conn : iConnection) return Boolean
                            is abstract;
@@ -109,7 +109,7 @@ package AdaBase.Interfaces.Connection is
    procedure rollback     (conn : iConnection) is null;
    procedure connect      (conn : out iConnection) is null;
    procedure disconnect   (conn : out iConnection) is null;
-   function  execute      (conn : iConnection; sql : AD.textual)
+   function  execute      (conn : iConnection; sql : String)
                            return AD.AffectedRows is abstract;
 
 

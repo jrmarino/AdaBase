@@ -161,7 +161,7 @@ package body AdaBase.Driver.Base.MySQL is
    --  execute  --
    ---------------
    overriding
-   function execute (driver : MySQL_Driver; sql : AD.textual)
+   function execute (driver : MySQL_Driver; sql : String)
                      return AD.AffectedRows
    is
       result : AD.AffectedRows := 0;
@@ -170,7 +170,7 @@ package body AdaBase.Driver.Base.MySQL is
    begin
       if driver.connection_active then
          result := driver.connection.all.execute (sql => sql);
-         driver.log_nominal (category => AD.execution, message => sql);
+         driver.log_nominal (category => AD.execution, message => SUS (sql));
       else
          --  Non-fatal attempt to query an unccnnected database
          driver.log_problem (category => AD.execution,
@@ -180,7 +180,7 @@ package body AdaBase.Driver.Base.MySQL is
    exception
       when ACM.QUERY_FAIL =>
          driver.log_problem (category   => AD.execution,
-                             message    => sql,
+                             message    => SUS (sql),
                              pull_codes => True);
          return 0;
    end execute;
@@ -189,7 +189,7 @@ package body AdaBase.Driver.Base.MySQL is
    --  query  --
    -------------
    overriding
-   function query (driver : MySQL_Driver; sql : AD.textual)
+   function query (driver : MySQL_Driver; sql : String)
                    return  AS.Base'Class
    is
       result : AS.MySQL.MySQL_statement;
@@ -202,7 +202,7 @@ package body AdaBase.Driver.Base.MySQL is
          --  set sql ???
          --  driver.connection.execute (sql => sql);
          --  Result.successful := True;
-         driver.log_nominal (category => AD.execution, message => sql);
+         driver.log_nominal (category => AD.execution, message => SUS (sql));
          null;
       else
          --  Non-fatal attempt to query an unccnnected database

@@ -30,9 +30,12 @@ package AdaBase.Driver.Base.Firebird is
 
    overriding
    procedure query_drop_table        (driver      : Firebird_Driver;
-                                      tables      : AD.textual;
+                                      tables      : String;
                                       when_exists : Boolean := False;
                                       cascade     : Boolean := False);
+   overriding
+   procedure query_clear_table       (driver : Firebird_Driver;
+                                      table  : String);
 
    overriding
    function last_insert_id (driver : Firebird_Driver) return AD.TraxID;
@@ -44,8 +47,12 @@ package AdaBase.Driver.Base.Firebird is
    function last_error_info (driver : Firebird_Driver) return AD.Error_Info;
 
    overriding
-   function query (driver : Firebird_Driver; sql : AD.textual)
+   function query (driver : Firebird_Driver; sql : String)
                    return  AS.Base'Class;
+
+   overriding
+   function execute (driver : Firebird_Driver; sql : String)
+                     return AD.AffectedRows;
 
 private
 

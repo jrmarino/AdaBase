@@ -38,7 +38,7 @@ package AdaBase.Driver.Base.MySQL is
    procedure rollback (driver : MySQL_Driver);
 
    overriding
-   function query  (driver : MySQL_Driver; sql : AD.textual)
+   function query  (driver : MySQL_Driver; sql : String)
                     return AS.Base'Class;
 
    overriding
@@ -51,9 +51,8 @@ package AdaBase.Driver.Base.MySQL is
    function last_error_info (driver : MySQL_Driver) return AD.Error_Info;
 
    overriding
-   function execute                        (driver : MySQL_Driver;
-                                            sql : AD.textual)
-                                            return AD.AffectedRows;
+   function execute (driver : MySQL_Driver; sql : String)
+                     return AD.AffectedRows;
 
    function trait_protocol_compressed (driver : MySQL_Driver) return Boolean;
    function trait_multiquery_enabled  (driver : MySQL_Driver) return Boolean;

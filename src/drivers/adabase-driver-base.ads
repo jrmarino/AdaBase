@@ -61,23 +61,23 @@ package AdaBase.Driver.Base is
 
    overriding
    function trait_driver         (driver : Base_Driver)
-                                  return ACB.AD.textual;
+                                  return String;
 
    overriding
    function trait_client_info    (driver : Base_Driver)
-                                  return ACB.AD.textual;
+                                  return String;
 
    overriding
    function trait_client_version (driver : Base_Driver)
-                                  return ACB.AD.textual;
+                                  return String;
 
    overriding
    function trait_server_info    (driver : Base_Driver)
-                                  return ACB.AD.textual;
+                                  return String;
 
    overriding
    function trait_server_version (driver : Base_Driver)
-                                  return ACB.AD.textual;
+                                  return String;
 
    overriding
    function trait_max_blob_size    (driver : Base_Driver)
@@ -105,11 +105,11 @@ package AdaBase.Driver.Base is
 
    overriding
    procedure query_clear_table       (driver : Base_Driver;
-                                      table  : ACB.AD.textual);
+                                      table  : String);
 
    overriding
    procedure query_drop_table        (driver      : Base_Driver;
-                                      tables      : ACB.AD.textual;
+                                      tables      : String;
                                       when_exists : Boolean := False;
                                       cascade     : Boolean := False);
 

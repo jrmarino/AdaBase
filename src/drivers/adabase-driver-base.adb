@@ -77,7 +77,7 @@ package body AdaBase.Driver.Base is
    --  trait_driver  --
    --------------------
    overriding
-   function trait_driver (driver : Base_Driver) return ACB.AD.textual
+   function trait_driver (driver : Base_Driver) return String
    is
    begin
       return driver.connection.all.description;
@@ -89,7 +89,7 @@ package body AdaBase.Driver.Base is
    -------------------------
    overriding
    function trait_client_info (driver : Base_Driver)
-                               return ACB.AD.textual
+                               return String
    is
    begin
       return driver.connection.all.clientInfo;
@@ -101,7 +101,7 @@ package body AdaBase.Driver.Base is
    ----------------------------
    overriding
    function trait_client_version (driver : Base_Driver)
-                                  return ACB.AD.textual
+                                  return String
    is
    begin
       return driver.connection.all.clientVersion;
@@ -113,7 +113,7 @@ package body AdaBase.Driver.Base is
    -------------------------
    overriding
    function trait_server_info (driver : Base_Driver)
-                               return ACB.AD.textual
+                               return String
    is
    begin
       return driver.connection.all.serverInfo;
@@ -125,7 +125,7 @@ package body AdaBase.Driver.Base is
    ----------------------------
    overriding
    function trait_server_version (driver : Base_Driver)
-                                  return ACB.AD.textual
+                                  return String
    is
    begin
       return driver.connection.all.serverVersion;
@@ -246,32 +246,13 @@ package body AdaBase.Driver.Base is
    -------------------------
    overriding
    procedure query_clear_table (driver : Base_Driver;
-                                table  : ACB.AD.textual)
+                                table  : String)
    is
-      sql : ACB.AD.textual := SUS ("TRUNCATE ");
+      sql : constant String := "TRUNCATE " & table;
       AR  : ACB.AD.AffectedRows;
    begin
-      ACB.AD.SU.Append (Source => sql, New_Item => table);
-      --  AR := driver.execute (sql => sql);
       AR := execute (driver => Base_Driver'Class (driver), sql => sql);
    end query_clear_table;
-
-
-   ---------------
-   --  execute  --
-   ---------------
---     overriding
---     function execute (driver : Base_Driver; sql : ACB.AD.textual)
---                       return ACB.AD.AffectedRows
---     is
---        --  Never run; this function is always overridden.
---     begin
---        driver.log_problem (category => ACB.AD.execution,
---                            break => True,
---                            message =>
---                              SUS ("Base execution run (internal error)"));
---        return -1;
---     end execute;
 
 
    ------------------------
@@ -279,7 +260,7 @@ package body AdaBase.Driver.Base is
    ------------------------
    overriding
    procedure query_drop_table (driver      : Base_Driver;
-                               tables      : ACB.AD.textual;
+                               tables      : String;
                                when_exists : Boolean := False;
                                cascade     : Boolean := False)
 
@@ -298,15 +279,14 @@ package body AdaBase.Driver.Base is
                         SUS ("Requested CASCADE has no effect on MySQL"));
       end if;
       case when_exists is
-         when True  => sql := SUS ("DROP TABLE IF EXISTS ");
-         when False => sql := SUS ("DROP TABLE ");
+         when True  => sql := SUS ("DROP TABLE IF EXISTS " & tables);
+         when False => sql := SUS ("DROP TABLE " & tables);
       end case;
-      ACB.AD.SU.Append (Source => sql, New_Item => tables);
       if cascade then
          ACB.AD.SU.Append (Source => sql, New_Item => " CASCADE");
       end if;
-      --  AR := driver.execute (sql => sql);
-      AR := execute (driver => Base_Driver'Class (driver), sql => sql);
+      AR := execute (driver => Base_Driver'Class (driver),
+                     sql    => USS (sql));
    end query_drop_table;
 
 
