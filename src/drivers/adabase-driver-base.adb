@@ -252,25 +252,26 @@ package body AdaBase.Driver.Base is
       AR  : ACB.AD.AffectedRows;
    begin
       ACB.AD.SU.Append (Source => sql, New_Item => table);
-      AR := driver.execute (sql => sql);
+      --  AR := driver.execute (sql => sql);
+      AR := execute (driver => Base_Driver'Class (driver), sql => sql);
    end query_clear_table;
 
 
    ---------------
    --  execute  --
    ---------------
-   overriding
-   function execute (driver : Base_Driver; sql : ACB.AD.textual)
-                     return ACB.AD.AffectedRows
-   is
-      --  Never run; this function is always overridden.
-   begin
-      driver.log_problem (category => ACB.AD.execution,
-                          break => True,
-                          message =>
-                            SUS ("Base execution run (internal error)"));
-      return -1;
-   end execute;
+--     overriding
+--     function execute (driver : Base_Driver; sql : ACB.AD.textual)
+--                       return ACB.AD.AffectedRows
+--     is
+--        --  Never run; this function is always overridden.
+--     begin
+--        driver.log_problem (category => ACB.AD.execution,
+--                            break => True,
+--                            message =>
+--                              SUS ("Base execution run (internal error)"));
+--        return -1;
+--     end execute;
 
 
    ------------------------
@@ -304,7 +305,8 @@ package body AdaBase.Driver.Base is
       if cascade then
          ACB.AD.SU.Append (Source => sql, New_Item => " CASCADE");
       end if;
-      AR := driver.execute (sql => sql);
+      --  AR := driver.execute (sql => sql);
+      AR := execute (driver => Base_Driver'Class (driver), sql => sql);
    end query_drop_table;
 
 

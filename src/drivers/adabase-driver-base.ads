@@ -113,10 +113,6 @@ package AdaBase.Driver.Base is
                                       when_exists : Boolean := False;
                                       cascade     : Boolean := False);
 
-   overriding
-   function execute (driver : Base_Driver; sql : ACB.AD.textual)
-                     return ACB.AD.AffectedRows;
-
 private
 
    logger : ALF.LogFacility;

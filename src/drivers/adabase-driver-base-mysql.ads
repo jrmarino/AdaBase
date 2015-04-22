@@ -80,15 +80,5 @@ private
 
    procedure initialize (Object : in out MySQL_Driver);
 
---     procedure log_nominal (driver   : MySQL_Driver;
---                            category : AD.LogCategory;
---                            message  : AD.textual);
---
---     procedure log_problem
---       (driver     : MySQL_Driver;
---        category   : AD.LogCategory;
---        message    : AD.textual;
---        pull_codes : Boolean := False;
---        break      : Boolean := False);
 
 end AdaBase.Driver.Base.MySQL;

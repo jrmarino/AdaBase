@@ -165,9 +165,17 @@ package body AdaBase.Driver.Base.MySQL is
                      return AD.AffectedRows
    is
       result : AD.AffectedRows := 0;
+      err1 : constant AD.textual :=
+        SUS ("ACK! Execution attempted on inactive connection");
    begin
-      result := driver.connection.all.execute (sql => sql);
-      driver.log_nominal (category => AD.execution, message => sql);
+      if driver.connection_active then
+         result := driver.connection.all.execute (sql => sql);
+         driver.log_nominal (category => AD.execution, message => sql);
+      else
+         --  Non-fatal attempt to query an unccnnected database
+         driver.log_problem (category => AD.execution,
+                             message  => err1);
+      end if;
       return result;
    exception
       when ACM.QUERY_FAIL =>
@@ -287,48 +295,5 @@ package body AdaBase.Driver.Base.MySQL is
       Object.dialect          := AD.mysql;
    end initialize;
 
-
-   ------------------
-   --  log_nominal --
-   ------------------
---     procedure log_nominal (driver    : MySQL_Driver;
---                            category  : AD.LogCategory;
---                            message   : AD.textual)
---     is
---     begin
---           logger.log_nominal (driver   => AD.mysql,
---                               category => category,
---                               message  => message);
---     end log_nominal;
-
-
-   ------------------
-   --  log_problem --
-   ------------------
---     procedure log_problem
---       (driver     : MySQL_Driver;
---        category   : AD.LogCategory;
---        message    : AD.textual;
---        pull_codes : Boolean := False;
---        break      : Boolean := False)
---     is
---        error_msg  : AD.textual      := AD.blank;
---        error_code : AD.DriverCodes  := 0;
---        sqlstate   : AD.TSqlState    := AD.stateless;
---     begin
---        if pull_codes then
---           error_msg  := driver.connection.driverMessage;
---           error_code := driver.connection.driverCode;
---           sqlstate   := driver.connection.SqlState;
---        end if;
---
---        logger.log_problem (driver     => AD.mysql,
---                            category   => category,
---                            message    => message,
---                            error_msg  => error_msg,
---                            error_code => error_code,
---                            sqlstate   => sqlstate,
---                            break      => break);
---     end log_problem;
 
 end AdaBase.Driver.Base.MySQL;

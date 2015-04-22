@@ -54,15 +54,4 @@ private
          null;
       end record;
 
---     procedure log_nominal (driver   : Firebird_Driver;
---                            category : AD.LogCategory;
---                            message  : AD.textual);
---
---     procedure log_problem
---       (driver     : Firebird_Driver;
---        category   : AD.LogCategory;
---        message    : AD.textual;
---        pull_codes : Boolean := False;
---        break      : Boolean := False);
-
 end AdaBase.Driver.Base.Firebird;
