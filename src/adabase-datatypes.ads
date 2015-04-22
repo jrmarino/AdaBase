@@ -27,15 +27,15 @@ package AdaBase.DataTypes is
                            serializable);
    type LogCategory    is (connection, disconnection, transaction, execution,
                            statement_preparation, statement_execution,
-                           miscellaneous);
-   type TDriver        is (mysql, firebird, postgresql);
+                           miscellaneous, note);
+   type TDriver        is (foundation, mysql, firebird, postgresql);
    type TIsoKeywords   is array (TransIsolation) of String (1 .. 16);
    type TraxID         is mod 2 ** 64;
 
    subtype BLOB_maximum  is Positive range 2 ** 12 .. 2 ** 30;
    subtype TSqlState     is String (1 .. 5);
    subtype DriverCodes   is Integer range -999 .. 1999;
-   subtype QueryResult   is Integer;
+   subtype AffectedRows  is Integer;
    subtype textual       is SU.Unbounded_String;
 
    IsoKeywords : constant TIsoKeywords :=
@@ -48,9 +48,9 @@ package AdaBase.DataTypes is
    stateless : constant TSqlState := "     ";
 
    type Error_Info is record
-      sql_state      : TSqlState;
-      driver_code    : DriverCodes;
-      driver_message : textual;
+      sql_state      : TSqlState   := stateless;
+      driver_code    : DriverCodes := 0;
+      driver_message : textual     := blank;
    end record;
 
 

@@ -64,6 +64,7 @@ package body AdaBase.Logger.Base is
          when AD.mysql      => drv := "    mysql :";
          when AD.postgresql => drv := "    pgsql :";
          when AD.firebird   => drv := " firebird :";
+         when AD.foundation => drv := "     none :";
       end case;
 
       case category is
@@ -74,6 +75,7 @@ package body AdaBase.Logger.Base is
          when AD.statement_preparation => prefix := "  Prepare Stmt : ";
          when AD.statement_execution   => prefix := "  Execute Stmt : ";
          when AD.miscellaneous         => prefix := " Miscellaneous : ";
+         when AD.note                  => prefix := "          Note : ";
       end case;
 
       composite := S (TS & drv & prefix);

@@ -82,7 +82,7 @@ package AdaBase.Connection.Base.MySQL is
    overriding
    function  execute      (conn : MySQL_Connection;
                            sql  : AD.textual)
-                           return AD.QueryResult;
+                           return AD.AffectedRows;
 
    procedure initializeStatement (conn : MySQL_Connection;
                                   stmt : out AS.MySQL.MySQL_statement);

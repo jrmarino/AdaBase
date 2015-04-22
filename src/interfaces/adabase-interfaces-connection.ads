@@ -110,6 +110,7 @@ package AdaBase.Interfaces.Connection is
    procedure connect      (conn : out iConnection) is null;
    procedure disconnect   (conn : out iConnection) is null;
    function  execute      (conn : iConnection; sql : AD.textual)
-                           return AD.QueryResult is abstract;
+                           return AD.AffectedRows is abstract;
+
 
 end AdaBase.Interfaces.Connection;

@@ -157,13 +157,32 @@ package body AdaBase.Driver.Base.MySQL is
    end last_error_info;
 
 
-   ---------------------
-   --  query_literal  --
-   ---------------------
+   ---------------
+   --  execute  --
+   ---------------
    overriding
-   function query_literal (driver : MySQL_Driver;
-                           sql    : AD.textual)
-                           return  AS.Base'Class
+   function execute (driver : MySQL_Driver; sql : AD.textual)
+                     return AD.AffectedRows
+   is
+      result : AD.AffectedRows := 0;
+   begin
+      result := driver.connection.all.execute (sql => sql);
+      driver.log_nominal (category => AD.execution, message => sql);
+      return result;
+   exception
+      when ACM.QUERY_FAIL =>
+         driver.log_problem (category   => AD.execution,
+                             message    => sql,
+                             pull_codes => True);
+         return 0;
+   end execute;
+
+   -------------
+   --  query  --
+   -------------
+   overriding
+   function query (driver : MySQL_Driver; sql : AD.textual)
+                   return  AS.Base'Class
    is
       result : AS.MySQL.MySQL_statement;
       err1 : constant AD.textual :=
@@ -175,6 +194,7 @@ package body AdaBase.Driver.Base.MySQL is
          --  set sql ???
          --  driver.connection.execute (sql => sql);
          --  Result.successful := True;
+         driver.log_nominal (category => AD.execution, message => sql);
          null;
       else
          --  Non-fatal attempt to query an unccnnected database
@@ -182,7 +202,7 @@ package body AdaBase.Driver.Base.MySQL is
                              message  => err1);
       end if;
       return result;
-   end query_literal;
+   end query;
 
    ------------------------------------------------------------------------
    --  PUBLIC ROUTINES NOT COVERED BY INTERFACES                         --
@@ -264,50 +284,51 @@ package body AdaBase.Driver.Base.MySQL is
    begin
       Object.connection       := backend'Access;
       Object.local_connection := backend'Access;
+      Object.dialect          := AD.mysql;
    end initialize;
 
 
    ------------------
    --  log_nominal --
    ------------------
-   procedure log_nominal (driver    : MySQL_Driver;
-                          category  : AD.LogCategory;
-                          message   : AD.textual)
-   is
-   begin
-         logger.log_nominal (driver   => ALF.AD.mysql,
-                             category => category,
-                             message  => message);
-   end log_nominal;
+--     procedure log_nominal (driver    : MySQL_Driver;
+--                            category  : AD.LogCategory;
+--                            message   : AD.textual)
+--     is
+--     begin
+--           logger.log_nominal (driver   => AD.mysql,
+--                               category => category,
+--                               message  => message);
+--     end log_nominal;
 
 
    ------------------
    --  log_problem --
    ------------------
-   procedure log_problem
-     (driver     : MySQL_Driver;
-      category   : AD.LogCategory;
-      message    : AD.textual;
-      pull_codes : Boolean := False;
-      break      : Boolean := False)
-   is
-      error_msg  : AD.textual      := AD.blank;
-      error_code : AD.DriverCodes  := 0;
-      sqlstate   : AD.TSqlState    := AD.stateless;
-   begin
-      if pull_codes then
-         error_msg  := driver.connection.driverMessage;
-         error_code := driver.connection.driverCode;
-         sqlstate   := driver.connection.SqlState;
-      end if;
-
-      logger.log_problem (driver     => AD.mysql,
-                          category   => category,
-                          message    => message,
-                          error_msg  => error_msg,
-                          error_code => error_code,
-                          sqlstate   => sqlstate,
-                          break      => break);
-   end log_problem;
+--     procedure log_problem
+--       (driver     : MySQL_Driver;
+--        category   : AD.LogCategory;
+--        message    : AD.textual;
+--        pull_codes : Boolean := False;
+--        break      : Boolean := False)
+--     is
+--        error_msg  : AD.textual      := AD.blank;
+--        error_code : AD.DriverCodes  := 0;
+--        sqlstate   : AD.TSqlState    := AD.stateless;
+--     begin
+--        if pull_codes then
+--           error_msg  := driver.connection.driverMessage;
+--           error_code := driver.connection.driverCode;
+--           sqlstate   := driver.connection.SqlState;
+--        end if;
+--
+--        logger.log_problem (driver     => AD.mysql,
+--                            category   => category,
+--                            message    => message,
+--                            error_msg  => error_msg,
+--                            error_code => error_code,
+--                            sqlstate   => sqlstate,
+--                            break      => break);
+--     end log_problem;
 
 end AdaBase.Driver.Base.MySQL;

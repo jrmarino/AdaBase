@@ -38,8 +38,8 @@ package AdaBase.Driver.Base.MySQL is
    procedure rollback (driver : MySQL_Driver);
 
    overriding
-   function query_literal (driver : MySQL_Driver;
-                           sql    : AD.textual) return AS.Base'Class;
+   function query  (driver : MySQL_Driver; sql : AD.textual)
+                    return AS.Base'Class;
 
    overriding
    function last_insert_id (driver : MySQL_Driver) return AD.TraxID;
@@ -49,6 +49,11 @@ package AdaBase.Driver.Base.MySQL is
 
    overriding
    function last_error_info (driver : MySQL_Driver) return AD.Error_Info;
+
+   overriding
+   function execute                        (driver : MySQL_Driver;
+                                            sql : AD.textual)
+                                            return AD.AffectedRows;
 
    function trait_protocol_compressed (driver : MySQL_Driver) return Boolean;
    function trait_multiquery_enabled  (driver : MySQL_Driver) return Boolean;
@@ -60,6 +65,7 @@ package AdaBase.Driver.Base.MySQL is
                                             trait  : Boolean);
    procedure set_query_buffers_used        (driver : MySQL_Driver;
                                             trait  : Boolean);
+
 private
 
    backend : aliased ACM.MySQL_Connection;
@@ -74,15 +80,15 @@ private
 
    procedure initialize (Object : in out MySQL_Driver);
 
-   procedure log_nominal (driver   : MySQL_Driver;
-                          category : AD.LogCategory;
-                          message  : AD.textual);
-
-   procedure log_problem
-     (driver     : MySQL_Driver;
-      category   : AD.LogCategory;
-      message    : AD.textual;
-      pull_codes : Boolean := False;
-      break      : Boolean := False);
+--     procedure log_nominal (driver   : MySQL_Driver;
+--                            category : AD.LogCategory;
+--                            message  : AD.textual);
+--
+--     procedure log_problem
+--       (driver     : MySQL_Driver;
+--        category   : AD.LogCategory;
+--        message    : AD.textual;
+--        pull_codes : Boolean := False;
+--        break      : Boolean := False);
 
 end AdaBase.Driver.Base.MySQL;

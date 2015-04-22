@@ -240,7 +240,75 @@ package body AdaBase.Driver.Base is
       logger.attach_custom_logger (logger_access => logger_access);
    end attach_custom_logger;
 
-   ------------------------------------------------------------------------
+
+   -------------------------
+   --  query_clear_table  --
+   -------------------------
+   overriding
+   procedure query_clear_table (driver : Base_Driver;
+                                table  : ACB.AD.textual)
+   is
+      sql : ACB.AD.textual := SUS ("TRUNCATE ");
+      AR  : ACB.AD.AffectedRows;
+   begin
+      ACB.AD.SU.Append (Source => sql, New_Item => table);
+      AR := driver.execute (sql => sql);
+   end query_clear_table;
+
+
+   ---------------
+   --  execute  --
+   ---------------
+   overriding
+   function execute (driver : Base_Driver; sql : ACB.AD.textual)
+                     return ACB.AD.AffectedRows
+   is
+      --  Never run; this function is always overridden.
+   begin
+      driver.log_problem (category => ACB.AD.execution,
+                          break => True,
+                          message =>
+                            SUS ("Base execution run (internal error)"));
+      return -1;
+   end execute;
+
+
+   ------------------------
+   --  query_drop_table  --
+   ------------------------
+   overriding
+   procedure query_drop_table (driver      : Base_Driver;
+                               tables      : ACB.AD.textual;
+                               when_exists : Boolean := False;
+                               cascade     : Boolean := False)
+
+   is
+      use type ACB.AD.TDriver;
+      --  MySQL acceptions CASCADE but ignores it
+      --  MySQL and PostgreSQL can use this versions, but FireBird
+      --  needs if_exists implementation and doesn't know CASCADE, so it
+      --  needs an overriding implementation.
+      sql : ACB.AD.textual;
+      AR  : ACB.AD.AffectedRows;
+   begin
+      if cascade and then driver.dialect = ACB.AD.mysql
+      then
+         driver.log_nominal (category => ACB.AD.note, message =>
+                        SUS ("Requested CASCADE has no effect on MySQL"));
+      end if;
+      case when_exists is
+         when True  => sql := SUS ("DROP TABLE IF EXISTS ");
+         when False => sql := SUS ("DROP TABLE ");
+      end case;
+      ACB.AD.SU.Append (Source => sql, New_Item => tables);
+      if cascade then
+         ACB.AD.SU.Append (Source => sql, New_Item => " CASCADE");
+      end if;
+      AR := driver.execute (sql => sql);
+   end query_drop_table;
+
+
+   -----------------------------------------------------------------------
    --  PRIVATE ROUTINES NOT COVERED BY INTERFACES                        --
    ------------------------------------------------------------------------
 
@@ -262,6 +330,50 @@ package body AdaBase.Driver.Base is
    begin
       return ACB.AD.SU.To_String (Source => loose);
    end USS;
+
+   ------------------
+   --  log_nominal --
+   ------------------
+   procedure log_nominal (driver    : Base_Driver;
+                          category  : ACB.AD.LogCategory;
+                          message   : ACB.AD.textual)
+   is
+   begin
+         logger.log_nominal (driver   => driver.dialect,
+                             category => category,
+                             message  => message);
+   end log_nominal;
+
+
+   ------------------
+   --  log_problem --
+   ------------------
+   procedure log_problem
+     (driver     : Base_Driver;
+      category   : ACB.AD.LogCategory;
+      message    : ACB.AD.textual;
+      pull_codes : Boolean := False;
+      break      : Boolean := False)
+   is
+      error_msg  : ACB.AD.textual      := ACB.AD.blank;
+      error_code : ACB.AD.DriverCodes  := 0;
+      sqlstate   : ACB.AD.TSqlState    := ACB.AD.stateless;
+   begin
+      if pull_codes then
+         error_msg  := driver.connection.all.driverMessage;
+         error_code := driver.connection.all.driverCode;
+         sqlstate   := driver.connection.all.SqlState;
+      end if;
+
+      logger.log_problem (driver     => driver.dialect,
+                          category   => category,
+                          message    => message,
+                          error_msg  => error_msg,
+                          error_code => error_code,
+                          sqlstate   => sqlstate,
+                          break      => break);
+   end log_problem;
+
 
 
 end AdaBase.Driver.Base;

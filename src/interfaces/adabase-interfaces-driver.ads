@@ -73,12 +73,12 @@ package AdaBase.Interfaces.Driver is
    function last_sql_state       (driver : iDriver)
                                   return AD.TSqlState is abstract;
 
-   function last_error_info (driver : iDriver)
-                             return AD.Error_Info is abstract;
+   function last_error_info      (driver : iDriver)
+                                  return AD.Error_Info is abstract;
 
-   function query_literal (driver : iDriver;
-                           sql    : AD.textual)
-                           return  AS.Base'Class is abstract;
+   function execute              (driver : iDriver;
+                                  sql    : AD.textual)
+                                  return AD.AffectedRows is abstract;
 
    procedure command_standard_logger (driver : iDriver;
                                       device : ALF.TLogger;
@@ -88,5 +88,21 @@ package AdaBase.Interfaces.Driver is
    procedure attach_custom_logger
      (driver        : iDriver;
       logger_access : ALF.AL.BaseClass_Logger_access) is null;
+
+   ------------------------------------------------------------------------
+   -- QUERIES                                                            --
+   ------------------------------------------------------------------------
+
+   function query                (driver : iDriver;
+                                  sql    : AD.textual)
+                                  return  AS.Base'Class is abstract;
+
+   procedure query_clear_table   (driver : iDriver;
+                                  table  : AD.textual) is abstract;
+
+   procedure query_drop_table    (driver      : iDriver;
+                                  tables       : AD.textual;
+                                  when_exists : Boolean := False;
+                                  cascade     : Boolean := False) is abstract;
 
 end AdaBase.Interfaces.Driver;

@@ -103,6 +103,20 @@ package AdaBase.Driver.Base is
    procedure set_trait_max_blob_size (driver : Base_Driver;
                                       trait  : ACB.AD.BLOB_maximum);
 
+   overriding
+   procedure query_clear_table       (driver : Base_Driver;
+                                      table  : ACB.AD.textual);
+
+   overriding
+   procedure query_drop_table        (driver      : Base_Driver;
+                                      tables      : ACB.AD.textual;
+                                      when_exists : Boolean := False;
+                                      cascade     : Boolean := False);
+
+   overriding
+   function execute (driver : Base_Driver; sql : ACB.AD.textual)
+                     return ACB.AD.AffectedRows;
+
 private
 
    logger : ALF.LogFacility;
@@ -111,9 +125,21 @@ private
       record
          connection_active : Boolean := False;
          connection        : ACB.Base_Connection_Access;
+         dialect           : ACB.AD.TDriver := ACB.AD.foundation;
       end record;
 
    function SUS (fixed : String) return ACB.AD.textual;
    function USS (loose : ACB.AD.textual) return String;
+
+   procedure log_nominal (driver   : Base_Driver;
+                          category : ACB.AD.LogCategory;
+                          message  : ACB.AD.textual);
+
+   procedure log_problem
+     (driver     : Base_Driver;
+      category   : ACB.AD.LogCategory;
+      message    : ACB.AD.textual;
+      pull_codes : Boolean := False;
+      break      : Boolean := False);
 
 end AdaBase.Driver.Base;

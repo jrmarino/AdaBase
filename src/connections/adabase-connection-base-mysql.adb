@@ -328,24 +328,22 @@ package body AdaBase.Connection.Base.MySQL is
    --  execute  --
    ---------------
    overriding
-   function  execute (conn : MySQL_Connection;
-                      sql  : AD.textual)
-                      return AD.QueryResult
+   function  execute (conn : MySQL_Connection; sql : AD.textual)
+                      return AD.AffectedRows
    is
       use type ABM.my_int;
       result : ABM.my_int;
-      query  : constant ABM.ICS.chars_ptr := ABM.ICS.New_String
-        (Str => AD.SU.To_String (sql));
+      query  : constant ABM.ICS.chars_ptr :=
+                        ABM.ICS.New_String (Str => AD.SU.To_String (sql));
       len    : constant ABM.my_ulong := ABM.my_ulong (AD.SU.Length (sql));
    begin
       result := ABM.mysql_real_query (handle => conn.handle,
                                       query  => query,
                                       length => len);
-
       if result /= 0 then
          raise QUERY_FAIL;
       end if;
-      return 0;  -- TO DO
+      return AD.AffectedRows (result);
    end execute;
 
 
@@ -361,7 +359,7 @@ package body AdaBase.Connection.Base.MySQL is
       sql : AD.textual := AD.SU.To_Unbounded_String
             ("SET SESSION TRANSACTION ISOLATION LEVEL ") &
             AD.SU.To_Unbounded_String (AD.IsoKeywords (isolation));
-      affected_rows : AD.QueryResult;
+      affected_rows : AD.AffectedRows;
    begin
       if conn.prop_connected then
          if isolation = conn.prop_trax_isolation then
@@ -432,7 +430,7 @@ package body AdaBase.Connection.Base.MySQL is
       use type AD.textual;
       sql : constant AD.textual :=
         SUS ("SET CHARACTER SET ") & conn.character_set;
-      affected_rows : AD.QueryResult;
+      affected_rows : AD.AffectedRows;
    begin
       if conn.prop_connected then
          if conn.character_set /= AD.blank then
