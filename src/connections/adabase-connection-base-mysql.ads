@@ -17,12 +17,14 @@
 with AdaBase.Interfaces.Connection;
 with AdaBase.Statement.MySQL;
 with AdaBase.Bindings.MySQL;
+with Ada.Exceptions;
 
 package AdaBase.Connection.Base.MySQL is
 
    package AIC renames AdaBase.Interfaces.Connection;
    package ABM renames AdaBase.Bindings.MySQL;
    package AS  renames AdaBase.Statement;
+   package EX renames Ada.Exceptions;
 
    type MySQL_Connection is new Base_Connection and AIC.iConnection with private;
    type MySQL_Connection_Access is access all MySQL_Connection;
@@ -74,14 +76,20 @@ package AdaBase.Connection.Base.MySQL is
    procedure rollback     (conn : MySQL_Connection);
 
    overriding
-   procedure connect      (conn : out MySQL_Connection);
-
-   overriding
    procedure disconnect   (conn : out MySQL_Connection);
 
    overriding
    function  execute      (conn : MySQL_Connection;
                            sql  : String) return AD.AffectedRows;
+
+   overriding
+   procedure connect (conn     : out MySQL_Connection;
+                      database : String;
+                      username : String;
+                      password : String;
+                      hostname : String := AD.blankstring;
+                      socket   : String := AD.blankstring;
+                      port     : AD.PosixPort := AD.portless);
 
    procedure initializeStatement (conn : MySQL_Connection;
                                   stmt : out AS.MySQL.MySQL_statement);
@@ -94,6 +102,7 @@ package AdaBase.Connection.Base.MySQL is
    CONNECT_FAIL        : exception;
    TRAXISOL_FAIL       : exception;
    CHARSET_FAIL        : exception;
+   INITIALIZE_FAIL     : exception;
 
 private
    type MySQL_Connection is new Base_Connection and AIC.iConnection
@@ -104,12 +113,6 @@ private
       info_description : String (1 .. 24) := "MySQL 5.5+ native driver";
 
       handle           : ABM.MYSQL_Access;
-      mrc_host         : AD.textual  := AD.blank;
-      mrc_user         : AD.textual  := AD.blank;
-      mrc_password     : AD.textual  := AD.blank;
-      mrc_db           : AD.textual  := AD.blank;
-      mrc_socket       : AD.textual  := AD.blank;
-      mrc_port         : ABM.my_uint := 0;
       character_set    : AD.textual  := AD.blank;
    end record;
 
@@ -117,6 +120,7 @@ private
                              return AD.textual;
 
    function S2P (S : AD.textual) return ABM.ICS.chars_ptr;
+   function S2P (S : String)     return ABM.ICS.chars_ptr;
 
    procedure set_character_set (conn : MySQL_Connection);
 

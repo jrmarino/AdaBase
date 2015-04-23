@@ -135,7 +135,7 @@ package body AdaBase.Connection.Base is
    function connected (conn : Base_Connection) return Boolean
    is
    begin
-      return conn.prop_connected;
+      return conn.prop_active;
    end connected;
 
 
@@ -206,5 +206,6 @@ package body AdaBase.Connection.Base is
    begin
       return AD.SU.To_String (Source => loose);
    end USS;
+
 
 end AdaBase.Connection.Base;

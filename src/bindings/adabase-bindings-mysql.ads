@@ -197,8 +197,8 @@ package AdaBase.Bindings.MySQL is
    function mysql_rollback (handle : not null access MYSQL) return my_bool;
    pragma Import (C, mysql_rollback, "mysql_rollback");
 
-   function mysql_autocommit (handle    : not null access MYSQL;
-                              auto_mode : my_bool) return my_bool;
+   function mysql_autocommit (handle : not null access MYSQL;
+                              mode   : my_bool) return my_bool;
    pragma Import (C, mysql_autocommit, "mysql_autocommit");
 
    function mysql_insert_id (handle : not null access MYSQL)

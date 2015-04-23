@@ -89,9 +89,11 @@ package AdaBase.Interfaces.Driver is
      (driver        : iDriver;
       logger_access : ALF.AL.BaseClass_Logger_access) is null;
 
+
    ------------------------------------------------------------------------
    -- QUERIES                                                            --
    ------------------------------------------------------------------------
+
 
    function query                (driver : iDriver;
                                   sql    : String)
@@ -104,5 +106,27 @@ package AdaBase.Interfaces.Driver is
                                   tables      : String;
                                   when_exists : Boolean := False;
                                   cascade     : Boolean := False) is abstract;
+
+
+   ------------------------------------------------------------------------
+   -- CONNECTIONS                                                        --
+   ------------------------------------------------------------------------
+
+   --  Returns True if connection attempt is successful
+   --  These are guaranteed to work (at least one of the them, but the
+   --  individual driver could define a driver-specific version as well.
+
+   function basic_connect (driver   : out iDriver;
+                           database : String;
+                           username : String;
+                           password : String;
+                           socket   : String) return Boolean is abstract;
+
+   function basic_connect (driver   : out iDriver;
+                           database : String;
+                           username : String;
+                           password : String;
+                           hostname : String;
+                           port     : AD.PosixPort) return Boolean is abstract;
 
 end AdaBase.Interfaces.Driver;

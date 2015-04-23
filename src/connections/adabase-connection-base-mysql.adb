@@ -114,11 +114,11 @@ package body AdaBase.Connection.Base.MySQL is
          auto_mode := 1;
       end if;
 
-      if conn.prop_connected then
+      if conn.prop_active then
          result := ABM.mysql_autocommit (handle => conn.handle,
-                                         auto_mode => auto_mode);
+                                         mode   => auto_mode);
          if result /= 0 then
-            raise AUTOCOMMIT_FAIL;
+            raise AUTOCOMMIT_FAIL with "autocommit result = " & result'Img;
          end if;
       end if;
 
@@ -221,9 +221,15 @@ package body AdaBase.Connection.Base.MySQL is
    --  connect  --
    ----------------
    overriding
-   procedure connect (conn : out MySQL_Connection)
+   procedure connect (conn     : out MySQL_Connection;
+                      database : String;
+                      username : String;
+                      password : String;
+                      hostname : String := AD.blankstring;
+                      socket   : String := AD.blankstring;
+                      port     : AD.PosixPort := AD.portless)
    is
-      use type AD.textual;
+      use type ABM.MYSQL_Access;
       options : Natural := 0;
       opt_compress : constant Natural := 2 ** (ABM.client_flag_order'Pos
                                                (ABM.CLIENT_COMPRESS) - 1);
@@ -244,28 +250,37 @@ package body AdaBase.Connection.Base.MySQL is
 
       conn.handle := ABM.mysql_init (handle => conn.handle);
 
-      if conn.mrc_socket = AD.blank then
+      if conn.handle = null then
+         raise INITIALIZE_FAIL;
+      end if;
+
+      if socket = AD.blankstring then
          conn.handle := ABM.mysql_real_connect
            (handle      => conn.handle,
-            host        => S2P (conn.mrc_host),
-            user        => S2P (conn.mrc_user),
-            passwd      => S2P (conn.mrc_password),
-            db          => S2P (conn.mrc_db),
-            port        => conn.mrc_port,
+            host        => S2P (hostname),
+            user        => S2P (username),
+            passwd      => S2P (password),
+            db          => S2P (database),
+            port        => ABM.my_uint (port),
             unix_socket => ABM.ICS.Null_Ptr,
             client_flag => ABM.my_ulong (options));
       else
           conn.handle := ABM.mysql_real_connect
            (handle      => conn.handle,
             host        => ABM.ICS.Null_Ptr,
-            user        => S2P (conn.mrc_user),
-            passwd      => S2P (conn.mrc_password),
-            db          => S2P (conn.mrc_db),
+            user        => S2P (username),
+            passwd      => S2P (password),
+            db          => S2P (database),
             port        => 0,
-            unix_socket => S2P (conn.mrc_socket),
+            unix_socket => S2P (socket),
             client_flag => ABM.my_ulong (options));
       end if;
 
+      if conn.handle = null then
+         raise CONNECT_FAIL;
+      end if;
+
+      conn.prop_active := True;
       conn.set_character_set;
       conn.setTransactionIsolation (conn.prop_trax_isolation);
       conn.setAutoCommit (conn.prop_auto_commit);
@@ -304,10 +319,17 @@ package body AdaBase.Connection.Base.MySQL is
 
    exception
 
-      when CONNECT_FAIL    => raise CONNECT_FAIL;
-      when TRAXISOL_FAIL   => raise TRAXISOL_FAIL;
-      when AUTOCOMMIT_FAIL => raise AUTOCOMMIT_FAIL;
-      when CHARSET_FAIL    => raise CHARSET_FAIL;
+      when NOT_WHILE_CONNECTED =>
+         raise NOT_WHILE_CONNECTED with
+           "Reconnection attempted during an active connection";
+      when CONNECT_FAIL        =>
+         raise CONNECT_FAIL with
+           "Failed to connect to " & database;
+      when INITIALIZE_FAIL     =>
+         raise INITIALIZE_FAIL with
+           "Failed to allocate enough memory for MySQL connection object";
+      when rest : others       =>
+         EX.Reraise_Occurrence (rest);
 
    end connect;
 
@@ -320,7 +342,7 @@ package body AdaBase.Connection.Base.MySQL is
    is
    begin
       ABM.mysql_close (handle => conn.handle);
-      conn.prop_connected := False;
+      conn.prop_active := False;
    end disconnect;
 
 
@@ -359,7 +381,7 @@ package body AdaBase.Connection.Base.MySQL is
                                AD.IsoKeywords (isolation);
       affected_rows : AD.AffectedRows;
    begin
-      if conn.prop_connected then
+      if conn.prop_active then
          if isolation = conn.prop_trax_isolation then
             return;
          end if;
@@ -369,7 +391,7 @@ package body AdaBase.Connection.Base.MySQL is
       conn.prop_trax_isolation := isolation;
    exception
       when QUERY_FAIL =>
-         raise TRAXISOL_FAIL;
+         raise TRAXISOL_FAIL with sql;
    end setTransactionIsolation;
 
 
@@ -420,6 +442,16 @@ package body AdaBase.Connection.Base.MySQL is
    end S2P;
 
 
+   -----------
+   --  S2P  --
+   -----------
+   function S2P (S : String) return ABM.ICS.chars_ptr
+   is
+   begin
+      return ABM.ICS.New_String (Str => S);
+   end S2P;
+
+
    -------------------------
    --  set_character_set  --
    -------------------------
@@ -429,14 +461,14 @@ package body AdaBase.Connection.Base.MySQL is
       sql : constant String := "SET CHARACTER SET " & USS (conn.character_set);
       affected_rows : AD.AffectedRows;
    begin
-      if conn.prop_connected then
+      if conn.prop_active then
          if conn.character_set /= AD.blank then
             affected_rows := execute (conn => conn, sql => sql);
          end if;
       end if;
    exception
       when QUERY_FAIL =>
-         raise CHARSET_FAIL;
+         raise CHARSET_FAIL with sql;
    end set_character_set;
 
 

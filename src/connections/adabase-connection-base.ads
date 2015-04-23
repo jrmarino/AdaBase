@@ -82,7 +82,6 @@ private
 
    type Base_Connection is abstract new Base_Pure and AIC.iConnection with
       record
-         prop_connected      : Boolean             := False;
          prop_auto_commit    : Boolean             := False;
          prop_active         : Boolean             := False;
          prop_trax_isolation : AD.TransIsolation   := AD.repeatable_read;

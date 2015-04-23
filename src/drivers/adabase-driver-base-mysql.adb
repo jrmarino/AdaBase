@@ -279,6 +279,44 @@ package body AdaBase.Driver.Base.MySQL is
    end set_query_buffers_used;
 
 
+   ---------------------
+   --  basic_connect  --
+   ---------------------
+   overriding
+   function basic_connect (driver   : out MySQL_Driver;
+                           database : String;
+                           username : String;
+                           password : String;
+                           socket   : String) return Boolean
+   is
+   begin
+      return driver.private_connect (database => database,
+                                     username => username,
+                                     password => password,
+                                     socket   => socket);
+   end basic_connect;
+
+
+   ---------------------
+   --  basic_connect  --
+   ---------------------
+   overriding
+   function basic_connect (driver   : out MySQL_Driver;
+                           database : String;
+                           username : String;
+                           password : String;
+                           hostname : String;
+                           port     : AD.PosixPort) return Boolean
+   is
+   begin
+      return driver.private_connect (database => database,
+                                     username => username,
+                                     password => password,
+                                     hostname => hostname,
+                                     port     => port);
+   end basic_connect;
+
+
    ------------------------------------------------------------------------
    --  PRIVATE ROUTINES NOT COVERED BY INTERFACES                        --
    ------------------------------------------------------------------------
@@ -295,5 +333,47 @@ package body AdaBase.Driver.Base.MySQL is
       Object.dialect          := AD.mysql;
    end initialize;
 
+
+   -----------------------
+   --  private_connect  --
+   -----------------------
+   function private_connect (driver   : out MySQL_Driver;
+                             database : String;
+                             username : String;
+                             password : String;
+                             hostname : String := AD.blankstring;
+                             socket   : String := AD.blankstring;
+                             port     : AD.PosixPort := AD.portless)
+                             return Boolean
+   is
+      err1 : constant AD.textual :=
+        SUS ("ACK! Reconnection attempted on active connection");
+      nom  : constant AD.textual :=
+        SUS ("Connection to " & database & " database succeeded.");
+   begin
+      if driver.connection_active then
+         driver.log_problem (category => AD.execution,
+                             message  => err1);
+         return False;
+      end if;
+      driver.connection.connect (database => database,
+                                 username => username,
+                                 password => password,
+                                 socket   => socket,
+                                 hostname => hostname,
+                                 port     => port);
+
+      driver.connection_active := driver.connection.all.connected;
+
+      driver.log_nominal (category => AD.connection, message => nom);
+      return True;
+   exception
+      when Error : others =>
+         driver.log_problem
+           (category => AD.connection,
+            break    => True,
+            message  => SUS (ACM.EX.Exception_Message (X => Error)));
+         return False;
+   end private_connect;
 
 end AdaBase.Driver.Base.MySQL;

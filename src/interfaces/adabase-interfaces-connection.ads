@@ -107,10 +107,16 @@ package AdaBase.Interfaces.Connection is
    --  Commands
    procedure commit       (conn : iConnection) is null;
    procedure rollback     (conn : iConnection) is null;
-   procedure connect      (conn : out iConnection) is null;
    procedure disconnect   (conn : out iConnection) is null;
    function  execute      (conn : iConnection; sql : String)
                            return AD.AffectedRows is abstract;
 
+   procedure connect (conn     : out iConnection;
+                      database : String;
+                      username : String;
+                      password : String;
+                      hostname : String := AD.blankstring;
+                      socket   : String := AD.blankstring;
+                      port     : AD.PosixPort := AD.portless) is null;
 
 end AdaBase.Interfaces.Connection;
