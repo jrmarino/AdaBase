@@ -57,4 +57,32 @@ package AdaBase.DataTypes is
    end record;
 
 
+   -------------------------------------------
+   --  Supported Field Types (Standardized) --
+   -------------------------------------------
+
+   type nbyte1 is mod 2 ** 8;
+   type nbyte2 is mod 2 ** 16;
+   type nbyte3 is mod 2 ** 24;
+   type nbyte4 is mod 2 ** 32;
+   type nbyte8 is mod 2 ** 64;
+   type byte8  is range -2 ** 63 .. 2 ** 63 - 1;
+   type byte4  is range -2 ** 31 .. 2 ** 31 - 1;
+   type byte3  is range -2 ** 23 .. 2 ** 23 - 1;
+   type byte2  is range -2 ** 15 .. 2 ** 15 - 1;
+   type byte1  is range -2 **  7 .. 2 **  7 - 1;
+   type real9  is digits 9;
+   type real18 is digits 18;
+
+   subtype nbyte0 is Boolean;
+
+   type chain is array (Positive range <>) of nbyte1;
+   type chain_access is access all chain;
+   type enumtype is record
+      enumeration : textual;
+      index       : Natural;
+   end record;
+   type settype is array (Positive range <>) of enumtype;
+   type settype_access is access all settype;
+
 end AdaBase.DataTypes;
