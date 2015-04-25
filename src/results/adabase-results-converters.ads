@@ -35,9 +35,11 @@ package AdaBase.Results.Converters is
    function convert (nv : AD.nbyte0) return AD.byte8;
    function convert (nv : AD.nbyte0) return AD.real9;
    function convert (nv : AD.nbyte0) return AD.real18;
-   function convert (nv : AD.nbyte0) return AD.textual;
-   function convert (nv : AD.nbyte0) return textwide;
-   function convert (nv : AD.nbyte0) return textsuper;
+   function convert (nv : AD.nbyte0) return String;
+   function convert (nv : AD.nbyte0) return Wide_String;
+   function convert (nv : AD.nbyte0) return Wide_Wide_String;
+   function convert (nv : AD.nbyte0) return AD.chain;
+
 
    -------------
    -- nbyte 1 --
@@ -57,6 +59,8 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str1 (IntType => AD.nbyte1);
    function convert is new GEN.convert2str2 (IntType => AD.nbyte1);
    function convert is new GEN.convert2str3 (IntType => AD.nbyte1);
+   function convert (nv : AD.nbyte1) return AD.chain;
+
 
    -------------
    -- nbyte 2 --
@@ -76,6 +80,7 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str1 (IntType => AD.nbyte2);
    function convert is new GEN.convert2str2 (IntType => AD.nbyte2);
    function convert is new GEN.convert2str3 (IntType => AD.nbyte2);
+   function convert (nv : AD.nbyte2) return AD.chain;
 
    -------------
    -- nbyte 3 --
@@ -95,6 +100,8 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str1 (IntType => AD.nbyte3);
    function convert is new GEN.convert2str2 (IntType => AD.nbyte3);
    function convert is new GEN.convert2str3 (IntType => AD.nbyte3);
+   function convert (nv : AD.nbyte3) return AD.chain;
+
 
    -------------
    -- nbyte 4 --
@@ -114,6 +121,7 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str1 (IntType => AD.nbyte4);
    function convert is new GEN.convert2str2 (IntType => AD.nbyte4);
    function convert is new GEN.convert2str3 (IntType => AD.nbyte4);
+   function convert (nv : AD.nbyte4) return AD.chain;
 
 
    -------------
@@ -134,6 +142,7 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str1 (IntType => AD.nbyte8);
    function convert is new GEN.convert2str2 (IntType => AD.nbyte8);
    function convert is new GEN.convert2str3 (IntType => AD.nbyte8);
+   function convert (nv : AD.nbyte8) return AD.chain;
 
 
    ------------
@@ -257,7 +266,7 @@ package AdaBase.Results.Converters is
    ------------
    -- String --
    ------------
-   function convert (nv : String) return AD.nbyte0;
+   function convert (nv : AD.textual) return AD.nbyte0;
    function convert is new GEN.convertstr (IntType => AD.nbyte1);
    function convert is new GEN.convertstr (IntType => AD.nbyte2);
    function convert is new GEN.convertstr (IntType => AD.nbyte3);
@@ -270,14 +279,15 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convertstr (IntType => AD.byte8);
    function convert is new GEN.convertst2 (RealType => AD.real9);
    function convert is new GEN.convertst2 (RealType => AD.real18);
-   function convert (nv : String) return Wide_String;
-   function convert (nv : String) return Wide_Wide_String;
+   function convert (nv : AD.textual) return String;
+   function convert (nv : AD.textual) return Wide_String;
+   function convert (nv : AD.textual) return Wide_Wide_String;
 
 
    -----------------
    -- Wide_String --
    -----------------
-   function convert (nv : Wide_String) return AD.nbyte0;
+   function convert (nv : textwide) return AD.nbyte0;
    function convert is new GEN.convertst3 (IntType => AD.nbyte1);
    function convert is new GEN.convertst3 (IntType => AD.nbyte2);
    function convert is new GEN.convertst3 (IntType => AD.nbyte3);
@@ -290,14 +300,15 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convertst3 (IntType => AD.byte8);
    function convert is new GEN.convertst4 (RealType => AD.real9);
    function convert is new GEN.convertst4 (RealType => AD.real18);
-   function convert (nv : Wide_String) return String;
-   function convert (nv : Wide_String) return Wide_Wide_String;
+   function convert (nv : textwide) return String;
+   function convert (nv : textwide) return Wide_String;
+   function convert (nv : textwide) return Wide_Wide_String;
 
 
    ----------------------
    -- Wide_Wide_String --
    ----------------------
-   function convert (nv : Wide_Wide_String) return AD.nbyte0;
+   function convert (nv : textsuper) return AD.nbyte0;
    function convert is new GEN.convertst5 (IntType => AD.nbyte1);
    function convert is new GEN.convertst5 (IntType => AD.nbyte2);
    function convert is new GEN.convertst5 (IntType => AD.nbyte3);
@@ -310,8 +321,9 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convertst5 (IntType => AD.byte8);
    function convert is new GEN.convertst6 (RealType => AD.real9);
    function convert is new GEN.convertst6 (RealType => AD.real18);
-   function convert (nv : Wide_Wide_String) return String;
-   function convert (nv : Wide_Wide_String) return Wide_String;
+   function convert (nv : textsuper) return String;
+   function convert (nv : textsuper) return Wide_String;
+   function convert (nv : textsuper) return Wide_Wide_String;
 
 
    ----------
@@ -335,9 +347,9 @@ package AdaBase.Results.Converters is
    function convert (nv : AD.enumtype) return AD.byte3;
    function convert (nv : AD.enumtype) return AD.byte4;
    function convert (nv : AD.enumtype) return AD.byte8;
-   function convert (nv : AD.enumtype) return AD.textual;
-   function convert (nv : AD.enumtype) return textwide;
-   function convert (nv : AD.enumtype) return textsuper;
+   function convert (nv : AD.enumtype) return String;
+   function convert (nv : AD.enumtype) return Wide_String;
+   function convert (nv : AD.enumtype) return Wide_Wide_String;
 
 
    ------------------------

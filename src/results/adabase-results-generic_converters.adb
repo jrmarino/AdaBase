@@ -27,33 +27,38 @@ package body AdaBase.Results.Generic_Converters is
    --------------------------
    --  GENERIC convertstr  --
    --------------------------
-   function convertstr (nv : String) return IntType is
+   function convertstr (nv : AD.textual) return IntType
+   is
+      nverr : constant String := AD.SU.To_String (nv);
    begin
-      return IntType'Value (nv);
+      return IntType'Value (nverr);
    exception
       when others =>
-         raise CONVERSION_FAILED with "Tried to convert '" & nv & "'";
+         raise CONVERSION_FAILED with "Tried to convert '" & nverr & "'";
    end convertstr;
 
 
    --------------------------
    --  GENERIC convertst2  --
    --------------------------
-   function convertst2 (nv : String) return RealType is
+   function convertst2 (nv : AD.textual) return RealType
+   is
+      nverr : constant String := AD.SU.To_String (nv);
    begin
-      return RealType'Value (nv);
+      return RealType'Value (nverr);
    exception
       when others =>
-         raise CONVERSION_FAILED with "Tried to convert '" & nv & "'";
+         raise CONVERSION_FAILED with "Tried to convert '" & nverr & "'";
    end convertst2;
 
 
    --------------------------
    --  GENERIC convertst3  --
    --------------------------
-   function convertst3 (nv : Wide_String) return IntType
+   function convertst3 (nv : textwide) return IntType
    is
-      str : constant String := ACC.To_String (Item => nv);
+      wstr : constant Wide_String := SUW.To_Wide_String (Source => nv);
+      str  : constant String := ACC.To_String (Item => wstr);
    begin
       return IntType'Value (str);
    exception
@@ -65,9 +70,10 @@ package body AdaBase.Results.Generic_Converters is
    --------------------------
    --  GENERIC convertst4  --
    --------------------------
-   function convertst4 (nv : Wide_String) return RealType
+   function convertst4 (nv : textwide) return RealType
    is
-      str : constant String := ACC.To_String (Item => nv);
+      wstr : constant Wide_String := SUW.To_Wide_String (Source => nv);
+      str  : constant String := ACC.To_String (Item => wstr);
    begin
       return RealType'Value (str);
    exception
@@ -79,9 +85,10 @@ package body AdaBase.Results.Generic_Converters is
    --------------------------
    --  GENERIC convertst5  --
    --------------------------
-   function convertst5 (nv : Wide_Wide_String) return IntType
+   function convertst5 (nv : textsuper) return IntType
    is
-      str : constant String := ACC.To_String (Item => nv);
+      wwstr : constant Wide_Wide_String := SUWW.To_Wide_Wide_String (nv);
+      str   : constant String := ACC.To_String (Item => wwstr);
    begin
       return IntType'Value (str);
    exception
@@ -93,9 +100,10 @@ package body AdaBase.Results.Generic_Converters is
    --------------------------
    --  GENERIC convertst6  --
    --------------------------
-   function convertst6 (nv : Wide_Wide_String) return RealType
+   function convertst6 (nv : textsuper) return RealType
    is
-      str : constant String := ACC.To_String (Item => nv);
+      wwstr : constant Wide_Wide_String := SUWW.To_Wide_Wide_String (nv);
+      str   : constant String := ACC.To_String (Item => wwstr);
    begin
       return RealType'Value (str);
    exception
@@ -104,11 +112,10 @@ package body AdaBase.Results.Generic_Converters is
    end convertst6;
 
 
-
    ----------------------------
    --  GENERIC convert2str1  --
    ----------------------------
-   function convert2str1 (nv : IntType) return AD.textual is
+   function convert2str1 (nv : IntType) return String is
    begin
       return ctrim (nv'Img);
    end convert2str1;
@@ -117,25 +124,25 @@ package body AdaBase.Results.Generic_Converters is
    ----------------------------
    --  GENERIC convert2str2  --
    ----------------------------
-   function convert2str2 (nv : IntType) return textwide is
+   function convert2str2 (nv : IntType) return Wide_String is
    begin
-      return wtrim (ACC.To_Wide_String (nv'Img));
+      return wtrim (nv'Img);
    end convert2str2;
 
 
    ----------------------------
    --  GENERIC convert2str3  --
    ----------------------------
-   function convert2str3 (nv : IntType) return textsuper is
+   function convert2str3 (nv : IntType) return Wide_Wide_String is
    begin
-      return strim (ACC.To_Wide_Wide_String (nv'Img));
+      return strim (nv'Img);
    end convert2str3;
 
 
    ----------------------------
    --  GENERIC convert3str1  --
    ----------------------------
-   function convert3str1 (nv : RealType) return AD.textual is
+   function convert3str1 (nv : RealType) return String is
    begin
       return ctrim (nv'Img);
    end convert3str1;
@@ -144,18 +151,18 @@ package body AdaBase.Results.Generic_Converters is
    ----------------------------
    --  GENERIC convert3str2  --
    ----------------------------
-   function convert3str2 (nv : RealType) return textwide is
+   function convert3str2 (nv : RealType) return Wide_String is
    begin
-      return wtrim (ACC.To_Wide_String (nv'Img));
+      return wtrim (nv'Img);
    end convert3str2;
 
 
    ----------------------------
    --  GENERIC convert3str3  --
    ----------------------------
-   function convert3str3 (nv : RealType) return textsuper is
+   function convert3str3 (nv : RealType) return Wide_Wide_String is
    begin
-      return strim (ACC.To_Wide_Wide_String (nv'Img));
+      return strim (nv'Img);
    end convert3str3;
 
 
@@ -163,26 +170,19 @@ package body AdaBase.Results.Generic_Converters is
    --  PRIVATE TRIM FUNCTIONS  --
    ------------------------------
 
-   function ctrim (raw : String) return AD.textual
-   is
-      trimmed_str : constant String := AS.Fixed.Trim (raw, AS.Left);
+   function ctrim (raw : String) return String is
    begin
-      return AD.SU.To_Unbounded_String (trimmed_str);
+      return AS.Fixed.Trim (raw, AS.Left);
    end ctrim;
 
-   function wtrim (raw : Wide_String) return textwide
-   is
-      trimmed_str : constant Wide_String := AS.Wide_Fixed.Trim (raw, AS.Left);
+   function wtrim (raw : String) return Wide_String is
    begin
-      return SUW.To_Unbounded_Wide_String (trimmed_str);
+      return ACC.To_Wide_String (AS.Fixed.Trim (raw, AS.Left));
    end wtrim;
 
-   function strim (raw : Wide_Wide_String) return textsuper
-   is
-      trimmed_str : constant Wide_Wide_String :=
-        AS.Wide_Wide_Fixed.Trim (raw, AS.Left);
+   function strim (raw : String) return Wide_Wide_String is
    begin
-      return SUWW.To_Unbounded_Wide_Wide_String (trimmed_str);
+      return ACC.To_Wide_Wide_String (AS.Fixed.Trim (raw, AS.Left));
    end strim;
 
 end AdaBase.Results.Generic_Converters;

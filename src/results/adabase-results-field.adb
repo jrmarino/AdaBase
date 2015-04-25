@@ -14,34 +14,565 @@
 --  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --
 
+with AdaBase.Results.Converters;
+
 package body AdaBase.Results.Field is
 
+   package ARC renames AdaBase.Results.Converters;
 
 
-
-   function as_byte1 (field : map_field) return AD.byte1
+   -----------------
+   --  as_nbyte0  --
+   -----------------
+   function as_nbyte0 (field : map_field) return AD.nbyte0
    is
-      use type AD.byte1;
    begin
       case field.native.datatype is
-         when ft_nbyte0 =>
-            if field.native.v00 then
-               return 1;
-            else
-               return 0;
-            end if;
-         when ft_byte1 => return field.native.v06;
-         when ft_byte2 =>
-            if field.native.v07 < AD.byte1'First or else
-              field.native.v07 > AD.byte1'Last
-            then
-               raise TARGET_TYPE_TOO_NARROW;
-            else
-               return AD.byte1 (field.native.v07);
-            end if;
-         when others => return 0;
+         when ft_nbyte0    => return field.native.v00;
+         when ft_nbyte1    => return ARC.convert (field.native.v01);
+         when ft_nbyte2    => return ARC.convert (field.native.v02);
+         when ft_nbyte3    => return ARC.convert (field.native.v03);
+         when ft_nbyte4    => return ARC.convert (field.native.v04);
+         when ft_nbyte8    => return ARC.convert (field.native.v05);
+         when ft_byte1     => return ARC.convert (field.native.v06);
+         when ft_byte2     => return ARC.convert (field.native.v07);
+         when ft_byte3     => return ARC.convert (field.native.v08);
+         when ft_byte4     => return ARC.convert (field.native.v09);
+         when ft_byte8     => return ARC.convert (field.native.v10);
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_real9     |
+              ft_real18    |
+              ft_timestamp |
+              ft_chain     |
+              ft_enumtype  |
+              ft_settype   => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_nbyte0;
+
+   -----------------
+   --  as_nbyte1  --
+   -----------------
+   function as_nbyte1 (field : map_field) return AD.nbyte1
+   is
+   begin
+      case field.native.datatype is
+         when ft_nbyte0    => return ARC.convert (field.native.v00);
+         when ft_nbyte1    => return field.native.v01;
+         when ft_nbyte2    => return ARC.convert (field.native.v02);
+         when ft_nbyte3    => return ARC.convert (field.native.v03);
+         when ft_nbyte4    => return ARC.convert (field.native.v04);
+         when ft_nbyte8    => return ARC.convert (field.native.v05);
+         when ft_byte1     => return ARC.convert (field.native.v06);
+         when ft_byte2     => return ARC.convert (field.native.v07);
+         when ft_byte3     => return ARC.convert (field.native.v08);
+         when ft_byte4     => return ARC.convert (field.native.v09);
+         when ft_byte8     => return ARC.convert (field.native.v10);
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_real9     |
+              ft_real18    |
+              ft_timestamp |
+              ft_chain     |
+              ft_enumtype  |
+              ft_settype   => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_nbyte1;
+
+
+   -----------------
+   --  as_nbyte2  --
+   -----------------
+   function as_nbyte2 (field : map_field) return AD.nbyte2
+   is
+   begin
+      case field.native.datatype is
+         when ft_nbyte0    => return ARC.convert (field.native.v00);
+         when ft_nbyte1    => return ARC.convert (field.native.v01);
+         when ft_nbyte2    => return field.native.v02;
+         when ft_nbyte3    => return ARC.convert (field.native.v03);
+         when ft_nbyte4    => return ARC.convert (field.native.v04);
+         when ft_nbyte8    => return ARC.convert (field.native.v05);
+         when ft_byte1     => return ARC.convert (field.native.v06);
+         when ft_byte2     => return ARC.convert (field.native.v07);
+         when ft_byte3     => return ARC.convert (field.native.v08);
+         when ft_byte4     => return ARC.convert (field.native.v09);
+         when ft_byte8     => return ARC.convert (field.native.v10);
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_real9     |
+              ft_real18    |
+              ft_timestamp |
+              ft_chain     |
+              ft_enumtype  |
+              ft_settype   => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_nbyte2;
+
+
+   -----------------
+   --  as_nbyte3  --
+   -----------------
+   function as_nbyte3 (field : map_field) return AD.nbyte3
+   is
+   begin
+      case field.native.datatype is
+         when ft_nbyte0    => return ARC.convert (field.native.v00);
+         when ft_nbyte1    => return ARC.convert (field.native.v01);
+         when ft_nbyte2    => return ARC.convert (field.native.v02);
+         when ft_nbyte3    => return field.native.v03;
+         when ft_nbyte4    => return ARC.convert (field.native.v04);
+         when ft_nbyte8    => return ARC.convert (field.native.v05);
+         when ft_byte1     => return ARC.convert (field.native.v06);
+         when ft_byte2     => return ARC.convert (field.native.v07);
+         when ft_byte3     => return ARC.convert (field.native.v08);
+         when ft_byte4     => return ARC.convert (field.native.v09);
+         when ft_byte8     => return ARC.convert (field.native.v10);
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_real9     |
+              ft_real18    |
+              ft_timestamp |
+              ft_chain     |
+              ft_enumtype  |
+              ft_settype   => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_nbyte3;
+
+
+   -----------------
+   --  as_nbyte4  --
+   -----------------
+   function as_nbyte4 (field : map_field) return AD.nbyte4
+   is
+   begin
+      case field.native.datatype is
+         when ft_nbyte0    => return ARC.convert (field.native.v00);
+         when ft_nbyte1    => return ARC.convert (field.native.v01);
+         when ft_nbyte2    => return ARC.convert (field.native.v02);
+         when ft_nbyte3    => return ARC.convert (field.native.v03);
+         when ft_nbyte4    => return field.native.v04;
+         when ft_nbyte8    => return ARC.convert (field.native.v05);
+         when ft_byte1     => return ARC.convert (field.native.v06);
+         when ft_byte2     => return ARC.convert (field.native.v07);
+         when ft_byte3     => return ARC.convert (field.native.v08);
+         when ft_byte4     => return ARC.convert (field.native.v09);
+         when ft_byte8     => return ARC.convert (field.native.v10);
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_real9     |
+              ft_real18    |
+              ft_timestamp |
+              ft_chain     |
+              ft_enumtype  |
+              ft_settype   => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_nbyte4;
+
+
+   -----------------
+   --  as_nbyte8  --
+   -----------------
+   function as_nbyte8 (field : map_field) return AD.nbyte8
+   is
+   begin
+      case field.native.datatype is
+         when ft_nbyte0    => return ARC.convert (field.native.v00);
+         when ft_nbyte1    => return ARC.convert (field.native.v01);
+         when ft_nbyte2    => return ARC.convert (field.native.v02);
+         when ft_nbyte3    => return ARC.convert (field.native.v03);
+         when ft_nbyte4    => return ARC.convert (field.native.v04);
+         when ft_nbyte8    => return field.native.v05;
+         when ft_byte1     => return ARC.convert (field.native.v06);
+         when ft_byte2     => return ARC.convert (field.native.v07);
+         when ft_byte3     => return ARC.convert (field.native.v08);
+         when ft_byte4     => return ARC.convert (field.native.v09);
+         when ft_byte8     => return ARC.convert (field.native.v10);
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_real9     |
+              ft_real18    |
+              ft_timestamp |
+              ft_chain     |
+              ft_enumtype  |
+              ft_settype   => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_nbyte8;
+
+
+   ----------------
+   --  as_byte1  --
+   ----------------
+   function as_byte1 (field : map_field) return AD.byte1
+   is
+   begin
+      case field.native.datatype is
+         when ft_nbyte0    => return ARC.convert (field.native.v00);
+         when ft_nbyte1    => return ARC.convert (field.native.v01);
+         when ft_nbyte2    => return ARC.convert (field.native.v02);
+         when ft_nbyte3    => return ARC.convert (field.native.v03);
+         when ft_nbyte4    => return ARC.convert (field.native.v04);
+         when ft_nbyte8    => return ARC.convert (field.native.v05);
+         when ft_byte1     => return field.native.v06;
+         when ft_byte2     => return ARC.convert (field.native.v07);
+         when ft_byte3     => return ARC.convert (field.native.v08);
+         when ft_byte4     => return ARC.convert (field.native.v09);
+         when ft_byte8     => return ARC.convert (field.native.v10);
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_real9     |
+              ft_real18    |
+              ft_timestamp |
+              ft_chain     |
+              ft_enumtype  |
+              ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_byte1;
+
+
+   ----------------
+   --  as_byte2  --
+   ----------------
+   function as_byte2 (field : map_field) return AD.byte2
+   is
+   begin
+      case field.native.datatype is
+         when ft_nbyte0    => return ARC.convert (field.native.v00);
+         when ft_nbyte1    => return ARC.convert (field.native.v01);
+         when ft_nbyte2    => return ARC.convert (field.native.v02);
+         when ft_nbyte3    => return ARC.convert (field.native.v03);
+         when ft_nbyte4    => return ARC.convert (field.native.v04);
+         when ft_nbyte8    => return ARC.convert (field.native.v05);
+         when ft_byte1     => return ARC.convert (field.native.v06);
+         when ft_byte2     => return field.native.v07;
+         when ft_byte3     => return ARC.convert (field.native.v08);
+         when ft_byte4     => return ARC.convert (field.native.v09);
+         when ft_byte8     => return ARC.convert (field.native.v10);
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_real9     |
+              ft_real18    |
+              ft_timestamp |
+              ft_chain     |
+              ft_enumtype  |
+              ft_settype   => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_byte2;
+
+
+   ----------------
+   --  as_byte3  --
+   ----------------
+   function as_byte3 (field : map_field) return AD.byte3
+   is
+   begin
+      case field.native.datatype is
+         when ft_nbyte0    => return ARC.convert (field.native.v00);
+         when ft_nbyte1    => return ARC.convert (field.native.v01);
+         when ft_nbyte2    => return ARC.convert (field.native.v02);
+         when ft_nbyte3    => return ARC.convert (field.native.v03);
+         when ft_nbyte4    => return ARC.convert (field.native.v04);
+         when ft_nbyte8    => return ARC.convert (field.native.v05);
+         when ft_byte1     => return ARC.convert (field.native.v06);
+         when ft_byte2     => return ARC.convert (field.native.v07);
+         when ft_byte3     => return field.native.v08;
+         when ft_byte4     => return ARC.convert (field.native.v09);
+         when ft_byte8     => return ARC.convert (field.native.v10);
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_real9     |
+              ft_real18    |
+              ft_timestamp |
+              ft_chain     |
+              ft_enumtype  |
+              ft_settype   => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_byte3;
+
+
+   ----------------
+   --  as_byte4  --
+   ----------------
+   function as_byte4 (field : map_field) return AD.byte4
+   is
+   begin
+      case field.native.datatype is
+         when ft_nbyte0    => return ARC.convert (field.native.v00);
+         when ft_nbyte1    => return ARC.convert (field.native.v01);
+         when ft_nbyte2    => return ARC.convert (field.native.v02);
+         when ft_nbyte3    => return ARC.convert (field.native.v03);
+         when ft_nbyte4    => return ARC.convert (field.native.v04);
+         when ft_nbyte8    => return ARC.convert (field.native.v05);
+         when ft_byte1     => return ARC.convert (field.native.v06);
+         when ft_byte2     => return ARC.convert (field.native.v07);
+         when ft_byte3     => return ARC.convert (field.native.v08);
+         when ft_byte4     => return field.native.v09;
+         when ft_byte8     => return ARC.convert (field.native.v10);
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_real9     |
+              ft_real18    |
+              ft_timestamp |
+              ft_chain     |
+              ft_enumtype  |
+              ft_settype   => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_byte4;
+
+
+   ----------------
+   --  as_byte8  --
+   ----------------
+   function as_byte8 (field : map_field) return AD.byte8
+   is
+   begin
+      case field.native.datatype is
+         when ft_nbyte0    => return ARC.convert (field.native.v00);
+         when ft_nbyte1    => return ARC.convert (field.native.v01);
+         when ft_nbyte2    => return ARC.convert (field.native.v02);
+         when ft_nbyte3    => return ARC.convert (field.native.v03);
+         when ft_nbyte4    => return ARC.convert (field.native.v04);
+         when ft_nbyte8    => return ARC.convert (field.native.v05);
+         when ft_byte1     => return ARC.convert (field.native.v06);
+         when ft_byte2     => return ARC.convert (field.native.v07);
+         when ft_byte3     => return ARC.convert (field.native.v08);
+         when ft_byte4     => return ARC.convert (field.native.v09);
+         when ft_byte8     => return field.native.v10;
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_real9     |
+              ft_real18    |
+              ft_timestamp |
+              ft_chain     |
+              ft_enumtype  |
+              ft_settype   => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_byte8;
+
+
+   ----------------
+   --  as_real9  --
+   ----------------
+   function as_real9 (field : map_field) return AD.real9
+   is
+   begin
+      case field.native.datatype is
+         when ft_nbyte0    => return ARC.convert (field.native.v00);
+         when ft_nbyte1    => return ARC.convert (field.native.v01);
+         when ft_nbyte2    => return ARC.convert (field.native.v02);
+         when ft_nbyte3    => return ARC.convert (field.native.v03);
+         when ft_nbyte4    => return ARC.convert (field.native.v04);
+         when ft_nbyte8    => return ARC.convert (field.native.v05);
+         when ft_byte1     => return ARC.convert (field.native.v06);
+         when ft_byte2     => return ARC.convert (field.native.v07);
+         when ft_byte3     => return ARC.convert (field.native.v08);
+         when ft_byte4     => return ARC.convert (field.native.v09);
+         when ft_byte8     => return ARC.convert (field.native.v10);
+         when ft_real9     => return field.native.v11;
+         when ft_real18    => return ARC.convert (field.native.v12);
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_timestamp |
+              ft_chain     |
+              ft_enumtype  |
+              ft_settype   => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_real9;
+
+
+   -----------------
+   --  as_real18  --
+   -----------------
+   function as_real18 (field : map_field) return AD.real18
+   is
+   begin
+      case field.native.datatype is
+         when ft_nbyte0    => return ARC.convert (field.native.v00);
+         when ft_nbyte1    => return ARC.convert (field.native.v01);
+         when ft_nbyte2    => return ARC.convert (field.native.v02);
+         when ft_nbyte3    => return ARC.convert (field.native.v03);
+         when ft_nbyte4    => return ARC.convert (field.native.v04);
+         when ft_nbyte8    => return ARC.convert (field.native.v05);
+         when ft_byte1     => return ARC.convert (field.native.v06);
+         when ft_byte2     => return ARC.convert (field.native.v07);
+         when ft_byte3     => return ARC.convert (field.native.v08);
+         when ft_byte4     => return ARC.convert (field.native.v09);
+         when ft_byte8     => return ARC.convert (field.native.v10);
+         when ft_real9     => return ARC.convert (field.native.v11);
+         when ft_real18    => return field.native.v12;
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_timestamp |
+              ft_chain     |
+              ft_enumtype  |
+              ft_settype   => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_real18;
+
+
+   -----------------
+   --  as_string  --
+   -----------------
+   function as_string (field : map_field) return String
+   is
+   begin
+      case field.native.datatype is
+         when ft_nbyte0    => return ARC.convert (field.native.v00);
+         when ft_nbyte1    => return ARC.convert (field.native.v01);
+         when ft_nbyte2    => return ARC.convert (field.native.v02);
+         when ft_nbyte3    => return ARC.convert (field.native.v03);
+         when ft_nbyte4    => return ARC.convert (field.native.v04);
+         when ft_nbyte8    => return ARC.convert (field.native.v05);
+         when ft_byte1     => return ARC.convert (field.native.v06);
+         when ft_byte2     => return ARC.convert (field.native.v07);
+         when ft_byte3     => return ARC.convert (field.native.v08);
+         when ft_byte4     => return ARC.convert (field.native.v09);
+         when ft_byte8     => return ARC.convert (field.native.v10);
+         when ft_real9     => return ARC.convert (field.native.v11);
+         when ft_real18    => return ARC.convert (field.native.v12);
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_timestamp => return ARC.convert (field.native.v16);
+         when ft_enumtype  => return ARC.convert (field.native.v18);
+         when ft_chain     |
+              ft_settype   => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_string;
+
+
+   ------------------
+   --  as_wstring  --
+   ------------------
+   function as_wstring (field : map_field) return Wide_String
+   is
+   begin
+      case field.native.datatype is
+         when ft_nbyte0    => return ARC.convert (field.native.v00);
+         when ft_nbyte1    => return ARC.convert (field.native.v01);
+         when ft_nbyte2    => return ARC.convert (field.native.v02);
+         when ft_nbyte3    => return ARC.convert (field.native.v03);
+         when ft_nbyte4    => return ARC.convert (field.native.v04);
+         when ft_nbyte8    => return ARC.convert (field.native.v05);
+         when ft_byte1     => return ARC.convert (field.native.v06);
+         when ft_byte2     => return ARC.convert (field.native.v07);
+         when ft_byte3     => return ARC.convert (field.native.v08);
+         when ft_byte4     => return ARC.convert (field.native.v09);
+         when ft_byte8     => return ARC.convert (field.native.v10);
+         when ft_real9     => return ARC.convert (field.native.v11);
+         when ft_real18    => return ARC.convert (field.native.v12);
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_timestamp => return ARC.convert (field.native.v16);
+         when ft_enumtype  => return ARC.convert (field.native.v18);
+         when ft_chain     |
+              ft_settype   => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_wstring;
+
+
+   -------------------
+   --  as_wwstring  --
+   -------------------
+   function as_wwstring (field : map_field) return Wide_Wide_String
+   is
+   begin
+      case field.native.datatype is
+         when ft_nbyte0    => return ARC.convert (field.native.v00);
+         when ft_nbyte1    => return ARC.convert (field.native.v01);
+         when ft_nbyte2    => return ARC.convert (field.native.v02);
+         when ft_nbyte3    => return ARC.convert (field.native.v03);
+         when ft_nbyte4    => return ARC.convert (field.native.v04);
+         when ft_nbyte8    => return ARC.convert (field.native.v05);
+         when ft_byte1     => return ARC.convert (field.native.v06);
+         when ft_byte2     => return ARC.convert (field.native.v07);
+         when ft_byte3     => return ARC.convert (field.native.v08);
+         when ft_byte4     => return ARC.convert (field.native.v09);
+         when ft_byte8     => return ARC.convert (field.native.v10);
+         when ft_real9     => return ARC.convert (field.native.v11);
+         when ft_real18    => return ARC.convert (field.native.v12);
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_timestamp => return ARC.convert (field.native.v16);
+         when ft_enumtype  => return ARC.convert (field.native.v18);
+         when ft_chain     |
+              ft_settype   => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_wwstring;
+
+
+   -----------------
+   --  as_time  --
+   -----------------
+   function as_time (field : map_field) return AC.Time
+   is
+      --  Looks like nothing can be converted to a time type so far
+   begin
+      case field.native.datatype is
+         when ft_timestamp => return field.native.v16;
+         when others => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_time;
+
+
+   ----------------
+   --  as_chain  --
+   ----------------
+   function as_chain (field : map_field) return AD.chain
+   is
+   begin
+      case field.native.datatype is
+         when ft_nbyte0    => return ARC.convert (field.native.v00);
+         when ft_nbyte1    => return ARC.convert (field.native.v01);
+         when ft_nbyte2    => return ARC.convert (field.native.v02);
+         when ft_nbyte3    => return ARC.convert (field.native.v03);
+         when ft_nbyte4    => return ARC.convert (field.native.v04);
+         when ft_nbyte8    => return ARC.convert (field.native.v05);
+         when ft_chain     => return field.native.v17.all;
+         when others => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_chain;
+
+
+   -------------------
+   --  as_enumtype  --
+   -------------------
+   function as_enumtype (field : map_field) return AD.enumtype
+   is
+   begin
+      case field.native.datatype is
+         when ft_enumtype  => return field.native.v18;
+         when others => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_enumtype;
+
+
+   -----------------
+   --  TEMPLATE  --
+   -----------------
+   function as_settype (field : map_field) return AD.settype
+   is
+   begin
+      case field.native.datatype is
+         when ft_settype   => return field.native.v19.all;
+         when others => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_settype;
 
 
 end AdaBase.Results.Field;

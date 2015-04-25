@@ -34,7 +34,7 @@ package AdaBase.Results is
    subtype textwide  is SUW.Unbounded_Wide_String;
    subtype textsuper is SUWW.Unbounded_Wide_Wide_String;
 
-   type variant (datatype : field_types) is
+   type variant (datatype : field_types := ft_nbyte8) is
       record
          case datatype is
             when ft_nbyte0    => v00 : Boolean;
@@ -62,5 +62,6 @@ package AdaBase.Results is
 
    TARGET_TYPE_TOO_NARROW : exception;
    CONVERSION_FAILED      : exception;
+   UNSUPPORTED_CONVERSION : exception;
 
 end AdaBase.Results;

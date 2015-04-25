@@ -132,29 +132,40 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte0) return AD.textual is
+   function convert (nv : AD.nbyte0) return String is
    begin
       case nv is
-         when True  => return AD.SU.To_Unbounded_String ("1");
-         when False => return AD.SU.To_Unbounded_String ("0");
+         when True  => return "1";
+         when False => return "0";
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte0) return textwide is
+   function convert (nv : AD.nbyte0) return Wide_String is
    begin
       case nv is
-         when True  => return SUW.To_Unbounded_Wide_String ("1");
-         when False => return SUW.To_Unbounded_Wide_String ("0");
+         when True  => return "1";
+         when False => return "0";
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte0) return textsuper is
+   function convert (nv : AD.nbyte0) return Wide_Wide_String is
    begin
       case nv is
-         when True  => return SUWW.To_Unbounded_Wide_Wide_String ("1");
-         when False => return SUWW.To_Unbounded_Wide_Wide_String ("0");
+         when True  => return "1";
+         when False => return "0";
       end case;
    end convert;
+
+   function convert (nv : AD.nbyte0) return AD.chain
+   is
+     result : AD.chain (1 .. 1) := (others => 0);
+   begin
+      if nv then
+         result (1) := 1;
+      end if;
+      return result;
+   end convert;
+
 
    ---------------------------
    --  CONVERT FROM NBYTE1  --
@@ -246,6 +257,13 @@ package body AdaBase.Results.Converters is
    function convert (nv : AD.nbyte1) return AD.real18 is
    begin
       return AD.real18 (nv);
+   end convert;
+
+   function convert (nv : AD.nbyte1) return AD.chain
+   is
+      result : constant AD.chain (1 .. 1) := (1 => nv);
+   begin
+      return result;
    end convert;
 
 
@@ -344,6 +362,22 @@ package body AdaBase.Results.Converters is
    function convert (nv : AD.nbyte2) return AD.real18 is
    begin
       return AD.real18 (nv);
+   end convert;
+
+   function convert (nv : AD.nbyte2) return AD.chain
+   is
+      use type AD.nbyte2;
+      result : AD.chain (1 .. 2);
+      block1 : constant AD.nbyte1 := AD.nbyte1 (nv and 16#FF#);
+      block2 : constant AD.nbyte1 := AD.nbyte1
+                        (BIT.Shift_Right (BIT.Unsigned_16 (nv), 8));
+   begin
+      if Big_Endian then
+         result := (block2, block1);
+      else
+         result := (block1, block2);
+      end if;
+      return result;
    end convert;
 
 
@@ -447,6 +481,24 @@ package body AdaBase.Results.Converters is
    function convert (nv : AD.nbyte3) return AD.real18 is
    begin
       return AD.real18 (nv);
+   end convert;
+
+   function convert (nv : AD.nbyte3) return AD.chain
+   is
+      use type AD.nbyte3;
+      result : AD.chain (1 .. 3);
+      block1 : constant AD.nbyte1 := AD.nbyte1 (nv and 16#FF#);
+      block2 : constant AD.nbyte1 := AD.nbyte1 (BIT.Shift_Right
+                        (BIT.Unsigned_32 (nv and 16#FF00#), 8));
+      block3 : constant AD.nbyte1 := AD.nbyte1 (BIT.Shift_Right
+                        (BIT.Unsigned_32 (nv and 16#FF0000#), 16));
+   begin
+      if Big_Endian then
+         result := (block3, block2, block1);
+      else
+         result := (block1, block2, block3);
+      end if;
+      return result;
    end convert;
 
 
@@ -555,6 +607,26 @@ package body AdaBase.Results.Converters is
    function convert (nv : AD.nbyte4) return AD.real18 is
    begin
       return AD.real18 (nv);
+   end convert;
+
+   function convert (nv : AD.nbyte4) return AD.chain
+   is
+      use type AD.nbyte4;
+      result : AD.chain (1 .. 4);
+      block1 : constant AD.nbyte1 := AD.nbyte1 (nv and 16#FF#);
+      block2 : constant AD.nbyte1 := AD.nbyte1 (BIT.Shift_Right
+                        (BIT.Unsigned_32 (nv and 16#FF00#), 8));
+      block3 : constant AD.nbyte1 := AD.nbyte1 (BIT.Shift_Right
+                        (BIT.Unsigned_32 (nv and 16#FF0000#), 16));
+      block4 : constant AD.nbyte1 := AD.nbyte1 (BIT.Shift_Right
+                        (BIT.Unsigned_32 (nv and 16#FF000000#), 24));
+   begin
+      if Big_Endian then
+         result := (block4, block3, block2, block1);
+      else
+         result := (block1, block2, block3, block4);
+      end if;
+      return result;
    end convert;
 
 
@@ -1155,6 +1227,31 @@ package body AdaBase.Results.Converters is
       return AD.real18 (nv);
    end convert;
 
+   function convert (nv : AD.nbyte8) return AD.chain
+   is
+      use type AD.nbyte8;
+      result : AD.chain (1 .. 8);
+      b      : AD.chain (1 .. 8);
+   begin
+      b (1) := AD.nbyte1 (nv and 16#FF#);
+      for s in 1 .. 7 loop
+         declare
+            use type BIT.Unsigned_64;
+            shft : constant Natural := s * 8;
+            mask : constant BIT.Unsigned_64 := BIT.Shift_Left (16#FF#, shft);
+            slvr : constant BIT.Unsigned_64 := BIT.Unsigned_64 (nv) and mask;
+         begin
+            b (s + 1) := AD.nbyte1 (BIT.Shift_Right (slvr, shft));
+         end;
+      end loop;
+      if Big_Endian then
+         result := (b (8), b (7), b (6), b (5), b (4), b (3), b (2), b (1));
+      else
+         result := b;
+      end if;
+      return result;
+   end convert;
+
 
    --------------------------
    --  CONVERT FROM REAL9  --
@@ -1177,60 +1274,110 @@ package body AdaBase.Results.Converters is
    ---------------------------------
    --  CONVERT STRING TO BOOLEAN  --
    ---------------------------------
-   function convert (nv : String) return AD.nbyte0 is
+   function convert (nv : AD.textual) return AD.nbyte0
+   is
+      nvstr : constant String := AD.SU.To_String (Source => nv);
    begin
-      if nv = "0" then
+      if nvstr = "0" then
          return False;
       end if;
-      if nv = "1" then
+      if nvstr = "1" then
          return True;
       end if;
-      raise CONVERSION_FAILED with "Tried to convert '" & nv & "'";
+      raise CONVERSION_FAILED with "Tried to convert '" & nvstr & "'";
    end convert;
 
-   function convert (nv : Wide_String) return AD.nbyte0 is
+   function convert (nv : textwide) return AD.nbyte0
+   is
+      nvstr : constant Wide_String := SUW.To_Wide_String (Source => nv);
+      nverr : constant String   := ACC.To_String (Item => nvstr);
    begin
-      return convert (ACC.To_String (Item => nv));
+      if nverr = "0" then
+         return False;
+      end if;
+      if nverr = "1" then
+         return True;
+      end if;
+      raise CONVERSION_FAILED with "Tried to convert '" & nverr & "'";
    end convert;
 
-   function convert (nv : Wide_Wide_String) return AD.nbyte0 is
+   function convert (nv : textsuper) return AD.nbyte0
+   is
+      nvstr : constant Wide_Wide_String := SUWW.To_Wide_Wide_String (nv);
+      nverr : constant String := ACC.To_String (Item => nvstr);
    begin
-      return convert (ACC.To_String (Item => nv));
+      if nverr = "0" then
+         return False;
+      end if;
+      if nverr = "1" then
+         return True;
+      end if;
+      raise CONVERSION_FAILED with "Tried to convert '" & nverr & "'";
    end convert;
 
 
    ---------------------------------
    --  CONVERT *STRING TO *STRING --
    ---------------------------------
-   function convert (nv : String) return Wide_String is
+   function convert (nv : AD.textual) return String is
    begin
-      return ACC.To_Wide_String (Item => nv);
+      return AD.SU.To_String (nv);
    end convert;
 
-   function convert (nv : String) return Wide_Wide_String is
+   function convert (nv : AD.textual) return Wide_String
+   is
+      nvstr : constant String := AD.SU.To_String (nv);
    begin
-      return ACC.To_Wide_Wide_String (Item => nv);
+      return ACC.To_Wide_String (Item => nvstr);
    end convert;
 
-   function convert (nv : Wide_String) return String is
+   function convert (nv : AD.textual) return Wide_Wide_String
+   is
+      nvstr : constant String := AD.SU.To_String (nv);
    begin
-      return ACC.To_String (Item => nv);
+      return ACC.To_Wide_Wide_String (Item => nvstr);
    end convert;
 
-   function convert (nv : Wide_String) return Wide_Wide_String is
+   function convert (nv : textwide) return String
+   is
+      nvstr : constant Wide_String := SUW.To_Wide_String (Source => nv);
    begin
-      return ACC.To_Wide_Wide_String (Item => nv);
+      return ACC.To_String (Item => nvstr);
    end convert;
 
-   function convert (nv : Wide_Wide_String) return String is
+   function convert (nv : textwide) return Wide_String is
    begin
-      return ACC.To_String (Item => nv);
+      return SUW.To_Wide_String (Source => nv);
    end convert;
 
-   function convert (nv : Wide_Wide_String) return Wide_String is
+   function convert (nv : textwide) return Wide_Wide_String
+   is
+      nvstr : constant Wide_String := SUW.To_Wide_String (Source => nv);
    begin
-      return ACC.To_Wide_String (Item => nv);
+      return ACC.To_Wide_Wide_String (Item => nvstr);
    end convert;
+
+   function convert (nv : textsuper) return String
+   is
+      nvstr : constant Wide_Wide_String :=
+        SUWW.To_Wide_Wide_String (Source => nv);
+   begin
+      return ACC.To_String (Item => nvstr);
+   end convert;
+
+   function convert (nv : textsuper) return Wide_String
+   is
+      nvstr : constant Wide_Wide_String :=
+        SUWW.To_Wide_Wide_String (Source => nv);
+   begin
+      return ACC.To_Wide_String (Item => nvstr);
+   end convert;
+
+   function convert (nv : textsuper) return Wide_Wide_String is
+   begin
+      return SUWW.To_Wide_Wide_String (Source => nv);
+   end convert;
+
 
    --------------------------------------
    -- CONVERT TIME TO ISO 8601 STRING  --
@@ -1249,6 +1396,7 @@ package body AdaBase.Results.Converters is
    begin
       return ACC.To_Wide_Wide_String (Item => ACF.Image (Date => nv));
    end convert;
+
 
    ----------------------------------------------------
    -- ENUMERATION - return either integer or string  --
@@ -1338,25 +1486,23 @@ package body AdaBase.Results.Converters is
       return AD.byte8 (nv.index);
    end convert;
 
-   function convert (nv : AD.enumtype) return AD.textual is
+   function convert (nv : AD.enumtype) return String is
    begin
-      return nv.enumeration;
+      return AD.SU.To_String (Source => nv.enumeration);
    end convert;
 
-   function convert (nv : AD.enumtype) return textwide
+   function convert (nv : AD.enumtype) return Wide_String
    is
-      str : constant Wide_String := ACC.To_Wide_String
-        (Item => AD.SU.To_String (nv.enumeration));
+      str : constant String := AD.SU.To_String (Source => nv.enumeration);
    begin
-      return SUW.To_Unbounded_Wide_String (Source => str);
+      return ACC.To_Wide_String (Item => str);
    end convert;
 
-   function convert (nv : AD.enumtype) return textsuper
+   function convert (nv : AD.enumtype) return Wide_Wide_String
    is
-      str : constant Wide_Wide_String := ACC.To_Wide_Wide_String
-        (Item => AD.SU.To_String (nv.enumeration));
+      str : constant String := AD.SU.To_String (Source => nv.enumeration);
    begin
-      return SUWW.To_Unbounded_Wide_Wide_String (Source => str);
+      return ACC.To_Wide_Wide_String (Item => str);
    end convert;
 
    ------------------------
