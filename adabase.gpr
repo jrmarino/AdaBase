@@ -9,7 +9,7 @@ project AdaBase is
    end Ide;
 
    package Compiler is
-      for Default_Switches ("ada") use ("-gnatyaAbBcdefhiIklnOprsStx", "-gnat12");
+      for Default_Switches ("ada") use ("-gnatyaAbBcdefhiIklnOprsStx", "-gnat05");
    end Compiler;
 
    package Pretty_Printer is

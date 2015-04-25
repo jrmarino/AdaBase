@@ -112,21 +112,21 @@ package AdaBase.Interfaces.Driver is
    -- CONNECTIONS                                                        --
    ------------------------------------------------------------------------
 
-   --  Returns True if connection attempt is successful
    --  These are guaranteed to work (at least one of the them, but the
    --  individual driver could define a driver-specific version as well.
+   --  Checked "trait_connected" to determine if connection was successful
 
-   function basic_connect (driver   : out iDriver;
-                           database : String;
-                           username : String;
-                           password : String;
-                           socket   : String) return Boolean is abstract;
+   procedure basic_connect (driver   : out iDriver;
+                            database : String;
+                            username : String;
+                            password : String;
+                            socket   : String) is null;
 
-   function basic_connect (driver   : out iDriver;
-                           database : String;
-                           username : String;
-                           password : String;
-                           hostname : String;
-                           port     : AD.PosixPort) return Boolean is abstract;
+   procedure basic_connect (driver   : out iDriver;
+                            database : String;
+                            username : String;
+                            password : String;
+                            hostname : String;
+                            port     : AD.PosixPort) is null;
 
 end AdaBase.Interfaces.Driver;

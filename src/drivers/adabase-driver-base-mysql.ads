@@ -66,19 +66,19 @@ package AdaBase.Driver.Base.MySQL is
                                             trait  : Boolean);
 
    overriding
-   function basic_connect (driver   : out MySQL_Driver;
-                           database : String;
-                           username : String;
-                           password : String;
-                           socket   : String) return Boolean;
+   procedure basic_connect (driver   : out MySQL_Driver;
+                            database : String;
+                            username : String;
+                            password : String;
+                            socket   : String);
 
    overriding
-   function basic_connect (driver   : out MySQL_Driver;
-                           database : String;
-                           username : String;
-                           password : String;
-                           hostname : String;
-                           port     : AD.PosixPort) return Boolean;
+   procedure basic_connect (driver   : out MySQL_Driver;
+                            database : String;
+                            username : String;
+                            password : String;
+                            hostname : String;
+                            port     : AD.PosixPort);
 private
 
    backend : aliased ACM.MySQL_Connection;
@@ -93,13 +93,12 @@ private
 
    procedure initialize (Object : in out MySQL_Driver);
 
-   function private_connect (driver   : out MySQL_Driver;
-                             database : String;
-                             username : String;
-                             password : String;
-                             hostname : String := AD.blankstring;
-                             socket   : String := AD.blankstring;
-                             port     : AD.PosixPort := AD.portless)
-                             return Boolean;
+   procedure private_connect (driver   : out MySQL_Driver;
+                              database : String;
+                              username : String;
+                              password : String;
+                              hostname : String := AD.blankstring;
+                              socket   : String := AD.blankstring;
+                              port     : AD.PosixPort := AD.portless);
 
 end AdaBase.Driver.Base.MySQL;

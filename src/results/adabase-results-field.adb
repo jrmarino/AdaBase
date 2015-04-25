@@ -563,7 +563,7 @@ package body AdaBase.Results.Field is
 
 
    -----------------
-   --  TEMPLATE  --
+   --  as_settype  --
    -----------------
    function as_settype (field : map_field) return AD.settype
    is
@@ -573,6 +573,24 @@ package body AdaBase.Results.Field is
          when others => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_settype;
+
+
+   ---------------
+   --  is_null  --
+   ---------------
+   function is_null (field : map_field) return Boolean is
+   begin
+      return field.explicit_null;
+   end is_null;
+
+
+   -------------------
+   --  native_type  --
+   -------------------
+   function native_type (field : map_field) return field_types is
+   begin
+      return field.native.datatype;
+   end native_type;
 
 
 end AdaBase.Results.Field;

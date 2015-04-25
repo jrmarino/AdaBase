@@ -19,21 +19,21 @@ package AdaBase.Results.Field is
 
    type map_field is abstract tagged limited private;
 
-   function as_nbyte0 (field : map_field) return AD.nbyte0;
-   function as_nbyte1 (field : map_field) return AD.nbyte1;
-   function as_nbyte2 (field : map_field) return AD.nbyte2;
-   function as_nbyte3 (field : map_field) return AD.nbyte3;
-   function as_nbyte4 (field : map_field) return AD.nbyte4;
-   function as_nbyte8 (field : map_field) return AD.nbyte8;
+   function as_nbyte0   (field : map_field) return AD.nbyte0;
+   function as_nbyte1   (field : map_field) return AD.nbyte1;
+   function as_nbyte2   (field : map_field) return AD.nbyte2;
+   function as_nbyte3   (field : map_field) return AD.nbyte3;
+   function as_nbyte4   (field : map_field) return AD.nbyte4;
+   function as_nbyte8   (field : map_field) return AD.nbyte8;
 
-   function as_byte1  (field : map_field) return AD.byte1;
-   function as_byte2  (field : map_field) return AD.byte2;
-   function as_byte3  (field : map_field) return AD.byte3;
-   function as_byte4  (field : map_field) return AD.byte4;
-   function as_byte8  (field : map_field) return AD.byte8;
+   function as_byte1    (field : map_field) return AD.byte1;
+   function as_byte2    (field : map_field) return AD.byte2;
+   function as_byte3    (field : map_field) return AD.byte3;
+   function as_byte4    (field : map_field) return AD.byte4;
+   function as_byte8    (field : map_field) return AD.byte8;
 
-   function as_real9  (field : map_field) return AD.real9;
-   function as_real18 (field : map_field) return AD.real18;
+   function as_real9    (field : map_field) return AD.real9;
+   function as_real18   (field : map_field) return AD.real18;
 
    function as_string   (field : map_field) return String;
    function as_wstring  (field : map_field) return Wide_String;
@@ -44,10 +44,14 @@ package AdaBase.Results.Field is
    function as_enumtype (field : map_field) return AD.enumtype;
    function as_settype  (field : map_field) return AD.settype;
 
+   function is_null     (field : map_field) return Boolean;
+   function native_type (field : map_field) return field_types;
+
 private
 
    type map_field is abstract tagged limited record
-         native : variant;
+      native        : variant;
+      explicit_null : Boolean := False;
    end record;
 
 end AdaBase.Results.Field;
