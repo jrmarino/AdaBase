@@ -34,32 +34,6 @@ package AdaBase.Results is
    subtype textwide  is SUW.Unbounded_Wide_String;
    subtype textsuper is SUWW.Unbounded_Wide_Wide_String;
 
-   type variant (datatype : field_types := ft_nbyte8) is
-      record
-         case datatype is
-            when ft_nbyte0    => v00 : Boolean;
-            when ft_nbyte1    => v01 : AD.nbyte1;
-            when ft_nbyte2    => v02 : AD.nbyte2;
-            when ft_nbyte3    => v03 : AD.nbyte3;
-            when ft_nbyte4    => v04 : AD.nbyte4;
-            when ft_nbyte8    => v05 : AD.nbyte8;
-            when ft_byte1     => v06 : AD.byte1;
-            when ft_byte2     => v07 : AD.byte2;
-            when ft_byte3     => v08 : AD.byte3;
-            when ft_byte4     => v09 : AD.byte4;
-            when ft_byte8     => v10 : AD.byte8;
-            when ft_real9     => v11 : AD.real9;
-            when ft_real18    => v12 : AD.real18;
-            when ft_textual   => v13 : AD.textual;
-            when ft_widetext  => v14 : textwide;
-            when ft_supertext => v15 : textsuper;
-            when ft_timestamp => v16 : AC.Time;
-            when ft_chain     => v17 : AD.chain_access;
-            when ft_enumtype  => v18 : AD.enumtype;
-            when ft_settype   => v19 : AD.settype_access;
-         end case;
-      end record;
-
    TARGET_TYPE_TOO_NARROW : exception;
    CONVERSION_FAILED      : exception;
    UNSUPPORTED_CONVERSION : exception;

@@ -24,7 +24,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte0  --
    -----------------
-   function as_nbyte0 (field : map_field) return AD.nbyte0
+   function as_nbyte0 (field : std_field) return AD.nbyte0
    is
    begin
       case field.native.datatype is
@@ -54,7 +54,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte1  --
    -----------------
-   function as_nbyte1 (field : map_field) return AD.nbyte1
+   function as_nbyte1 (field : std_field) return AD.nbyte1
    is
    begin
       case field.native.datatype is
@@ -72,10 +72,10 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_chain     => return ARC.convert (field.native.v17.all);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
-              ft_chain     |
               ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
@@ -85,7 +85,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte2  --
    -----------------
-   function as_nbyte2 (field : map_field) return AD.nbyte2
+   function as_nbyte2 (field : std_field) return AD.nbyte2
    is
    begin
       case field.native.datatype is
@@ -103,10 +103,10 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_chain     => return ARC.convert (field.native.v17.all);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
-              ft_chain     |
               ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
@@ -116,7 +116,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte3  --
    -----------------
-   function as_nbyte3 (field : map_field) return AD.nbyte3
+   function as_nbyte3 (field : std_field) return AD.nbyte3
    is
    begin
       case field.native.datatype is
@@ -134,10 +134,10 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_chain     => return ARC.convert (field.native.v17.all);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
-              ft_chain     |
               ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
@@ -147,7 +147,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte4  --
    -----------------
-   function as_nbyte4 (field : map_field) return AD.nbyte4
+   function as_nbyte4 (field : std_field) return AD.nbyte4
    is
    begin
       case field.native.datatype is
@@ -165,10 +165,10 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_chain     => return ARC.convert (field.native.v17.all);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
-              ft_chain     |
               ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
@@ -178,7 +178,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte8  --
    -----------------
-   function as_nbyte8 (field : map_field) return AD.nbyte8
+   function as_nbyte8 (field : std_field) return AD.nbyte8
    is
    begin
       case field.native.datatype is
@@ -196,10 +196,10 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_chain     => return ARC.convert (field.native.v17.all);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
-              ft_chain     |
               ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
@@ -209,7 +209,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte1  --
    ----------------
-   function as_byte1 (field : map_field) return AD.byte1
+   function as_byte1 (field : std_field) return AD.byte1
    is
    begin
       case field.native.datatype is
@@ -240,7 +240,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte2  --
    ----------------
-   function as_byte2 (field : map_field) return AD.byte2
+   function as_byte2 (field : std_field) return AD.byte2
    is
    begin
       case field.native.datatype is
@@ -271,7 +271,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte3  --
    ----------------
-   function as_byte3 (field : map_field) return AD.byte3
+   function as_byte3 (field : std_field) return AD.byte3
    is
    begin
       case field.native.datatype is
@@ -302,7 +302,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte4  --
    ----------------
-   function as_byte4 (field : map_field) return AD.byte4
+   function as_byte4 (field : std_field) return AD.byte4
    is
    begin
       case field.native.datatype is
@@ -333,7 +333,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte8  --
    ----------------
-   function as_byte8 (field : map_field) return AD.byte8
+   function as_byte8 (field : std_field) return AD.byte8
    is
    begin
       case field.native.datatype is
@@ -364,7 +364,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_real9  --
    ----------------
-   function as_real9 (field : map_field) return AD.real9
+   function as_real9 (field : std_field) return AD.real9
    is
    begin
       case field.native.datatype is
@@ -395,7 +395,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_real18  --
    -----------------
-   function as_real18 (field : map_field) return AD.real18
+   function as_real18 (field : std_field) return AD.real18
    is
    begin
       case field.native.datatype is
@@ -426,7 +426,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_string  --
    -----------------
-   function as_string (field : map_field) return String
+   function as_string (field : std_field) return String
    is
    begin
       case field.native.datatype is
@@ -457,7 +457,7 @@ package body AdaBase.Results.Field is
    ------------------
    --  as_wstring  --
    ------------------
-   function as_wstring (field : map_field) return Wide_String
+   function as_wstring (field : std_field) return Wide_String
    is
    begin
       case field.native.datatype is
@@ -488,7 +488,7 @@ package body AdaBase.Results.Field is
    -------------------
    --  as_wwstring  --
    -------------------
-   function as_wwstring (field : map_field) return Wide_Wide_String
+   function as_wwstring (field : std_field) return Wide_Wide_String
    is
    begin
       case field.native.datatype is
@@ -519,7 +519,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_time  --
    -----------------
-   function as_time (field : map_field) return AC.Time
+   function as_time (field : std_field) return AC.Time
    is
       --  Looks like nothing can be converted to a time type so far
    begin
@@ -533,7 +533,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_chain  --
    ----------------
-   function as_chain (field : map_field) return AD.chain
+   function as_chain (field : std_field) return AD.chain
    is
    begin
       case field.native.datatype is
@@ -552,7 +552,7 @@ package body AdaBase.Results.Field is
    -------------------
    --  as_enumtype  --
    -------------------
-   function as_enumtype (field : map_field) return AD.enumtype
+   function as_enumtype (field : std_field) return AD.enumtype
    is
    begin
       case field.native.datatype is
@@ -565,7 +565,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_settype  --
    -----------------
-   function as_settype (field : map_field) return AD.settype
+   function as_settype (field : std_field) return AD.settype
    is
    begin
       case field.native.datatype is
@@ -578,7 +578,7 @@ package body AdaBase.Results.Field is
    ---------------
    --  is_null  --
    ---------------
-   function is_null (field : map_field) return Boolean is
+   function is_null (field : std_field) return Boolean is
    begin
       return field.explicit_null;
    end is_null;
@@ -587,10 +587,73 @@ package body AdaBase.Results.Field is
    -------------------
    --  native_type  --
    -------------------
-   function native_type (field : map_field) return field_types is
+   function native_type (field : std_field) return field_types is
    begin
       return field.native.datatype;
    end native_type;
+
+
+   ---------------------------------------
+   --  ALLOCATE NEW FIELDS ON THE HEAP  --
+   ---------------------------------------
+   function spawn_field (data : variant; null_data : Boolean := False)
+                         return field_access
+   is
+      FA : constant field_access := new std_field;
+   begin
+      FA.set (data => data, exnull => null_data);
+      return FA;
+   end spawn_field;
+
+   function spawn_field (binob : AD.chain) return field_access
+   is
+      len : constant Natural := binob'Length;
+      FA  : constant field_access := new std_field;
+      CA  : constant AD.chain_access := new AD.chain (1 .. len);
+   begin
+      CA.all := binob;
+      FA.set (data => (ft_chain, CA), exnull => False);
+      return FA;
+   end spawn_field;
+
+   function spawn_field (enumset : AD.settype) return field_access
+   is
+      len : constant Natural := enumset'Length;
+      FA  : constant field_access := new std_field;
+      SA  : constant AD.settype_access := new AD.settype (1 .. len);
+   begin
+      SA.all := enumset;
+      FA.set (data => (ft_settype, SA), exnull => False);
+      return FA;
+   end spawn_field;
+
+
+   procedure set (field : out std_field; data : variant; exnull : Boolean) is
+   begin
+      case data.datatype is
+         when ft_nbyte0    => field.native := (ft_nbyte0, data.v00);
+         when ft_nbyte1    => field.native := (ft_nbyte1, data.v01);
+         when ft_nbyte2    => field.native := (ft_nbyte2, data.v02);
+         when ft_nbyte3    => field.native := (ft_nbyte3, data.v03);
+         when ft_nbyte4    => field.native := (ft_nbyte4, data.v04);
+         when ft_nbyte8    => field.native := (ft_nbyte8, data.v05);
+         when ft_byte1     => field.native := (ft_byte1, data.v06);
+         when ft_byte2     => field.native := (ft_byte2, data.v07);
+         when ft_byte3     => field.native := (ft_byte3, data.v08);
+         when ft_byte4     => field.native := (ft_byte4, data.v09);
+         when ft_byte8     => field.native := (ft_byte8, data.v10);
+         when ft_real9     => field.native := (ft_real9, data.v11);
+         when ft_real18    => field.native := (ft_real18, data.v12);
+         when ft_textual   => field.native := (ft_textual, data.v13);
+         when ft_widetext  => field.native := (ft_widetext, data.v14);
+         when ft_supertext => field.native := (ft_supertext, data.v15);
+         when ft_timestamp => field.native := (ft_timestamp, data.v16);
+         when ft_chain     => field.native := (ft_chain, data.v17);
+         when ft_enumtype  => field.native := (ft_enumtype, data.v18);
+         when ft_settype   => field.native := (ft_settype, data.v19);
+      end case;
+      field.explicit_null := exnull;
+   end set;
 
 
 end AdaBase.Results.Field;
