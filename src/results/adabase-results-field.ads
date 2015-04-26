@@ -17,8 +17,8 @@
 
 package AdaBase.Results.Field is
 
-   type std_field is tagged limited private;
-   type field_access is not null access std_field;
+   type std_field is tagged private;
+   type field_access is access std_field;
 
    type variant (datatype : field_types := ft_nbyte8) is
       record
@@ -83,7 +83,7 @@ package AdaBase.Results.Field is
 
 private
 
-   type std_field is tagged limited record
+   type std_field is tagged record
       native        : variant;
       explicit_null : Boolean := False;
    end record;

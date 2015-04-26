@@ -37,5 +37,7 @@ package AdaBase.Results is
    TARGET_TYPE_TOO_NARROW : exception;
    CONVERSION_FAILED      : exception;
    UNSUPPORTED_CONVERSION : exception;
+   COLUMN_DOES_NOT_EXIST  : exception;
+   CONSTRUCTOR_DO_NOT_USE : exception;
 
 end AdaBase.Results;
