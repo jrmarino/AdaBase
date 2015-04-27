@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
+<link rel="stylesheet" href="trac.css" type="text/css" />
+<link rel="stylesheet" href="default.css" type="text/css" media="screen"/>
+<title>AdaBase</title>
+</head>
+
+<body>
+
+<div class="container">
+	<div class="header">
+		<div class="title"><h1>AdaBase</h1></div>
+		<div class="navigation">
+			<a href="index.shtml">AdaBase</a>
+			<a href="http://sourceforge.net/projects/adabase">Sourceforge</a>			
+			<a href="http://freshports/databases/adabase">BSD Ports</a>
+			<a href="http://www.dragonlace.net">DragonLace.net</a>	
+			<div class="clearer"><span></span></div>
+		</div>
+	</div>
+	<div class="main">
+
+
+<!--#include virtual="site_header.tpl" -->
+		
+		<div class="content">
+
+		
+		
+		
+<h3 id="datatypes">Description of AdaBase data types</h3>
+<p>
+There are currently 20 distinct types in AdaBase.  The native types from each database are converted to one of these.  There are 10 integer types (5 sizes with signed and unsigned flavors), a Boolean type (which can easily be converted to an integer), two real types which correspond to floating point and double floats, three string types, a Time type, an enumeration type, a set type (which is an array of enumerations), and finally a "chain" type which is an indefinite array of single bytes.  This is the type a Binary Large Object (BLOB) would use.  Small chains (8 or less) can be converted to unsigned integer types.  The conversion is sensitive to the Endian setting of the host machine.
+
+</p>
+<pre class="wiki">package AdaBase.Results is
+
+   type field_types is (ft_nbyte0, ft_nbyte1, ft_nbyte2, ft_nbyte3, ft_nbyte4,
+                        ft_nbyte8, ft_byte1, ft_byte2, ft_byte3, ft_byte4,
+                        ft_byte8, ft_real9, ft_real18, ft_textual,
+                        ft_widetext, ft_supertext, ft_timestamp,
+                        ft_chain, ft_enumtype, ft_settype);
+
+   -------------------------------------------
+   --  Supported Field Types (Standardized) --
+   -------------------------------------------
+
+   subtype nbyte0 is Boolean;
+   type nbyte1 is mod 2 ** 8;
+   type nbyte2 is mod 2 ** 16;
+   type nbyte3 is mod 2 ** 24;
+   type nbyte4 is mod 2 ** 32;
+   type nbyte8 is mod 2 ** 64;
+   type byte8  is range -2 ** 63 .. 2 ** 63 - 1;
+   type byte4  is range -2 ** 31 .. 2 ** 31 - 1;
+   type byte3  is range -2 ** 23 .. 2 ** 23 - 1;
+   type byte2  is range -2 ** 15 .. 2 ** 15 - 1;
+   type byte1  is range -2 **  7 .. 2 **  7 - 1;
+   type real9  is digits 9;
+   type real18 is digits 18;
+
+   --  Also #14 String 
+   --  Also #15 Wide_String
+   --  Also #16 Wide_Wide_String
+   --  Also #17 Time (from Ada.Calendar)
+
+   --  #18 chain
+   type chain is array (Positive range <>) of nbyte1;
+
+   --  #19 enumeration type
+   type enumtype is record
+      enumeration : Ada.Strings.Unbounded_String;
+      index       : Natural;
+   end record;
+
+   --  #20 set type (array of enumerations)
+   type settype is array (Positive range <>) of enumtype;
+
+end AdaBase.Results;
+</pre>
+
+		</div>
+		<div class="sidenav">
+			<h1>See Also</h1>
+			<ul>
+				<li><a class="wiki" href="pkg_std_field.shtml">Field Type</a></li>
+				<li><a class="wiki" href="pkg_std_field.shtml">DataRow Type</a></li>	
+				<li><a class="wiki" href="pkg_std_field.shtml">DataRowSet Type</a></li>		
+				<li><a class="wiki" href="pkg_std_field.shtml">conversions</a></li>
+			</ul>
+		</div>
+		<div class="clearer"><span></span></div>
+
+
+
+
+<!--#include virtual="site_footer.tpl" -->
+
+
+
+
+	</div>
+
+</div>
+
+<div id="footerX">
+<div class="footer">
+<a href="http://sourceforge.net" id="sourceforge" title="SourceForge.net"></a>
+PDO Object Pascal adaption by John Marino, Template design by <a href="http://arcsin.se" class="flash">Arcsin</a></div>
+</div>
+
+</body>
+
+</html>
