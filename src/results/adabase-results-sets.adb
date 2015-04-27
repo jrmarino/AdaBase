@@ -33,10 +33,10 @@ package body AdaBase.Results.Sets is
    end column;
 
 
-   ------------
-   --  hash  --
-   ------------
-   function hash (row : DataRow; heading : String) return ARF.std_field
+   --------------
+   --  column  --
+   --------------
+   function column (row : DataRow; heading : String) return ARF.std_field
    is
       use type heading_map.Cursor;
       cursor : heading_map.Cursor;
@@ -50,7 +50,7 @@ package body AdaBase.Results.Sets is
       end if;
       index := heading_map.Element (Position => cursor);
       return row.crate.Element (Index => index).all;
-   end hash;
+   end column;
 
 
    -------------

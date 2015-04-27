@@ -27,7 +27,7 @@ package AdaBase.Results.Sets is
    type DataRowSet is array (Positive range <>) of DataRow;
 
    function column (row : DataRow; index : Positive) return ARF.std_field;
-   function hash   (row : DataRow; heading : String) return ARF.std_field;
+   function column (row : DataRow; heading : String) return ARF.std_field;
    function count  (row : DataRow) return Natural;
 
    --  Since it doesn't seem to be possible to construct this type with
