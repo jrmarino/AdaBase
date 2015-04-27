@@ -24,6 +24,7 @@ package AdaBase.Results.Sets is
    package ARF renames AdaBase.Results.Field;
 
    type DataRow is tagged limited private;
+   type DataRowSet is array (Positive range <>) of DataRow;
 
    function column (row : DataRow; index : Positive) return ARF.std_field;
    function hash   (row : DataRow; heading : String) return ARF.std_field;

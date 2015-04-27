@@ -82,6 +82,7 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str3 (IntType => AD.nbyte2);
    function convert (nv : AD.nbyte2) return AD.chain;
 
+
    -------------
    -- nbyte 3 --
    -------------
@@ -337,6 +338,7 @@ package AdaBase.Results.Converters is
    -----------------
    -- ENUMERATION --
    -----------------
+   function convert (nv : AD.enumtype) return AD.nbyte0;
    function convert (nv : AD.enumtype) return AD.nbyte1;
    function convert (nv : AD.enumtype) return AD.nbyte2;
    function convert (nv : AD.enumtype) return AD.nbyte3;
@@ -355,6 +357,7 @@ package AdaBase.Results.Converters is
    ------------------------
    --  CHAIN (OF BYTES)  --
    ------------------------
+   function convert (nv : AD.chain) return AD.nbyte0;
    function convert (nv : AD.chain) return AD.nbyte1;
    function convert (nv : AD.chain) return AD.nbyte2;
    function convert (nv : AD.chain) return AD.nbyte3;
