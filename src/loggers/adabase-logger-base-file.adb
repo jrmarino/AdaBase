@@ -23,7 +23,7 @@ package body AdaBase.Logger.Base.File is
    overriding
    procedure reaction (listener : File_Logger)
    is
-      use type textual;
+      use type logtext;
       output : TIO.File_Type;
    begin
       if listener.filepath = blank then

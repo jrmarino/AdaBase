@@ -148,12 +148,12 @@ package body AdaBase.Connection.Base.MySQL is
    ---------------------
    overriding
    function driverMessage (conn : MySQL_Connection)
-                           return textual
+                           return String
    is
       result : ABM.ICS.chars_ptr;
    begin
       result := ABM.mysql_error (handle => conn.handle);
-      return SUS (ABM.ICS.Value (Item => result));
+      return ABM.ICS.Value (Item => result);
    end driverMessage;
 
 
@@ -375,7 +375,7 @@ package body AdaBase.Connection.Base.MySQL is
    procedure setTransactionIsolation (conn      : out MySQL_Connection;
                                       isolation :     TransIsolation)
    is
-      use type textual;
+      use type conntext;
       use type TransIsolation;
       sql : constant String := "SET SESSION TRANSACTION ISOLATION LEVEL " &
                                IsoKeywords (isolation);
@@ -420,7 +420,7 @@ package body AdaBase.Connection.Base.MySQL is
    --  convert_version  --
    -----------------------
    function convert_version (mysql_version : Natural)
-     return textual
+     return conntext
    is
       raw : constant String := mysql_version'Img;
    begin
@@ -435,7 +435,7 @@ package body AdaBase.Connection.Base.MySQL is
    -----------
    --  S2P  --
    -----------
-   function S2P (S : textual) return ABM.ICS.chars_ptr
+   function S2P (S : conntext) return ABM.ICS.chars_ptr
    is
    begin
       return ABM.ICS.New_String (Str => SU.To_String (Source => S));
@@ -457,12 +457,12 @@ package body AdaBase.Connection.Base.MySQL is
    -------------------------
    procedure set_character_set (conn : MySQL_Connection)
    is
-      use type textual;
+      use type conntext;
       sql : constant String := "SET CHARACTER SET " & USS (conn.character_set);
       affected_rows : AffectedRows;
    begin
       if conn.prop_active then
-         if conn.character_set /= blank then
+         if conn.character_set /= SU.Null_Unbounded_String then
             affected_rows := execute (conn => conn, sql => sql);
          end if;
       end if;

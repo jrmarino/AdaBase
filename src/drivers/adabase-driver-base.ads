@@ -17,14 +17,20 @@
 with AdaBase.Connection.Base;
 with AdaBase.Logger.Facility;
 with AdaBase.Interfaces.Driver;
+with Ada.Strings.Unbounded;
 
 package AdaBase.Driver.Base is
 
+   package SU  renames Ada.Strings.Unbounded;
    package ACB renames AdaBase.Connection.Base;
    package ALF renames AdaBase.Logger.Facility;
    package AID renames AdaBase.Interfaces.Driver;
 
+   subtype drvtext is SU.Unbounded_String;
+
    type Base_Driver is abstract new Base_Pure and AID.iDriver with private;
+
+   blank : constant drvtext := SU.Null_Unbounded_String;
 
    overriding
    procedure command_standard_logger (driver : Base_Driver;
@@ -124,17 +130,17 @@ private
          dialect           : TDriver := foundation;
       end record;
 
-   function SUS (fixed : String) return textual;
-   function USS (loose : textual) return String;
+   function SUS (fixed : String)  return drvtext;
+   function USS (loose : drvtext) return String;
 
    procedure log_nominal (driver   : Base_Driver;
                           category : LogCategory;
-                          message  : textual);
+                          message  : drvtext);
 
    procedure log_problem
      (driver     : Base_Driver;
       category   : LogCategory;
-      message    : textual;
+      message    : drvtext;
       pull_codes : Boolean := False;
       break      : Boolean := False);
 

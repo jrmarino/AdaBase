@@ -17,6 +17,8 @@
 
 package AdaBase.Statement is
 
+   pragma Pure;
+
    type Base is tagged private;
 
 private

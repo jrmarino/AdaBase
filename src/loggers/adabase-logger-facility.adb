@@ -119,7 +119,7 @@ package body AdaBase.Logger.Facility is
    procedure log_nominal (facility  : LogFacility;
                           driver    : TDriver;
                           category  : LogCategory;
-                          message   : textual)
+                          message   : AL.logtext)
    is
       use type AL.Screen.Screen_Logger_access;
       use type AL.File.File_Logger_access;
@@ -160,8 +160,8 @@ package body AdaBase.Logger.Facility is
      (facility   : LogFacility;
       driver     : TDriver;
       category   : LogCategory;
-      message    : textual;
-      error_msg  : textual      := blank;
+      message    : AL.logtext;
+      error_msg  : AL.logtext   := AL.blank;
       error_code : DriverCodes  := 0;
       sqlstate   : TSqlState    := stateless;
       break      : Boolean      := False)
@@ -170,7 +170,7 @@ package body AdaBase.Logger.Facility is
       use type AL.Screen.Screen_Logger_access;
       use type AL.File.File_Logger_access;
       use type AL.BaseClass_Logger_access;
-      QND : constant String := SU.To_String (message);
+      QND : constant String := AL.SU.To_String (message);
    begin
       if not break and then facility.prop_error_mode = silent
       then

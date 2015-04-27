@@ -270,7 +270,7 @@ package body AdaBase.Driver.Base is
       --  MySQL and PostgreSQL can use this versions, but FireBird
       --  needs if_exists implementation and doesn't know CASCADE, so it
       --  needs an overriding implementation.
-      sql : textual;
+      sql : drvtext;
       AR  : AffectedRows;
    begin
       if cascade and then driver.dialect = driver_mysql
@@ -297,7 +297,7 @@ package body AdaBase.Driver.Base is
    -----------
    --  SUS  --
    -----------
-   function SUS (fixed : String) return textual
+   function SUS (fixed : String) return drvtext
    is
    begin
       return SU.To_Unbounded_String (Source => fixed);
@@ -307,7 +307,7 @@ package body AdaBase.Driver.Base is
    -----------
    --  USS  --
    -----------
-   function USS (loose : textual) return String
+   function USS (loose : drvtext) return String
    is
    begin
       return SU.To_String (Source => loose);
@@ -318,7 +318,7 @@ package body AdaBase.Driver.Base is
    ------------------
    procedure log_nominal (driver    : Base_Driver;
                           category  : LogCategory;
-                          message   : textual)
+                          message   : drvtext)
    is
    begin
          logger.log_nominal (driver   => driver.dialect,
@@ -333,16 +333,17 @@ package body AdaBase.Driver.Base is
    procedure log_problem
      (driver     : Base_Driver;
       category   : LogCategory;
-      message    : textual;
+      message    : drvtext;
       pull_codes : Boolean := False;
       break      : Boolean := False)
    is
-      error_msg  : textual      := blank;
+      error_msg  : drvtext      := blank;
       error_code : DriverCodes  := 0;
       sqlstate   : TSqlState    := stateless;
    begin
       if pull_codes then
-         error_msg  := driver.connection.all.driverMessage;
+         error_msg  := SU.To_Unbounded_String
+                      (driver.connection.all.driverMessage);
          error_code := driver.connection.all.driverCode;
          sqlstate   := driver.connection.all.SqlState;
       end if;

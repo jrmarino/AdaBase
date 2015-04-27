@@ -61,7 +61,7 @@ package AdaBase.Connection.Base.MySQL is
    function SqlState      (conn : MySQL_Connection) return TSqlState;
 
    overriding
-   function driverMessage (conn : MySQL_Connection) return textual;
+   function driverMessage (conn : MySQL_Connection) return String;
 
    overriding
    function driverCode    (conn : MySQL_Connection) return DriverCodes;
@@ -113,14 +113,14 @@ private
       info_description : String (1 .. 24) := "MySQL 5.5+ native driver";
 
       handle           : ABM.MYSQL_Access;
-      character_set    : textual  := blank;
+      character_set    : conntext := blank;
    end record;
 
    function convert_version (mysql_version : Natural)
-                             return textual;
+                             return conntext;
 
-   function S2P (S : textual) return ABM.ICS.chars_ptr;
-   function S2P (S : String)     return ABM.ICS.chars_ptr;
+   function S2P (S : conntext) return ABM.ICS.chars_ptr;
+   function S2P (S : String)   return ABM.ICS.chars_ptr;
 
    procedure set_character_set (conn : MySQL_Connection);
 

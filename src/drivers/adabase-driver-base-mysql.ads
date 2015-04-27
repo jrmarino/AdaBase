@@ -46,7 +46,10 @@ package AdaBase.Driver.Base.MySQL is
    function last_sql_state (driver : MySQL_Driver) return TSqlState;
 
    overriding
-   function last_error_info (driver : MySQL_Driver) return Error_Info;
+   function last_driver_code (driver : MySQL_Driver) return DriverCodes;
+
+   overriding
+   function last_driver_message (driver : MySQL_Driver) return String;
 
    overriding
    function execute (driver : MySQL_Driver; sql : String)
@@ -86,7 +89,7 @@ private
 
          --  connection : ACB.Base_Connection_Access := cow'Access;
          local_connection : ACM.MySQL_Connection_Access := null;
-      database   : textual := blank;
+         database : drvtext := blank;
       end record;
 
    procedure initialize (Object : in out MySQL_Driver);

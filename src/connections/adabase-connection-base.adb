@@ -191,7 +191,7 @@ package body AdaBase.Connection.Base is
    -----------
    --  SUS  --
    -----------
-   function SUS (fixed : String) return textual
+   function SUS (fixed : String) return conntext
    is
    begin
       return SU.To_Unbounded_String (Source => fixed);
@@ -201,7 +201,7 @@ package body AdaBase.Connection.Base is
    -----------
    --  USS  --
    -----------
-   function USS (loose : textual) return String
+   function USS (loose : conntext) return String
    is
    begin
       return SU.To_String (Source => loose);

@@ -16,6 +16,6 @@
 
 package AdaBase.Bindings is
 
-   --  pragma Pure;
+   pragma Pure;
 
 end AdaBase.Bindings;

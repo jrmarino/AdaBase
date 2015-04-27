@@ -76,9 +76,7 @@ package AdaBase.Results.Field is
 
    function spawn_field (data : variant; null_data : Boolean := False)
                          return field_access;
-
    function spawn_field (binob : chain) return field_access;
-
    function spawn_field (enumset : settype) return field_access;
 
 private

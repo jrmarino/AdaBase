@@ -44,14 +44,14 @@ package AdaBase.Logger.Facility is
    procedure log_nominal (facility  : LogFacility;
                           driver    : TDriver;
                           category  : LogCategory;
-                          message   : textual);
+                          message   : AL.logtext);
 
    procedure log_problem
      (facility   : LogFacility;
       driver     : TDriver;
       category   : LogCategory;
-      message    : textual;
-      error_msg  : textual     := blank;
+      message    : AL.logtext;
+      error_msg  : AL.logtext  := AL.blank;
       error_code : DriverCodes := 0;
       sqlstate   : TSqlState   := stateless;
       break      : Boolean     := False);

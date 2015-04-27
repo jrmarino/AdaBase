@@ -15,14 +15,19 @@
 --
 
 with AdaBase.Interfaces.Connection;
+with Ada.Strings.Unbounded;
 
 package AdaBase.Connection.Base is
 
    package AIC renames AdaBase.Interfaces.Connection;
+   package SU  renames Ada.Strings.Unbounded;
 
    type Base_Connection is abstract new Base_Pure and
                                         AIC.iConnection with private;
    type Base_Connection_Access is access all Base_Connection'Class;
+   subtype conntext is SU.Unbounded_String;
+
+   blank : constant conntext := SU.Null_Unbounded_String;
 
    overriding
    function autoCommit (conn : Base_Connection) return Boolean;
@@ -88,13 +93,13 @@ private
          prop_string_mode    : StringMode       := return_null;
          prop_max_blob       : BLOB_maximum     := 2 ** 12;  -- 4kb
 
-         info_server         : textual := blank;
-         info_server_version : textual := blank;
-         info_client         : textual := blank;
-         info_client_version : textual := blank;
+         info_server         : conntext := blank;
+         info_server_version : conntext := blank;
+         info_client         : conntext := blank;
+         info_client_version : conntext := blank;
       end record;
 
-   function SUS (fixed : String) return textual;
-   function USS (loose : textual) return String;
+   function SUS (fixed : String) return conntext;
+   function USS (loose : conntext) return String;
 
 end AdaBase.Connection.Base;

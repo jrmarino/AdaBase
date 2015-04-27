@@ -93,7 +93,7 @@ package AdaBase.Interfaces.Connection is
    --  Error information associated with last query
    function SqlState      (conn : iConnection) return TSqlState
                            is abstract;
-   function driverMessage (conn : iConnection) return textual
+   function driverMessage (conn : iConnection) return String
                           is abstract;
    function driverCode    (conn : iConnection) return DriverCodes
                            is abstract;

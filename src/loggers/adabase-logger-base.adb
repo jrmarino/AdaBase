@@ -23,7 +23,7 @@ package body AdaBase.Logger.Base is
    ---------
    --  S  --
    ---------
-   function S (before : String) return textual
+   function S (before : String) return logtext
    is
    begin
       return SU.To_Unbounded_String (before);
@@ -37,20 +37,20 @@ package body AdaBase.Logger.Base is
                (listener   : out Base_Logger;
                 category   : LogCategory;
                 driver     : TDriver;
-                message    : textual;
-                error_msg  : textual     := blank;
+                message    : logtext;
+                error_msg  : logtext     := blank;
                 error_code : DriverCodes := 0;
                 sqlstate   : TSqlState   := stateless)
    is
-      use type textual;
+      use type logtext;
       prefix    : String (1 .. 17);
       drv       : String (1 .. 11);
       timestamp : constant AC.Time := AC.Clock;
       TS        : constant String  := ACF.Image (Date => timestamp);
-      error     : textual :=
+      error     : logtext :=
                   S (error_code'Img &  " : SQLSTATE[" & sqlstate & "] : ");
-      err_label : textual := S (" : Driver code :");
-      composite : textual := blank;
+      err_label : logtext := S (" : Driver code :");
+      composite : logtext := SU.Null_Unbounded_String;
    begin
       listener.prop_timestamp  := timestamp;
       listener.prop_category   := category;
@@ -81,7 +81,7 @@ package body AdaBase.Logger.Base is
       composite := S (TS & drv & prefix);
 
       SU.Append (Source => composite, New_Item => message);
-      if error_msg /= blank then
+      if error_msg /= SU.Null_Unbounded_String then
          SU.Append (Source => composite, New_Item => err_label);
          SU.Append (Source => composite, New_Item => error);
          SU.Append (Source => composite, New_Item => error_msg);
@@ -124,7 +124,7 @@ package body AdaBase.Logger.Base is
    -----------------
    --  composite  --
    -----------------
-   function composite (listener : Base_Logger) return textual
+   function composite (listener : Base_Logger) return logtext
    is
    begin
       return listener.prop_composite;
@@ -134,7 +134,7 @@ package body AdaBase.Logger.Base is
    ---------------
    --  message  --
    ---------------
-   function message (listener : Base_Logger) return textual
+   function message (listener : Base_Logger) return logtext
    is
    begin
       return listener.prop_message;
@@ -144,7 +144,7 @@ package body AdaBase.Logger.Base is
    -----------------
    --  error_msg  --
    -----------------
-   function error_msg  (listener : Base_Logger) return textual
+   function error_msg  (listener : Base_Logger) return logtext
    is
    begin
       return listener.prop_error_msg;

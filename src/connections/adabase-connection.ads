@@ -16,6 +16,8 @@
 
 package AdaBase.Connection is
 
+   pragma Pure;
+
    type Base_Pure is tagged private;
 
 private

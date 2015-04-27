@@ -19,6 +19,8 @@ with Ada.Finalization;
 
 package AdaBase.Driver is
 
+   pragma Pure;
+
    type Base_Pure is abstract tagged private;
 
 private

@@ -25,9 +25,9 @@ package body AdaBase.Driver.Base.MySQL is
    overriding
    procedure disconnect (driver : out MySQL_Driver)
    is
-      msg : constant textual :=
+      msg : constant drvtext :=
         SUS ("Disconnect From " & USS (driver.database) & "database");
-      err : constant textual :=
+      err : constant drvtext :=
         SUS ("ACK! Disconnect attempted on inactive connection");
    begin
       if driver.connection_active then
@@ -52,11 +52,11 @@ package body AdaBase.Driver.Base.MySQL is
    procedure rollback (driver : MySQL_Driver)
    is
       use type TransIsolation;
-      err1 : constant textual :=
+      err1 : constant drvtext :=
         SUS ("ACK! Rollback attempted on inactive connection");
-      err2 : constant textual :=
+      err2 : constant drvtext :=
         SUS ("ACK! Rollback attempted when autocommit mode set on");
-      err3 : constant textual :=
+      err3 : constant drvtext :=
         SUS ("Rollback attempt failed");
    begin
       if not driver.connection_active then
@@ -90,11 +90,11 @@ package body AdaBase.Driver.Base.MySQL is
    procedure commit (driver : MySQL_Driver)
    is
       use type TransIsolation;
-      err1 : constant textual :=
+      err1 : constant drvtext :=
         SUS ("ACK! Commit attempted on inactive connection");
-      err2 : constant textual :=
+      err2 : constant drvtext :=
         SUS ("ACK! Commit attempted when autocommit mode set on");
-      err3 : constant textual :=
+      err3 : constant drvtext :=
         SUS ("Commit attempt failed");
    begin
       if not driver.connection_active then
@@ -142,19 +142,26 @@ package body AdaBase.Driver.Base.MySQL is
    end last_sql_state;
 
 
+   ------------------------
+   --  last_driver_code  --
+   ------------------------
+   overriding
+   function last_driver_code (driver : MySQL_Driver) return DriverCodes
+   is
+   begin
+      return driver.connection.all.driverCode;
+   end last_driver_code;
+
+
    ---------------------------
    --  last_driver_message  --
    ---------------------------
    overriding
-   function last_error_info (driver : MySQL_Driver) return Error_Info
+   function last_driver_message (driver : MySQL_Driver) return String
    is
-      result : Error_Info;
    begin
-      result.sql_state      := driver.connection.all.SqlState;
-      result.driver_code    := driver.connection.all.driverCode;
-      result.driver_message := driver.connection.all.driverMessage;
-      return result;
-   end last_error_info;
+      return driver.connection.all.driverMessage;
+   end last_driver_message;
 
 
    ---------------
@@ -165,7 +172,7 @@ package body AdaBase.Driver.Base.MySQL is
                      return AffectedRows
    is
       result : AffectedRows := 0;
-      err1 : constant textual :=
+      err1 : constant drvtext :=
         SUS ("ACK! Execution attempted on inactive connection");
    begin
       if driver.connection_active then
@@ -193,7 +200,7 @@ package body AdaBase.Driver.Base.MySQL is
                    return  AS.Base'Class
    is
       result : AS.MySQL.MySQL_statement;
-      err1 : constant textual :=
+      err1 : constant drvtext :=
         SUS ("ACK! Query attempted on inactive connection");
    begin
       if driver.connection_active then
@@ -345,9 +352,9 @@ package body AdaBase.Driver.Base.MySQL is
                               socket   : String := blankstring;
                               port     : PosixPort := portless)
    is
-      err1 : constant textual :=
+      err1 : constant drvtext :=
         SUS ("ACK! Reconnection attempted on active connection");
-      nom  : constant textual :=
+      nom  : constant drvtext :=
         SUS ("Connection to " & database & " database succeeded.");
    begin
       if driver.connection_active then

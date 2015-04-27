@@ -71,8 +71,11 @@ package AdaBase.Interfaces.Driver is
    function last_sql_state       (driver : iDriver)
                                   return TSqlState is abstract;
 
-   function last_error_info      (driver : iDriver)
-                                  return Error_Info is abstract;
+   function last_driver_code     (driver : iDriver)
+                                  return DriverCodes is abstract;
+
+   function last_driver_message  (driver : iDriver)
+                                  return String is abstract;
 
    function execute              (driver : iDriver;
                                   sql    : String)
