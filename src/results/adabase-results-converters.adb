@@ -36,7 +36,7 @@ package body AdaBase.Results.Converters is
    ---------------------------
    --  CONVERT FROM NBYTE0  --
    ---------------------------
-   function convert (nv : AD.nbyte0) return AD.nbyte1 is
+   function convert (nv : nbyte0) return nbyte1 is
    begin
       case nv is
          when True  => return 1;
@@ -44,7 +44,7 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte0) return AD.nbyte2 is
+   function convert (nv : nbyte0) return nbyte2 is
    begin
       case nv is
          when True  => return 1;
@@ -52,7 +52,7 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte0) return AD.nbyte3 is
+   function convert (nv : nbyte0) return nbyte3 is
    begin
       case nv is
          when True  => return 1;
@@ -60,7 +60,7 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte0) return AD.nbyte4 is
+   function convert (nv : nbyte0) return nbyte4 is
    begin
       case nv is
          when True  => return 1;
@@ -68,7 +68,7 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte0) return AD.nbyte8 is
+   function convert (nv : nbyte0) return nbyte8 is
    begin
       case nv is
          when True  => return 1;
@@ -76,7 +76,7 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte0) return AD.byte1 is
+   function convert (nv : nbyte0) return byte1 is
    begin
       case nv is
          when True  => return 1;
@@ -84,7 +84,7 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte0) return AD.byte2 is
+   function convert (nv : nbyte0) return byte2 is
    begin
       case nv is
          when True  => return 1;
@@ -92,7 +92,7 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte0) return AD.byte3 is
+   function convert (nv : nbyte0) return byte3 is
    begin
       case nv is
          when True  => return 1;
@@ -100,7 +100,7 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte0) return AD.byte4 is
+   function convert (nv : nbyte0) return byte4 is
    begin
       case nv is
          when True  => return 1;
@@ -108,7 +108,7 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte0) return AD.byte8 is
+   function convert (nv : nbyte0) return byte8 is
    begin
       case nv is
          when True  => return 1;
@@ -116,23 +116,23 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte0) return AD.real9 is
+   function convert (nv : nbyte0) return real9 is
    begin
       case nv is
-         when True  => return AD.real9 (1);
-         when False => return AD.real9 (0);
+         when True  => return real9 (1);
+         when False => return real9 (0);
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte0) return AD.real18 is
+   function convert (nv : nbyte0) return real18 is
    begin
       case nv is
-         when True  => return AD.real18 (1);
-         when False => return AD.real18 (0);
+         when True  => return real18 (1);
+         when False => return real18 (0);
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte0) return String is
+   function convert (nv : nbyte0) return String is
    begin
       case nv is
          when True  => return "1";
@@ -140,7 +140,7 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte0) return Wide_String is
+   function convert (nv : nbyte0) return Wide_String is
    begin
       case nv is
          when True  => return "1";
@@ -148,7 +148,7 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte0) return Wide_Wide_String is
+   function convert (nv : nbyte0) return Wide_Wide_String is
    begin
       case nv is
          when True  => return "1";
@@ -156,9 +156,9 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte0) return AD.chain
+   function convert (nv : nbyte0) return chain
    is
-     result : AD.chain (1 .. 1) := (others => 0);
+     result : chain (1 .. 1) := (others => 0);
    begin
       if nv then
          result (1) := 1;
@@ -170,7 +170,7 @@ package body AdaBase.Results.Converters is
    ---------------------------
    --  CONVERT FROM NBYTE1  --
    ---------------------------
-   function convert (nv : AD.nbyte1) return AD.nbyte0 is
+   function convert (nv : nbyte1) return nbyte0 is
    begin
       case nv is
          when 0      => return False;
@@ -179,69 +179,69 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte1) return AD.nbyte2 is
+   function convert (nv : nbyte1) return nbyte2 is
    begin
-      return AD.nbyte2 (nv);
+      return nbyte2 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte1) return AD.nbyte3 is
+   function convert (nv : nbyte1) return nbyte3 is
    begin
-      return AD.nbyte3 (nv);
+      return nbyte3 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte1) return AD.nbyte4 is
+   function convert (nv : nbyte1) return nbyte4 is
    begin
-      return AD.nbyte4 (nv);
+      return nbyte4 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte1) return AD.nbyte8 is
+   function convert (nv : nbyte1) return nbyte8 is
    begin
-      return AD.nbyte8 (nv);
+      return nbyte8 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte1) return AD.byte1
+   function convert (nv : nbyte1) return byte1
    is
-      max : constant AD.nbyte1 := AD.nbyte1 (AD.byte1'Last);
+      max : constant nbyte1 := nbyte1 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte1 (nv);
+         when 0 .. max => return byte1 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte1) return AD.byte2 is
+   function convert (nv : nbyte1) return byte2 is
    begin
-      return AD.byte2 (nv);
+      return byte2 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte1) return AD.byte3 is
+   function convert (nv : nbyte1) return byte3 is
    begin
-      return AD.byte3 (nv);
+      return byte3 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte1) return AD.byte4 is
+   function convert (nv : nbyte1) return byte4 is
    begin
-      return AD.byte4 (nv);
+      return byte4 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte1) return AD.byte8 is
+   function convert (nv : nbyte1) return byte8 is
    begin
-      return AD.byte8 (nv);
+      return byte8 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte1) return AD.real9 is
+   function convert (nv : nbyte1) return real9 is
    begin
-      return AD.real9 (nv);
+      return real9 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte1) return AD.real18 is
+   function convert (nv : nbyte1) return real18 is
    begin
-      return AD.real18 (nv);
+      return real18 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte1) return AD.chain
+   function convert (nv : nbyte1) return chain
    is
-      result : constant AD.chain (1 .. 1) := (1 => nv);
+      result : constant chain (1 .. 1) := (1 => nv);
    begin
       return result;
    end convert;
@@ -250,7 +250,7 @@ package body AdaBase.Results.Converters is
    ---------------------------
    --  CONVERT FROM NBYTE2  --
    ---------------------------
-   function convert (nv : AD.nbyte2) return AD.nbyte0 is
+   function convert (nv : nbyte2) return nbyte0 is
    begin
       case nv is
          when 0      => return False;
@@ -259,82 +259,82 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte2) return AD.nbyte1
+   function convert (nv : nbyte2) return nbyte1
    is
-      max : constant AD.nbyte2 := AD.nbyte2 (AD.nbyte1'Last);
+      max : constant nbyte2 := nbyte2 (nbyte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte1 (nv);
+         when 0 .. max => return nbyte1 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte2) return AD.nbyte3 is
+   function convert (nv : nbyte2) return nbyte3 is
    begin
-      return AD.nbyte3 (nv);
+      return nbyte3 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte2) return AD.nbyte4 is
+   function convert (nv : nbyte2) return nbyte4 is
    begin
-      return AD.nbyte4 (nv);
+      return nbyte4 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte2) return AD.nbyte8 is
+   function convert (nv : nbyte2) return nbyte8 is
    begin
-      return AD.nbyte8 (nv);
+      return nbyte8 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte2) return AD.byte1
+   function convert (nv : nbyte2) return byte1
    is
-      max : constant AD.nbyte2 := AD.nbyte2 (AD.byte1'Last);
+      max : constant nbyte2 := nbyte2 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte1 (nv);
+         when 0 .. max => return byte1 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte2) return AD.byte2
+   function convert (nv : nbyte2) return byte2
    is
-      max : constant AD.nbyte2 := AD.nbyte2 (AD.byte1'Last);
+      max : constant nbyte2 := nbyte2 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte2 (nv);
+         when 0 .. max => return byte2 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte2) return AD.byte3 is
+   function convert (nv : nbyte2) return byte3 is
    begin
-      return AD.byte3 (nv);
+      return byte3 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte2) return AD.byte4 is
+   function convert (nv : nbyte2) return byte4 is
    begin
-      return AD.byte4 (nv);
+      return byte4 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte2) return AD.byte8 is
+   function convert (nv : nbyte2) return byte8 is
    begin
-      return AD.byte8 (nv);
+      return byte8 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte2) return AD.real9 is
+   function convert (nv : nbyte2) return real9 is
    begin
-      return AD.real9 (nv);
+      return real9 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte2) return AD.real18 is
+   function convert (nv : nbyte2) return real18 is
    begin
-      return AD.real18 (nv);
+      return real18 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte2) return AD.chain
+   function convert (nv : nbyte2) return chain
    is
-      use type AD.nbyte2;
-      result : AD.chain (1 .. 2);
-      block1 : constant AD.nbyte1 := AD.nbyte1 (nv and 16#FF#);
-      block2 : constant AD.nbyte1 := AD.nbyte1
+      use type nbyte2;
+      result : chain (1 .. 2);
+      block1 : constant nbyte1 := nbyte1 (nv and 16#FF#);
+      block2 : constant nbyte1 := nbyte1
                         (BIT.Shift_Right (BIT.Unsigned_16 (nv), 8));
    begin
       if Big_Endian then
@@ -349,7 +349,7 @@ package body AdaBase.Results.Converters is
    ---------------------------
    --  CONVERT FROM NBYTE3  --
    ---------------------------
-   function convert (nv : AD.nbyte3) return AD.nbyte0 is
+   function convert (nv : nbyte3) return nbyte0 is
    begin
       case nv is
          when 0      => return False;
@@ -358,94 +358,94 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte3) return AD.nbyte1
+   function convert (nv : nbyte3) return nbyte1
    is
-      max : constant AD.nbyte3 := AD.nbyte3 (AD.nbyte1'Last);
+      max : constant nbyte3 := nbyte3 (nbyte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte1 (nv);
+         when 0 .. max => return nbyte1 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte3) return AD.nbyte2
+   function convert (nv : nbyte3) return nbyte2
    is
-      max : constant AD.nbyte3 := AD.nbyte3 (AD.nbyte2'Last);
+      max : constant nbyte3 := nbyte3 (nbyte2'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte2 (nv);
+         when 0 .. max => return nbyte2 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte3) return AD.nbyte4 is
+   function convert (nv : nbyte3) return nbyte4 is
    begin
-      return AD.nbyte4 (nv);
+      return nbyte4 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte3) return AD.nbyte8 is
+   function convert (nv : nbyte3) return nbyte8 is
    begin
-      return AD.nbyte8 (nv);
+      return nbyte8 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte3) return AD.byte1
+   function convert (nv : nbyte3) return byte1
    is
-      max : constant AD.nbyte3 := AD.nbyte3 (AD.byte1'Last);
+      max : constant nbyte3 := nbyte3 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte1 (nv);
+         when 0 .. max => return byte1 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte3) return AD.byte2
+   function convert (nv : nbyte3) return byte2
    is
-      max : constant AD.nbyte3 := AD.nbyte3 (AD.byte1'Last);
+      max : constant nbyte3 := nbyte3 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte2 (nv);
+         when 0 .. max => return byte2 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte3) return AD.byte3
+   function convert (nv : nbyte3) return byte3
    is
-      max : constant AD.nbyte3 := AD.nbyte3 (AD.byte1'Last);
+      max : constant nbyte3 := nbyte3 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte3 (nv);
+         when 0 .. max => return byte3 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte3) return AD.byte4 is
+   function convert (nv : nbyte3) return byte4 is
    begin
-      return AD.byte4 (nv);
+      return byte4 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte3) return AD.byte8 is
+   function convert (nv : nbyte3) return byte8 is
    begin
-      return AD.byte8 (nv);
+      return byte8 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte3) return AD.real9 is
+   function convert (nv : nbyte3) return real9 is
    begin
-      return AD.real9 (nv);
+      return real9 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte3) return AD.real18 is
+   function convert (nv : nbyte3) return real18 is
    begin
-      return AD.real18 (nv);
+      return real18 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte3) return AD.chain
+   function convert (nv : nbyte3) return chain
    is
-      use type AD.nbyte3;
-      result : AD.chain (1 .. 3);
-      block1 : constant AD.nbyte1 := AD.nbyte1 (nv and 16#FF#);
-      block2 : constant AD.nbyte1 := AD.nbyte1 (BIT.Shift_Right
+      use type nbyte3;
+      result : chain (1 .. 3);
+      block1 : constant nbyte1 := nbyte1 (nv and 16#FF#);
+      block2 : constant nbyte1 := nbyte1 (BIT.Shift_Right
                         (BIT.Unsigned_32 (nv and 16#FF00#), 8));
-      block3 : constant AD.nbyte1 := AD.nbyte1 (BIT.Shift_Right
+      block3 : constant nbyte1 := nbyte1 (BIT.Shift_Right
                         (BIT.Unsigned_32 (nv and 16#FF0000#), 16));
    begin
       if Big_Endian then
@@ -460,7 +460,7 @@ package body AdaBase.Results.Converters is
    ---------------------------
    --  CONVERT FROM NBYTE4  --
    ---------------------------
-   function convert (nv : AD.nbyte4) return AD.nbyte0 is
+   function convert (nv : nbyte4) return nbyte0 is
    begin
       case nv is
          when 0      => return False;
@@ -469,106 +469,106 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte4) return AD.nbyte1
+   function convert (nv : nbyte4) return nbyte1
    is
-      max : constant AD.nbyte4 := AD.nbyte4 (AD.nbyte1'Last);
+      max : constant nbyte4 := nbyte4 (nbyte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte1 (nv);
+         when 0 .. max => return nbyte1 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte4) return AD.nbyte2
+   function convert (nv : nbyte4) return nbyte2
    is
-      max : constant AD.nbyte4 := AD.nbyte4 (AD.nbyte2'Last);
+      max : constant nbyte4 := nbyte4 (nbyte2'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte2 (nv);
+         when 0 .. max => return nbyte2 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte4) return AD.nbyte3
+   function convert (nv : nbyte4) return nbyte3
    is
-      max : constant AD.nbyte4 := AD.nbyte4 (AD.nbyte3'Last);
+      max : constant nbyte4 := nbyte4 (nbyte3'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte3 (nv);
+         when 0 .. max => return nbyte3 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte4) return AD.nbyte8 is
+   function convert (nv : nbyte4) return nbyte8 is
    begin
-      return AD.nbyte8 (nv);
+      return nbyte8 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte4) return AD.byte1
+   function convert (nv : nbyte4) return byte1
    is
-      max : constant AD.nbyte4 := AD.nbyte4 (AD.byte1'Last);
+      max : constant nbyte4 := nbyte4 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte1 (nv);
+         when 0 .. max => return byte1 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte4) return AD.byte2
+   function convert (nv : nbyte4) return byte2
    is
-      max : constant AD.nbyte4 := AD.nbyte4 (AD.byte1'Last);
+      max : constant nbyte4 := nbyte4 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte2 (nv);
+         when 0 .. max => return byte2 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte4) return AD.byte3
+   function convert (nv : nbyte4) return byte3
    is
-      max : constant AD.nbyte4 := AD.nbyte4 (AD.byte1'Last);
+      max : constant nbyte4 := nbyte4 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte3 (nv);
+         when 0 .. max => return byte3 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte4) return AD.byte4
+   function convert (nv : nbyte4) return byte4
    is
-      max : constant AD.nbyte4 := AD.nbyte4 (AD.byte1'Last);
+      max : constant nbyte4 := nbyte4 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte4 (nv);
+         when 0 .. max => return byte4 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte4) return AD.byte8 is
+   function convert (nv : nbyte4) return byte8 is
    begin
-      return AD.byte8 (nv);
+      return byte8 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte4) return AD.real9 is
+   function convert (nv : nbyte4) return real9 is
    begin
-      return AD.real9 (nv);
+      return real9 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte4) return AD.real18 is
+   function convert (nv : nbyte4) return real18 is
    begin
-      return AD.real18 (nv);
+      return real18 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte4) return AD.chain
+   function convert (nv : nbyte4) return chain
    is
-      use type AD.nbyte4;
-      result : AD.chain (1 .. 4);
-      block1 : constant AD.nbyte1 := AD.nbyte1 (nv and 16#FF#);
-      block2 : constant AD.nbyte1 := AD.nbyte1 (BIT.Shift_Right
+      use type nbyte4;
+      result : chain (1 .. 4);
+      block1 : constant nbyte1 := nbyte1 (nv and 16#FF#);
+      block2 : constant nbyte1 := nbyte1 (BIT.Shift_Right
                         (BIT.Unsigned_32 (nv and 16#FF00#), 8));
-      block3 : constant AD.nbyte1 := AD.nbyte1 (BIT.Shift_Right
+      block3 : constant nbyte1 := nbyte1 (BIT.Shift_Right
                         (BIT.Unsigned_32 (nv and 16#FF0000#), 16));
-      block4 : constant AD.nbyte1 := AD.nbyte1 (BIT.Shift_Right
+      block4 : constant nbyte1 := nbyte1 (BIT.Shift_Right
                         (BIT.Unsigned_32 (nv and 16#FF000000#), 24));
    begin
       if Big_Endian then
@@ -583,7 +583,7 @@ package body AdaBase.Results.Converters is
    ---------------------------
    --  CONVERT FROM NBYTE8  --
    ---------------------------
-   function convert (nv : AD.nbyte8) return AD.nbyte0 is
+   function convert (nv : nbyte8) return nbyte0 is
    begin
       case nv is
          when 0      => return False;
@@ -592,113 +592,113 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte8) return AD.nbyte1
+   function convert (nv : nbyte8) return nbyte1
    is
-      max : constant AD.nbyte8 := AD.nbyte8 (AD.nbyte1'Last);
+      max : constant nbyte8 := nbyte8 (nbyte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte1 (nv);
+         when 0 .. max => return nbyte1 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte8) return AD.nbyte2
+   function convert (nv : nbyte8) return nbyte2
    is
-      max : constant AD.nbyte8 := AD.nbyte8 (AD.nbyte2'Last);
+      max : constant nbyte8 := nbyte8 (nbyte2'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte2 (nv);
+         when 0 .. max => return nbyte2 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte8) return AD.nbyte3
+   function convert (nv : nbyte8) return nbyte3
    is
-      max : constant AD.nbyte8 := AD.nbyte8 (AD.nbyte3'Last);
+      max : constant nbyte8 := nbyte8 (nbyte3'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte3 (nv);
+         when 0 .. max => return nbyte3 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte8) return AD.nbyte4
+   function convert (nv : nbyte8) return nbyte4
    is
-      max : constant AD.nbyte8 := AD.nbyte8 (AD.nbyte4'Last);
+      max : constant nbyte8 := nbyte8 (nbyte4'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte4 (nv);
+         when 0 .. max => return nbyte4 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte8) return AD.byte1
+   function convert (nv : nbyte8) return byte1
    is
-      max : constant AD.nbyte8 := AD.nbyte8 (AD.byte1'Last);
+      max : constant nbyte8 := nbyte8 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte1 (nv);
+         when 0 .. max => return byte1 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte8) return AD.byte2
+   function convert (nv : nbyte8) return byte2
    is
-      max : constant AD.nbyte8 := AD.nbyte8 (AD.byte1'Last);
+      max : constant nbyte8 := nbyte8 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte2 (nv);
+         when 0 .. max => return byte2 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte8) return AD.byte3
+   function convert (nv : nbyte8) return byte3
    is
-      max : constant AD.nbyte8 := AD.nbyte8 (AD.byte1'Last);
+      max : constant nbyte8 := nbyte8 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte3 (nv);
+         when 0 .. max => return byte3 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte8) return AD.byte4
+   function convert (nv : nbyte8) return byte4
    is
-      max : constant AD.nbyte8 := AD.nbyte8 (AD.byte1'Last);
+      max : constant nbyte8 := nbyte8 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte4 (nv);
+         when 0 .. max => return byte4 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte8) return AD.byte8
+   function convert (nv : nbyte8) return byte8
    is
-      max : constant AD.nbyte8 := AD.nbyte8 (AD.byte1'Last);
+      max : constant nbyte8 := nbyte8 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte8 (nv);
+         when 0 .. max => return byte8 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.nbyte8) return AD.real9 is
+   function convert (nv : nbyte8) return real9 is
    begin
-      return AD.real9 (nv);
+      return real9 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte8) return AD.real18 is
+   function convert (nv : nbyte8) return real18 is
    begin
-      return AD.real18 (nv);
+      return real18 (nv);
    end convert;
 
-   function convert (nv : AD.nbyte8) return AD.chain
+   function convert (nv : nbyte8) return chain
    is
-      use type AD.nbyte8;
-      result : AD.chain (1 .. 8);
-      b      : AD.chain (1 .. 8);
+      use type nbyte8;
+      result : chain (1 .. 8);
+      b      : chain (1 .. 8);
    begin
-      b (1) := AD.nbyte1 (nv and 16#FF#);
+      b (1) := nbyte1 (nv and 16#FF#);
       for s in 1 .. 7 loop
          declare
             use type BIT.Unsigned_64;
@@ -706,7 +706,7 @@ package body AdaBase.Results.Converters is
             mask : constant BIT.Unsigned_64 := BIT.Shift_Left (16#FF#, shft);
             slvr : constant BIT.Unsigned_64 := BIT.Unsigned_64 (nv) and mask;
          begin
-            b (s + 1) := AD.nbyte1 (BIT.Shift_Right (slvr, shft));
+            b (s + 1) := nbyte1 (BIT.Shift_Right (slvr, shft));
          end;
       end loop;
       if Big_Endian then
@@ -721,7 +721,7 @@ package body AdaBase.Results.Converters is
    ---------------------------
    --  CONVERT FROM BYTE1  --
    ---------------------------
-   function convert (nv : AD.byte1) return AD.nbyte0 is
+   function convert (nv : byte1) return nbyte0 is
    begin
       case nv is
          when 0      => return False;
@@ -730,81 +730,81 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.byte1) return AD.nbyte1 is
+   function convert (nv : byte1) return nbyte1 is
    begin
       case nv is
-         when 0 .. AD.byte1'Last => return AD.nbyte1 (nv);
+         when 0 .. byte1'Last => return nbyte1 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte1) return AD.nbyte2 is
+   function convert (nv : byte1) return nbyte2 is
    begin
       case nv is
-         when 0 .. AD.byte1'Last => return AD.nbyte2 (nv);
+         when 0 .. byte1'Last => return nbyte2 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte1) return AD.nbyte3 is
+   function convert (nv : byte1) return nbyte3 is
    begin
       case nv is
-         when 0 .. AD.byte1'Last => return AD.nbyte3 (nv);
+         when 0 .. byte1'Last => return nbyte3 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte1) return AD.nbyte4 is
+   function convert (nv : byte1) return nbyte4 is
    begin
       case nv is
-         when 0 .. AD.byte1'Last => return AD.nbyte4 (nv);
+         when 0 .. byte1'Last => return nbyte4 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte1) return AD.nbyte8 is
+   function convert (nv : byte1) return nbyte8 is
    begin
       case nv is
-         when 0 .. AD.byte1'Last => return AD.nbyte8 (nv);
+         when 0 .. byte1'Last => return nbyte8 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte1) return AD.byte2 is
+   function convert (nv : byte1) return byte2 is
    begin
-      return AD.byte2 (nv);
+      return byte2 (nv);
    end convert;
 
-   function convert (nv : AD.byte1) return AD.byte3 is
+   function convert (nv : byte1) return byte3 is
    begin
-      return AD.byte3 (nv);
+      return byte3 (nv);
    end convert;
 
-   function convert (nv : AD.byte1) return AD.byte4 is
+   function convert (nv : byte1) return byte4 is
    begin
-      return AD.byte4 (nv);
+      return byte4 (nv);
    end convert;
 
-   function convert (nv : AD.byte1) return AD.byte8 is
+   function convert (nv : byte1) return byte8 is
    begin
-      return AD.byte8 (nv);
+      return byte8 (nv);
    end convert;
 
-   function convert (nv : AD.byte1) return AD.real9 is
+   function convert (nv : byte1) return real9 is
    begin
-      return AD.real9 (nv);
+      return real9 (nv);
    end convert;
 
-   function convert (nv : AD.byte1) return AD.real18 is
+   function convert (nv : byte1) return real18 is
    begin
-      return AD.real18 (nv);
+      return real18 (nv);
    end convert;
 
 
    ---------------------------
    --  CONVERT FROM BYTE2  --
    ---------------------------
-   function convert (nv : AD.byte2) return AD.nbyte0 is
+   function convert (nv : byte2) return nbyte0 is
    begin
       case nv is
          when 0      => return False;
@@ -813,88 +813,88 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.byte2) return AD.nbyte1
+   function convert (nv : byte2) return nbyte1
    is
-      max : constant AD.byte2 := AD.byte2 (AD.nbyte1'Last);
+      max : constant byte2 := byte2 (nbyte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte1 (nv);
+         when 0 .. max => return nbyte1 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte2) return AD.nbyte2 is
+   function convert (nv : byte2) return nbyte2 is
    begin
       case nv is
-         when 0 .. AD.byte2'Last => return AD.nbyte2 (nv);
+         when 0 .. byte2'Last => return nbyte2 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte2) return AD.nbyte3 is
+   function convert (nv : byte2) return nbyte3 is
    begin
       case nv is
-         when 0 .. AD.byte2'Last => return AD.nbyte3 (nv);
+         when 0 .. byte2'Last => return nbyte3 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte2) return AD.nbyte4 is
+   function convert (nv : byte2) return nbyte4 is
    begin
       case nv is
-         when 0 .. AD.byte2'Last => return AD.nbyte4 (nv);
+         when 0 .. byte2'Last => return nbyte4 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte2) return AD.nbyte8 is
+   function convert (nv : byte2) return nbyte8 is
    begin
       case nv is
-         when 0 .. AD.byte2'Last => return AD.nbyte8 (nv);
+         when 0 .. byte2'Last => return nbyte8 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte2) return AD.byte1
+   function convert (nv : byte2) return byte1
    is
-      max : constant AD.byte2 := AD.byte2 (AD.byte1'Last);
+      max : constant byte2 := byte2 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte1 (nv);
+         when 0 .. max => return byte1 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte2) return AD.byte3 is
+   function convert (nv : byte2) return byte3 is
    begin
-      return AD.byte3 (nv);
+      return byte3 (nv);
    end convert;
 
-   function convert (nv : AD.byte2) return AD.byte4 is
+   function convert (nv : byte2) return byte4 is
    begin
-      return AD.byte4 (nv);
+      return byte4 (nv);
    end convert;
 
-   function convert (nv : AD.byte2) return AD.byte8 is
+   function convert (nv : byte2) return byte8 is
    begin
-      return AD.byte8 (nv);
+      return byte8 (nv);
    end convert;
 
-   function convert (nv : AD.byte2) return AD.real9 is
+   function convert (nv : byte2) return real9 is
    begin
-      return AD.real9 (nv);
+      return real9 (nv);
    end convert;
 
-   function convert (nv : AD.byte2) return AD.real18 is
+   function convert (nv : byte2) return real18 is
    begin
-      return AD.real18 (nv);
+      return real18 (nv);
    end convert;
 
 
    ---------------------------
    --  CONVERT FROM BYTE3  --
    ---------------------------
-   function convert (nv : AD.byte3) return AD.nbyte0 is
+   function convert (nv : byte3) return nbyte0 is
    begin
       case nv is
          when 0      => return False;
@@ -903,95 +903,95 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.byte3) return AD.nbyte1
+   function convert (nv : byte3) return nbyte1
    is
-      max : constant AD.byte3 := AD.byte3 (AD.nbyte1'Last);
+      max : constant byte3 := byte3 (nbyte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte1 (nv);
+         when 0 .. max => return nbyte1 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte3) return AD.nbyte2
+   function convert (nv : byte3) return nbyte2
    is
-      max : constant AD.byte3 := AD.byte3 (AD.nbyte2'Last);
+      max : constant byte3 := byte3 (nbyte2'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte2 (nv);
+         when 0 .. max => return nbyte2 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte3) return AD.nbyte3 is
+   function convert (nv : byte3) return nbyte3 is
    begin
       case nv is
-         when 0 .. AD.byte3'Last => return AD.nbyte3 (nv);
+         when 0 .. byte3'Last => return nbyte3 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte3) return AD.nbyte4 is
+   function convert (nv : byte3) return nbyte4 is
    begin
       case nv is
-         when 0 .. AD.byte3'Last => return AD.nbyte4 (nv);
+         when 0 .. byte3'Last => return nbyte4 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte3) return AD.nbyte8 is
+   function convert (nv : byte3) return nbyte8 is
    begin
       case nv is
-         when 0 .. AD.byte3'Last => return AD.nbyte8 (nv);
+         when 0 .. byte3'Last => return nbyte8 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte3) return AD.byte1
+   function convert (nv : byte3) return byte1
    is
-      max : constant AD.byte3 := AD.byte3 (AD.byte1'Last);
+      max : constant byte3 := byte3 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte1 (nv);
+         when 0 .. max => return byte1 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte3) return AD.byte2
+   function convert (nv : byte3) return byte2
    is
-      max : constant AD.byte3 := AD.byte3 (AD.byte2'Last);
+      max : constant byte3 := byte3 (byte2'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte2 (nv);
+         when 0 .. max => return byte2 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte3) return AD.byte4 is
+   function convert (nv : byte3) return byte4 is
    begin
-      return AD.byte4 (nv);
+      return byte4 (nv);
    end convert;
 
-   function convert (nv : AD.byte3) return AD.byte8 is
+   function convert (nv : byte3) return byte8 is
    begin
-      return AD.byte8 (nv);
+      return byte8 (nv);
    end convert;
 
-   function convert (nv : AD.byte3) return AD.real9 is
+   function convert (nv : byte3) return real9 is
    begin
-      return AD.real9 (nv);
+      return real9 (nv);
    end convert;
 
-   function convert (nv : AD.byte3) return AD.real18 is
+   function convert (nv : byte3) return real18 is
    begin
-      return AD.real18 (nv);
+      return real18 (nv);
    end convert;
 
 
    ---------------------------
    --  CONVERT FROM BYTE4  --
    ---------------------------
-   function convert (nv : AD.byte4) return AD.nbyte0 is
+   function convert (nv : byte4) return nbyte0 is
    begin
       case nv is
          when 0      => return False;
@@ -1000,102 +1000,102 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.byte4) return AD.nbyte1
+   function convert (nv : byte4) return nbyte1
    is
-      max : constant AD.byte4 := AD.byte4 (AD.nbyte1'Last);
+      max : constant byte4 := byte4 (nbyte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte1 (nv);
+         when 0 .. max => return nbyte1 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte4) return AD.nbyte2
+   function convert (nv : byte4) return nbyte2
    is
-      max : constant AD.byte4 := AD.byte4 (AD.nbyte2'Last);
+      max : constant byte4 := byte4 (nbyte2'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte2 (nv);
+         when 0 .. max => return nbyte2 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte4) return AD.nbyte3
+   function convert (nv : byte4) return nbyte3
    is
-      max : constant AD.byte4 := AD.byte4 (AD.nbyte3'Last);
+      max : constant byte4 := byte4 (nbyte3'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte3 (nv);
+         when 0 .. max => return nbyte3 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte4) return AD.nbyte4 is
+   function convert (nv : byte4) return nbyte4 is
    begin
       case nv is
-         when 0 .. AD.byte4'Last => return AD.nbyte4 (nv);
+         when 0 .. byte4'Last => return nbyte4 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte4) return AD.nbyte8 is
+   function convert (nv : byte4) return nbyte8 is
    begin
       case nv is
-         when 0 .. AD.byte4'Last => return AD.nbyte8 (nv);
+         when 0 .. byte4'Last => return nbyte8 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte4) return AD.byte1
+   function convert (nv : byte4) return byte1
    is
-      max : constant AD.byte4 := AD.byte4 (AD.byte1'Last);
+      max : constant byte4 := byte4 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte1 (nv);
+         when 0 .. max => return byte1 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte4) return AD.byte2
+   function convert (nv : byte4) return byte2
    is
-      max : constant AD.byte4 := AD.byte4 (AD.byte2'Last);
+      max : constant byte4 := byte4 (byte2'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte2 (nv);
+         when 0 .. max => return byte2 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte4) return AD.byte3
+   function convert (nv : byte4) return byte3
    is
-      max : constant AD.byte4 := AD.byte4 (AD.byte3'Last);
+      max : constant byte4 := byte4 (byte3'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte3 (nv);
+         when 0 .. max => return byte3 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte4) return AD.byte8 is
+   function convert (nv : byte4) return byte8 is
    begin
-      return AD.byte8 (nv);
+      return byte8 (nv);
    end convert;
 
-   function convert (nv : AD.byte4) return AD.real9 is
+   function convert (nv : byte4) return real9 is
    begin
-      return AD.real9 (nv);
+      return real9 (nv);
    end convert;
 
-   function convert (nv : AD.byte4) return AD.real18 is
+   function convert (nv : byte4) return real18 is
    begin
-      return AD.real18 (nv);
+      return real18 (nv);
    end convert;
 
 
    ---------------------------
    --  CONVERT FROM BYTE8  --
    ---------------------------
-   function convert (nv : AD.byte8) return AD.nbyte0 is
+   function convert (nv : byte8) return nbyte0 is
    begin
       case nv is
          when 0      => return False;
@@ -1104,129 +1104,129 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.byte8) return AD.nbyte1
+   function convert (nv : byte8) return nbyte1
    is
-      max : constant AD.byte8 := AD.byte8 (AD.nbyte1'Last);
+      max : constant byte8 := byte8 (nbyte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte1 (nv);
+         when 0 .. max => return nbyte1 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte8) return AD.nbyte2
+   function convert (nv : byte8) return nbyte2
    is
-      max : constant AD.byte8 := AD.byte8 (AD.nbyte2'Last);
+      max : constant byte8 := byte8 (nbyte2'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte2 (nv);
+         when 0 .. max => return nbyte2 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte8) return AD.nbyte3
+   function convert (nv : byte8) return nbyte3
    is
-      max : constant AD.byte8 := AD.byte8 (AD.nbyte3'Last);
+      max : constant byte8 := byte8 (nbyte3'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte3 (nv);
+         when 0 .. max => return nbyte3 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte8) return AD.nbyte4
+   function convert (nv : byte8) return nbyte4
    is
-      max : constant AD.byte8 := AD.byte8 (AD.nbyte4'Last);
+      max : constant byte8 := byte8 (nbyte4'Last);
    begin
       case nv is
-         when 0 .. max => return AD.nbyte4 (nv);
+         when 0 .. max => return nbyte4 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte8) return AD.nbyte8 is
+   function convert (nv : byte8) return nbyte8 is
    begin
       case nv is
-         when 0 .. AD.byte8'Last => return AD.nbyte8 (nv);
+         when 0 .. byte8'Last => return nbyte8 (nv);
          when others   => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte8) return AD.byte1
+   function convert (nv : byte8) return byte1
    is
-      max : constant AD.byte8 := AD.byte8 (AD.byte1'Last);
+      max : constant byte8 := byte8 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte1 (nv);
+         when 0 .. max => return byte1 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte8) return AD.byte2
+   function convert (nv : byte8) return byte2
    is
-      max : constant AD.byte8 := AD.byte8 (AD.byte2'Last);
+      max : constant byte8 := byte8 (byte2'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte2 (nv);
+         when 0 .. max => return byte2 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte8) return AD.byte3
+   function convert (nv : byte8) return byte3
    is
-      max : constant AD.byte8 := AD.byte8 (AD.byte3'Last);
+      max : constant byte8 := byte8 (byte3'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte3 (nv);
+         when 0 .. max => return byte3 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte8) return AD.byte4
+   function convert (nv : byte8) return byte4
    is
-      max : constant AD.byte8 := AD.byte8 (AD.byte4'Last);
+      max : constant byte8 := byte8 (byte4'Last);
    begin
       case nv is
-         when 0 .. max => return AD.byte4 (nv);
+         when 0 .. max => return byte4 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.byte8) return AD.real9 is
+   function convert (nv : byte8) return real9 is
    begin
-      return AD.real9 (nv);
+      return real9 (nv);
    end convert;
 
-   function convert (nv : AD.byte8) return AD.real18 is
+   function convert (nv : byte8) return real18 is
    begin
-      return AD.real18 (nv);
+      return real18 (nv);
    end convert;
 
 
    --------------------------
    --  CONVERT FROM REAL9  --
    --------------------------
-   function convert (nv : AD.real9) return AD.real18 is
+   function convert (nv : real9) return real18 is
    begin
-      return AD.real18 (nv);
+      return real18 (nv);
    end convert;
 
 
    ---------------------------
    --  CONVERT FROM REAL18  --
    ---------------------------
-   function convert (nv : AD.real18) return AD.real9 is
+   function convert (nv : real18) return real9 is
    begin
-      return AD.real9 (nv);
+      return real9 (nv);
    end convert;
 
 
    ---------------------------------
    --  CONVERT STRING TO BOOLEAN  --
    ---------------------------------
-   function convert (nv : AD.textual) return AD.nbyte0
+   function convert (nv : textual) return nbyte0
    is
-      nvstr : constant String := AD.SU.To_String (Source => nv);
+      nvstr : constant String := SU.To_String (Source => nv);
    begin
       if nvstr = "0" then
          return False;
@@ -1237,7 +1237,7 @@ package body AdaBase.Results.Converters is
       raise CONVERSION_FAILED with "Tried to convert '" & nvstr & "'";
    end convert;
 
-   function convert (nv : textwide) return AD.nbyte0
+   function convert (nv : textwide) return nbyte0
    is
       nvstr : constant Wide_String := SUW.To_Wide_String (Source => nv);
       nverr : constant String   := ACC.To_String (Item => nvstr);
@@ -1251,7 +1251,7 @@ package body AdaBase.Results.Converters is
       raise CONVERSION_FAILED with "Tried to convert '" & nverr & "'";
    end convert;
 
-   function convert (nv : textsuper) return AD.nbyte0
+   function convert (nv : textsuper) return nbyte0
    is
       nvstr : constant Wide_Wide_String := SUWW.To_Wide_Wide_String (nv);
       nverr : constant String := ACC.To_String (Item => nvstr);
@@ -1269,21 +1269,21 @@ package body AdaBase.Results.Converters is
    ---------------------------------
    --  CONVERT *STRING TO *STRING --
    ---------------------------------
-   function convert (nv : AD.textual) return String is
+   function convert (nv : textual) return String is
    begin
-      return AD.SU.To_String (nv);
+      return SU.To_String (nv);
    end convert;
 
-   function convert (nv : AD.textual) return Wide_String
+   function convert (nv : textual) return Wide_String
    is
-      nvstr : constant String := AD.SU.To_String (nv);
+      nvstr : constant String := SU.To_String (nv);
    begin
       return ACC.To_Wide_String (Item => nvstr);
    end convert;
 
-   function convert (nv : AD.textual) return Wide_Wide_String
+   function convert (nv : textual) return Wide_Wide_String
    is
-      nvstr : constant String := AD.SU.To_String (nv);
+      nvstr : constant String := SU.To_String (nv);
    begin
       return ACC.To_Wide_Wide_String (Item => nvstr);
    end convert;
@@ -1351,7 +1351,7 @@ package body AdaBase.Results.Converters is
    ----------------------------------------------------
    -- ENUMERATION - return either integer or string  --
    ----------------------------------------------------
-   function convert (nv : AD.enumtype) return AD.nbyte0 is
+   function convert (nv : enumtype) return nbyte0 is
    begin
       case nv.index is
          when 0 => return False;
@@ -1360,106 +1360,106 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.enumtype) return AD.nbyte1
+   function convert (nv : enumtype) return nbyte1
    is
-      max : constant Natural := Natural (AD.nbyte1'Last);
+      max : constant Natural := Natural (nbyte1'Last);
    begin
       case nv.index is
-         when 0 .. max => return AD.nbyte1 (nv.index);
+         when 0 .. max => return nbyte1 (nv.index);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.enumtype) return AD.nbyte2
+   function convert (nv : enumtype) return nbyte2
    is
-      max : constant Natural := Natural (AD.nbyte2'Last);
+      max : constant Natural := Natural (nbyte2'Last);
    begin
       case nv.index is
-         when 0 .. max => return AD.nbyte2 (nv.index);
+         when 0 .. max => return nbyte2 (nv.index);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.enumtype) return AD.nbyte3
+   function convert (nv : enumtype) return nbyte3
    is
-      max : constant Natural := Natural (AD.nbyte3'Last);
+      max : constant Natural := Natural (nbyte3'Last);
    begin
       case nv.index is
-         when 0 .. max => return AD.nbyte3 (nv.index);
+         when 0 .. max => return nbyte3 (nv.index);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.enumtype) return AD.nbyte4 is
+   function convert (nv : enumtype) return nbyte4 is
    begin
-      return AD.nbyte4 (nv.index);
+      return nbyte4 (nv.index);
    end convert;
 
-   function convert (nv : AD.enumtype) return AD.nbyte8 is
+   function convert (nv : enumtype) return nbyte8 is
    begin
-      return AD.nbyte8 (nv.index);
+      return nbyte8 (nv.index);
    end convert;
 
-   function convert (nv : AD.enumtype) return AD.byte1
+   function convert (nv : enumtype) return byte1
    is
-      max : constant Natural := Natural (AD.byte1'Last);
+      max : constant Natural := Natural (byte1'Last);
    begin
       case nv.index is
-         when 0 .. max => return AD.byte1 (nv.index);
+         when 0 .. max => return byte1 (nv.index);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.enumtype) return AD.byte2
+   function convert (nv : enumtype) return byte2
    is
-      max : constant Natural := Natural (AD.byte2'Last);
+      max : constant Natural := Natural (byte2'Last);
    begin
       case nv.index is
-         when 0 .. max => return AD.byte2 (nv.index);
+         when 0 .. max => return byte2 (nv.index);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.enumtype) return AD.byte3
+   function convert (nv : enumtype) return byte3
    is
-      max : constant Natural := Natural (AD.byte3'Last);
+      max : constant Natural := Natural (byte3'Last);
    begin
       case nv.index is
-         when 0 .. max => return AD.byte3 (nv.index);
+         when 0 .. max => return byte3 (nv.index);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.enumtype) return AD.byte4
+   function convert (nv : enumtype) return byte4
    is
-      max : constant Natural := Natural (AD.byte4'Last);
+      max : constant Natural := Natural (byte4'Last);
    begin
       case nv.index is
-         when 0 .. max => return AD.byte4 (nv.index);
+         when 0 .. max => return byte4 (nv.index);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
-   function convert (nv : AD.enumtype) return AD.byte8 is
+   function convert (nv : enumtype) return byte8 is
    begin
-      return AD.byte8 (nv.index);
+      return byte8 (nv.index);
    end convert;
 
-   function convert (nv : AD.enumtype) return String is
+   function convert (nv : enumtype) return String is
    begin
-      return AD.SU.To_String (Source => nv.enumeration);
+      return SU.To_String (Source => nv.enumeration);
    end convert;
 
-   function convert (nv : AD.enumtype) return Wide_String
+   function convert (nv : enumtype) return Wide_String
    is
-      str : constant String := AD.SU.To_String (Source => nv.enumeration);
+      str : constant String := SU.To_String (Source => nv.enumeration);
    begin
       return ACC.To_Wide_String (Item => str);
    end convert;
 
-   function convert (nv : AD.enumtype) return Wide_Wide_String
+   function convert (nv : enumtype) return Wide_Wide_String
    is
-      str : constant String := AD.SU.To_String (Source => nv.enumeration);
+      str : constant String := SU.To_String (Source => nv.enumeration);
    begin
       return ACC.To_Wide_Wide_String (Item => str);
    end convert;
@@ -1467,7 +1467,7 @@ package body AdaBase.Results.Converters is
    ------------------------
    --  CHAIN (OF BYTES)  --
    ------------------------
-   function convert (nv : AD.chain) return AD.nbyte0 is
+   function convert (nv : chain) return nbyte0 is
    begin
       if nv'Length > 1 then
          raise TARGET_TYPE_TOO_NARROW;
@@ -1479,7 +1479,7 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : AD.chain) return AD.nbyte1 is
+   function convert (nv : chain) return nbyte1 is
    begin
       if nv'Length > 1 then
          raise TARGET_TYPE_TOO_NARROW;
@@ -1487,10 +1487,10 @@ package body AdaBase.Results.Converters is
       return nv (1);
    end convert;
 
-   function convert (nv : AD.chain) return AD.nbyte2
+   function convert (nv : chain) return nbyte2
    is
-      use type AD.nbyte2;
-      cn : AD.chain (1 .. 2) := (others => 0);
+      use type nbyte2;
+      cn : chain (1 .. 2) := (others => 0);
    begin
       if nv'Length > 2 then
          raise TARGET_TYPE_TOO_NARROW;
@@ -1500,19 +1500,19 @@ package body AdaBase.Results.Converters is
       end loop;
       if Big_Endian then
          return
-           AD.nbyte2 (BIT.Shift_Left (BIT.Unsigned_16 (cn (1)), 8)) +
-           AD.nbyte2 (cn (2));
+           nbyte2 (BIT.Shift_Left (BIT.Unsigned_16 (cn (1)), 8)) +
+           nbyte2 (cn (2));
       else
          return
-           AD.nbyte2 (BIT.Shift_Left (BIT.Unsigned_16 (cn (2)), 8)) +
-           AD.nbyte2 (cn (1));
+           nbyte2 (BIT.Shift_Left (BIT.Unsigned_16 (cn (2)), 8)) +
+           nbyte2 (cn (1));
       end if;
    end convert;
 
-   function convert (nv : AD.chain) return AD.nbyte3
+   function convert (nv : chain) return nbyte3
    is
-      use type AD.nbyte3;
-      cn : AD.chain (1 .. 3) := (others => 0);
+      use type nbyte3;
+      cn : chain (1 .. 3) := (others => 0);
    begin
       if nv'Length > 3 then
          raise TARGET_TYPE_TOO_NARROW;
@@ -1522,21 +1522,21 @@ package body AdaBase.Results.Converters is
       end loop;
       if Big_Endian then
          return
-           AD.nbyte3 (BIT.Shift_Left (BIT.Unsigned_32 (cn (1)), 16)) +
-           AD.nbyte3 (BIT.Shift_Left (BIT.Unsigned_16 (cn (2)), 8)) +
-           AD.nbyte3 (cn (3));
+           nbyte3 (BIT.Shift_Left (BIT.Unsigned_32 (cn (1)), 16)) +
+           nbyte3 (BIT.Shift_Left (BIT.Unsigned_16 (cn (2)), 8)) +
+           nbyte3 (cn (3));
       else
          return
-           AD.nbyte3 (BIT.Shift_Left (BIT.Unsigned_32 (cn (3)), 16)) +
-           AD.nbyte3 (BIT.Shift_Left (BIT.Unsigned_16 (cn (2)), 8)) +
-           AD.nbyte3 (cn (1));
+           nbyte3 (BIT.Shift_Left (BIT.Unsigned_32 (cn (3)), 16)) +
+           nbyte3 (BIT.Shift_Left (BIT.Unsigned_16 (cn (2)), 8)) +
+           nbyte3 (cn (1));
       end if;
    end convert;
 
-   function convert (nv : AD.chain) return AD.nbyte4
+   function convert (nv : chain) return nbyte4
    is
-      use type AD.nbyte4;
-      cn : AD.chain (1 .. 4) := (others => 0);
+      use type nbyte4;
+      cn : chain (1 .. 4) := (others => 0);
    begin
       if nv'Length > 4 then
          raise TARGET_TYPE_TOO_NARROW;
@@ -1546,23 +1546,23 @@ package body AdaBase.Results.Converters is
       end loop;
       if Big_Endian then
          return
-           AD.nbyte4 (BIT.Shift_Left (BIT.Unsigned_32 (cn (1)), 24)) +
-           AD.nbyte4 (BIT.Shift_Left (BIT.Unsigned_32 (cn (2)), 16)) +
-           AD.nbyte4 (BIT.Shift_Left (BIT.Unsigned_16 (cn (3)), 8)) +
-           AD.nbyte4 (cn (4));
+           nbyte4 (BIT.Shift_Left (BIT.Unsigned_32 (cn (1)), 24)) +
+           nbyte4 (BIT.Shift_Left (BIT.Unsigned_32 (cn (2)), 16)) +
+           nbyte4 (BIT.Shift_Left (BIT.Unsigned_16 (cn (3)), 8)) +
+           nbyte4 (cn (4));
       else
          return
-           AD.nbyte4 (BIT.Shift_Left (BIT.Unsigned_32 (cn (4)), 24)) +
-           AD.nbyte4 (BIT.Shift_Left (BIT.Unsigned_32 (cn (3)), 16)) +
-           AD.nbyte4 (BIT.Shift_Left (BIT.Unsigned_16 (cn (2)), 8)) +
-           AD.nbyte4 (cn (1));
+           nbyte4 (BIT.Shift_Left (BIT.Unsigned_32 (cn (4)), 24)) +
+           nbyte4 (BIT.Shift_Left (BIT.Unsigned_32 (cn (3)), 16)) +
+           nbyte4 (BIT.Shift_Left (BIT.Unsigned_16 (cn (2)), 8)) +
+           nbyte4 (cn (1));
       end if;
    end convert;
 
-   function convert (nv : AD.chain) return AD.nbyte8
+   function convert (nv : chain) return nbyte8
    is
-      use type AD.nbyte8;
-      cn : AD.chain (1 .. 8) := (others => 0);
+      use type nbyte8;
+      cn : chain (1 .. 8) := (others => 0);
    begin
       if nv'Length > 8 then
          raise TARGET_TYPE_TOO_NARROW;
@@ -1572,24 +1572,24 @@ package body AdaBase.Results.Converters is
       end loop;
       if Big_Endian then
          return
-           AD.nbyte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (1)), 56)) +
-           AD.nbyte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (2)), 48)) +
-           AD.nbyte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (3)), 40)) +
-           AD.nbyte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (4)), 32)) +
-           AD.nbyte8 (BIT.Shift_Left (BIT.Unsigned_32 (cn (5)), 24)) +
-           AD.nbyte8 (BIT.Shift_Left (BIT.Unsigned_32 (cn (6)), 16)) +
-           AD.nbyte8 (BIT.Shift_Left (BIT.Unsigned_16 (cn (7)), 8)) +
-           AD.nbyte8 (cn (8));
+           nbyte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (1)), 56)) +
+           nbyte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (2)), 48)) +
+           nbyte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (3)), 40)) +
+           nbyte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (4)), 32)) +
+           nbyte8 (BIT.Shift_Left (BIT.Unsigned_32 (cn (5)), 24)) +
+           nbyte8 (BIT.Shift_Left (BIT.Unsigned_32 (cn (6)), 16)) +
+           nbyte8 (BIT.Shift_Left (BIT.Unsigned_16 (cn (7)), 8)) +
+           nbyte8 (cn (8));
       else
          return
-           AD.nbyte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (8)), 56)) +
-           AD.nbyte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (7)), 48)) +
-           AD.nbyte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (6)), 40)) +
-           AD.nbyte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (5)), 32)) +
-           AD.nbyte8 (BIT.Shift_Left (BIT.Unsigned_32 (cn (4)), 24)) +
-           AD.nbyte8 (BIT.Shift_Left (BIT.Unsigned_32 (cn (3)), 16)) +
-           AD.nbyte8 (BIT.Shift_Left (BIT.Unsigned_16 (cn (2)), 8)) +
-           AD.nbyte8 (cn (1));
+           nbyte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (8)), 56)) +
+           nbyte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (7)), 48)) +
+           nbyte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (6)), 40)) +
+           nbyte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (5)), 32)) +
+           nbyte8 (BIT.Shift_Left (BIT.Unsigned_32 (cn (4)), 24)) +
+           nbyte8 (BIT.Shift_Left (BIT.Unsigned_32 (cn (3)), 16)) +
+           nbyte8 (BIT.Shift_Left (BIT.Unsigned_16 (cn (2)), 8)) +
+           nbyte8 (cn (1));
       end if;
    end convert;
 

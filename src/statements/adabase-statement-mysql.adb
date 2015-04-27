@@ -49,10 +49,10 @@ package body AdaBase.Statement.MySQL is
    ---------------------------
    procedure transfer_connection (Stmt        : out MySQL_statement;
                                   connection  : ABM.MYSQL_Access;
-                                  error_mode  : AD.ErrorMode;
-                                  case_mode   : AD.CaseMode;
-                                  string_mode : AD.StringMode;
-                                  max_blob    : AD.BLOB_maximum;
+                                  error_mode  : ErrorMode;
+                                  case_mode   : CaseMode;
+                                  string_mode : StringMode;
+                                  max_blob    : BLOB_maximum;
                                   buffered    : Boolean)
    is
    begin

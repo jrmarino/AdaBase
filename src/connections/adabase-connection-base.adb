@@ -31,7 +31,7 @@ package body AdaBase.Connection.Base is
    --  setCaseMode  --
    -------------------
    overriding
-   procedure setCaseMode (conn : out Base_Connection; mode : AD.CaseMode)
+   procedure setCaseMode (conn : out Base_Connection; mode : CaseMode)
    is
    begin
       conn.prop_case_mode := mode;
@@ -42,18 +42,18 @@ package body AdaBase.Connection.Base is
    --  caseMode  --
    ----------------
    overriding
-   function caseMode (conn : Base_Connection) return AD.CaseMode
+   function getCaseMode (conn : Base_Connection) return CaseMode
    is
    begin
       return conn.prop_case_mode;
-   end caseMode;
+   end getCaseMode;
 
 
    --------------------
    --  setErrorMode  --
    --------------------
    overriding
-   procedure setErrorMode (conn : out Base_Connection; mode : AD.ErrorMode)
+   procedure setErrorMode (conn : out Base_Connection; mode : ErrorMode)
    is
    begin
       conn.prop_error_mode := mode;
@@ -64,18 +64,18 @@ package body AdaBase.Connection.Base is
    --  ErrorMode  --
    -----------------
    overriding
-   function ErrorMode (conn : Base_Connection) return AD.ErrorMode
+   function getErrorMode (conn : Base_Connection) return ErrorMode
    is
    begin
       return conn.prop_error_mode;
-   end ErrorMode;
+   end getErrorMode;
 
 
    ---------------------
    --  setStringMode  --
    ---------------------
    overriding
-   procedure setStringMode (conn : out Base_Connection; mode : AD.StringMode)
+   procedure setStringMode (conn : out Base_Connection; mode : StringMode)
    is
    begin
       conn.prop_string_mode := mode;
@@ -86,11 +86,11 @@ package body AdaBase.Connection.Base is
    --  stringMode  --
    ------------------
    overriding
-   function stringMode (conn : Base_Connection) return AD.StringMode
+   function getStringMode (conn : Base_Connection) return StringMode
    is
    begin
       return conn.prop_string_mode;
-   end stringMode;
+   end getStringMode;
 
 
    --------------------
@@ -98,7 +98,7 @@ package body AdaBase.Connection.Base is
    --------------------
    overriding
    procedure setMaxBlobSize (conn    : out Base_Connection;
-                             maxsize :     AD.BLOB_maximum)
+                             maxsize :     BLOB_maximum)
    is
    begin
       conn.prop_max_blob := maxsize;
@@ -109,7 +109,7 @@ package body AdaBase.Connection.Base is
    --  maxBlobSize  --
    -------------------
    overriding
-   function maxBlobSize (conn : Base_Connection) return AD.BLOB_maximum
+   function maxBlobSize (conn : Base_Connection) return BLOB_maximum
    is
    begin
       return conn.prop_max_blob;
@@ -121,7 +121,7 @@ package body AdaBase.Connection.Base is
    ----------------------------
    overriding
    function transactionIsolation (conn : Base_Connection)
-                                  return AD.TransIsolation
+                                  return TransIsolation
    is
    begin
       return conn.prop_trax_isolation;
@@ -191,20 +191,20 @@ package body AdaBase.Connection.Base is
    -----------
    --  SUS  --
    -----------
-   function SUS (fixed : String) return AD.textual
+   function SUS (fixed : String) return textual
    is
    begin
-      return AD.SU.To_Unbounded_String (Source => fixed);
+      return SU.To_Unbounded_String (Source => fixed);
    end SUS;
 
 
    -----------
    --  USS  --
    -----------
-   function USS (loose : AD.textual) return String
+   function USS (loose : textual) return String
    is
    begin
-      return AD.SU.To_String (Source => loose);
+      return SU.To_String (Source => loose);
    end USS;
 
 

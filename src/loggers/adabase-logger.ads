@@ -16,8 +16,6 @@
 
 package AdaBase.Logger is
 
-   pragma Pure;
-
    type Base_Pure is abstract tagged private;
 
 private

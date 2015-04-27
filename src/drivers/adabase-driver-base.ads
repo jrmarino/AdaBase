@@ -45,15 +45,15 @@ package AdaBase.Driver.Base is
 
    overriding
    function trait_column_case    (driver : Base_Driver)
-                                  return ACB.AD.CaseMode;
+                                  return CaseMode;
 
    overriding
    function trait_error_mode     (driver : Base_Driver)
-                                  return ACB.AD.ErrorMode;
+                                  return ErrorMode;
 
    overriding
    function trait_string_mode    (driver : Base_Driver)
-                                  return ACB.AD.StringMode;
+                                  return StringMode;
 
    overriding
    function trait_connected      (driver : Base_Driver)
@@ -81,7 +81,7 @@ package AdaBase.Driver.Base is
 
    overriding
    function trait_max_blob_size    (driver : Base_Driver)
-                                    return ACB.AD.BLOB_maximum;
+                                    return BLOB_maximum;
 
    overriding
    procedure set_trait_autocommit  (driver : Base_Driver;
@@ -89,19 +89,19 @@ package AdaBase.Driver.Base is
 
    overriding
    procedure set_trait_column_case (driver : Base_Driver;
-                                    trait  : ACB.AD.CaseMode);
+                                    trait  : CaseMode);
 
    overriding
    procedure set_trait_error_mode  (driver : Base_Driver;
-                                    trait  : ACB.AD.ErrorMode);
+                                    trait  : ErrorMode);
 
    overriding
    procedure set_trait_string_mode (driver : Base_Driver;
-                                    trait  : ACB.AD.StringMode);
+                                    trait  : StringMode);
 
    overriding
    procedure set_trait_max_blob_size (driver : Base_Driver;
-                                      trait  : ACB.AD.BLOB_maximum);
+                                      trait  : BLOB_maximum);
 
    overriding
    procedure query_clear_table       (driver : Base_Driver;
@@ -121,20 +121,20 @@ private
       record
          connection_active : Boolean := False;
          connection        : ACB.Base_Connection_Access;
-         dialect           : ACB.AD.TDriver := ACB.AD.foundation;
+         dialect           : TDriver := foundation;
       end record;
 
-   function SUS (fixed : String) return ACB.AD.textual;
-   function USS (loose : ACB.AD.textual) return String;
+   function SUS (fixed : String) return textual;
+   function USS (loose : textual) return String;
 
    procedure log_nominal (driver   : Base_Driver;
-                          category : ACB.AD.LogCategory;
-                          message  : ACB.AD.textual);
+                          category : LogCategory;
+                          message  : textual);
 
    procedure log_problem
      (driver     : Base_Driver;
-      category   : ACB.AD.LogCategory;
-      message    : ACB.AD.textual;
+      category   : LogCategory;
+      message    : textual;
       pull_codes : Boolean := False;
       break      : Boolean := False);
 

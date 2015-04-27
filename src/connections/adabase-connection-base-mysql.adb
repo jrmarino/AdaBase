@@ -130,7 +130,7 @@ package body AdaBase.Connection.Base.MySQL is
    --  SqlState  --
    ----------------
    overriding
-   function SqlState (conn : MySQL_Connection) return AD.TSqlState
+   function SqlState (conn : MySQL_Connection) return TSqlState
    is
       result : ABM.ICS.chars_ptr;
    begin
@@ -138,7 +138,7 @@ package body AdaBase.Connection.Base.MySQL is
       declare
          convstr : constant String := ABM.ICS.Value (Item => result);
       begin
-         return AD.TSqlState (convstr (1 .. 5));
+         return TSqlState (convstr (1 .. 5));
       end;
    end SqlState;
 
@@ -148,7 +148,7 @@ package body AdaBase.Connection.Base.MySQL is
    ---------------------
    overriding
    function driverMessage (conn : MySQL_Connection)
-                           return AD.textual
+                           return textual
    is
       result : ABM.ICS.chars_ptr;
    begin
@@ -161,12 +161,12 @@ package body AdaBase.Connection.Base.MySQL is
    --  driverCode  --
    ------------------
    overriding
-   function driverCode (conn : MySQL_Connection) return AD.DriverCodes
+   function driverCode (conn : MySQL_Connection) return DriverCodes
    is
       result : ABM.my_uint;
    begin
       result := ABM.mysql_errno (handle => conn.handle);
-      return AD.DriverCodes (result);
+      return DriverCodes (result);
    end driverCode;
 
 
@@ -174,12 +174,12 @@ package body AdaBase.Connection.Base.MySQL is
    --  lastInsertID  --
    --------------------
    overriding
-   function lastInsertID (conn : MySQL_Connection) return AD.TraxID
+   function lastInsertID (conn : MySQL_Connection) return TraxID
    is
       result : ABM.my_ulonglong;
    begin
       result := ABM.mysql_insert_id (handle => conn.handle);
-      return AD.TraxID (result);
+      return TraxID (result);
    end lastInsertID;
 
 
@@ -225,9 +225,9 @@ package body AdaBase.Connection.Base.MySQL is
                       database : String;
                       username : String;
                       password : String;
-                      hostname : String := AD.blankstring;
-                      socket   : String := AD.blankstring;
-                      port     : AD.PosixPort := AD.portless)
+                      hostname : String := blankstring;
+                      socket   : String := blankstring;
+                      port     : PosixPort := portless)
    is
       use type ABM.MYSQL_Access;
       options : Natural := 0;
@@ -254,7 +254,7 @@ package body AdaBase.Connection.Base.MySQL is
          raise INITIALIZE_FAIL;
       end if;
 
-      if socket = AD.blankstring then
+      if socket = blankstring then
          conn.handle := ABM.mysql_real_connect
            (handle      => conn.handle,
             host        => S2P (hostname),
@@ -351,7 +351,7 @@ package body AdaBase.Connection.Base.MySQL is
    ---------------
    overriding
    function  execute (conn : MySQL_Connection;
-                      sql : String) return AD.AffectedRows
+                      sql : String) return AffectedRows
    is
       use type ABM.my_int;
       result : ABM.my_int;
@@ -364,7 +364,7 @@ package body AdaBase.Connection.Base.MySQL is
       if result /= 0 then
          raise QUERY_FAIL;
       end if;
-      return AD.AffectedRows (result);
+      return AffectedRows (result);
    end execute;
 
 
@@ -373,13 +373,13 @@ package body AdaBase.Connection.Base.MySQL is
    -------------------------------
    overriding
    procedure setTransactionIsolation (conn      : out MySQL_Connection;
-                                      isolation :     AD.TransIsolation)
+                                      isolation :     TransIsolation)
    is
-      use type AD.textual;
-      use type AD.TransIsolation;
+      use type textual;
+      use type TransIsolation;
       sql : constant String := "SET SESSION TRANSACTION ISOLATION LEVEL " &
-                               AD.IsoKeywords (isolation);
-      affected_rows : AD.AffectedRows;
+                               IsoKeywords (isolation);
+      affected_rows : AffectedRows;
    begin
       if conn.prop_active then
          if isolation = conn.prop_trax_isolation then
@@ -420,7 +420,7 @@ package body AdaBase.Connection.Base.MySQL is
    --  convert_version  --
    -----------------------
    function convert_version (mysql_version : Natural)
-     return AD.textual
+     return textual
    is
       raw : constant String := mysql_version'Img;
    begin
@@ -435,10 +435,10 @@ package body AdaBase.Connection.Base.MySQL is
    -----------
    --  S2P  --
    -----------
-   function S2P (S : AD.textual) return ABM.ICS.chars_ptr
+   function S2P (S : textual) return ABM.ICS.chars_ptr
    is
    begin
-      return ABM.ICS.New_String (Str => AD.SU.To_String (Source => S));
+      return ABM.ICS.New_String (Str => SU.To_String (Source => S));
    end S2P;
 
 
@@ -457,12 +457,12 @@ package body AdaBase.Connection.Base.MySQL is
    -------------------------
    procedure set_character_set (conn : MySQL_Connection)
    is
-      use type AD.textual;
+      use type textual;
       sql : constant String := "SET CHARACTER SET " & USS (conn.character_set);
-      affected_rows : AD.AffectedRows;
+      affected_rows : AffectedRows;
    begin
       if conn.prop_active then
-         if conn.character_set /= AD.blank then
+         if conn.character_set /= blank then
             affected_rows := execute (conn => conn, sql => sql);
          end if;
       end if;

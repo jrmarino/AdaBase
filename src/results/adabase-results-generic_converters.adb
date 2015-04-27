@@ -27,9 +27,9 @@ package body AdaBase.Results.Generic_Converters is
    --------------------------
    --  GENERIC convertstr  --
    --------------------------
-   function convertstr (nv : AD.textual) return IntType
+   function convertstr (nv : textual) return IntType
    is
-      nverr : constant String := AD.SU.To_String (nv);
+      nverr : constant String := SU.To_String (nv);
    begin
       return IntType'Value (nverr);
    exception
@@ -41,9 +41,9 @@ package body AdaBase.Results.Generic_Converters is
    --------------------------
    --  GENERIC convertst2  --
    --------------------------
-   function convertst2 (nv : AD.textual) return RealType
+   function convertst2 (nv : textual) return RealType
    is
-      nverr : constant String := AD.SU.To_String (nv);
+      nverr : constant String := SU.To_String (nv);
    begin
       return RealType'Value (nverr);
    exception

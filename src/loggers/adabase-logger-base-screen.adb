@@ -23,14 +23,14 @@ package body AdaBase.Logger.Base.Screen is
    overriding
    procedure reaction (listener : Screen_Logger)
    is
-      use type AD.SU.Unbounded_String;
+      use type SU.Unbounded_String;
    begin
-      if listener.error_msg = AD.blank then
+      if listener.error_msg = blank then
          TIO.Put_Line (File => TIO.Standard_Output,
-                       Item => AD.SU.To_String (listener.composite));
+                       Item => SU.To_String (listener.composite));
       else
          TIO.Put_Line (File => TIO.Standard_Error,
-                       Item => AD.SU.To_String (listener.composite));
+                       Item => SU.To_String (listener.composite));
       end if;
    end reaction;
 

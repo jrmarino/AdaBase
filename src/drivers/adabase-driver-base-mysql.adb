@@ -25,9 +25,9 @@ package body AdaBase.Driver.Base.MySQL is
    overriding
    procedure disconnect (driver : out MySQL_Driver)
    is
-      msg : constant AD.textual :=
+      msg : constant textual :=
         SUS ("Disconnect From " & USS (driver.database) & "database");
-      err : constant AD.textual :=
+      err : constant textual :=
         SUS ("ACK! Disconnect attempted on inactive connection");
    begin
       if driver.connection_active then
@@ -35,11 +35,11 @@ package body AdaBase.Driver.Base.MySQL is
          driver.connection := null;
          driver.connection_active := False;
 
-         driver.log_nominal (category => AD.disconnection,
+         driver.log_nominal (category => disconnecting,
                              message  => msg);
       else
          --  Non-fatal attempt to disconnect db when none is connected
-         driver.log_problem (category => AD.disconnection,
+         driver.log_problem (category => disconnecting,
                              message  => err);
       end if;
    end disconnect;
@@ -51,23 +51,23 @@ package body AdaBase.Driver.Base.MySQL is
    overriding
    procedure rollback (driver : MySQL_Driver)
    is
-      use type ALF.AD.TransIsolation;
-      err1 : constant AD.textual :=
+      use type TransIsolation;
+      err1 : constant textual :=
         SUS ("ACK! Rollback attempted on inactive connection");
-      err2 : constant AD.textual :=
+      err2 : constant textual :=
         SUS ("ACK! Rollback attempted when autocommit mode set on");
-      err3 : constant AD.textual :=
+      err3 : constant textual :=
         SUS ("Rollback attempt failed");
    begin
       if not driver.connection_active then
          --  Non-fatal attempt to roll back when no database is connected
-         driver.log_problem (category => AD.miscellaneous,
+         driver.log_problem (category => miscellaneous,
                              message  => err1);
          return;
       end if;
       if driver.connection.autoCommit then
          --  Non-fatal attempt to roll back when autocommit is on
-         driver.log_problem (category => AD.miscellaneous,
+         driver.log_problem (category => miscellaneous,
                              message  => err2);
          return;
       end if;
@@ -76,7 +76,7 @@ package body AdaBase.Driver.Base.MySQL is
 
    exception
       when ACM.ROLLBACK_FAIL =>
-         driver.log_problem (category   => AD.miscellaneous,
+         driver.log_problem (category   => miscellaneous,
                              message    => err3,
                              pull_codes => True);
 
@@ -89,23 +89,23 @@ package body AdaBase.Driver.Base.MySQL is
    overriding
    procedure commit (driver : MySQL_Driver)
    is
-      use type ALF.AD.TransIsolation;
-      err1 : constant AD.textual :=
+      use type TransIsolation;
+      err1 : constant textual :=
         SUS ("ACK! Commit attempted on inactive connection");
-      err2 : constant AD.textual :=
+      err2 : constant textual :=
         SUS ("ACK! Commit attempted when autocommit mode set on");
-      err3 : constant AD.textual :=
+      err3 : constant textual :=
         SUS ("Commit attempt failed");
    begin
       if not driver.connection_active then
          --  Non-fatal attempt to commit when no database is connected
-         driver.log_problem (category => AD.transaction,
+         driver.log_problem (category => transaction,
                              message  => err1);
          return;
       end if;
       if driver.connection.autoCommit then
          --  Non-fatal attempt to commit when autocommit is on
-         driver.log_problem (category => AD.transaction,
+         driver.log_problem (category => transaction,
                              message  => err2);
          return;
       end if;
@@ -114,7 +114,7 @@ package body AdaBase.Driver.Base.MySQL is
 
    exception
       when ACM.COMMIT_FAIL =>
-         driver.log_problem (category   => AD.transaction,
+         driver.log_problem (category   => transaction,
                              message    => err3,
                              pull_codes => True);
    end commit;
@@ -124,7 +124,7 @@ package body AdaBase.Driver.Base.MySQL is
    --  last_insert_id  --
    ----------------------
    overriding
-   function last_insert_id (driver : MySQL_Driver) return AD.TraxID
+   function last_insert_id (driver : MySQL_Driver) return TraxID
    is
    begin
       return driver.connection.all.lastInsertID;
@@ -135,7 +135,7 @@ package body AdaBase.Driver.Base.MySQL is
    --  last_driver_code  --
    ------------------------
    overriding
-   function last_sql_state (driver : MySQL_Driver) return AD.TSqlState
+   function last_sql_state (driver : MySQL_Driver) return TSqlState
    is
    begin
       return driver.connection.all.SqlState;
@@ -146,9 +146,9 @@ package body AdaBase.Driver.Base.MySQL is
    --  last_driver_message  --
    ---------------------------
    overriding
-   function last_error_info (driver : MySQL_Driver) return AD.Error_Info
+   function last_error_info (driver : MySQL_Driver) return Error_Info
    is
-      result : AD.Error_Info;
+      result : Error_Info;
    begin
       result.sql_state      := driver.connection.all.SqlState;
       result.driver_code    := driver.connection.all.driverCode;
@@ -162,24 +162,24 @@ package body AdaBase.Driver.Base.MySQL is
    ---------------
    overriding
    function execute (driver : MySQL_Driver; sql : String)
-                     return AD.AffectedRows
+                     return AffectedRows
    is
-      result : AD.AffectedRows := 0;
-      err1 : constant AD.textual :=
+      result : AffectedRows := 0;
+      err1 : constant textual :=
         SUS ("ACK! Execution attempted on inactive connection");
    begin
       if driver.connection_active then
          result := driver.connection.all.execute (sql => sql);
-         driver.log_nominal (category => AD.execution, message => SUS (sql));
+         driver.log_nominal (category => execution, message => SUS (sql));
       else
          --  Non-fatal attempt to query an unccnnected database
-         driver.log_problem (category => AD.execution,
+         driver.log_problem (category => execution,
                              message  => err1);
       end if;
       return result;
    exception
       when ACM.QUERY_FAIL =>
-         driver.log_problem (category   => AD.execution,
+         driver.log_problem (category   => execution,
                              message    => SUS (sql),
                              pull_codes => True);
          return 0;
@@ -193,7 +193,7 @@ package body AdaBase.Driver.Base.MySQL is
                    return  AS.Base'Class
    is
       result : AS.MySQL.MySQL_statement;
-      err1 : constant AD.textual :=
+      err1 : constant textual :=
         SUS ("ACK! Query attempted on inactive connection");
    begin
       if driver.connection_active then
@@ -202,11 +202,11 @@ package body AdaBase.Driver.Base.MySQL is
          --  set sql ???
          --  driver.connection.execute (sql => sql);
          --  Result.successful := True;
-         driver.log_nominal (category => AD.execution, message => SUS (sql));
+         driver.log_nominal (category => execution, message => SUS (sql));
          null;
       else
          --  Non-fatal attempt to query an unccnnected database
-         driver.log_problem (category => AD.execution,
+         driver.log_problem (category => execution,
                              message  => err1);
       end if;
       return result;
@@ -306,7 +306,7 @@ package body AdaBase.Driver.Base.MySQL is
                             username : String;
                             password : String;
                             hostname : String;
-                            port     : AD.PosixPort)
+                            port     : PosixPort)
    is
    begin
       driver.private_connect (database => database,
@@ -330,7 +330,7 @@ package body AdaBase.Driver.Base.MySQL is
    begin
       Object.connection       := backend'Access;
       Object.local_connection := backend'Access;
-      Object.dialect          := AD.mysql;
+      Object.dialect          := driver_mysql;
    end initialize;
 
 
@@ -341,17 +341,17 @@ package body AdaBase.Driver.Base.MySQL is
                               database : String;
                               username : String;
                               password : String;
-                              hostname : String := AD.blankstring;
-                              socket   : String := AD.blankstring;
-                              port     : AD.PosixPort := AD.portless)
+                              hostname : String := blankstring;
+                              socket   : String := blankstring;
+                              port     : PosixPort := portless)
    is
-      err1 : constant AD.textual :=
+      err1 : constant textual :=
         SUS ("ACK! Reconnection attempted on active connection");
-      nom  : constant AD.textual :=
+      nom  : constant textual :=
         SUS ("Connection to " & database & " database succeeded.");
    begin
       if driver.connection_active then
-         driver.log_problem (category => AD.execution,
+         driver.log_problem (category => execution,
                              message  => err1);
          return;
       end if;
@@ -364,11 +364,11 @@ package body AdaBase.Driver.Base.MySQL is
 
       driver.connection_active := driver.connection.all.connected;
 
-      driver.log_nominal (category => AD.connection, message => nom);
+      driver.log_nominal (category => connecting, message => nom);
    exception
       when Error : others =>
          driver.log_problem
-           (category => AD.connection,
+           (category => connecting,
             break    => True,
             message  => SUS (ACM.EX.Exception_Message (X => Error)));
    end private_connect;

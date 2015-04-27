@@ -23,26 +23,26 @@ package body AdaBase.Logger.Base.File is
    overriding
    procedure reaction (listener : File_Logger)
    is
-      use type AD.textual;
+      use type textual;
       output : TIO.File_Type;
    begin
-      if listener.filepath = AD.blank then
+      if listener.filepath = blank then
          return;
       end if;
 
       begin
          TIO.Open (File => output,
                    Mode => TIO.Append_File,
-                   Name => AD.SU.To_String (listener.filepath));
+                   Name => SU.To_String (listener.filepath));
       exception
          when TIO.Name_Error =>
             TIO.Create (File => output,
                         Mode => TIO.Out_File,
-                        Name => AD.SU.To_String (listener.filepath));
+                        Name => SU.To_String (listener.filepath));
       end;
 
       TIO.Put_Line (File => output,
-                   Item => AD.SU.To_String (listener.composite));
+                   Item => SU.To_String (listener.composite));
 
       TIO.Close (File => output);
 

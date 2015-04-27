@@ -14,14 +14,12 @@
 --  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --
 
-with AdaBase.DataTypes;
 with AdaBase.Statement;
 
 package AdaBase.Interfaces.Connection is
 
    type iConnection is interface;
 
-   package AD renames AdaBase.DataTypes;
    package AS renames AdaBase.Statement;
 
    --  Autocommit
@@ -30,21 +28,21 @@ package AdaBase.Interfaces.Connection is
 
 
    --  Column Header Case Mode
-   procedure setCaseMode (conn : out iConnection; mode : AD.CaseMode) is null;
-   function     caseMode (conn : iConnection) return AD.CaseMode is abstract;
+   procedure setCaseMode (conn : out iConnection; mode : CaseMode) is null;
+   function  getCaseMode (conn : iConnection) return CaseMode is abstract;
 
 
    --  Representation of empty strings
-   procedure setStringMode (conn : out iConnection; mode : AD.StringMode)
+   procedure setStringMode (conn : out iConnection; mode : StringMode)
                             is null;
-   function     stringMode (conn : iConnection) return AD.StringMode
+   function  getStringMode (conn : iConnection) return StringMode
                             is abstract;
 
 
    --  Setting of exception behavior (suppress, warn, break)
-   procedure setErrorMode (conn : out iConnection; mode : AD.ErrorMode)
+   procedure setErrorMode (conn : out iConnection; mode : ErrorMode)
                            is null;
-   function     ErrorMode (conn : iConnection) return AD.ErrorMode
+   function  getErrorMode (conn : iConnection) return ErrorMode
                            is abstract;
 
 
@@ -68,15 +66,15 @@ package AdaBase.Interfaces.Connection is
 
    --  Set maximum size of result that buffer must accommodate (if supported)
    procedure setMaxBlobSize (conn    : out iConnection;
-                             maxsize :     AD.BLOB_maximum) is null;
-   function     maxBlobSize (conn : iConnection) return AD.BLOB_maximum
+                             maxsize :     BLOB_maximum) is null;
+   function     maxBlobSize (conn : iConnection) return BLOB_maximum
                              is abstract;
 
    --  Set transaction Isolation level
    procedure setTransactionIsolation (conn : out iConnection;
-                                      isolation : AD.TransIsolation) is null;
+                                      isolation : TransIsolation) is null;
    function     transactionIsolation (conn : iConnection)
-                                      return AD.TransIsolation is abstract;
+                                      return TransIsolation is abstract;
 
    --  properties
    function serverVersion (conn : iConnection) return String
@@ -93,15 +91,15 @@ package AdaBase.Interfaces.Connection is
                            is abstract;
 
    --  Error information associated with last query
-   function SqlState      (conn : iConnection) return AD.TSqlState
+   function SqlState      (conn : iConnection) return TSqlState
                            is abstract;
-   function driverMessage (conn : iConnection) return AD.textual
+   function driverMessage (conn : iConnection) return textual
                           is abstract;
-   function driverCode    (conn : iConnection) return AD.DriverCodes
+   function driverCode    (conn : iConnection) return DriverCodes
                            is abstract;
 
    --  Information associated with previous successful query
-   function lastInsertID  (conn : iConnection) return AD.TraxID
+   function lastInsertID  (conn : iConnection) return TraxID
                            is abstract;
 
    --  Commands
@@ -109,14 +107,14 @@ package AdaBase.Interfaces.Connection is
    procedure rollback     (conn : iConnection) is null;
    procedure disconnect   (conn : out iConnection) is null;
    function  execute      (conn : iConnection; sql : String)
-                           return AD.AffectedRows is abstract;
+                           return AffectedRows is abstract;
 
    procedure connect (conn     : out iConnection;
                       database : String;
                       username : String;
                       password : String;
-                      hostname : String := AD.blankstring;
-                      socket   : String := AD.blankstring;
-                      port     : AD.PosixPort := AD.portless) is null;
+                      hostname : String := blankstring;
+                      socket   : String := blankstring;
+                      port     : PosixPort := portless) is null;
 
 end AdaBase.Interfaces.Connection;

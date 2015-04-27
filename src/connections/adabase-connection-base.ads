@@ -15,12 +15,10 @@
 --
 
 with AdaBase.Interfaces.Connection;
-with AdaBase.DataTypes;
 
 package AdaBase.Connection.Base is
 
    package AIC renames AdaBase.Interfaces.Connection;
-   package AD renames AdaBase.DataTypes;
 
    type Base_Connection is abstract new Base_Pure and
                                         AIC.iConnection with private;
@@ -30,33 +28,33 @@ package AdaBase.Connection.Base is
    function autoCommit (conn : Base_Connection) return Boolean;
 
    overriding
-   procedure setCaseMode (conn : out Base_Connection; mode : AD.CaseMode);
+   procedure setCaseMode (conn : out Base_Connection; mode : CaseMode);
 
    overriding
-   function caseMode (conn : Base_Connection) return AD.CaseMode;
+   function getCaseMode (conn : Base_Connection) return CaseMode;
 
    overriding
-   procedure setStringMode (conn : out Base_Connection; mode : AD.StringMode);
+   procedure setStringMode (conn : out Base_Connection; mode : StringMode);
 
    overriding
-   procedure setErrorMode (conn : out Base_Connection; mode : AD.ErrorMode);
+   procedure setErrorMode (conn : out Base_Connection; mode : ErrorMode);
 
    overriding
-   function ErrorMode (conn : Base_Connection) return AD.ErrorMode;
+   function getErrorMode (conn : Base_Connection) return ErrorMode;
 
    overriding
-   function stringMode (conn : Base_Connection) return AD.StringMode;
+   function getStringMode (conn : Base_Connection) return StringMode;
 
    overriding
    procedure setMaxBlobSize (conn : out Base_Connection;
-                             maxsize : AD.BLOB_maximum);
+                             maxsize : BLOB_maximum);
 
    overriding
-   function maxBlobSize (conn : Base_Connection) return AD.BLOB_maximum;
+   function maxBlobSize (conn : Base_Connection) return BLOB_maximum;
 
    overriding
    function transactionIsolation (conn : Base_Connection)
-                                  return AD.TransIsolation;
+                                  return TransIsolation;
 
    overriding
    function serverVersion (conn : Base_Connection)
@@ -82,21 +80,21 @@ private
 
    type Base_Connection is abstract new Base_Pure and AIC.iConnection with
       record
-         prop_auto_commit    : Boolean             := False;
-         prop_active         : Boolean             := False;
-         prop_trax_isolation : AD.TransIsolation   := AD.repeatable_read;
-         prop_error_mode     : AD.ErrorMode        := AD.warning;
-         prop_case_mode      : AD.CaseMode         := AD.natural_case;
-         prop_string_mode    : AD.StringMode       := AD.return_null;
-         prop_max_blob       : AD.BLOB_maximum     := 2 ** 12;  -- 4kb
+         prop_auto_commit    : Boolean          := False;
+         prop_active         : Boolean          := False;
+         prop_trax_isolation : TransIsolation   := repeatable_read;
+         prop_error_mode     : ErrorMode        := warning;
+         prop_case_mode      : CaseMode         := natural_case;
+         prop_string_mode    : StringMode       := return_null;
+         prop_max_blob       : BLOB_maximum     := 2 ** 12;  -- 4kb
 
-         info_server         : AD.textual := AD.blank;
-         info_server_version : AD.textual := AD.blank;
-         info_client         : AD.textual := AD.blank;
-         info_client_version : AD.textual := AD.blank;
+         info_server         : textual := blank;
+         info_server_version : textual := blank;
+         info_client         : textual := blank;
+         info_client_version : textual := blank;
       end record;
 
-   function SUS (fixed : String) return AD.textual;
-   function USS (loose : AD.textual) return String;
+   function SUS (fixed : String) return textual;
+   function USS (loose : textual) return String;
 
 end AdaBase.Connection.Base;

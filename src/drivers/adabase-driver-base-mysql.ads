@@ -17,14 +17,12 @@
 with AdaBase.Interfaces.Driver;
 with AdaBase.Connection.Base.MySQL;
 with AdaBase.Statement;
-with AdaBase.DataTypes;
 
 package AdaBase.Driver.Base.MySQL is
 
    package AID renames AdaBase.Interfaces.Driver;
    package ACM renames AdaBase.Connection.Base.MySQL;
    package AS  renames AdaBase.Statement;
-   package AD  renames AdaBase.DataTypes;
 
    type MySQL_Driver is new Base_Driver and AID.iDriver with private;
 
@@ -42,17 +40,17 @@ package AdaBase.Driver.Base.MySQL is
                     return AS.Base'Class;
 
    overriding
-   function last_insert_id (driver : MySQL_Driver) return AD.TraxID;
+   function last_insert_id (driver : MySQL_Driver) return TraxID;
 
    overriding
-   function last_sql_state (driver : MySQL_Driver) return AD.TSqlState;
+   function last_sql_state (driver : MySQL_Driver) return TSqlState;
 
    overriding
-   function last_error_info (driver : MySQL_Driver) return AD.Error_Info;
+   function last_error_info (driver : MySQL_Driver) return Error_Info;
 
    overriding
    function execute (driver : MySQL_Driver; sql : String)
-                     return AD.AffectedRows;
+                     return AffectedRows;
 
    function trait_protocol_compressed (driver : MySQL_Driver) return Boolean;
    function trait_multiquery_enabled  (driver : MySQL_Driver) return Boolean;
@@ -78,7 +76,7 @@ package AdaBase.Driver.Base.MySQL is
                             username : String;
                             password : String;
                             hostname : String;
-                            port     : AD.PosixPort);
+                            port     : PosixPort);
 private
 
    backend : aliased ACM.MySQL_Connection;
@@ -88,7 +86,7 @@ private
 
          --  connection : ACB.Base_Connection_Access := cow'Access;
          local_connection : ACM.MySQL_Connection_Access := null;
-      database   : AD.textual := AD.blank;
+      database   : textual := blank;
       end record;
 
    procedure initialize (Object : in out MySQL_Driver);
@@ -97,8 +95,8 @@ private
                               database : String;
                               username : String;
                               password : String;
-                              hostname : String := AD.blankstring;
-                              socket   : String := AD.blankstring;
-                              port     : AD.PosixPort := AD.portless);
+                              hostname : String    := blankstring;
+                              socket   : String    := blankstring;
+                              port     : PosixPort := portless);
 
 end AdaBase.Driver.Base.MySQL;

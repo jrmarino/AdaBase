@@ -52,22 +52,22 @@ package AdaBase.Connection.Base.MySQL is
 
    overriding
    procedure setTransactionIsolation (conn      : out MySQL_Connection;
-                                      isolation :     AD.TransIsolation);
+                                      isolation :     TransIsolation);
 
    overriding
    function description   (conn : MySQL_Connection) return String;
 
    overriding
-   function SqlState      (conn : MySQL_Connection) return AD.TSqlState;
+   function SqlState      (conn : MySQL_Connection) return TSqlState;
 
    overriding
-   function driverMessage (conn : MySQL_Connection) return AD.textual;
+   function driverMessage (conn : MySQL_Connection) return textual;
 
    overriding
-   function driverCode    (conn : MySQL_Connection) return AD.DriverCodes;
+   function driverCode    (conn : MySQL_Connection) return DriverCodes;
 
    overriding
-   function lastInsertID  (conn : MySQL_Connection) return AD.TraxID;
+   function lastInsertID  (conn : MySQL_Connection) return TraxID;
 
    overriding
    procedure commit       (conn : MySQL_Connection);
@@ -80,16 +80,16 @@ package AdaBase.Connection.Base.MySQL is
 
    overriding
    function  execute      (conn : MySQL_Connection;
-                           sql  : String) return AD.AffectedRows;
+                           sql  : String) return AffectedRows;
 
    overriding
    procedure connect (conn     : out MySQL_Connection;
                       database : String;
                       username : String;
                       password : String;
-                      hostname : String := AD.blankstring;
-                      socket   : String := AD.blankstring;
-                      port     : AD.PosixPort := AD.portless);
+                      hostname : String := blankstring;
+                      socket   : String := blankstring;
+                      port     : PosixPort := portless);
 
    procedure initializeStatement (conn : MySQL_Connection;
                                   stmt : out AS.MySQL.MySQL_statement);
@@ -113,13 +113,13 @@ private
       info_description : String (1 .. 24) := "MySQL 5.5+ native driver";
 
       handle           : ABM.MYSQL_Access;
-      character_set    : AD.textual  := AD.blank;
+      character_set    : textual  := blank;
    end record;
 
    function convert_version (mysql_version : Natural)
-                             return AD.textual;
+                             return textual;
 
-   function S2P (S : AD.textual) return ABM.ICS.chars_ptr;
+   function S2P (S : textual) return ABM.ICS.chars_ptr;
    function S2P (S : String)     return ABM.ICS.chars_ptr;
 
    procedure set_character_set (conn : MySQL_Connection);

@@ -16,6 +16,6 @@
 
 package AdaBase.Interfaces is
 
-   pragma Pure;
+   --  This can't be pure anymore (due to AdaBase relying on SU package)
 
 end AdaBase.Interfaces;

@@ -16,13 +16,11 @@
 
 with AdaBase.Interfaces.Statement;
 with AdaBase.Bindings.MySQL;
-with AdaBase.DataTypes;
 
 package AdaBase.Statement.MySQL is
 
    package AIS renames AdaBase.Interfaces.Statement;
    package ABM renames AdaBase.Bindings.MySQL;
-   package AD  renames AdaBase.DataTypes;
 
    type MySQL_statement is new Base and AIS.iStatement with private;
 
@@ -43,20 +41,20 @@ package AdaBase.Statement.MySQL is
 
    procedure transfer_connection (Stmt        : out MySQL_statement;
                                   connection  : ABM.MYSQL_Access;
-                                  error_mode  : AD.ErrorMode;
-                                  case_mode   : AD.CaseMode;
-                                  string_mode : AD.StringMode;
-                                  max_blob    : AD.BLOB_maximum;
+                                  error_mode  : ErrorMode;
+                                  case_mode   : CaseMode;
+                                  string_mode : StringMode;
+                                  max_blob    : BLOB_maximum;
                                   buffered    : Boolean);
 
 private
    type MySQL_statement is new Base and AIS.iStatement with record
       constructed     : Boolean := False;
       con_handle      : ABM.MYSQL_Access;
-      con_error_mode  : AD.ErrorMode;
-      con_case_mode   : AD.CaseMode;
-      con_string_mode : AD.StringMode;
-      con_max_blob    : AD.BLOB_maximum;
+      con_error_mode  : ErrorMode;
+      con_case_mode   : CaseMode;
+      con_string_mode : StringMode;
+      con_max_blob    : BLOB_maximum;
       con_buffered    : Boolean;
 
       stmt_handle     : ABM.MYSQL_STMT_Access := null;

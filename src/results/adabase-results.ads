@@ -14,14 +14,12 @@
 --  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --
 
-with AdaBase.DataTypes;
 with Ada.Calendar;
 with Ada.Strings.Wide_Unbounded;
 with Ada.Strings.Wide_Wide_Unbounded;
 
 package AdaBase.Results is
 
-   package AD   renames AdaBase.DataTypes;
    package AC   renames Ada.Calendar;
    package SUW  renames Ada.Strings.Wide_Unbounded;
    package SUWW renames Ada.Strings.Wide_Wide_Unbounded;

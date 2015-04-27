@@ -18,11 +18,11 @@ package AdaBase.Results.Generic_Converters is
 
    generic
       type IntType is (<>);
-   function convertstr (nv : AD.textual) return IntType;
+   function convertstr (nv : textual) return IntType;
 
    generic
       type RealType is digits <>;
-   function convertst2 (nv : AD.textual) return RealType;
+   function convertst2 (nv : textual) return RealType;
 
    generic
       type IntType is (<>);

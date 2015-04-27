@@ -16,13 +16,11 @@
 
 with AdaBase.Statement;
 with AdaBase.Logger.Facility;
-with AdaBase.DataTypes;
 
 package AdaBase.Interfaces.Driver is
 
    type iDriver is interface;
 
-   package AD renames AdaBase.DataTypes;
    package AS renames AdaBase.Statement;
    package ALF renames AdaBase.Logger.Facility;
 
@@ -36,15 +34,15 @@ package AdaBase.Interfaces.Driver is
    function trait_autocommit     (driver : iDriver)
                                   return Boolean is abstract;
    function trait_column_case    (driver : iDriver)
-                                  return AD.CaseMode is abstract;
+                                  return CaseMode is abstract;
    function trait_error_mode     (driver : iDriver)
-                                  return AD.ErrorMode is abstract;
+                                  return ErrorMode is abstract;
    function trait_string_mode    (driver : iDriver)
-                                  return AD.StringMode is abstract;
+                                  return StringMode is abstract;
    function trait_connected      (driver : iDriver)
                                   return Boolean is abstract;
    function trait_max_blob_size  (driver : iDriver)
-                                  return AD.BLOB_maximum is abstract;
+                                  return BLOB_maximum is abstract;
    function trait_driver         (driver : iDriver)
                                   return String is abstract;
    function trait_client_info    (driver : iDriver)
@@ -59,26 +57,26 @@ package AdaBase.Interfaces.Driver is
    procedure set_trait_autocommit    (driver : iDriver;
                                       trait  : Boolean) is null;
    procedure set_trait_column_case   (driver : iDriver;
-                                      trait  : AD.CaseMode) is null;
+                                      trait  : CaseMode) is null;
    procedure set_trait_error_mode    (driver : iDriver;
-                                      trait  : AD.ErrorMode) is null;
+                                      trait  : ErrorMode) is null;
    procedure set_trait_string_mode   (driver : iDriver;
-                                      trait  : AD.StringMode) is null;
+                                      trait  : StringMode) is null;
    procedure set_trait_max_blob_size (driver : iDriver;
-                                      trait  : AD.BLOB_maximum) is null;
+                                      trait  : BLOB_maximum) is null;
 
    function last_insert_id       (driver : iDriver)
-                                  return AD.TraxID is abstract;
+                                  return TraxID is abstract;
 
    function last_sql_state       (driver : iDriver)
-                                  return AD.TSqlState is abstract;
+                                  return TSqlState is abstract;
 
    function last_error_info      (driver : iDriver)
-                                  return AD.Error_Info is abstract;
+                                  return Error_Info is abstract;
 
    function execute              (driver : iDriver;
                                   sql    : String)
-                                  return AD.AffectedRows is abstract;
+                                  return AffectedRows is abstract;
 
    procedure command_standard_logger (driver : iDriver;
                                       device : ALF.TLogger;
@@ -127,6 +125,6 @@ package AdaBase.Interfaces.Driver is
                             username : String;
                             password : String;
                             hostname : String;
-                            port     : AD.PosixPort) is null;
+                            port     : PosixPort) is null;
 
 end AdaBase.Interfaces.Driver;

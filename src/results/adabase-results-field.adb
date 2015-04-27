@@ -24,7 +24,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte0  --
    -----------------
-   function as_nbyte0 (field : std_field) return AD.nbyte0
+   function as_nbyte0 (field : std_field) return nbyte0
    is
    begin
       case field.native.datatype is
@@ -54,7 +54,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte1  --
    -----------------
-   function as_nbyte1 (field : std_field) return AD.nbyte1
+   function as_nbyte1 (field : std_field) return nbyte1
    is
    begin
       case field.native.datatype is
@@ -85,7 +85,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte2  --
    -----------------
-   function as_nbyte2 (field : std_field) return AD.nbyte2
+   function as_nbyte2 (field : std_field) return nbyte2
    is
    begin
       case field.native.datatype is
@@ -116,7 +116,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte3  --
    -----------------
-   function as_nbyte3 (field : std_field) return AD.nbyte3
+   function as_nbyte3 (field : std_field) return nbyte3
    is
    begin
       case field.native.datatype is
@@ -147,7 +147,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte4  --
    -----------------
-   function as_nbyte4 (field : std_field) return AD.nbyte4
+   function as_nbyte4 (field : std_field) return nbyte4
    is
    begin
       case field.native.datatype is
@@ -178,7 +178,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte8  --
    -----------------
-   function as_nbyte8 (field : std_field) return AD.nbyte8
+   function as_nbyte8 (field : std_field) return nbyte8
    is
    begin
       case field.native.datatype is
@@ -209,7 +209,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte1  --
    ----------------
-   function as_byte1 (field : std_field) return AD.byte1
+   function as_byte1 (field : std_field) return byte1
    is
    begin
       case field.native.datatype is
@@ -240,7 +240,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte2  --
    ----------------
-   function as_byte2 (field : std_field) return AD.byte2
+   function as_byte2 (field : std_field) return byte2
    is
    begin
       case field.native.datatype is
@@ -271,7 +271,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte3  --
    ----------------
-   function as_byte3 (field : std_field) return AD.byte3
+   function as_byte3 (field : std_field) return byte3
    is
    begin
       case field.native.datatype is
@@ -302,7 +302,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte4  --
    ----------------
-   function as_byte4 (field : std_field) return AD.byte4
+   function as_byte4 (field : std_field) return byte4
    is
    begin
       case field.native.datatype is
@@ -333,7 +333,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte8  --
    ----------------
-   function as_byte8 (field : std_field) return AD.byte8
+   function as_byte8 (field : std_field) return byte8
    is
    begin
       case field.native.datatype is
@@ -364,7 +364,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_real9  --
    ----------------
-   function as_real9 (field : std_field) return AD.real9
+   function as_real9 (field : std_field) return real9
    is
    begin
       case field.native.datatype is
@@ -395,7 +395,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_real18  --
    -----------------
-   function as_real18 (field : std_field) return AD.real18
+   function as_real18 (field : std_field) return real18
    is
    begin
       case field.native.datatype is
@@ -533,7 +533,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_chain  --
    ----------------
-   function as_chain (field : std_field) return AD.chain
+   function as_chain (field : std_field) return chain
    is
    begin
       case field.native.datatype is
@@ -552,7 +552,7 @@ package body AdaBase.Results.Field is
    -------------------
    --  as_enumtype  --
    -------------------
-   function as_enumtype (field : std_field) return AD.enumtype
+   function as_enumtype (field : std_field) return enumtype
    is
    begin
       case field.native.datatype is
@@ -565,7 +565,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_settype  --
    -----------------
-   function as_settype (field : std_field) return AD.settype
+   function as_settype (field : std_field) return settype
    is
    begin
       case field.native.datatype is
@@ -605,22 +605,22 @@ package body AdaBase.Results.Field is
       return FA;
    end spawn_field;
 
-   function spawn_field (binob : AD.chain) return field_access
+   function spawn_field (binob : chain) return field_access
    is
       len : constant Natural := binob'Length;
       FA  : constant field_access := new std_field;
-      CA  : constant AD.chain_access := new AD.chain (1 .. len);
+      CA  : constant chain_access := new chain (1 .. len);
    begin
       CA.all := binob;
       FA.set (data => (ft_chain, CA), exnull => False);
       return FA;
    end spawn_field;
 
-   function spawn_field (enumset : AD.settype) return field_access
+   function spawn_field (enumset : settype) return field_access
    is
       len : constant Natural := enumset'Length;
       FA  : constant field_access := new std_field;
-      SA  : constant AD.settype_access := new AD.settype (1 .. len);
+      SA  : constant settype_access := new settype (1 .. len);
    begin
       SA.all := enumset;
       FA.set (data => (ft_settype, SA), exnull => False);

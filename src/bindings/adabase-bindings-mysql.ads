@@ -24,7 +24,7 @@ with Interfaces.C.Strings;
 
 package AdaBase.Bindings.MySQL is
 
-   pragma Preelaborate;
+   --  pragma Preelaborate;
 
    package IC  renames Interfaces.C;
    package ICS renames Interfaces.C.Strings;

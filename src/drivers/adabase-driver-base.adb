@@ -33,10 +33,10 @@ package body AdaBase.Driver.Base is
    --  trait_column_case  --
    -------------------------
    overriding
-   function trait_column_case (driver : Base_Driver) return ACB.AD.CaseMode
+   function trait_column_case (driver : Base_Driver) return CaseMode
    is
    begin
-      return driver.connection.all.caseMode;
+      return driver.connection.all.getCaseMode;
    end trait_column_case;
 
 
@@ -44,10 +44,10 @@ package body AdaBase.Driver.Base is
    --  trait_error_mode  --
    ------------------------
    overriding
-   function trait_error_mode (driver : Base_Driver) return ACB.AD.ErrorMode
+   function trait_error_mode (driver : Base_Driver) return ErrorMode
    is
    begin
-      return driver.connection.all.ErrorMode;
+      return driver.connection.all.getErrorMode;
    end trait_error_mode;
 
 
@@ -55,10 +55,10 @@ package body AdaBase.Driver.Base is
    --  trait_string_mode  --
    -------------------------
    overriding
-   function trait_string_mode (driver : Base_Driver) return ACB.AD.StringMode
+   function trait_string_mode (driver : Base_Driver) return StringMode
    is
    begin
-      return driver.connection.all.stringMode;
+      return driver.connection.all.getStringMode;
    end trait_string_mode;
 
 
@@ -137,7 +137,7 @@ package body AdaBase.Driver.Base is
    ---------------------------
    overriding
    function trait_max_blob_size (driver : Base_Driver)
-                                 return ACB.AD.BLOB_maximum
+                                 return BLOB_maximum
    is
    begin
       return driver.connection.all.maxBlobSize;
@@ -161,7 +161,7 @@ package body AdaBase.Driver.Base is
    -----------------------------
    overriding
    procedure set_trait_column_case (driver : Base_Driver;
-                                    trait  : ACB.AD.CaseMode)
+                                    trait  : CaseMode)
    is
    begin
       driver.connection.all.setCaseMode (mode => trait);
@@ -173,7 +173,7 @@ package body AdaBase.Driver.Base is
    ----------------------------
    overriding
    procedure set_trait_error_mode  (driver : Base_Driver;
-                                    trait  : ACB.AD.ErrorMode)
+                                    trait  : ErrorMode)
    is
    begin
       driver.connection.all.setErrorMode (mode => trait);
@@ -185,7 +185,7 @@ package body AdaBase.Driver.Base is
    -----------------------------
    overriding
    procedure set_trait_string_mode (driver : Base_Driver;
-                                    trait  : ACB.AD.StringMode)
+                                    trait  : StringMode)
    is
    begin
       driver.connection.all.setStringMode (mode => trait);
@@ -197,7 +197,7 @@ package body AdaBase.Driver.Base is
    -------------------------------
    overriding
    procedure set_trait_max_blob_size (driver : Base_Driver;
-                                      trait  : ACB.AD.BLOB_maximum)
+                                      trait  : BLOB_maximum)
    is
    begin
       driver.connection.all.setMaxBlobSize (maxsize => trait);
@@ -249,7 +249,7 @@ package body AdaBase.Driver.Base is
                                 table  : String)
    is
       sql : constant String := "TRUNCATE " & table;
-      AR  : ACB.AD.AffectedRows;
+      AR  : AffectedRows;
    begin
       AR := execute (driver => Base_Driver'Class (driver), sql => sql);
    end query_clear_table;
@@ -265,17 +265,17 @@ package body AdaBase.Driver.Base is
                                cascade     : Boolean := False)
 
    is
-      use type ACB.AD.TDriver;
+      use type TDriver;
       --  MySQL acceptions CASCADE but ignores it
       --  MySQL and PostgreSQL can use this versions, but FireBird
       --  needs if_exists implementation and doesn't know CASCADE, so it
       --  needs an overriding implementation.
-      sql : ACB.AD.textual;
-      AR  : ACB.AD.AffectedRows;
+      sql : textual;
+      AR  : AffectedRows;
    begin
-      if cascade and then driver.dialect = ACB.AD.mysql
+      if cascade and then driver.dialect = driver_mysql
       then
-         driver.log_nominal (category => ACB.AD.note, message =>
+         driver.log_nominal (category => note, message =>
                         SUS ("Requested CASCADE has no effect on MySQL"));
       end if;
       case when_exists is
@@ -283,7 +283,7 @@ package body AdaBase.Driver.Base is
          when False => sql := SUS ("DROP TABLE " & tables);
       end case;
       if cascade then
-         ACB.AD.SU.Append (Source => sql, New_Item => " CASCADE");
+         SU.Append (Source => sql, New_Item => " CASCADE");
       end if;
       AR := execute (driver => Base_Driver'Class (driver),
                      sql    => USS (sql));
@@ -297,28 +297,28 @@ package body AdaBase.Driver.Base is
    -----------
    --  SUS  --
    -----------
-   function SUS (fixed : String) return ACB.AD.textual
+   function SUS (fixed : String) return textual
    is
    begin
-      return ACB.AD.SU.To_Unbounded_String (Source => fixed);
+      return SU.To_Unbounded_String (Source => fixed);
    end SUS;
 
 
    -----------
    --  USS  --
    -----------
-   function USS (loose : ACB.AD.textual) return String
+   function USS (loose : textual) return String
    is
    begin
-      return ACB.AD.SU.To_String (Source => loose);
+      return SU.To_String (Source => loose);
    end USS;
 
    ------------------
    --  log_nominal --
    ------------------
    procedure log_nominal (driver    : Base_Driver;
-                          category  : ACB.AD.LogCategory;
-                          message   : ACB.AD.textual)
+                          category  : LogCategory;
+                          message   : textual)
    is
    begin
          logger.log_nominal (driver   => driver.dialect,
@@ -332,14 +332,14 @@ package body AdaBase.Driver.Base is
    ------------------
    procedure log_problem
      (driver     : Base_Driver;
-      category   : ACB.AD.LogCategory;
-      message    : ACB.AD.textual;
+      category   : LogCategory;
+      message    : textual;
       pull_codes : Boolean := False;
       break      : Boolean := False)
    is
-      error_msg  : ACB.AD.textual      := ACB.AD.blank;
-      error_code : ACB.AD.DriverCodes  := 0;
-      sqlstate   : ACB.AD.TSqlState    := ACB.AD.stateless;
+      error_msg  : textual      := blank;
+      error_code : DriverCodes  := 0;
+      sqlstate   : TSqlState    := stateless;
    begin
       if pull_codes then
          error_msg  := driver.connection.all.driverMessage;

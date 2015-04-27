@@ -23,10 +23,10 @@ package body AdaBase.Logger.Base is
    ---------
    --  S  --
    ---------
-   function S (before : String) return AD.textual
+   function S (before : String) return textual
    is
    begin
-      return AD.SU.To_Unbounded_String (before);
+      return SU.To_Unbounded_String (before);
    end S;
 
 
@@ -35,22 +35,22 @@ package body AdaBase.Logger.Base is
    -----------------------
    procedure set_information
                (listener   : out Base_Logger;
-                category   : AD.LogCategory;
-                driver     : AD.TDriver;
-                message    : AD.textual;
-                error_msg  : AD.textual     := AD.blank;
-                error_code : AD.DriverCodes := 0;
-                sqlstate   : AD.TSqlState   := AD.stateless)
+                category   : LogCategory;
+                driver     : TDriver;
+                message    : textual;
+                error_msg  : textual     := blank;
+                error_code : DriverCodes := 0;
+                sqlstate   : TSqlState   := stateless)
    is
-      use type AD.textual;
+      use type textual;
       prefix    : String (1 .. 17);
       drv       : String (1 .. 11);
       timestamp : constant AC.Time := AC.Clock;
       TS        : constant String  := ACF.Image (Date => timestamp);
-      error     : AD.textual :=
+      error     : textual :=
                   S (error_code'Img &  " : SQLSTATE[" & sqlstate & "] : ");
-      err_label : AD.textual := S (" : Driver code :");
-      composite : AD.textual := AD.blank;
+      err_label : textual := S (" : Driver code :");
+      composite : textual := blank;
    begin
       listener.prop_timestamp  := timestamp;
       listener.prop_category   := category;
@@ -61,30 +61,30 @@ package body AdaBase.Logger.Base is
       listener.prop_sqlstate   := sqlstate;
 
       case driver is
-         when AD.mysql      => drv := "    mysql :";
-         when AD.postgresql => drv := "    pgsql :";
-         when AD.firebird   => drv := " firebird :";
-         when AD.foundation => drv := "     none :";
+         when driver_mysql      => drv := "    mysql :";
+         when driver_postgresql => drv := "    pgsql :";
+         when driver_firebird   => drv := " firebird :";
+         when foundation        => drv := "     none :";
       end case;
 
       case category is
-         when AD.connection            => prefix := "       Connect : ";
-         when AD.disconnection         => prefix := "    Disconnect : ";
-         when AD.transaction           => prefix := "   Transaction : ";
-         when AD.execution             => prefix := "       Execute : ";
-         when AD.statement_preparation => prefix := "  Prepare Stmt : ";
-         when AD.statement_execution   => prefix := "  Execute Stmt : ";
-         when AD.miscellaneous         => prefix := " Miscellaneous : ";
-         when AD.note                  => prefix := "          Note : ";
+         when connecting            => prefix := "       Connect : ";
+         when disconnecting         => prefix := "    Disconnect : ";
+         when transaction           => prefix := "   Transaction : ";
+         when execution             => prefix := "       Execute : ";
+         when statement_preparation => prefix := "  Prepare Stmt : ";
+         when statement_execution   => prefix := "  Execute Stmt : ";
+         when miscellaneous         => prefix := " Miscellaneous : ";
+         when note                  => prefix := "          Note : ";
       end case;
 
       composite := S (TS & drv & prefix);
 
-      AD.SU.Append (Source => composite, New_Item => message);
-      if error_msg /= AD.blank then
-         AD.SU.Append (Source => composite, New_Item => err_label);
-         AD.SU.Append (Source => composite, New_Item => error);
-         AD.SU.Append (Source => composite, New_Item => error_msg);
+      SU.Append (Source => composite, New_Item => message);
+      if error_msg /= blank then
+         SU.Append (Source => composite, New_Item => err_label);
+         SU.Append (Source => composite, New_Item => error);
+         SU.Append (Source => composite, New_Item => error_msg);
       end if;
 
       listener.prop_composite  := composite;
@@ -104,7 +104,7 @@ package body AdaBase.Logger.Base is
    ----------------
    --  category  --
    ----------------
-   function category   (listener : Base_Logger) return AD.LogCategory
+   function category   (listener : Base_Logger) return LogCategory
    is
    begin
       return listener.prop_category;
@@ -114,7 +114,7 @@ package body AdaBase.Logger.Base is
    --------------
    --  driver  --
    --------------
-   function driver (listener : Base_Logger) return AD.TDriver
+   function driver (listener : Base_Logger) return TDriver
    is
    begin
       return listener.prop_driver;
@@ -124,7 +124,7 @@ package body AdaBase.Logger.Base is
    -----------------
    --  composite  --
    -----------------
-   function composite (listener : Base_Logger) return AD.textual
+   function composite (listener : Base_Logger) return textual
    is
    begin
       return listener.prop_composite;
@@ -134,7 +134,7 @@ package body AdaBase.Logger.Base is
    ---------------
    --  message  --
    ---------------
-   function message (listener : Base_Logger) return AD.textual
+   function message (listener : Base_Logger) return textual
    is
    begin
       return listener.prop_message;
@@ -144,7 +144,7 @@ package body AdaBase.Logger.Base is
    -----------------
    --  error_msg  --
    -----------------
-   function error_msg  (listener : Base_Logger) return AD.textual
+   function error_msg  (listener : Base_Logger) return textual
    is
    begin
       return listener.prop_error_msg;
@@ -154,7 +154,7 @@ package body AdaBase.Logger.Base is
    ------------------
    --  error_code  --
    ------------------
-   function error_code (listener : Base_Logger) return AD.DriverCodes
+   function error_code (listener : Base_Logger) return DriverCodes
    is
    begin
       return listener.prop_error_code;

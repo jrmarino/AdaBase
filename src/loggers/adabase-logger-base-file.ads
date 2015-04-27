@@ -26,7 +26,7 @@ private
 
    type File_Logger is new Base_Logger and AIL.iLogger
      with record
-      filepath : AD.textual := AD.blank;
+      filepath : textual := blank;
    end record;
 
 end AdaBase.Logger.Base.File;

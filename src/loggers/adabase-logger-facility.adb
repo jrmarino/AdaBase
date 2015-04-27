@@ -20,7 +20,7 @@ package body AdaBase.Logger.Facility is
    ------------------
    --  error_mode  --
    ------------------
-   function error_mode (facility : LogFacility) return AD.ErrorMode
+   function error_mode (facility : LogFacility) return ErrorMode
    is
    begin
       return facility.prop_error_mode;
@@ -30,7 +30,7 @@ package body AdaBase.Logger.Facility is
    ----------------------
    --  set_error_mode  --
    ----------------------
-   procedure set_error_mode (facility : out LogFacility; mode : AD.ErrorMode)
+   procedure set_error_mode (facility : out LogFacility; mode : ErrorMode)
    is
    begin
       facility.prop_error_mode := mode;
@@ -117,9 +117,9 @@ package body AdaBase.Logger.Facility is
    --  log_nominal  --
    -------------------
    procedure log_nominal (facility  : LogFacility;
-                          driver    : AL.AD.TDriver;
-                          category  : AL.AD.LogCategory;
-                          message   : AL.AD.textual)
+                          driver    : TDriver;
+                          category  : LogCategory;
+                          message   : textual)
    is
       use type AL.Screen.Screen_Logger_access;
       use type AL.File.File_Logger_access;
@@ -158,21 +158,21 @@ package body AdaBase.Logger.Facility is
    -------------------
    procedure log_problem
      (facility   : LogFacility;
-      driver     : AL.AD.TDriver;
-      category   : AL.AD.LogCategory;
-      message    : AL.AD.textual;
-      error_msg  : AL.AD.textual      := AL.AD.blank;
-      error_code : AL.AD.DriverCodes  := 0;
-      sqlstate   : AL.AD.TSqlState    := AD.stateless;
-      break      : Boolean            := False)
+      driver     : TDriver;
+      category   : LogCategory;
+      message    : textual;
+      error_msg  : textual      := blank;
+      error_code : DriverCodes  := 0;
+      sqlstate   : TSqlState    := stateless;
+      break      : Boolean      := False)
    is
-      use type AL.AD.ErrorMode;
+      use type ErrorMode;
       use type AL.Screen.Screen_Logger_access;
       use type AL.File.File_Logger_access;
       use type AL.BaseClass_Logger_access;
-      QND : constant String := AL.AD.SU.To_String (message);
+      QND : constant String := SU.To_String (message);
    begin
-      if not break and then facility.prop_error_mode = AD.silent
+      if not break and then facility.prop_error_mode = silent
       then
          return;
       end if;
@@ -210,7 +210,7 @@ package body AdaBase.Logger.Facility is
          facility.listener_custom.all.reaction;
       end if;
 
-      if break or else facility.prop_error_mode = AD.raise_exception
+      if break or else facility.prop_error_mode = raise_exception
       then
          raise ERRMODE_EXCEPTION with QND;
       end if;

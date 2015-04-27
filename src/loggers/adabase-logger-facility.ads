@@ -14,13 +14,11 @@
 --  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --
 
-with AdaBase.DataTypes;
 with AdaBase.Logger.Base.File;
 with AdaBase.Logger.Base.Screen;
 
 package AdaBase.Logger.Facility is
 
-   package AD  renames AdaBase.DataTypes;
    package AL  renames AdaBase.Logger.Base;
    package ALF renames AdaBase.Logger.Base.File;
    package ALS renames AdaBase.Logger.Base.Screen;
@@ -36,31 +34,31 @@ package AdaBase.Logger.Facility is
    procedure standard_logger (facility : out LogFacility;
                               logger   : TLogger;
                               action   : TAction);
-   procedure set_error_mode (facility : out LogFacility; mode : AD.ErrorMode);
-   function  error_mode     (facility : LogFacility) return AD.ErrorMode;
+   procedure set_error_mode (facility : out LogFacility; mode : ErrorMode);
+   function  error_mode     (facility : LogFacility) return ErrorMode;
 
    procedure detach_custom_logger (facility : out LogFacility);
    procedure attach_custom_logger (facility : out LogFacility;
                                    logger_access : AL.BaseClass_Logger_access);
 
    procedure log_nominal (facility  : LogFacility;
-                          driver    : AL.AD.TDriver;
-                          category  : AL.AD.LogCategory;
-                          message   : AL.AD.textual);
+                          driver    : TDriver;
+                          category  : LogCategory;
+                          message   : textual);
 
    procedure log_problem
      (facility   : LogFacility;
-      driver     : AL.AD.TDriver;
-      category   : AL.AD.LogCategory;
-      message    : AL.AD.textual;
-      error_msg  : AL.AD.textual     := AL.AD.blank;
-      error_code : AL.AD.DriverCodes := 0;
-      sqlstate   : AL.AD.TSqlState   := AD.stateless;
-      break      : Boolean           := False);
+      driver     : TDriver;
+      category   : LogCategory;
+      message    : textual;
+      error_msg  : textual     := blank;
+      error_code : DriverCodes := 0;
+      sqlstate   : TSqlState   := stateless;
+      break      : Boolean     := False);
 
 private
    type LogFacility is tagged record
-      prop_error_mode : AD.ErrorMode := AD.warning;
+      prop_error_mode : ErrorMode := warning;
       listener_file   : ALF.File_Logger_access := null;
       listener_screen : ALS.Screen_Logger_access := null;
       listener_custom : AL.BaseClass_Logger_access := null;
