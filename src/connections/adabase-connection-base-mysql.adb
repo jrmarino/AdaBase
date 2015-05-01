@@ -395,21 +395,148 @@ package body AdaBase.Connection.Base.MySQL is
    end setTransactionIsolation;
 
 
-   ---------------------------
-   --  initializeStatement  --
-   ---------------------------
-   procedure initializeStatement (conn : MySQL_Connection;
-                                  stmt : out AS.MySQL.MySQL_statement)
+   -------------------
+   --  free_result  --
+   -------------------
+   procedure free_result (conn : MySQL_Connection;
+                          result_handle : ABM.MYSQL_RES_Access)
    is
    begin
-      stmt.transfer_connection
-        (connection  => conn.handle,
-         error_mode  => conn.prop_error_mode,
-         case_mode   => conn.prop_case_mode,
-         string_mode => conn.prop_string_mode,
-         max_blob    => conn.prop_max_blob,
-         buffered    => conn.prop_buffered);
-   end initializeStatement;
+      ABM.mysql_free_result (handle => result_handle);
+   end free_result;
+
+
+   --------------------
+   --  store_result  --
+   --------------------
+   procedure store_result (conn : MySQL_Connection;
+                           result_handle : out ABM.MYSQL_RES_Access)
+   is
+      use type ABM.MYSQL_RES_Access;
+   begin
+      result_handle := ABM.mysql_store_result (handle => conn.handle);
+      if result_handle = null then
+         raise RESULT_FAIL with "Direct statement null store result";
+      end if;
+   end store_result;
+
+
+
+
+
+
+
+
+
+
+   -------------------------
+   --  prep_LastInsertID  --
+   -------------------------
+   function prep_LastInsertID (conn : MySQL_Connection;
+                               stmt : ABM.MYSQL_STMT_Access) return TraxID
+   is
+      use type ABM.MYSQL_STMT_Access;
+      result : ABM.my_ulonglong;
+   begin
+      if stmt = null then
+         raise STMT_NOT_VALID with "PREP: Last Insert ID";
+      end if;
+      result := ABM.mysql_stmt_insert_id (handle => stmt);
+      return TraxID (result);
+   end prep_LastInsertID;
+
+
+   ---------------------
+   --  prep_SqlState  --
+   ---------------------
+   function prep_SqlState     (conn : MySQL_Connection;
+                               stmt : ABM.MYSQL_STMT_Access) return TSqlState
+   is
+      result : ABM.ICS.chars_ptr;
+   begin
+      result := ABM.mysql_stmt_sqlstate (handle => stmt);
+      declare
+         convstr : constant String := ABM.ICS.Value (Item => result);
+      begin
+         return TSqlState (convstr (1 .. 5));
+      end;
+   end prep_SqlState;
+
+
+   -----------------------
+   --  prep_DriverCode  --
+   -----------------------
+   function prep_DriverCode (conn : MySQL_Connection;
+                             stmt : ABM.MYSQL_STMT_Access) return DriverCodes
+   is
+      result : ABM.my_uint;
+   begin
+      result := ABM.mysql_stmt_errno (handle => stmt);
+      return DriverCodes (result);
+   end prep_DriverCode;
+
+
+   --------------------------
+   --  prep_DriverMessage  --
+   --------------------------
+   function prep_DriverMessage (conn : MySQL_Connection;
+                                stmt : ABM.MYSQL_STMT_Access) return String
+   is
+      result : ABM.ICS.chars_ptr;
+   begin
+      result := ABM.mysql_stmt_error (handle => stmt);
+      return ABM.ICS.Value (Item => result);
+   end prep_DriverMessage;
+
+
+   ------------------------
+   --  prep_free_result  --
+   ------------------------
+   procedure prep_free_result (conn : MySQL_Connection;
+                               stmt : ABM.MYSQL_STMT_Access)
+   is
+      use type ABM.my_bool;
+      result : ABM.my_bool;
+   begin
+      result := ABM.mysql_stmt_free_result (handle => stmt);
+      if result /= 0 then
+         raise RESULT_FAIL with "Prepared statement free result";
+      end if;
+   end prep_free_result;
+
+
+   -------------------
+   --  use_result  --
+   -------------------
+   procedure use_result (conn : MySQL_Connection;
+                         result_handle : out ABM.MYSQL_RES_Access)
+   is
+      use type ABM.MYSQL_RES_Access;
+   begin
+      result_handle := ABM.mysql_use_result (handle => conn.handle);
+      if result_handle = null then
+         raise RESULT_FAIL with "Direct statement null use result";
+      end if;
+   end use_result;
+
+
+   -------------------------
+   --  prep_store_result  --
+   -------------------------
+   procedure prep_store_result (conn : MySQL_Connection;
+                                stmt : ABM.MYSQL_STMT_Access)
+   is
+      use type ABM.my_int;
+      result : ABM.my_int;
+   begin
+      result := ABM.mysql_stmt_store_result (handle => stmt);
+      if result /= 0 then
+         raise RESULT_FAIL with "Prepared statement store result";
+      end if;
+   end prep_store_result;
+
+
+
 
 
    ------------------------------------------------------------------------

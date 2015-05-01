@@ -15,7 +15,6 @@
 --
 
 with AdaBase.Interfaces.Connection;
-with AdaBase.Statement.MySQL;
 with AdaBase.Bindings.MySQL;
 with Ada.Exceptions;
 
@@ -23,7 +22,6 @@ package AdaBase.Connection.Base.MySQL is
 
    package AIC renames AdaBase.Interfaces.Connection;
    package ABM renames AdaBase.Bindings.MySQL;
-   package AS  renames AdaBase.Statement;
    package EX renames Ada.Exceptions;
 
    type MySQL_Connection is new Base_Connection and AIC.iConnection with private;
@@ -91,8 +89,39 @@ package AdaBase.Connection.Base.MySQL is
                       socket   : String := blankstring;
                       port     : PosixPort := portless);
 
-   procedure initializeStatement (conn : MySQL_Connection;
-                                  stmt : out AS.MySQL.MySQL_statement);
+
+   procedure use_result   (conn : MySQL_Connection;
+                           result_handle : out ABM.MYSQL_RES_Access);
+
+   procedure free_result  (conn : MySQL_Connection;
+                           result_handle : ABM.MYSQL_RES_Access);
+
+   procedure store_result (conn : MySQL_Connection;
+                           result_handle : out ABM.MYSQL_RES_Access);
+
+
+   -----------------------------------------------------------------------
+   --  PREPARED STATEMENT FUNCTIONS                                     --
+   -----------------------------------------------------------------------
+
+   function prep_LastInsertID  (conn : MySQL_Connection;
+                                stmt : ABM.MYSQL_STMT_Access) return TraxID;
+
+   function prep_SqlState      (conn : MySQL_Connection;
+                                stmt : ABM.MYSQL_STMT_Access) return TSqlState;
+
+   function prep_DriverCode    (conn : MySQL_Connection;
+                                stmt : ABM.MYSQL_STMT_Access)
+                                return DriverCodes;
+
+   function prep_DriverMessage (conn : MySQL_Connection;
+                                stmt : ABM.MYSQL_STMT_Access) return String;
+
+   procedure prep_free_result (conn : MySQL_Connection;
+                               stmt : ABM.MYSQL_STMT_Access);
+
+   procedure prep_store_result (conn : MySQL_Connection;
+                                stmt : ABM.MYSQL_STMT_Access);
 
    NOT_WHILE_CONNECTED : exception;
    AUTOCOMMIT_FAIL     : exception;
@@ -103,6 +132,9 @@ package AdaBase.Connection.Base.MySQL is
    TRAXISOL_FAIL       : exception;
    CHARSET_FAIL        : exception;
    INITIALIZE_FAIL     : exception;
+   STMT_NOT_VALID      : exception;
+   RESULT_FAIL         : exception;
+
 
 private
    type MySQL_Connection is new Base_Connection and AIC.iConnection

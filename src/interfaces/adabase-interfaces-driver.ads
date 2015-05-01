@@ -96,9 +96,9 @@ package AdaBase.Interfaces.Driver is
    ------------------------------------------------------------------------
 
 
-   function query                (driver : iDriver;
-                                  sql    : String)
-                                  return AS.Base'Class is abstract;
+--     function query                (driver : iDriver;
+--                                    sql    : String)
+--                                    return AS.Base_Pure'Class is abstract;
 
    procedure query_clear_table   (driver : iDriver;
                                   table  : String) is abstract;

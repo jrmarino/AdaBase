@@ -19,12 +19,6 @@ package AdaBase.Statement is
 
    pragma Pure;
 
-   type Base is tagged private;
-
-private
-   type Base is tagged
-      record
-         successful_execution : Boolean := False;
-      end record;
+   type Base_Pure is tagged limited null record;
 
 end AdaBase.Statement;

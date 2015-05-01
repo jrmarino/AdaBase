@@ -16,22 +16,27 @@
 
 package AdaBase.Interfaces.Statement is
 
-   type iStatement is interface;
+   type iStatement is limited interface;
 
-   function successful  (Stmt : iStatement) return Boolean is abstract;
-   function closeCursor (Stmt : iStatement) return Boolean is abstract;
-   function columnCount (Stmt : iStatement) return Integer is abstract;
+   function successful    (Stmt : iStatement) return Boolean is abstract;
+   function column_count  (Stmt : iStatement) return Natural is abstract;
 
+   function last_driver_message (Stmt : iStatement) return String is abstract;
+   function last_insert_id      (Stmt : iStatement) return TraxID is abstract;
+   function last_sql_state      (Stmt : iStatement) return TSqlState
+                                 is abstract;
+   function last_driver_code    (Stmt : iStatement) return DriverCodes
+                                 is abstract;
+
+   procedure discard_rest  (Stmt : out iStatement; was_complete : out Boolean)
+   is null;
 
    --  bindValue  (variant)
    --  bindTimeValue (generic time)
    --  bindColumn
---  errorCode
---  errorInfo
 --  execute
 --  getRowsAffected
 --  getNumberRows
---  lastInsertId
 --  nextRowSet
 --  fetch_bound
 --  fetch

@@ -35,9 +35,9 @@ package AdaBase.Driver.Base.MySQL is
    overriding
    procedure rollback (driver : MySQL_Driver);
 
-   overriding
-   function query  (driver : MySQL_Driver; sql : String)
-                    return AS.Base'Class;
+--     overriding
+--     function query  (driver : MySQL_Driver; sql : String)
+--                      return AS.Base_Pure'Class;
 
    overriding
    function last_insert_id (driver : MySQL_Driver) return TraxID;

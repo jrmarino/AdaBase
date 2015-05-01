@@ -261,6 +261,14 @@ package AdaBase.Bindings.MySQL is
    procedure mysql_free_result (handle : not null access MYSQL_RES);
    pragma Import (C, mysql_free_result, "mysql_free_result");
 
+   function mysql_use_result (handle : not null access MYSQL)
+                              return MYSQL_RES_Access;
+   pragma Import (C, mysql_use_result, "mysql_use_result");
+
+   function mysql_store_result (handle : not null access MYSQL)
+                                return MYSQL_RES_Access;
+   pragma Import (C, mysql_store_result, "mysql_store_result");
+
    function mysql_stmt_init (handle : not null access MYSQL)
                              return MYSQL_STMT_Access;
    pragma Import (C, mysql_stmt_init, "mysql_stmt_init");
@@ -268,6 +276,36 @@ package AdaBase.Bindings.MySQL is
    function mysql_stmt_close (handle : not null access MYSQL_STMT)
                               return my_bool;
    pragma Import (C, mysql_stmt_close, "mysql_stmt_close");
+
+   function mysql_stmt_param_count (handle : not null access MYSQL_STMT)
+                                    return my_ulong;
+   pragma Import (C, mysql_stmt_param_count, "mysql_stmt_param_count");
+
+   function mysql_stmt_insert_id (handle : not null access MYSQL_STMT)
+                                  return my_ulonglong;
+   pragma Import (C, mysql_stmt_insert_id, "mysql_stmt_insert_id");
+
+   function mysql_stmt_sqlstate (handle : not null access MYSQL_STMT)
+                                 return ICS.chars_ptr;
+   pragma Import (C, mysql_stmt_sqlstate, "mysql_stmt_sqlstate");
+
+   function mysql_stmt_errno (handle : not null access MYSQL_STMT)
+                              return my_uint;
+   pragma Import (C, mysql_stmt_errno, "mysql_stmt_errno");
+
+   function mysql_stmt_error (handle : not null access MYSQL_STMT)
+                              return ICS.chars_ptr;
+   pragma Import (C, mysql_stmt_error, "mysql_stmt_error");
+
+   function mysql_stmt_free_result (handle : not null access MYSQL_STMT)
+                                    return my_bool;
+   pragma Import (C, mysql_stmt_free_result, "mysql_stmt_free_result");
+
+   function mysql_stmt_store_result (handle : not null access MYSQL_STMT)
+                                     return my_int;
+   pragma Import (C, mysql_stmt_store_result, "mysql_stmt_store_result");
+
+
 
 private
 

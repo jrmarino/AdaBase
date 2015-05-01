@@ -14,7 +14,7 @@
 --  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --
 
-with AdaBase.Statement.MySQL;
+with AdaBase.Statement.Base.MySQL;
 
 package body AdaBase.Driver.Base.MySQL is
 
@@ -195,29 +195,29 @@ package body AdaBase.Driver.Base.MySQL is
    -------------
    --  query  --
    -------------
-   overriding
-   function query (driver : MySQL_Driver; sql : String)
-                   return  AS.Base'Class
-   is
-      result : AS.MySQL.MySQL_statement;
-      err1 : constant drvtext :=
-        SUS ("ACK! Query attempted on inactive connection");
-   begin
-      if driver.connection_active then
-         driver.local_connection.all.initializeStatement (stmt => result);
-         --  driver.connection.initializeStatement;
-         --  set sql ???
-         --  driver.connection.execute (sql => sql);
-         --  Result.successful := True;
-         driver.log_nominal (category => execution, message => SUS (sql));
-         null;
-      else
-         --  Non-fatal attempt to query an unccnnected database
-         driver.log_problem (category => execution,
-                             message  => err1);
-      end if;
-      return result;
-   end query;
+--     overriding
+--     function query (driver : MySQL_Driver; sql : String)
+--                     return  AS.Base_Pure'Class
+--     is
+--        result : AS.Base.MySQL.MySQL_statement;
+--        err1 : constant drvtext :=
+--          SUS ("ACK! Query attempted on inactive connection");
+--     begin
+--        if driver.connection_active then
+--           driver.local_connection.all.initializeStatement (stmt => result);
+--           --  driver.connection.initializeStatement;
+--           --  set sql ???
+--           --  driver.connection.execute (sql => sql);
+--           --  Result.successful := True;
+--           driver.log_nominal (category => execution, message => SUS (sql));
+--           null;
+--        else
+--           --  Non-fatal attempt to query an unccnnected database
+--           driver.log_problem (category => execution,
+--                               message  => err1);
+--        end if;
+--        return result;
+--     end query;
 
    ------------------------------------------------------------------------
    --  PUBLIC ROUTINES NOT COVERED BY INTERFACES                         --
