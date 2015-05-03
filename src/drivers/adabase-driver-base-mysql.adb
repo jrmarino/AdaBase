@@ -176,7 +176,8 @@ package body AdaBase.Driver.Base.MySQL is
         SUS ("ACK! Execution attempted on inactive connection");
    begin
       if driver.connection_active then
-         result := driver.connection.all.execute (sql => sql);
+         driver.connection.all.execute (sql => sql);
+         result := driver.connection.all.rows_affected_by_execution;
          driver.log_nominal (category => execution, message => SUS (sql));
       else
          --  Non-fatal attempt to query an unccnnected database

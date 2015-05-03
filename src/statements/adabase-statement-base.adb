@@ -18,13 +18,34 @@
 package body AdaBase.Statement.Base is
 
    ---------------------
+   --  rows_affected  --
+   ---------------------
+   overriding
+   function rows_affected (Stmt : Base_Statement) return AffectedRows
+   is
+   begin
+      if not Stmt.successful_execution then
+         raise PRIOR_EXECUTION_FAILED
+           with "Has query been executed yet?";
+      end if;
+      if Stmt.result_present then
+         raise INVALID_FOR_RESULT_SET
+           with "Result set found; use rows_returned";
+      else
+         return Stmt.impacted;
+      end if;
+   end rows_affected;
+
+
+   ---------------------
    --  transform_sql  --
    ---------------------
-   procedure transform_sql (Stmt : out Base_Statement; sql : in out String)
+   procedure transform_sql (Stmt : out Base_Statement; sql : String;
+                            new_sql : out String)
    is
       sql_mask : String := sql;
-      sql_hold : String := sql;
    begin
+      new_sql := sql;
       Stmt.alpha_markers.Clear;
       if sql'Length = 0 then
          return;
@@ -86,7 +107,7 @@ package body AdaBase.Statement.Base is
             end if;
             index := index + 1;
             Stmt.alpha_markers.Insert (Key => alias, New_Item => index);
-            sql_hold (start .. arrow - 1) := scab;
+            new_sql (start .. arrow - 1) := scab;
             scanning := False;
          end replace_alias;
 
@@ -120,7 +141,6 @@ package body AdaBase.Statement.Base is
             arrow := arrow + 1;
          end loop;
       end;
-      sql := sql_hold;
    end transform_sql;
 
 
@@ -131,5 +151,53 @@ package body AdaBase.Statement.Base is
    begin
       return S = T;
    end Same_Strings;
+
+
+   -------------------
+   --  log_nominal  --
+   -------------------
+   procedure log_nominal (statement : Base_Statement;
+                          category  : LogCategory;
+                          message   : String)
+   is
+   begin
+      logger_access.all.log_nominal
+        (driver   => statement.dialect,
+         category => category,
+         message  => SU.To_Unbounded_String (message));
+   end log_nominal;
+
+
+   -------------------
+   --  log_problem  --
+   -------------------
+   procedure log_problem
+     (statement  : Base_Statement;
+      category   : LogCategory;
+      message    : String;
+      pull_codes : Boolean := False;
+      break      : Boolean := False)
+   is
+      error_msg  : stmttext    := blank;
+      error_code : DriverCodes := 0;
+      sqlstate   : TSqlState   := stateless;
+   begin
+      if pull_codes then
+         error_msg  := SU.To_Unbounded_String
+                      (statement.connection.all.driverMessage);
+         error_code := statement.connection.all.driverCode;
+         sqlstate   := statement.connection.all.SqlState;
+      end if;
+
+      logger_access.all.log_problem
+          (driver     => statement.dialect,
+           category   => category,
+           message    => SU.To_Unbounded_String (message),
+           error_msg  => error_msg,
+           error_code => error_code,
+           sqlstate   => sqlstate,
+           break      => break);
+   end log_problem;
+
 
 end AdaBase.Statement.Base;

@@ -14,11 +14,21 @@
 --  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --
 
+private
+with Ada.Finalization;
 
 package AdaBase.Statement is
 
    pragma Pure;
 
-   type Base_Pure is tagged limited null record;
+   type Base_Pure is abstract tagged limited private;
+
+private
+   package FIN renames Ada.Finalization;
+
+   type Base_Pure is abstract new FIN.Limited_Controlled with
+      record
+         null;
+      end record;
 
 end AdaBase.Statement;

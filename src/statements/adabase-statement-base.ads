@@ -15,26 +15,58 @@
 --
 
 
+with AdaBase.Connection.Base;
 with AdaBase.Interfaces.Statement;
+with AdaBase.Logger.Facility;
 with Ada.Containers.Indefinite_Hashed_Maps;
 with Ada.Strings.Hash;
+with Ada.Strings.Unbounded;
 
 package AdaBase.Statement.Base is
 
+   package SU  renames Ada.Strings.Unbounded;
+   package ACB renames AdaBase.Connection.Base;
    package AIS renames AdaBase.Interfaces.Statement;
+   package ALF renames AdaBase.Logger.Facility;
 
-   type Base_Statement is abstract limited new Base_Pure and AIS.iStatement
-   with private;
+   subtype stmttext is SU.Unbounded_String;
+
+   blank : constant stmttext := SU.Null_Unbounded_String;
+
+   type Base_Statement is
+     abstract limited new Base_Pure and AIS.iStatement with private;
 
    type stmt_type is (direct_statement, prepared_statement);
+   type sql_access is access all String;
 
-   ILLEGAL_BIND_SQL : exception;
+   ILLEGAL_BIND_SQL         : exception;
+   INVALID_FOR_DIRECT_QUERY : exception;
+   INVALID_FOR_RESULT_SET   : exception;
+   PRIOR_EXECUTION_FAILED   : exception;
+
+   overriding
+   function rows_affected (Stmt : Base_Statement) return AffectedRows;
 
 private
 
+   logger_access : ALF.LogFacility_access;
+
    function Same_Strings (S, T : String) return Boolean;
 
-   procedure transform_sql (Stmt : out Base_Statement; sql : in out String);
+   procedure transform_sql (Stmt : out Base_Statement; sql : String;
+                           new_sql : out String);
+
+   procedure log_nominal (statement : Base_Statement;
+                          category  : LogCategory;
+                          message   : String);
+
+   procedure log_problem
+     (statement  : Base_Statement;
+      category   : LogCategory;
+      message    : String;
+      pull_codes : Boolean := False;
+      break      : Boolean := False);
+
 
    package Markers is new Ada.Containers.Indefinite_Hashed_Maps
      (Key_Type        => String,
@@ -42,13 +74,16 @@ private
       Equivalent_Keys => Same_Strings,
       Hash            => Ada.Strings.Hash);
 
-   type Base_Statement is abstract limited new Base_Pure and AIS.iStatement
-     with record
-      successful_execution : Boolean   := False;
-      type_of_statement    : stmt_type := direct_statement;
+   type Base_Statement is
+     abstract limited new Base_Pure and AIS.iStatement with record
+      sql_final            : sql_access;
+      successful_execution : Boolean      := False;
+      result_present       : Boolean      := False;
+      dialect              : TDriver      := foundation;
+      impacted             : AffectedRows := 0;
+      connection           : ACB.Base_Connection_Access;
       alpha_markers        : Markers.Map;
    end record;
-
 
 
 end AdaBase.Statement.Base;

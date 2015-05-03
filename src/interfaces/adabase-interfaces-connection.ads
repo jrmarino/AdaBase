@@ -102,12 +102,14 @@ package AdaBase.Interfaces.Connection is
    function lastInsertID  (conn : iConnection) return TraxID
                            is abstract;
 
+   function rows_affected_by_execution (conn : iConnection)
+                                        return AffectedRows is abstract;
+
    --  Commands
    procedure commit       (conn : iConnection) is null;
    procedure rollback     (conn : iConnection) is null;
    procedure disconnect   (conn : out iConnection) is null;
-   function  execute      (conn : iConnection; sql : String)
-                           return AffectedRows is abstract;
+   procedure execute      (conn : iConnection; sql : String) is null;
 
    procedure connect (conn     : out iConnection;
                       database : String;

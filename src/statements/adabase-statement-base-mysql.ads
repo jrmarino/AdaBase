@@ -16,11 +16,13 @@
 
 with AdaBase.Connection.Base.MySQL;
 with AdaBase.Bindings.MySQL;
+with Ada.Containers.Vectors;
 
 package AdaBase.Statement.Base.MySQL is
 
    package ACM renames AdaBase.Connection.Base.MySQL;
    package ABM renames AdaBase.Bindings.MySQL;
+   package AC renames Ada.Containers;
 
    type MySQL_statement (<>) is limited new Base_Statement and AIS.iStatement
      with private;
@@ -47,25 +49,56 @@ package AdaBase.Statement.Base.MySQL is
    procedure discard_rest  (Stmt : out MySQL_statement;
                             was_complete : out Boolean);
 
-   ------------------------------------------------
-   --  These routines are not part of interface  --
-   ------------------------------------------------
+   overriding
+   function execute         (Stmt : MySQL_statement) return Boolean;
+
+   overriding
+   function execute         (Stmt : MySQL_statement; bind_piped : String)
+                             return Boolean;
+
+   overriding
+   function rows_returned   (Stmt : MySQL_statement) return AffectedRows;
+
+
+private
+
 
    procedure clear_buffer (Stmt : out MySQL_statement);
 
 
-private
-   type MySQL_statement (con_handle      : ACM.MySQL_Connection_Access;
-                         con_error_mode  : ErrorMode;
-                         con_case_mode   : CaseMode;
-                         con_string_mode : StringMode;
-                         con_max_blob    : BLOB_maximum;
-                         con_buffered    : Boolean)
+   procedure initialize (Object : in out MySQL_statement);
+   procedure internal_execute (Stmt : in out MySQL_statement);
+   procedure direct_result (Stmt    : in out MySQL_statement;
+                            present : out Boolean);
+   procedure scan_column_information (Stmt : in out MySQL_statement);
+
+   type column_info is record
+      field_name    : stmttext;
+      field_type    : field_types;
+      field_size    : Natural;
+      null_possible : Boolean;
+      mysql_type    : ABM.enum_field_types;
+   end record;
+
+   package VColumns is new AC.Vectors (Index_Type   => Positive,
+                                       Element_Type => column_info);
+
+   type MySQL_statement (type_of_statement : stmt_type;
+                         query_access      : sql_access;
+                         log_handler       : ALF.LogFacility_access;
+                         mysql_conn        : ACM.MySQL_Connection_Access;
+                         con_error_mode    : ErrorMode;
+                         con_case_mode     : CaseMode;
+                         con_string_mode   : StringMode;
+                         con_max_blob      : BLOB_maximum;
+                         con_buffered      : Boolean)
    is limited new Base_Statement and AIS.iStatement with
       record
-         stmt_handle : ABM.MYSQL_STMT_Access := null;
-         res_handle  : ABM.MYSQL_RES_Access  := null;
-         num_columns : Natural := 0;
+         stmt_handle    : ABM.MYSQL_STMT_Access := null;
+         result_handle  : ABM.MYSQL_RES_Access  := null;
+         num_columns    : Natural               := 0;
+         size_of_rowset : TraxID                := 0;
+         column_info    : VColumns.Vector;
       end record;
 
 end AdaBase.Statement.Base.MySQL;

@@ -26,11 +26,6 @@ package AdaBase.Results is
    package SUW  renames Ada.Strings.Wide_Unbounded;
    package SUWW renames Ada.Strings.Wide_Wide_Unbounded;
 
-   type field_types is (ft_nbyte0, ft_nbyte1, ft_nbyte2, ft_nbyte3, ft_nbyte4,
-                        ft_nbyte8, ft_byte1, ft_byte2, ft_byte3, ft_byte4,
-                        ft_byte8, ft_real9, ft_real18, ft_textual,
-                        ft_widetext, ft_supertext, ft_timestamp,
-                        ft_chain, ft_enumtype, ft_settype);
    subtype textual   is SU.Unbounded_String;
    subtype textwide  is SUW.Unbounded_Wide_String;
    subtype textsuper is SUWW.Unbounded_Wide_Wide_String;

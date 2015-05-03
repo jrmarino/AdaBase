@@ -24,6 +24,7 @@ package AdaBase.Logger.Facility is
    package ALS renames AdaBase.Logger.Base.Screen;
 
    type LogFacility is tagged private;
+   type LogFacility_access is access all LogFacility;
    type TAction is (attach, detach);
    type TLogger is (file, screen);
 

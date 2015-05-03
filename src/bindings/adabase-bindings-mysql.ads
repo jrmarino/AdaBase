@@ -117,6 +117,18 @@ package AdaBase.Bindings.MySQL is
    end record;
    pragma Convention (C, MYSQL_FIELD);
 
+   type MY_CHARSET_INFO is record
+      number           : IC.unsigned;
+      state            : IC.unsigned;
+      csname           : ICS.chars_ptr;
+      name             : ICS.chars_ptr;
+      comment          : ICS.chars_ptr;
+      dir              : ICS.chars_ptr;
+      mbminlen         : IC.unsigned;
+      mbmaxlen         : IC.unsigned;
+   end record;
+   pragma Convention (C, MY_CHARSET_INFO);
+
    type mysql_option is
     (MYSQL_OPT_CONNECT_TIMEOUT,
      MYSQL_OPT_COMPRESS,
@@ -177,6 +189,12 @@ package AdaBase.Bindings.MySQL is
 
    type MYSQL_STMT_Access is access all MYSQL_STMT;
    pragma Convention (C, MYSQL_STMT_Access);
+
+   type MYSQL_FIELD_Access is access all MYSQL_FIELD;
+   pragma Convention (C, MYSQL_FIELD_Access);
+
+   type MY_CHARSET_INFO_Access is access all MY_CHARSET_INFO;
+   pragma Convention (C, MY_CHARSET_INFO_Access);
 
    type my_bool      is new IC.signed_char;
    type my_ulong     is new IC.unsigned_long;
@@ -269,6 +287,21 @@ package AdaBase.Bindings.MySQL is
                                 return MYSQL_RES_Access;
    pragma Import (C, mysql_store_result, "mysql_store_result");
 
+   function mysql_field_count (handle : not null access MYSQL) return my_uint;
+   pragma Import (C, mysql_field_count, "mysql_field_count");
+
+   function mysql_num_fields (handle : not null access MYSQL_RES)
+                              return my_uint;
+   pragma Import (C, mysql_num_fields, "mysql_num_fields");
+
+   function mysql_num_rows (handle : not null access MYSQL_RES)
+                            return my_ulonglong;
+   pragma Import (C, mysql_num_rows, "mysql_num_rows");
+
+   function mysql_affected_rows (handle : not null access MYSQL)
+                                 return my_ulonglong;
+   pragma Import (C, mysql_affected_rows, "mysql_affected_rows");
+
    function mysql_stmt_init (handle : not null access MYSQL)
                              return MYSQL_STMT_Access;
    pragma Import (C, mysql_stmt_init, "mysql_stmt_init");
@@ -305,7 +338,15 @@ package AdaBase.Bindings.MySQL is
                                      return my_int;
    pragma Import (C, mysql_stmt_store_result, "mysql_stmt_store_result");
 
+   function mysql_fetch_field (handle : not null access MYSQL_RES)
+                              return MYSQL_FIELD_Access;
+   pragma Import (C, mysql_fetch_field, "mysql_fetch_field");
 
+
+   procedure mysql_get_character_set_info (handle : not null access MYSQL;
+                                           cs     : access MY_CHARSET_INFO);
+   pragma Import (C, mysql_get_character_set_info,
+                    "mysql_get_character_set_info");
 
 private
 

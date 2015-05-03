@@ -28,14 +28,23 @@ package AdaBase.Interfaces.Statement is
    function last_driver_code    (Stmt : iStatement) return DriverCodes
                                  is abstract;
 
-   procedure discard_rest  (Stmt : out iStatement; was_complete : out Boolean)
-   is null;
+   procedure discard_rest   (Stmt : out iStatement;
+                             was_complete : out Boolean) is null;
+
+   function execute         (Stmt : iStatement) return Boolean is abstract;
+   function execute         (Stmt : iStatement; bind_piped : String)
+                             return Boolean is abstract;
+
+   function rows_affected   (Stmt : iStatement)
+                             return AffectedRows is abstract;
+
+   function rows_returned   (Stmt : iStatement)
+                             return AffectedRows is abstract;
 
    --  bindValue  (variant)
    --  bindTimeValue (generic time)
    --  bindColumn
 --  execute
---  getRowsAffected
 --  getNumberRows
 --  nextRowSet
 --  fetch_bound

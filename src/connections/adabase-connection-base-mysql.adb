@@ -350,8 +350,7 @@ package body AdaBase.Connection.Base.MySQL is
    --  execute  --
    ---------------
    overriding
-   function  execute (conn : MySQL_Connection;
-                      sql : String) return AffectedRows
+   procedure execute (conn : MySQL_Connection; sql : String)
    is
       use type ABM.my_int;
       result : ABM.my_int;
@@ -364,7 +363,6 @@ package body AdaBase.Connection.Base.MySQL is
       if result /= 0 then
          raise QUERY_FAIL;
       end if;
-      return AffectedRows (result);
    end execute;
 
 
@@ -379,13 +377,12 @@ package body AdaBase.Connection.Base.MySQL is
       use type TransIsolation;
       sql : constant String := "SET SESSION TRANSACTION ISOLATION LEVEL " &
                                IsoKeywords (isolation);
-      affected_rows : AffectedRows;
    begin
       if conn.prop_active then
          if isolation = conn.prop_trax_isolation then
             return;
          end if;
-         affected_rows := execute (conn => conn, sql => sql);
+         execute (conn => conn, sql => sql);
       end if;
 
       conn.prop_trax_isolation := isolation;
@@ -406,6 +403,21 @@ package body AdaBase.Connection.Base.MySQL is
    end free_result;
 
 
+   -------------------
+   --  use_result  --
+   -------------------
+   procedure use_result (conn : MySQL_Connection;
+                         result_handle : out ABM.MYSQL_RES_Access)
+   is
+      use type ABM.MYSQL_RES_Access;
+   begin
+      result_handle := ABM.mysql_use_result (handle => conn.handle);
+      if result_handle = null then
+         raise RESULT_FAIL with "Direct statement null use result";
+      end if;
+   end use_result;
+
+
    --------------------
    --  store_result  --
    --------------------
@@ -421,10 +433,254 @@ package body AdaBase.Connection.Base.MySQL is
    end store_result;
 
 
+   -------------------
+   --  field_count  --
+   -------------------
+   function field_count (conn : MySQL_Connection) return Natural
+   is
+      result : ABM.my_uint;
+   begin
+      result := ABM.mysql_field_count (handle => conn.handle);
+      return Natural (result);
+   end field_count;
 
 
+   ----------------------------------
+   --  rows_affected_by_execution  --
+   ----------------------------------
+   overriding
+   function rows_affected_by_execution (conn : MySQL_Connection)
+                                        return AffectedRows
+   is
+      result : ABM.my_ulonglong;
+   begin
+      result := ABM.mysql_affected_rows (handle => conn.handle);
+      return AffectedRows (result);
+   end rows_affected_by_execution;
 
 
+   ------------------------
+   --  fields_in_result  --
+   ------------------------
+   function fields_in_result (conn : MySQL_Connection;
+                              result_handle : ABM.MYSQL_RES_Access)
+                              return Natural
+   is
+      result : ABM.my_uint;
+   begin
+      result := ABM.mysql_num_fields (handle => result_handle);
+      return Natural (result);
+   end fields_in_result;
+
+
+   ----------------------
+   --  rows_in_result  --
+   ----------------------
+   function rows_in_result (conn : MySQL_Connection;
+                            result_handle : ABM.MYSQL_RES_Access)
+                            return AffectedRows
+   is
+      result : ABM.my_ulonglong;
+   begin
+      result := ABM.mysql_num_rows (handle => result_handle);
+      return AffectedRows (result);
+   end rows_in_result;
+
+
+   -------------------
+   --  fetch_field  --
+   -------------------
+   function fetch_field (conn : MySQL_Connection;
+                         result_handle : ABM.MYSQL_RES_Access)
+                         return ABM.MYSQL_FIELD_Access
+   is
+   begin
+      return ABM.mysql_fetch_field (handle => result_handle);
+   end fetch_field;
+
+
+   ------------------------
+   --  field_name_field  --
+   ------------------------
+   function field_name_field (conn : MySQL_Connection;
+                              field : ABM.MYSQL_FIELD_Access) return String
+   is
+      result : constant String := ABM.ICS.Value (Item => field.name);
+   begin
+      return result;
+   end field_name_field;
+
+
+   ------------------------
+   --  field_name_table  --
+   ------------------------
+   function field_name_table (conn : MySQL_Connection;
+                              field : ABM.MYSQL_FIELD_Access) return String
+   is
+      result : constant String := ABM.ICS.Value (Item => field.table);
+   begin
+      return result;
+   end field_name_table;
+
+
+   ---------------------------
+   --  field_name_database  --
+   ---------------------------
+   function field_name_database (conn : MySQL_Connection;
+                                 field : ABM.MYSQL_FIELD_Access) return String
+   is
+      result : constant String := ABM.ICS.Value (Item => field.db);
+   begin
+      return result;
+   end field_name_database;
+
+
+   -----------------------
+   --  field_data_type  --
+   -----------------------
+   procedure field_data_type (conn : MySQL_Connection;
+                              field : ABM.MYSQL_FIELD_Access;
+                              std_type : out field_types;
+                              size     : out Natural)
+   is
+      type flagtype is mod 2 ** 16;
+      flag_unsigned : constant flagtype := 2 ** 5;
+      mytype   : constant ABM.enum_field_types := field.field_type;
+      flags    : constant flagtype := flagtype (field.flags);
+      unsigned : constant Boolean := (flags and flag_unsigned) > 0;
+      decimals : constant Natural := Natural (field.decimals);
+      fieldlen : constant Natural := Natural (field.length);
+      maxlen   : constant Natural := Natural (field.max_length);
+   begin
+      case mytype is
+         when ABM.MYSQL_TYPE_FLOAT      => std_type := ft_real9;
+         when ABM.MYSQL_TYPE_DOUBLE     => std_type := ft_real18;
+         when ABM.MYSQL_TYPE_DECIMAL    |
+              ABM.MYSQL_TYPE_NEWDECIMAL =>
+            if decimals <= 9 then
+               std_type := ft_real9;
+            else
+               std_type := ft_real18;
+            end if;
+         when ABM.MYSQL_TYPE_TINY =>
+            if unsigned then
+               if fieldlen = 1 then
+                  std_type := ft_nbyte0;
+               else
+                  std_type := ft_nbyte1;
+               end if;
+            else
+               std_type := ft_byte1;
+            end if;
+         when ABM.MYSQL_TYPE_SHORT =>
+            if unsigned then
+               std_type := ft_nbyte2;
+            else
+               std_type := ft_byte2;
+            end if;
+         when ABM.MYSQL_TYPE_INT24 =>
+            if unsigned then
+               std_type := ft_nbyte3;
+            else
+               std_type := ft_byte3;
+            end if;
+         when ABM.MYSQL_TYPE_LONG =>
+            if unsigned then
+               std_type := ft_nbyte4;
+            else
+               std_type := ft_byte4;
+            end if;
+         when ABM.MYSQL_TYPE_LONGLONG =>
+            if unsigned then
+               std_type := ft_nbyte8;
+            else
+               std_type := ft_byte8;
+            end if;
+         when ABM.MYSQL_TYPE_TIMESTAMP   |
+              ABM.MYSQL_TYPE_DATE        |
+              ABM.MYSQL_TYPE_TIME        |
+              ABM.MYSQL_TYPE_DATETIME    |
+              ABM.MYSQL_TYPE_YEAR        |
+              ABM.MYSQL_TYPE_NEWDATE     => std_type := ft_timestamp;
+         when ABM.MYSQL_TYPE_ENUM        => std_type := ft_enumtype;
+         when ABM.MYSQL_TYPE_SET         => std_type := ft_settype;
+         when ABM.MYSQL_TYPE_BIT =>
+            case maxlen is
+               when 0 .. 1               => std_type := ft_nbyte0;
+               when others               => std_type := ft_chain;
+            end case;
+         when ABM.MYSQL_TYPE_TINY_BLOB   |
+              ABM.MYSQL_TYPE_BLOB        |
+              ABM.MYSQL_TYPE_MEDIUM_BLOB |
+              ABM.MYSQL_TYPE_LONG_BLOB   |
+              ABM.MYSQL_TYPE_VARCHAR     |
+              ABM.MYSQL_TYPE_VAR_STRING  |
+              ABM.MYSQL_TYPE_STRING      =>
+            declare
+               use type ABM.MY_CHARSET_INFO_Access;
+               chsetnr  : constant Natural := Natural (field.charsetnr);
+               bin_set  : constant Natural := 63;
+               binary   : constant Boolean := (chsetnr = bin_set);
+               csinfo   : ABM.MY_CHARSET_INFO_Access := null;
+            begin
+               if binary then
+                  std_type := ft_chain;
+               else
+                  ABM.mysql_get_character_set_info (handle => conn.handle,
+                                                    cs => csinfo);
+                  if csinfo = null then
+                     raise BINDING_FAIL with
+                       "Unable to retrieve character set info";
+                  else
+                     case csinfo.all.mbmaxlen is
+                     when 1  => std_type := ft_textual;
+                     when 2  => std_type := ft_widetext;
+                     when 4  => std_type := ft_supertext;
+                     when others =>
+                        raise BINDING_FAIL with
+                          "Unexpected character set maximum set";
+                     end case;
+                  end if;
+               end if;
+            end;
+         when ABM.MYSQL_TYPE_GEOMETRY =>
+            raise BINDING_FAIL with
+              "Geometry type not currently supported";
+         when ABM.MYSQL_TYPE_NULL     => std_type := ft_textual;
+
+      end case;
+      case mytype is
+         when ABM.MYSQL_TYPE_BIT =>
+            case maxlen is
+               when 0 .. 1               => size := 0;
+               when others               => size := ((maxlen - 1) / 8) + 1;
+            end case;
+         when ABM.MYSQL_TYPE_TINY_BLOB   |
+              ABM.MYSQL_TYPE_BLOB        |
+              ABM.MYSQL_TYPE_MEDIUM_BLOB |
+              ABM.MYSQL_TYPE_LONG_BLOB   |
+              ABM.MYSQL_TYPE_VARCHAR     |
+              ABM.MYSQL_TYPE_VAR_STRING  |
+              ABM.MYSQL_TYPE_STRING      => size := maxlen;
+         when others                     => size := 0;
+      end case;
+   end field_data_type;
+
+
+   -------------------------
+   --  field_allows_null  --
+   -------------------------
+   function field_allows_null (conn : MySQL_Connection;
+                               field : ABM.MYSQL_FIELD_Access)
+                               return Boolean
+   is
+      type flagtype is mod 2 ** 16;
+      flag_null : constant flagtype := 2 ** 1;
+      flags     : constant flagtype := flagtype (field.flags);
+      permitted : constant Boolean := (flags and flag_null) > 0;
+   begin
+      return permitted;
+   end field_allows_null;
 
 
 
@@ -505,21 +761,6 @@ package body AdaBase.Connection.Base.MySQL is
    end prep_free_result;
 
 
-   -------------------
-   --  use_result  --
-   -------------------
-   procedure use_result (conn : MySQL_Connection;
-                         result_handle : out ABM.MYSQL_RES_Access)
-   is
-      use type ABM.MYSQL_RES_Access;
-   begin
-      result_handle := ABM.mysql_use_result (handle => conn.handle);
-      if result_handle = null then
-         raise RESULT_FAIL with "Direct statement null use result";
-      end if;
-   end use_result;
-
-
    -------------------------
    --  prep_store_result  --
    -------------------------
@@ -586,11 +827,10 @@ package body AdaBase.Connection.Base.MySQL is
    is
       use type conntext;
       sql : constant String := "SET CHARACTER SET " & USS (conn.character_set);
-      affected_rows : AffectedRows;
    begin
       if conn.prop_active then
          if conn.character_set /= SU.Null_Unbounded_String then
-            affected_rows := execute (conn => conn, sql => sql);
+            execute (conn => conn, sql => sql);
          end if;
       end if;
    exception

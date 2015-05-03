@@ -77,8 +77,7 @@ package AdaBase.Connection.Base.MySQL is
    procedure disconnect   (conn : out MySQL_Connection);
 
    overriding
-   function  execute      (conn : MySQL_Connection;
-                           sql  : String) return AffectedRows;
+   procedure execute      (conn : MySQL_Connection; sql  : String);
 
    overriding
    procedure connect (conn     : out MySQL_Connection;
@@ -89,6 +88,9 @@ package AdaBase.Connection.Base.MySQL is
                       socket   : String := blankstring;
                       port     : PosixPort := portless);
 
+   overriding
+   function rows_affected_by_execution (conn : MySQL_Connection)
+                                        return AffectedRows;
 
    procedure use_result   (conn : MySQL_Connection;
                            result_handle : out ABM.MYSQL_RES_Access);
@@ -98,6 +100,39 @@ package AdaBase.Connection.Base.MySQL is
 
    procedure store_result (conn : MySQL_Connection;
                            result_handle : out ABM.MYSQL_RES_Access);
+
+   function field_count   (conn : MySQL_Connection) return Natural;
+
+   function fields_in_result (conn : MySQL_Connection;
+                              result_handle : ABM.MYSQL_RES_Access)
+                              return Natural;
+
+   function rows_in_result (conn : MySQL_Connection;
+                            result_handle : ABM.MYSQL_RES_Access)
+                            return AffectedRows;
+
+   function fetch_field (conn : MySQL_Connection;
+                         result_handle : ABM.MYSQL_RES_Access)
+                         return ABM.MYSQL_FIELD_Access;
+
+   function field_name_field (conn : MySQL_Connection;
+                              field : ABM.MYSQL_FIELD_Access) return String;
+
+   function field_name_table (conn : MySQL_Connection;
+                              field : ABM.MYSQL_FIELD_Access) return String;
+
+   function field_name_database (conn : MySQL_Connection;
+                                 field : ABM.MYSQL_FIELD_Access)
+                                 return String;
+
+   procedure field_data_type (conn : MySQL_Connection;
+                              field : ABM.MYSQL_FIELD_Access;
+                              std_type : out field_types;
+                              size     : out Natural);
+
+   function field_allows_null (conn : MySQL_Connection;
+                               field : ABM.MYSQL_FIELD_Access)
+                               return Boolean;
 
 
    -----------------------------------------------------------------------
@@ -134,7 +169,7 @@ package AdaBase.Connection.Base.MySQL is
    INITIALIZE_FAIL     : exception;
    STMT_NOT_VALID      : exception;
    RESULT_FAIL         : exception;
-
+   BINDING_FAIL        : exception;
 
 private
    type MySQL_Connection is new Base_Connection and AIC.iConnection
