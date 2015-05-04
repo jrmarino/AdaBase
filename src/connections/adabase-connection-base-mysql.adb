@@ -373,11 +373,11 @@ package body AdaBase.Connection.Base.MySQL is
       result : ABM.my_int;
       query  : ABM.ICS.chars_ptr := ABM.ICS.New_String (Str => sql);
       len    : constant ABM.my_ulong := ABM.my_ulong (ABM.ICS.Strlen (query));
-      use type ABM.MYSQL_Access;
    begin
       result := ABM.mysql_real_query (handle   => conn.handle,
                                       stmt_str => query,
                                       length   => len);
+      ABM.ICS.Free (Item => query);
       if result /= 0 then
          raise QUERY_FAIL;
       end if;
