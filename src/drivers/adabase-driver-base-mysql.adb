@@ -14,7 +14,6 @@
 --  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --
 
-with AdaBase.Statement.Base.MySQL;
 
 package body AdaBase.Driver.Base.MySQL is
 
@@ -196,29 +195,15 @@ package body AdaBase.Driver.Base.MySQL is
    -------------
    --  query  --
    -------------
---     overriding
---     function query (driver : MySQL_Driver; sql : String)
---                     return  AS.Base_Pure'Class
---     is
---        result : AS.Base.MySQL.MySQL_statement;
---        err1 : constant drvtext :=
---          SUS ("ACK! Query attempted on inactive connection");
---     begin
---        if driver.connection_active then
---           driver.local_connection.all.initializeStatement (stmt => result);
---           --  driver.connection.initializeStatement;
---           --  set sql ???
---           --  driver.connection.execute (sql => sql);
---           --  Result.successful := True;
---           driver.log_nominal (category => execution, message => SUS (sql));
---           null;
---        else
---           --  Non-fatal attempt to query an unccnnected database
---           driver.log_problem (category => execution,
---                               message  => err1);
---        end if;
---        return result;
---     end query;
+   overriding
+   function query (driver : MySQL_Driver; sql : String)
+                   return AID.ASB.basic_statement
+   is
+   begin
+      ASM.hack := SU.To_Unbounded_String (sql);
+      return AID.ASB.basic_statement (driver.private_query);
+   end query;
+
 
    ------------------------------------------------------------------------
    --  PUBLIC ROUTINES NOT COVERED BY INTERFACES                         --
@@ -380,5 +365,44 @@ package body AdaBase.Driver.Base.MySQL is
             break    => True,
             message  => SUS (ACM.EX.Exception_Message (X => Error)));
    end private_connect;
+
+
+   ---------------------
+   --  private_query  --
+   ---------------------
+   function private_query (driver : MySQL_Driver)
+                   return ASM.MySQL_statement_access
+   is
+      err1 : constant drvtext :=
+        SUS ("ACK! Query attempted on inactive connection");
+      statement : constant ASM.MySQL_statement_access :=
+        new ASM.MySQL_statement
+          (type_of_statement => AID.ASB.direct_statement,
+           log_handler       => logger'Access,
+           mysql_conn        => driver.local_connection,
+           con_error_mode    => driver.trait_error_mode,
+           con_case_mode     => driver.trait_column_case,
+           con_string_mode   => driver.trait_string_mode,
+           con_max_blob      => driver.trait_max_blob_size,
+           con_buffered      => driver.trait_query_buffers_used);
+   begin
+      if driver.connection_active then
+         driver.log_nominal (category => execution, message => ASM.hack);
+
+         --  driver.local_connection.all.initializeStatement (stmt => result);
+         --  driver.connection.initializeStatement;
+         --  set sql ???
+         --  driver.connection.execute (sql => sql);
+         --  Result.successful := True;
+      --   driver.log_nominal (category => execution, message => SUS (sql));
+
+      else
+         --  Non-fatal attempt to query an unccnnected database
+         driver.log_problem (category => execution,
+                             message  => err1);
+      end if;
+      return statement;
+   end private_query;
+
 
 end AdaBase.Driver.Base.MySQL;

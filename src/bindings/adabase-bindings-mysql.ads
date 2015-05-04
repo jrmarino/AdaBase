@@ -24,7 +24,7 @@ with Interfaces.C.Strings;
 
 package AdaBase.Bindings.MySQL is
 
-   --  pragma Preelaborate;
+   pragma Preelaborate;
 
    package IC  renames Interfaces.C;
    package ICS renames Interfaces.C.Strings;
@@ -248,12 +248,12 @@ package AdaBase.Bindings.MySQL is
    pragma Import (C, mysql_sqlstate, "mysql_sqlstate");
 
    function mysql_query (handle : not null access MYSQL;
-                         query  : ICS.chars_ptr) return my_int;
+                         stmt_str : ICS.chars_ptr) return my_int;
    pragma Import (C, mysql_query, "mysql_query");
 
-   function mysql_real_query (handle : not null access MYSQL;
-                              query  : ICS.chars_ptr;
-                              length : my_ulong) return my_int;
+   function mysql_real_query (handle   : not null access MYSQL;
+                              stmt_str : ICS.chars_ptr;
+                              length   : my_ulong) return my_int;
    pragma Import (C, mysql_real_query, "mysql_real_query");
 
    function mysql_init (handle : access MYSQL) return MYSQL_Access;

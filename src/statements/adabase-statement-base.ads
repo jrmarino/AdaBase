@@ -35,9 +35,9 @@ package AdaBase.Statement.Base is
 
    type Base_Statement is
      abstract limited new Base_Pure and AIS.iStatement with private;
+   type basic_statement is access all Base_Statement'Class;
 
    type stmt_type is (direct_statement, prepared_statement);
-   type sql_access is access all String;
 
    ILLEGAL_BIND_SQL         : exception;
    INVALID_FOR_DIRECT_QUERY : exception;
@@ -46,6 +46,9 @@ package AdaBase.Statement.Base is
 
    overriding
    function rows_affected (Stmt : Base_Statement) return AffectedRows;
+
+   overriding
+   function successful (Stmt : Base_Statement) return Boolean;
 
 private
 
@@ -76,7 +79,6 @@ private
 
    type Base_Statement is
      abstract limited new Base_Pure and AIS.iStatement with record
-      sql_final            : sql_access;
       successful_execution : Boolean      := False;
       result_present       : Boolean      := False;
       dialect              : TDriver      := foundation;

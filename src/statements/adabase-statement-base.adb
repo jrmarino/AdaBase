@@ -17,6 +17,17 @@
 
 package body AdaBase.Statement.Base is
 
+   ------------------
+   --  successful  --
+   ------------------
+   overriding
+   function successful  (Stmt : Base_Statement) return Boolean
+   is
+   begin
+      return Stmt.successful_execution;
+   end successful;
+
+
    ---------------------
    --  rows_affected  --
    ---------------------

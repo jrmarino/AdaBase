@@ -80,7 +80,6 @@ package AdaBase.Connection.Base is
    overriding
    function connected     (conn : Base_Connection) return Boolean;
 
-
 private
 
    type Base_Connection is abstract new Base_Pure and AIC.iConnection with
@@ -101,5 +100,8 @@ private
 
    function SUS (fixed : String) return conntext;
    function USS (loose : conntext) return String;
+
+   overriding
+   procedure finalize (conn : in out Base_Connection) is null;
 
 end AdaBase.Connection.Base;

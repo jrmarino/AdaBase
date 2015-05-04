@@ -14,17 +14,19 @@
 --  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --
 
+private
+with Ada.Finalization;
+
 package AdaBase.Connection is
 
    pragma Pure;
 
-   type Base_Pure is tagged private;
+   type Base_Pure is abstract tagged private;
 
 private
 
-   type Base_Pure is tagged
-      record
-         null;
-      end record;
+   package FIN renames Ada.Finalization;
+
+   type Base_Pure is abstract new FIN.Controlled with null record;
 
 end AdaBase.Connection;

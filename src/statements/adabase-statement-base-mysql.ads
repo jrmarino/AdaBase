@@ -24,11 +24,16 @@ package AdaBase.Statement.Base.MySQL is
    package ABM renames AdaBase.Bindings.MySQL;
    package AC renames Ada.Containers;
 
-   type MySQL_statement (<>) is limited new Base_Statement and AIS.iStatement
-     with private;
-
-   overriding
-   function successful  (Stmt : MySQL_statement) return Boolean;
+   type MySQL_statement (type_of_statement : stmt_type;
+                         log_handler       : ALF.LogFacility_access;
+                         mysql_conn        : ACM.MySQL_Connection_Access;
+                         con_error_mode    : ErrorMode;
+                         con_case_mode     : CaseMode;
+                         con_string_mode   : StringMode;
+                         con_max_blob      : BLOB_maximum;
+                         con_buffered      : Boolean)
+   is limited new Base_Statement and AIS.iStatement with private;
+   type MySQL_statement_access is access MySQL_statement;
 
    overriding
    function column_count (Stmt : MySQL_statement) return Natural;
@@ -60,6 +65,8 @@ package AdaBase.Statement.Base.MySQL is
    function rows_returned   (Stmt : MySQL_statement) return AffectedRows;
 
 
+      hack : stmttext := blank;
+
 private
 
 
@@ -84,7 +91,6 @@ private
                                        Element_Type => column_info);
 
    type MySQL_statement (type_of_statement : stmt_type;
-                         query_access      : sql_access;
                          log_handler       : ALF.LogFacility_access;
                          mysql_conn        : ACM.MySQL_Connection_Access;
                          con_error_mode    : ErrorMode;
@@ -99,6 +105,7 @@ private
          num_columns    : Natural               := 0;
          size_of_rowset : TraxID                := 0;
          column_info    : VColumns.Vector;
+         sql_final      : access String;
       end record;
 
 end AdaBase.Statement.Base.MySQL;

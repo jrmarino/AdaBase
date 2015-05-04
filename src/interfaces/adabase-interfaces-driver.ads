@@ -14,14 +14,14 @@
 --  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --
 
-with AdaBase.Statement;
+with AdaBase.Statement.Base;
 with AdaBase.Logger.Facility;
 
 package AdaBase.Interfaces.Driver is
 
    type iDriver is interface;
 
-   package AS renames AdaBase.Statement;
+   package ASB renames AdaBase.Statement.Base;
    package ALF renames AdaBase.Logger.Facility;
 
    procedure disconnect (driver : out iDriver) is null;
@@ -96,9 +96,9 @@ package AdaBase.Interfaces.Driver is
    ------------------------------------------------------------------------
 
 
---     function query                (driver : iDriver;
---                                    sql    : String)
---                                    return AS.Base_Pure'Class is abstract;
+   function query                (driver : iDriver;
+                                  sql    : String)
+                                  return ASB.basic_statement is abstract;
 
    procedure query_clear_table   (driver : iDriver;
                                   table  : String) is abstract;

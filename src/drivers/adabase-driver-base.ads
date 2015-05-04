@@ -121,7 +121,7 @@ package AdaBase.Driver.Base is
 
 private
 
-   logger : ALF.LogFacility;
+   logger : aliased ALF.LogFacility;
 
    type Base_Driver is abstract new Base_Pure and AID.iDriver with
       record
@@ -143,5 +143,9 @@ private
       message    : drvtext;
       pull_codes : Boolean := False;
       break      : Boolean := False);
+
+   overriding
+   procedure initialize (Object : in out Base_Driver) is null;
+
 
 end AdaBase.Driver.Base;

@@ -248,42 +248,50 @@ package body AdaBase.Connection.Base.MySQL is
          options := options + opt_multi;
       end if;
 
-      conn.handle := ABM.mysql_init (handle => conn.handle);
-
+      conn.handle := ABM.mysql_init (null);
       if conn.handle = null then
          raise INITIALIZE_FAIL;
       end if;
 
-      if socket = blankstring then
-         conn.handle := ABM.mysql_real_connect
-           (handle      => conn.handle,
-            host        => S2P (hostname),
-            user        => S2P (username),
-            passwd      => S2P (password),
-            db          => S2P (database),
-            port        => ABM.my_uint (port),
-            unix_socket => ABM.ICS.Null_Ptr,
-            client_flag => ABM.my_ulong (options));
-      else
-          conn.handle := ABM.mysql_real_connect
-           (handle      => conn.handle,
-            host        => ABM.ICS.Null_Ptr,
-            user        => S2P (username),
-            passwd      => S2P (password),
-            db          => S2P (database),
-            port        => 0,
-            unix_socket => S2P (socket),
-            client_flag => ABM.my_ulong (options));
-      end if;
+      declare
+         hoststr   : ABM.ICS.chars_ptr := ABM.ICS.Null_Ptr;
+         userstr   : ABM.ICS.chars_ptr := S2P (username);
+         passwdstr : ABM.ICS.chars_ptr := S2P (password);
+         dbstr     : ABM.ICS.chars_ptr := S2P (database);
+         socketstr : ABM.ICS.chars_ptr := ABM.ICS.Null_Ptr;
+         portval   : ABM.my_uint       := 0;
+         test      : ABM.MYSQL_Access  := null;
 
-      if conn.handle = null then
-         raise CONNECT_FAIL;
-      end if;
+      begin
+         if socket = blankstring then
+            hoststr   := S2P (hostname);
+            portval   := ABM.my_uint (port);
+         else
+            socketstr := S2P (socket);
+         end if;
+         test := ABM.mysql_real_connect
+              (handle      => conn.handle,
+               host        => hoststr,
+               user        => userstr,
+               passwd      => passwdstr,
+               db          => dbstr,
+               port        => portval,
+               unix_socket => socketstr,
+               client_flag => ABM.my_ulong (options));
+         ABM.ICS.Free (userstr);
+         ABM.ICS.Free (passwdstr);
+         ABM.ICS.Free (dbstr);
+         if socket = blankstring then
+            ABM.ICS.Free (socketstr);
+         else
+            socketstr := S2P (socket);
+         end if;
+         if test = null then
+            raise CONNECT_FAIL;
+         end if;
+      end;
 
       conn.prop_active := True;
-      conn.set_character_set;
-      conn.setTransactionIsolation (conn.prop_trax_isolation);
-      conn.setAutoCommit (conn.prop_auto_commit);
 
       declare
          --  populate client version information
@@ -317,18 +325,23 @@ package body AdaBase.Connection.Base.MySQL is
          conn.info_server := SUS (ABM.ICS.Value (Item => result));
       end;
 
-   exception
+      conn.set_character_set;
+      conn.setTransactionIsolation (conn.prop_trax_isolation);
+      conn.setAutoCommit (conn.prop_auto_commit);
 
+   exception
       when NOT_WHILE_CONNECTED =>
          raise NOT_WHILE_CONNECTED with
            "Reconnection attempted during an active connection";
-      when CONNECT_FAIL        =>
-         raise CONNECT_FAIL with
-           "Failed to connect to " & database;
-      when INITIALIZE_FAIL     =>
+      when INITIALIZE_FAIL =>
          raise INITIALIZE_FAIL with
            "Failed to allocate enough memory for MySQL connection object";
-      when rest : others       =>
+      when CONNECT_FAIL =>
+         conn.disconnect;
+         raise CONNECT_FAIL with
+           "Failed to connect to " & database;
+      when rest : others =>
+         conn.disconnect;
          EX.Reraise_Occurrence (rest);
 
    end connect;
@@ -340,8 +353,12 @@ package body AdaBase.Connection.Base.MySQL is
    overriding
    procedure disconnect (conn : out MySQL_Connection)
    is
+      use type ABM.MYSQL_Access;
    begin
-      ABM.mysql_close (handle => conn.handle);
+      if conn.handle /= null then
+         ABM.mysql_close (handle => conn.handle);
+         conn.handle := null;
+      end if;
       conn.prop_active := False;
    end disconnect;
 
@@ -354,12 +371,13 @@ package body AdaBase.Connection.Base.MySQL is
    is
       use type ABM.my_int;
       result : ABM.my_int;
-      query  : constant ABM.ICS.chars_ptr := ABM.ICS.New_String (Str => sql);
-      len    : constant ABM.my_ulong      := ABM.my_ulong (sql'Length);
+      query  : ABM.ICS.chars_ptr := ABM.ICS.New_String (Str => sql);
+      len    : constant ABM.my_ulong := ABM.my_ulong (ABM.ICS.Strlen (query));
+      use type ABM.MYSQL_Access;
    begin
-      result := ABM.mysql_real_query (handle => conn.handle,
-                                      query  => query,
-                                      length => len);
+      result := ABM.mysql_real_query (handle   => conn.handle,
+                                      stmt_str => query,
+                                      length   => len);
       if result /= 0 then
          raise QUERY_FAIL;
       end if;
@@ -379,10 +397,7 @@ package body AdaBase.Connection.Base.MySQL is
                                IsoKeywords (isolation);
    begin
       if conn.prop_active then
-         if isolation = conn.prop_trax_isolation then
-            return;
-         end if;
-         execute (conn => conn, sql => sql);
+         conn.execute (sql);
       end if;
 
       conn.prop_trax_isolation := isolation;
@@ -617,30 +632,25 @@ package body AdaBase.Connection.Base.MySQL is
               ABM.MYSQL_TYPE_VAR_STRING  |
               ABM.MYSQL_TYPE_STRING      =>
             declare
-               use type ABM.MY_CHARSET_INFO_Access;
+               use type ABM.MY_CHARSET_INFO;
                chsetnr  : constant Natural := Natural (field.charsetnr);
                bin_set  : constant Natural := 63;
                binary   : constant Boolean := (chsetnr = bin_set);
-               csinfo   : ABM.MY_CHARSET_INFO_Access := null;
+               csinfo   : aliased ABM.MY_CHARSET_INFO;
             begin
                if binary then
                   std_type := ft_chain;
                else
                   ABM.mysql_get_character_set_info (handle => conn.handle,
-                                                    cs => csinfo);
-                  if csinfo = null then
-                     raise BINDING_FAIL with
-                       "Unable to retrieve character set info";
-                  else
-                     case csinfo.all.mbmaxlen is
+                                                    cs => csinfo'Access);
+                  case csinfo.mbmaxlen is
                      when 1  => std_type := ft_textual;
                      when 2  => std_type := ft_widetext;
                      when 4  => std_type := ft_supertext;
                      when others =>
                         raise BINDING_FAIL with
                           "Unexpected character set maximum set";
-                     end case;
-                  end if;
+                  end case;
                end if;
             end;
          when ABM.MYSQL_TYPE_GEOMETRY =>
@@ -783,6 +793,17 @@ package body AdaBase.Connection.Base.MySQL is
    ------------------------------------------------------------------------
    --  From this point on, the routines are private                       -                              --
    ------------------------------------------------------------------------
+
+
+   ----------------
+   --  finalize  --
+   ----------------
+   overriding
+   procedure finalize (conn : in out MySQL_Connection) is
+   begin
+      conn.disconnect;
+   end finalize;
+
 
    -----------------------
    --  convert_version  --

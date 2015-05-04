@@ -53,17 +53,6 @@ package body AdaBase.Statement.Base.MySQL is
    end column_count;
 
 
-   ------------------
-   --  successful  --
-   ------------------
-   overriding
-   function successful  (Stmt : MySQL_statement) return Boolean
-   is
-   begin
-      return Stmt.successful_execution;
-   end successful;
-
-
    ---------------------------
    --  last_driver_message  --
    ---------------------------
@@ -182,27 +171,33 @@ package body AdaBase.Statement.Base.MySQL is
       return False;
    end execute;
 
+
    ------------------
    --  initialize  --
    ------------------
    overriding
    procedure initialize (Object : in out MySQL_statement)
    is
+      use type ACM.MySQL_Connection_Access;
+      len : Natural := SU.Length (hack);
    begin
+      if Object.mysql_conn = null then
+         return;
+      end if;
+
       logger_access     := Object.log_handler;
       Object.dialect    := driver_mysql;
+      Object.sql_final  := new String (1 .. len);
       Object.connection := ACB.Base_Connection_Access (Object.mysql_conn);
-      Object.sql_final := new String (Object.query_access'Range);
       case Object.type_of_statement is
          when direct_statement =>
-            Object.sql_final.all := Object.query_access.all;
+            Object.sql_final.all := SU.To_String (hack);
             Object.internal_execute;
          when prepared_statement =>
-            Object.transform_sql (sql => Object.query_access.all,
+            Object.transform_sql (sql => SU.To_String (hack),
                                   new_sql => Object.sql_final.all);
       end case;
    end initialize;
-
 
    ---------------------
    --  direct_result  --
@@ -278,7 +273,7 @@ package body AdaBase.Statement.Base.MySQL is
                                       (field => field));
             info.null_possible := Stmt.mysql_conn.all.field_allows_null
               (field => field);
-            info.mysql_type    := field.field_type;
+            info.mysql_type := field.field_type;
             Stmt.mysql_conn.all.field_data_type
               (field    => field,
                std_type => info.field_type,
@@ -296,7 +291,7 @@ package body AdaBase.Statement.Base.MySQL is
    is
       --  num_columns is already 0, success_execution is already false
    begin
-      Stmt.connection.all.execute (sql => Stmt.sql_final.all);
+      Stmt.connection.execute (sql => Stmt.sql_final.all);
       Stmt.log_nominal (category => statement_execution,
                         message => Stmt.sql_final.all);
       Stmt.direct_result (present => Stmt.result_present);

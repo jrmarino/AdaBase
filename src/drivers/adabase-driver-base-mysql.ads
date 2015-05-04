@@ -16,13 +16,13 @@
 
 with AdaBase.Interfaces.Driver;
 with AdaBase.Connection.Base.MySQL;
-with AdaBase.Statement;
+with AdaBase.Statement.Base.MySQL;
 
 package AdaBase.Driver.Base.MySQL is
 
    package AID renames AdaBase.Interfaces.Driver;
    package ACM renames AdaBase.Connection.Base.MySQL;
-   package AS  renames AdaBase.Statement;
+   package ASM renames AdaBase.Statement.Base.MySQL;
 
    type MySQL_Driver is new Base_Driver and AID.iDriver with private;
 
@@ -35,9 +35,9 @@ package AdaBase.Driver.Base.MySQL is
    overriding
    procedure rollback (driver : MySQL_Driver);
 
---     overriding
---     function query  (driver : MySQL_Driver; sql : String)
---                      return AS.Base_Pure'Class;
+   overriding
+   function query (driver : MySQL_Driver; sql : String)
+                   return AID.ASB.basic_statement;
 
    overriding
    function last_insert_id (driver : MySQL_Driver) return TraxID;
@@ -80,19 +80,16 @@ package AdaBase.Driver.Base.MySQL is
                             password : String;
                             hostname : String;
                             port     : PosixPort);
+
 private
 
    backend : aliased ACM.MySQL_Connection;
 
    type MySQL_Driver is new Base_Driver and AID.iDriver with
       record
-
-         --  connection : ACB.Base_Connection_Access := cow'Access;
          local_connection : ACM.MySQL_Connection_Access := null;
          database : drvtext := blank;
       end record;
-
-   procedure initialize (Object : in out MySQL_Driver);
 
    procedure private_connect (driver   : out MySQL_Driver;
                               database : String;
@@ -101,5 +98,11 @@ private
                               hostname : String    := blankstring;
                               socket   : String    := blankstring;
                               port     : PosixPort := portless);
+
+   function private_query (driver : MySQL_Driver)
+                           return ASM.MySQL_statement_access;
+
+   overriding
+   procedure initialize (Object : in out MySQL_Driver);
 
 end AdaBase.Driver.Base.MySQL;

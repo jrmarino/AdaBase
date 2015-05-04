@@ -24,7 +24,8 @@ package AdaBase.Connection.Base.MySQL is
    package ABM renames AdaBase.Bindings.MySQL;
    package EX renames Ada.Exceptions;
 
-   type MySQL_Connection is new Base_Connection and AIC.iConnection with private;
+   type MySQL_Connection is new Base_Connection and AIC.iConnection
+   with private;
    type MySQL_Connection_Access is access all MySQL_Connection;
 
    overriding
@@ -77,7 +78,7 @@ package AdaBase.Connection.Base.MySQL is
    procedure disconnect   (conn : out MySQL_Connection);
 
    overriding
-   procedure execute      (conn : MySQL_Connection; sql  : String);
+   procedure execute      (conn : MySQL_Connection; sql : String);
 
    overriding
    procedure connect (conn     : out MySQL_Connection;
@@ -172,6 +173,7 @@ package AdaBase.Connection.Base.MySQL is
    BINDING_FAIL        : exception;
 
 private
+
    type MySQL_Connection is new Base_Connection and AIC.iConnection
      with record
       prop_compressed  : Boolean := True;
@@ -179,7 +181,7 @@ private
       prop_multiquery  : Boolean := False;
       info_description : String (1 .. 24) := "MySQL 5.5+ native driver";
 
-      handle           : ABM.MYSQL_Access;
+      handle           : ABM.MYSQL_Access := null;
       character_set    : conntext := blank;
    end record;
 
@@ -190,5 +192,8 @@ private
    function S2P (S : String)   return ABM.ICS.chars_ptr;
 
    procedure set_character_set (conn : MySQL_Connection);
+
+   overriding
+   procedure finalize (conn : in out MySQL_Connection);
 
 end AdaBase.Connection.Base.MySQL;
