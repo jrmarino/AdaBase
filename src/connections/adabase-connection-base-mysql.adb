@@ -282,9 +282,9 @@ package body AdaBase.Connection.Base.MySQL is
          ABM.ICS.Free (passwdstr);
          ABM.ICS.Free (dbstr);
          if socket = blankstring then
-            ABM.ICS.Free (socketstr);
+            ABM.ICS.Free (hoststr);
          else
-            socketstr := S2P (socket);
+            ABM.ICS.Free (socketstr);
          end if;
          if test = null then
             raise CONNECT_FAIL;
