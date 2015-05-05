@@ -14,6 +14,8 @@
 --  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --
 
+with AdaBase.Results.Sets;
+
 package AdaBase.Interfaces.Statement is
 
    type iStatement is limited interface;
@@ -41,14 +43,27 @@ package AdaBase.Interfaces.Statement is
    function rows_returned   (Stmt : iStatement)
                              return AffectedRows is abstract;
 
+   function column_name     (Stmt : iStatement; index : Positive)
+                             return String is abstract;
+
+   function column_table    (Stmt : iStatement; index : Positive)
+                             return String is abstract;
+
+   function column_native_type (Stmt : iStatement; index : Positive)
+                                return field_types is abstract;
+
+   function fetch_next      (Stmt : iStatement)
+                             return AdaBase.Results.Sets.DataRow_Access
+                             is abstract;
+
+   function fetch_all       (Stmt : iStatement)
+                             return AdaBase.Results.Sets.DataRowSet_Access
+                             is abstract;
+
    --  bindValue  (variant)
    --  bindTimeValue (generic time)
    --  bindColumn
---  execute
---  getNumberRows
---  nextRowSet
+--  fetch_nextRowSet
 --  fetch_bound
---  fetch
---  fetch_all
 
 end AdaBase.Interfaces.Statement;

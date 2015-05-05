@@ -18,16 +18,28 @@
 with AdaBase.Connection.Base;
 with AdaBase.Interfaces.Statement;
 with AdaBase.Logger.Facility;
+with AdaBase.Results.Generic_Converters;
+with Ada.Calendar.Formatting;
 with Ada.Containers.Indefinite_Hashed_Maps;
 with Ada.Strings.Hash;
 with Ada.Strings.Unbounded;
+with Ada.Strings.Wide_Unbounded;
+with Ada.Strings.Wide_Wide_Unbounded;
+with Ada.Characters.Conversions;
 
 package AdaBase.Statement.Base is
 
    package SU  renames Ada.Strings.Unbounded;
+   package SUW renames Ada.Strings.Wide_Unbounded;
+   package SWW renames Ada.Strings.Wide_Wide_Unbounded;
+   package CAL renames Ada.Calendar;
+   package CFM renames Ada.Calendar.Formatting;
+   package ACC renames Ada.Characters.Conversions;
+   package AR  renames AdaBase.Results;
    package ACB renames AdaBase.Connection.Base;
    package AIS renames AdaBase.Interfaces.Statement;
    package ALF renames AdaBase.Logger.Facility;
+   package RGC renames AdaBase.Results.Generic_Converters;
 
    subtype stmttext is SU.Unbounded_String;
 
@@ -42,6 +54,7 @@ package AdaBase.Statement.Base is
    ILLEGAL_BIND_SQL         : exception;
    INVALID_FOR_DIRECT_QUERY : exception;
    INVALID_FOR_RESULT_SET   : exception;
+   INVALID_COLUMN_INDEX     : exception;
    PRIOR_EXECUTION_FAILED   : exception;
 
    overriding
@@ -49,6 +62,7 @@ package AdaBase.Statement.Base is
 
    overriding
    function successful (Stmt : Base_Statement) return Boolean;
+
 
 private
 
@@ -87,5 +101,21 @@ private
       alpha_markers        : Markers.Map;
    end record;
 
+   function convert is new RGC.convert4str (IntType => AR.nbyte1);
+   function convert is new RGC.convert4str (IntType => AR.nbyte2);
+   function convert is new RGC.convert4str (IntType => AR.nbyte3);
+   function convert is new RGC.convert4str (IntType => AR.nbyte4);
+   function convert is new RGC.convert4str (IntType => AR.nbyte8);
+   function convert is new RGC.convert4str (IntType => AR.byte1);
+   function convert is new RGC.convert4str (IntType => AR.byte2);
+   function convert is new RGC.convert4str (IntType => AR.byte3);
+   function convert is new RGC.convert4str (IntType => AR.byte4);
+   function convert is new RGC.convert4str (IntType => AR.byte8);
+   function convert is new RGC.convert4st2 (RealType => AR.real9);
+   function convert is new RGC.convert4st2 (RealType => AR.real18);
+   function convert (nv : String; maxsize : BLOB_maximum) return AR.chain;
+   function convert (nv : String; maxsize : BLOB_maximum) return AR.textual;
+   function convert (nv : String; maxsize : BLOB_maximum) return AR.textwide;
+   function convert (nv : String; maxsize : BLOB_maximum) return AR.textsuper;
 
 end AdaBase.Statement.Base;

@@ -64,6 +64,14 @@ package AdaBase.Results.Generic_Converters is
       type RealType is digits <>;
    function convert3str3 (nv : RealType) return Wide_Wide_String;
 
+   generic
+      type IntType is (<>);
+   function convert4str (nv : String) return IntType;
+
+   generic
+      type RealType is digits <>;
+   function convert4st2 (nv : String) return RealType;
+
 private
 
    function ctrim (raw : String) return String;

@@ -1234,7 +1234,7 @@ package body AdaBase.Results.Converters is
       if nvstr = "1" then
          return True;
       end if;
-      raise CONVERSION_FAILED with "Tried to convert '" & nvstr & "'";
+      raise CONVERSION_FAILED with "Tried to convert '" & nvstr & "' (S)";
    end convert;
 
    function convert (nv : textwide) return nbyte0
@@ -1248,7 +1248,7 @@ package body AdaBase.Results.Converters is
       if nverr = "1" then
          return True;
       end if;
-      raise CONVERSION_FAILED with "Tried to convert '" & nverr & "'";
+      raise CONVERSION_FAILED with "Tried to convert '" & nverr & "' (WS)";
    end convert;
 
    function convert (nv : textsuper) return nbyte0
@@ -1262,7 +1262,7 @@ package body AdaBase.Results.Converters is
       if nverr = "1" then
          return True;
       end if;
-      raise CONVERSION_FAILED with "Tried to convert '" & nverr & "'";
+      raise CONVERSION_FAILED with "Tried to convert '" & nverr & "' (WWS)";
    end convert;
 
 
@@ -1591,6 +1591,54 @@ package body AdaBase.Results.Converters is
            nbyte8 (BIT.Shift_Left (BIT.Unsigned_16 (cn (2)), 8)) +
            nbyte8 (cn (1));
       end if;
+   end convert;
+
+
+
+   ---------------------------------------
+   -- CONVERT SETS TO STRING (implode)  --
+   ---------------------------------------
+   function convert (nv : settype_access) return String
+   is
+      len    : Natural := 0;
+      nvlen  : Natural := nv.all'Length;
+   begin
+      if nvlen = 0 then
+         return "";
+      end if;
+      for x in 1 .. nvlen loop
+         len := len + SU.Length (nv.all (x).enumeration);
+      end loop;
+      len := len + nvlen - 1;
+      for x in 1 .. nvlen loop
+         len := len + SU.Length (nv.all (x).enumeration);
+      end loop;
+      declare
+         cursor : Natural := 1;
+         curend : Natural;
+         result : String (1 .. len) := (others => ',');
+      begin
+         for x in 1 .. nvlen loop
+            curend := cursor - 1 + SU.Length (nv.all (x).enumeration);
+            result (cursor .. curend) := SU.To_String (nv.all (x).enumeration);
+            cursor := curend + 2;
+         end loop;
+         return result;
+      end;
+   end convert;
+
+   function convert (nv : settype_access) return Wide_String
+   is
+      preview : String := convert (nv);
+   begin
+      return ACC.To_Wide_String (preview);
+   end convert;
+
+   function convert (nv : settype_access) return Wide_Wide_String
+   is
+      preview : String := convert (nv);
+   begin
+      return ACC.To_Wide_Wide_String (preview);
    end convert;
 
 

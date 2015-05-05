@@ -365,4 +365,12 @@ package AdaBase.Results.Converters is
    function convert (nv : chain) return nbyte8;
 
 
+   ---------------
+   -- SET TYPE  --
+   ---------------
+   function convert (nv : settype_access) return String;
+   function convert (nv : settype_access) return Wide_String;
+   function convert (nv : settype_access) return Wide_Wide_String;
+
+
 end AdaBase.Results.Converters;

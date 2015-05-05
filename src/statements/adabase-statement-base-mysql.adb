@@ -17,10 +17,13 @@
 
 with Ada.Exceptions;
 with Ada.Characters.Handling;
+with AdaBase.Results.Field;
+with Ada.Unchecked_Conversion;
 
 package body AdaBase.Statement.Base.MySQL is
 
-   package EX renames Ada.Exceptions;
+   package EX  renames Ada.Exceptions;
+   package ARF renames AdaBase.Results.Field;
    package ACH renames Ada.Characters.Handling;
 
    --------------------
@@ -38,7 +41,8 @@ package body AdaBase.Statement.Base.MySQL is
       --   when prepared_statement => was_complete := Stmt.connection = null;
       --  end case;
       was_complete := False;
-      Stmt.clear_buffer;
+      Stmt.impacted := 0;
+    --  Stmt.clear_buffer;
    end discard_rest;
 
 
@@ -119,25 +123,25 @@ package body AdaBase.Statement.Base.MySQL is
    --------------------
    --  clear_buffer  --
    --------------------
-   procedure clear_buffer (Stmt : out MySQL_statement)
-   is
-      use type ABM.MYSQL_RES_Access;
-      use type ABM.MYSQL_STMT_Access;
-   begin
-      case Stmt.type_of_statement is
-         when direct_statement =>
-            if Stmt.result_handle /= null then
-               Stmt.mysql_conn.all.free_result (Stmt.result_handle);
-            end if;
-         when prepared_statement =>
-            if Stmt.stmt_handle /= null then
-               Stmt.mysql_conn.all.prep_free_result (Stmt.stmt_handle);
-            end if;
-      end case;
-      Stmt.num_columns := 0;
-
-      --  MORE
-   end clear_buffer;
+--     procedure clear_buffer (Stmt : out MySQL_statement)
+--     is
+--        use type ABM.MYSQL_RES_Access;
+--        use type ABM.MYSQL_STMT_Access;
+--     begin
+--        case Stmt.type_of_statement is
+--           when direct_statement =>
+--              if Stmt.result_handle /= null then
+--                 Stmt.mysql_conn.all.free_result (Stmt.result_handle);
+--              end if;
+--           when prepared_statement =>
+--              if Stmt.stmt_handle /= null then
+--                 Stmt.mysql_conn.all.prep_free_result (Stmt.stmt_handle);
+--              end if;
+--        end case;
+--        Stmt.num_columns := 0;
+--
+--        --  MORE
+--     end clear_buffer;
 
 
    ----------------------------
@@ -263,18 +267,17 @@ package body AdaBase.Statement.Base.MySQL is
       end fn;
    begin
       loop
-         field := Stmt.mysql_conn.all.fetch_field
+         field := Stmt.mysql_conn.fetch_field
            (result_handle => Stmt.result_handle);
          exit when field = null;
          declare
             info : column_info;
          begin
-            info.field_name    := fn (Stmt.mysql_conn.all.field_name_field
-                                      (field => field));
-            info.null_possible := Stmt.mysql_conn.all.field_allows_null
-              (field => field);
-            info.mysql_type := field.field_type;
-            Stmt.mysql_conn.all.field_data_type
+            info.field_name  := fn (Stmt.mysql_conn.field_name_field (field));
+            info.table       := fn (Stmt.mysql_conn.field_name_table (field));
+            info.mysql_type  := field.field_type;
+            info.null_possible := Stmt.mysql_conn.field_allows_null (field);
+            Stmt.mysql_conn.field_data_type
               (field    => field,
                std_type => info.field_type,
                size     => info.field_size);
@@ -282,6 +285,302 @@ package body AdaBase.Statement.Base.MySQL is
          end;
       end loop;
    end scan_column_information;
+
+
+   -------------------
+   --  column_name  --
+   -------------------
+   overriding
+   function column_name (Stmt : MySQL_statement; index : Positive)
+                         return String
+   is
+      maxlen : constant Natural := Natural (Stmt.column_info.Length);
+   begin
+      if index > maxlen then
+         raise INVALID_COLUMN_INDEX with "Max index is" & maxlen'Img &
+           " but" & index'Img & " attempted";
+      end if;
+      return SU.To_String
+        (Stmt.column_info.Element (Index => index).field_name);
+   end column_name;
+
+
+   --------------------
+   --  column_table  --
+   --------------------
+   overriding
+   function column_table (Stmt : MySQL_statement; index : Positive)
+                          return String
+   is
+      maxlen : constant Natural := Natural (Stmt.column_info.Length);
+   begin
+      if index > maxlen then
+         raise INVALID_COLUMN_INDEX with "Max index is" & maxlen'Img &
+           " but" & index'Img & " attempted";
+      end if;
+      return SU.To_String
+        (Stmt.column_info.Element (Index => index).table);
+   end column_table;
+
+
+   --------------------------
+   --  column_native_type  --
+   --------------------------
+   overriding
+   function column_native_type (Stmt : MySQL_statement; index : Positive)
+                                return field_types
+   is
+      maxlen : constant Natural := Natural (Stmt.column_info.Length);
+   begin
+      if index > maxlen then
+         raise INVALID_COLUMN_INDEX with "Max index is" & maxlen'Img &
+           " but" & index'Img & " attempted";
+      end if;
+      return Stmt.column_info.Element (Index => index).field_type;
+   end column_native_type;
+
+
+   ------------------
+   --  fetch_next  --
+   ------------------
+   overriding
+   function fetch_next (Stmt : MySQL_statement) return ARS.DataRow_Access
+   is
+      datarow : ARS.DataRow_Access := null;
+   begin
+      if delivery = completed then
+         return datarow;
+      end if;
+      case Stmt.type_of_statement is
+         when prepared_statement =>
+            raise INVALID_FOR_RESULT_SET with "not yet implemented";
+            return datarow;
+         when direct_statement =>
+            return Stmt.internal_fetch_row_direct;
+      end case;
+   end fetch_next;
+
+
+   -----------------
+   --  fetch_all  --
+   -----------------
+   overriding
+   function fetch_all (Stmt : MySQL_statement) return ARS.DataRowSet_Access
+   is
+      dataset : ARS.DataRowSet_Access := null;
+   begin
+      return dataset;
+   end fetch_all;
+
+
+   ---------------------------
+   --  convert to Ada Time  --
+   ---------------------------
+   function convert (nv : String) return CAL.Time
+   is
+      len    : constant Natural  := nv'Length;
+      year   : CAL.Year_Number   := CAL.Year_Number'First;
+      month  : CAL.Month_Number  := CAL.Month_Number'First;
+      day    : CAL.Day_Number    := CAL.Day_Number'First;
+      hour   : CFM.Hour_Number   := CFM.Hour_Number'First;
+      minute : CFM.Minute_Number := CFM.Minute_Number'First;
+      second : CFM.Second_Number := CFM.Second_Number'First;
+      cursor : Positive;
+   begin
+      case len is
+         when 8 | 14 => cursor := 5;
+         when others => cursor := 3;
+      end case;
+      year := Integer'Value (nv (nv'First .. cursor - 1));
+      if len > 2 then
+         month := Integer'Value (nv (cursor .. cursor + 1));
+         cursor := cursor + 2;
+         if len > 4 then
+            day := Integer'Value (nv (cursor .. cursor + 1));
+            cursor := cursor + 2;
+            if len > 6 then
+               hour := Integer'Value (nv (cursor .. cursor + 1));
+               cursor := cursor + 2;
+               if len > 8 then
+                  minute := Integer'Value (nv (cursor .. cursor + 1));
+                  cursor := cursor + 2;
+                  if len > 10 then
+                     second := Integer'Value (nv (cursor .. cursor + 1));
+                  end if;
+               end if;
+            end if;
+         end if;
+      end if;
+      --  If this raises an exception, it probable means the date < 1901 or
+      --  greater than 2099.  Turn this into a string time in that case.
+      return CFM.Time_Of (Year   => year,
+                          Month  => month,
+                          Day    => day,
+                          Hour   => hour,
+                          Minute => minute,
+                          Second => second);
+   end convert;
+
+
+   ----------------------------------
+   --  convert string to enumtype  --
+   ----------------------------------
+   function convert (nv : String) return AR.settype
+   is
+      num_enums : Natural := 1;
+      nv_len    : Natural := nv'Length;
+   begin
+      for x in nv'Range loop
+         if nv (x) = ',' then
+            num_enums := num_enums + 1;
+         end if;
+      end loop;
+      declare
+         result : AR.settype (1 .. num_enums);
+         cursor : Natural  := 1;
+         curend : Natural  := 0;
+         index  : Positive := 1;
+      begin
+         for x in nv'Range loop
+            if nv (x) = ',' then
+               result (index).enumeration := SU.To_Unbounded_String
+                 (Source => nv (cursor .. curend));
+               result (index).index := 0;  -- not supported on MySQL
+               index := index + 1;
+               cursor := x + 1;
+            end if;
+            curend := curend + 1;
+         end loop;
+         result (index).enumeration := SU.To_Unbounded_String
+           (Source => nv (cursor .. curend));
+         result (index).index := 0;
+         return result;
+      end;
+   end convert;
+
+
+   ---------------------------------
+   --  internal_fetch_row_direct  --
+   ---------------------------------
+   function internal_fetch_row_direct (Stmt : MySQL_statement)
+                                       return ARS.DataRow_Access
+   is
+      use type ABM.ICS.chars_ptr;
+      use type ABM.MYSQL_ROW_access;
+      rptr : ABM.MYSQL_ROW_access :=
+        Stmt.mysql_conn.fetch_row (Stmt.result_handle);
+   begin
+      if rptr = null then
+         delivery := completed;
+         Stmt.mysql_conn.free_result (Stmt.result_handle);
+         return null;
+      end if;
+      delivery := progressing;
+
+      declare
+         maxlen : constant Natural := Natural (Stmt.column_info.Length);
+         type rowtype is array (1 .. maxlen) of ABM.ICS.chars_ptr;
+         type rowtype_access is access all rowtype;
+
+         row    : rowtype_access;
+         result : ARS.DataRow_Access := new ARS.DataRow;
+
+         field_lengths : constant ACM.fldlen := Stmt.mysql_conn.fetch_lengths
+           (result_handle => Stmt.result_handle,
+            num_columns   => maxlen);
+
+         function Convert is new Ada.Unchecked_Conversion
+           (Source => ABM.MYSQL_ROW_access, Target => rowtype_access);
+      begin
+         row := Convert (rptr);
+         for F in 1 .. maxlen loop
+            declare
+               field    : ARF.field_access;
+               last_one : constant Boolean := (F = maxlen);
+               heading  : constant String := SU.To_String
+                 (Stmt.column_info.Element (Index => F).field_name);
+               sz : constant Natural := field_lengths (F);
+               EN : constant Boolean := row (F) = ABM.ICS.Null_Ptr;
+               ST : constant String  := ABM.ICS.Value
+                 (Item => row (F), Length => ABM.IC.size_t (sz));
+               dvariant : ARF.variant;
+            begin
+               case Stmt.column_info.Element (Index => F).field_type is
+                  when ft_nbyte0 =>
+                     dvariant := (datatype => ft_nbyte0, v00 => ST = "1");
+                  when ft_nbyte1 =>
+                     dvariant := (datatype => ft_nbyte1, v01 => convert (ST));
+                  when ft_nbyte2 =>
+                     dvariant := (datatype => ft_nbyte2, v02 => convert (ST));
+                  when ft_nbyte3 =>
+                     dvariant := (datatype => ft_nbyte3, v03 => convert (ST));
+                  when ft_nbyte4 =>
+                     dvariant := (datatype => ft_nbyte4, v04 => convert (ST));
+                  when ft_nbyte8 =>
+                     dvariant := (datatype => ft_nbyte8, v05 => convert (ST));
+                  when ft_byte1  =>
+                     dvariant := (datatype => ft_byte1, v06 => convert (ST));
+                  when ft_byte2  =>
+                     dvariant := (datatype => ft_byte2, v07 => convert (ST));
+                  when ft_byte3  =>
+                     dvariant := (datatype => ft_byte3, v08 => convert (ST));
+                  when ft_byte4  =>
+                     dvariant := (datatype => ft_byte4, v09 => convert (ST));
+                  when ft_byte8  =>
+                     dvariant := (datatype => ft_byte8, v10 => convert (ST));
+                  when ft_real9  =>
+                     dvariant := (datatype => ft_real9, v11 => convert (ST));
+                  when ft_real18 =>
+                     dvariant := (datatype => ft_real18, v12 => convert (ST));
+                  when ft_textual =>
+                     dvariant := (datatype => ft_textual,
+                                  v13 => convert (ST, Stmt.con_max_blob));
+                  when ft_widetext =>
+                     dvariant := (datatype => ft_widetext,
+                                  v14 => convert (ST, Stmt.con_max_blob));
+                  when ft_supertext =>
+                     dvariant := (datatype => ft_supertext,
+                                  v15 => convert (ST, Stmt.con_max_blob));
+                  when ft_timestamp =>
+                     begin
+                        dvariant := (datatype => ft_timestamp,
+                                     v16 => convert (ST));
+                     exception
+                        when CAL.Time_Error =>
+                           dvariant := (datatype => ft_textual, v13 =>
+                                           convert (ST, Stmt.con_max_blob));
+                     end;
+                  when ft_enumtype =>
+                     --  It seems that mysql doesn't give up the enum index
+                     --  easily.  Set to "0" for all members
+                     dvariant := (datatype => ft_enumtype,
+                                  V18 => (enumeration =>
+                                             convert (ST, Stmt.con_max_blob),
+                                            index => 0));
+                  when others =>
+                     null;
+
+               end case;
+               case Stmt.column_info.Element (Index => F).field_type is
+                  when ft_chain =>
+                     field := ARF.spawn_field
+                       (binob => convert (ST, Stmt.con_max_blob));
+                  when ft_settype =>
+                     field := ARF.spawn_field (enumset => convert (ST));
+                  when others =>
+                     field := ARF.spawn_field (data => dvariant,
+                                               null_data => EN);
+               end case;
+
+               result.push (heading    => heading,
+                            field      => field,
+                            last_field => last_one);
+            end;
+         end loop;
+         return result;
+      end;
+
+   end internal_fetch_row_direct;
 
 
    ----------------------------------
@@ -297,13 +596,14 @@ package body AdaBase.Statement.Base.MySQL is
       Stmt.direct_result (present => Stmt.result_present);
       Stmt.successful_execution := True;
       if Stmt.result_present then
-         Stmt.num_columns := Stmt.mysql_conn.all.fields_in_result
+         Stmt.num_columns := Stmt.mysql_conn.fields_in_result
                                (Stmt.result_handle);
          if Stmt.con_buffered then
-            Stmt.size_of_rowset := Stmt.mysql_conn.all.rows_in_result
+            Stmt.size_of_rowset := Stmt.mysql_conn.rows_in_result
                                      (Stmt.result_handle);
          end if;
          Stmt.scan_column_information;
+         delivery := pending;
       else
          declare
             returned_cols : Natural;
@@ -315,6 +615,7 @@ package body AdaBase.Statement.Base.MySQL is
                raise ACM.RESULT_FAIL with "Columns returned without result";
             end if;
          end;
+         delivery := completed;
       end if;
 
    exception
@@ -327,5 +628,7 @@ package body AdaBase.Statement.Base.MySQL is
                            message    => EX.Exception_Message (X => RES),
                            pull_codes => True);
    end internal_execute;
+
+
 
 end AdaBase.Statement.Base.MySQL;

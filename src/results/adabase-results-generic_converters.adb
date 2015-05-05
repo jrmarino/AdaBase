@@ -34,7 +34,7 @@ package body AdaBase.Results.Generic_Converters is
       return IntType'Value (nverr);
    exception
       when others =>
-         raise CONVERSION_FAILED with "Tried to convert '" & nverr & "'";
+         raise CONVERSION_FAILED with "Tried to convert '" & nverr & "' (S/I)";
    end convertstr;
 
 
@@ -48,7 +48,7 @@ package body AdaBase.Results.Generic_Converters is
       return RealType'Value (nverr);
    exception
       when others =>
-         raise CONVERSION_FAILED with "Tried to convert '" & nverr & "'";
+         raise CONVERSION_FAILED with "Tried to convert '" & nverr & "' (S/R)";
    end convertst2;
 
 
@@ -63,7 +63,7 @@ package body AdaBase.Results.Generic_Converters is
       return IntType'Value (str);
    exception
       when others =>
-         raise CONVERSION_FAILED with "Tried to convert '" & str & "'";
+         raise CONVERSION_FAILED with "Tried to convert '" & str & "' (WS/I)";
    end convertst3;
 
 
@@ -78,7 +78,7 @@ package body AdaBase.Results.Generic_Converters is
       return RealType'Value (str);
    exception
       when others =>
-         raise CONVERSION_FAILED with "Tried to convert '" & str & "'";
+         raise CONVERSION_FAILED with "Tried to convert '" & str & "' (WS/R)";
    end convertst4;
 
 
@@ -93,7 +93,7 @@ package body AdaBase.Results.Generic_Converters is
       return IntType'Value (str);
    exception
       when others =>
-         raise CONVERSION_FAILED with "Tried to convert '" & str & "'";
+         raise CONVERSION_FAILED with "Tried to convert '" & str & "' (WWS/I)";
    end convertst5;
 
 
@@ -108,7 +108,7 @@ package body AdaBase.Results.Generic_Converters is
       return RealType'Value (str);
    exception
       when others =>
-         raise CONVERSION_FAILED with "Tried to convert '" & str & "'";
+         raise CONVERSION_FAILED with "Tried to convert '" & str & "' (WWS/R)";
    end convertst6;
 
 
@@ -164,6 +164,30 @@ package body AdaBase.Results.Generic_Converters is
    begin
       return strim (nv'Img);
    end convert3str3;
+
+
+   ---------------------------
+   --  GENERIC convert4str  --
+   ---------------------------
+   function convert4str (nv : String) return IntType is
+   begin
+      return IntType'Value (nv);
+   exception
+      when others =>
+         raise CONVERSION_FAILED with "Tried to convert '" & nv & "' (ST/I)";
+   end convert4str;
+
+
+   ---------------------------
+   --  GENERIC convert4st2  --
+   ---------------------------
+   function convert4st2 (nv : String) return RealType is
+   begin
+      return RealType'Value (nv);
+   exception
+      when others =>
+         raise CONVERSION_FAILED with "Tried to convert '" & nv & "' (ST/R)";
+   end convert4st2;
 
 
    ------------------------------

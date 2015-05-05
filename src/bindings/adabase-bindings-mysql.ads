@@ -202,6 +202,24 @@ package AdaBase.Bindings.MySQL is
    type my_int       is new IC.int;
    type my_ulonglong is mod 2 ** 64;
 
+   type my_ulong_access is access all my_ulong;
+
+   type block_ulong  is array (Natural range <>) of my_ulong;
+   type block_char   is array (Natural range <>) of ICS.chars_ptr;
+   type MYSQL_LEN    is limited record
+      len : block_ulong (1 .. 1);  -- number is arbitrary, unchecked conv
+   end record;
+
+   type MYSQL_LEN_Access is access all MYSQL_LEN;
+   pragma Convention (C, MYSQL_LEN_Access);
+
+   type MYSQL_ROW is limited record
+      binary : block_char (1 .. 1);   -- number is arbitrary, unchecked conv
+   end record;
+
+   type MYSQL_ROW_access is access all MYSQL_ROW;
+   pragma Convention (C, MYSQL_ROW_access);
+
    ---------------------
    --  Library calls  --
    ---------------------
@@ -342,6 +360,13 @@ package AdaBase.Bindings.MySQL is
                               return MYSQL_FIELD_Access;
    pragma Import (C, mysql_fetch_field, "mysql_fetch_field");
 
+   function mysql_fetch_row (handle : not null access MYSQL_RES)
+                             return MYSQL_ROW_access;
+   pragma Import (C, mysql_fetch_row, "mysql_fetch_row");
+
+   function mysql_fetch_lengths (result : not null access MYSQL_RES)
+                                 return my_ulong_access;
+   pragma Import (C, mysql_fetch_lengths, "mysql_fetch_lengths");
 
    procedure mysql_get_character_set_info (handle : not null access MYSQL;
                                            cs     : access MY_CHARSET_INFO);

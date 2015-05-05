@@ -155,6 +155,69 @@ package body AdaBase.Statement.Base is
    end transform_sql;
 
 
+   -------------------------------
+   --  convert string to chain  --
+   -------------------------------
+   function convert (nv : String; maxsize : BLOB_maximum) return AR.chain
+   is
+      maxlinks : Natural := nv'Last;
+   begin
+      if maxlinks > maxsize then
+         maxlinks := maxsize;
+      end if;
+      declare
+         result : AR.chain (nv'First .. maxlinks);
+      begin
+         for x in 1 .. maxlinks loop
+            result (x) := AR.nbyte1 (Character'Pos (nv (x)));
+         end loop;
+         return result;
+      end;
+   end convert;
+
+   ---------------------------------
+   --  convert string to textual  --
+   ---------------------------------
+   function convert (nv : String; maxsize : BLOB_maximum) return AR.textual
+   is
+      maxlinks : Natural := nv'Last;
+   begin
+      if maxlinks > maxsize then
+         maxlinks := maxsize;
+      end if;
+      return SU.To_Unbounded_String (nv (nv'First .. maxlinks));
+   end convert;
+
+   ----------------------------------
+   --  convert string to textwide  --
+   ----------------------------------
+   function convert (nv : String; maxsize : BLOB_maximum) return AR.textwide
+   is
+      maxlinks : Natural := nv'Last;
+   begin
+      if maxlinks > maxsize then
+         maxlinks := maxsize;
+      end if;
+      return SUW.To_Unbounded_Wide_String
+        (ACC.To_Wide_String (nv (nv'First .. maxlinks)));
+   end convert;
+
+
+   -----------------------------------
+   --  convert string to textsuper  --
+   -----------------------------------
+   function convert (nv : String; maxsize : BLOB_maximum) return AR.textsuper
+   is
+      maxlinks : Natural := nv'Last;
+   begin
+      if maxlinks > maxsize then
+         maxlinks := maxsize;
+      end if;
+      return SWW.To_Unbounded_Wide_Wide_String
+        (ACC.To_Wide_Wide_String (nv (nv'First .. maxlinks)));
+   end convert;
+
+
    --------------------
    --  Same_Strings  --
    --------------------

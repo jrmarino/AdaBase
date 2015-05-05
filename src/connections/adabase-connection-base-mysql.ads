@@ -28,6 +28,8 @@ package AdaBase.Connection.Base.MySQL is
    with private;
    type MySQL_Connection_Access is access all MySQL_Connection;
 
+   type fldlen is array (Positive range <>) of Natural;
+
    overriding
    procedure setAutoCommit (conn : out MySQL_Connection; auto : Boolean);
 
@@ -112,9 +114,17 @@ package AdaBase.Connection.Base.MySQL is
                             result_handle : ABM.MYSQL_RES_Access)
                             return AffectedRows;
 
-   function fetch_field (conn : MySQL_Connection;
-                         result_handle : ABM.MYSQL_RES_Access)
-                         return ABM.MYSQL_FIELD_Access;
+   function fetch_field    (conn : MySQL_Connection;
+                            result_handle : ABM.MYSQL_RES_Access)
+                            return ABM.MYSQL_FIELD_Access;
+
+   function fetch_row      (conn : MySQL_Connection;
+                            result_handle : ABM.MYSQL_RES_Access)
+                            return ABM.MYSQL_ROW_access;
+
+   function fetch_lengths  (conn : MySQL_Connection;
+                            result_handle : ABM.MYSQL_RES_Access;
+                            num_columns   : Positive) return fldlen;
 
    function field_name_field (conn : MySQL_Connection;
                               field : ABM.MYSQL_FIELD_Access) return String;

@@ -16,13 +16,15 @@
 
 with AdaBase.Connection.Base.MySQL;
 with AdaBase.Bindings.MySQL;
+with AdaBase.Results.Sets;
 with Ada.Containers.Vectors;
 
 package AdaBase.Statement.Base.MySQL is
 
    package ACM renames AdaBase.Connection.Base.MySQL;
    package ABM renames AdaBase.Bindings.MySQL;
-   package AC renames Ada.Containers;
+   package ARS renames AdaBase.Results.Sets;
+   package AC  renames Ada.Containers;
 
    type MySQL_statement (type_of_statement : stmt_type;
                          log_handler       : ALF.LogFacility_access;
@@ -64,13 +66,31 @@ package AdaBase.Statement.Base.MySQL is
    overriding
    function rows_returned   (Stmt : MySQL_statement) return AffectedRows;
 
+   overriding
+   function column_name     (Stmt : MySQL_statement; index : Positive)
+                             return String;
 
-      hack : stmttext := blank;
+   overriding
+   function column_table    (Stmt : MySQL_statement; index : Positive)
+                             return String;
+
+   overriding
+   function column_native_type (Stmt : MySQL_statement; index : Positive)
+                                return field_types;
+
+   overriding
+   function fetch_next (Stmt : MySQL_statement) return ARS.DataRow_Access;
+
+   overriding
+   function fetch_all  (Stmt : MySQL_statement) return ARS.DataRowSet_Access;
+
+
+   hack : stmttext := blank;
 
 private
 
 
-   procedure clear_buffer (Stmt : out MySQL_statement);
+   --  procedure clear_buffer (Stmt : out MySQL_statement);
 
 
    procedure initialize (Object : in out MySQL_statement);
@@ -78,14 +98,21 @@ private
    procedure direct_result (Stmt    : in out MySQL_statement;
                             present : out Boolean);
    procedure scan_column_information (Stmt : in out MySQL_statement);
+   function internal_fetch_row_direct (Stmt :  MySQL_statement)
+                                       return ARS.DataRow_Access;
+   function convert (nv : String) return CAL.Time;
+   function convert (nv : String) return AR.settype;
 
    type column_info is record
+      table         : stmttext;
       field_name    : stmttext;
       field_type    : field_types;
       field_size    : Natural;
       null_possible : Boolean;
       mysql_type    : ABM.enum_field_types;
    end record;
+
+   type fetch_status is (pending, progressing, completed);
 
    package VColumns is new AC.Vectors (Index_Type   => Positive,
                                        Element_Type => column_info);
@@ -107,5 +134,11 @@ private
          column_info    : VColumns.Vector;
          sql_final      : access String;
       end record;
+
+   --  Delivery should be part of Statement, but the Ada 2005 restriction
+   --  of "in" only parameters for functions forces it outside (because we
+   --  really want fetch* to be functions, not procedures)
+
+   delivery  : fetch_status  := completed;
 
 end AdaBase.Statement.Base.MySQL;

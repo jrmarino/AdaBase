@@ -14,6 +14,8 @@
 --  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --
 
+with Ada.Unchecked_Conversion;
+
 package body AdaBase.Connection.Base.MySQL is
 
 
@@ -295,33 +297,29 @@ package body AdaBase.Connection.Base.MySQL is
 
       declare
          --  populate client version information
-         result : ABM.my_ulong;
+         result : ABM.my_ulong := ABM.mysql_get_client_version;
       begin
-         result := ABM.mysql_get_client_version;
          conn.info_client_version := convert_version (Positive (result));
       end;
 
       declare
          --  populate client information
-         result : ABM.ICS.chars_ptr;
+         result : ABM.ICS.chars_ptr := ABM.mysql_get_client_info;
       begin
-         result := ABM.mysql_get_client_info;
          conn.info_client := SUS (ABM.ICS.Value (Item => result));
       end;
 
       declare
          --  populate server version information
-         result : ABM.my_ulong;
+         result : ABM.my_ulong := ABM.mysql_get_server_version (conn.handle);
       begin
-         result := ABM.mysql_get_server_version (handle => conn.handle);
          conn.info_server_version := convert_version (Positive (result));
       end;
 
       declare
          --  populate server information
-         result : ABM.ICS.chars_ptr;
+         result : ABM.ICS.chars_ptr := ABM.mysql_get_server_info (conn.handle);
       begin
-         result := ABM.mysql_get_server_info (handle => conn.handle);
          conn.info_server := SUS (ABM.ICS.Value (Item => result));
       end;
 
@@ -343,7 +341,6 @@ package body AdaBase.Connection.Base.MySQL is
       when rest : others =>
          conn.disconnect;
          EX.Reraise_Occurrence (rest);
-
    end connect;
 
 
@@ -691,6 +688,55 @@ package body AdaBase.Connection.Base.MySQL is
    begin
       return permitted;
    end field_allows_null;
+
+
+   ------------------
+   --  fetch_row   --
+   ------------------
+   function fetch_row   (conn : MySQL_Connection;
+                         result_handle : ABM.MYSQL_RES_Access)
+                         return ABM.MYSQL_ROW_access
+   is
+   begin
+      return ABM.mysql_fetch_row (handle => result_handle);
+   end fetch_row;
+
+
+   ---------------------
+   --  fetch_lengths  --
+   ---------------------
+   function fetch_lengths  (conn : MySQL_Connection;
+                            result_handle : ABM.MYSQL_RES_Access;
+                            num_columns   : Positive) return fldlen
+   is
+      use type ABM.my_ulong_access;
+      type cres is record
+         len : ABM.block_ulong (0 .. num_columns - 1);
+      end record;
+      type cres_access is access all cres;
+
+      function convert_to_cres is new Ada.Unchecked_Conversion
+        (Source => ABM.my_ulong_access, Target => cres_access);
+
+      result  : fldlen (1 .. num_columns) := (others => 0);
+      naccess : cres_access;
+      MLA : ABM.my_ulong_access := ABM.mysql_fetch_lengths
+        (result => result_handle);
+
+   begin
+      if MLA = null then
+         return result;
+      end if;
+
+      naccess := convert_to_cres (MLA);
+      for x in naccess.len'Range
+      loop
+         result (x + 1) := Natural (naccess.len (x));
+      end loop;
+      return result;
+   end fetch_lengths;
+
+
 
 
 

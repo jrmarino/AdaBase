@@ -25,6 +25,8 @@ package AdaBase.Results.Sets is
 
    type DataRow is tagged limited private;
    type DataRowSet is array (Positive range <>) of DataRow;
+   type DataRow_Access    is access all DataRow;
+   type DataRowSet_Access is access all DataRowSet;
 
    function column (row : DataRow; index : Positive) return ARF.std_field;
    function column (row : DataRow; heading : String) return ARF.std_field;
