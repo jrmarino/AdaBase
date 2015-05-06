@@ -37,8 +37,6 @@ package AdaBase.Interfaces.Driver is
                                   return CaseMode is abstract;
    function trait_error_mode     (driver : iDriver)
                                   return ErrorMode is abstract;
-   function trait_string_mode    (driver : iDriver)
-                                  return StringMode is abstract;
    function trait_connected      (driver : iDriver)
                                   return Boolean is abstract;
    function trait_max_blob_size  (driver : iDriver)
@@ -60,8 +58,6 @@ package AdaBase.Interfaces.Driver is
                                       trait  : CaseMode) is null;
    procedure set_trait_error_mode    (driver : iDriver;
                                       trait  : ErrorMode) is null;
-   procedure set_trait_string_mode   (driver : iDriver;
-                                      trait  : StringMode) is null;
    procedure set_trait_max_blob_size (driver : iDriver;
                                       trait  : BLOB_maximum) is null;
 

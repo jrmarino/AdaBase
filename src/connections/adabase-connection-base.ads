@@ -39,16 +39,10 @@ package AdaBase.Connection.Base is
    function getCaseMode (conn : Base_Connection) return CaseMode;
 
    overriding
-   procedure setStringMode (conn : out Base_Connection; mode : StringMode);
-
-   overriding
    procedure setErrorMode (conn : out Base_Connection; mode : ErrorMode);
 
    overriding
    function getErrorMode (conn : Base_Connection) return ErrorMode;
-
-   overriding
-   function getStringMode (conn : Base_Connection) return StringMode;
 
    overriding
    procedure setMaxBlobSize (conn : out Base_Connection;
@@ -89,7 +83,6 @@ private
          prop_trax_isolation : TransIsolation   := repeatable_read;
          prop_error_mode     : ErrorMode        := warning;
          prop_case_mode      : CaseMode         := natural_case;
-         prop_string_mode    : StringMode       := return_null;
          prop_max_blob       : BLOB_maximum     := 2 ** 12;  -- 4kb
 
          info_server         : conntext := blank;

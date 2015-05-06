@@ -71,28 +71,6 @@ package body AdaBase.Connection.Base is
    end getErrorMode;
 
 
-   ---------------------
-   --  setStringMode  --
-   ---------------------
-   overriding
-   procedure setStringMode (conn : out Base_Connection; mode : StringMode)
-   is
-   begin
-      conn.prop_string_mode := mode;
-   end setStringMode;
-
-
-   ------------------
-   --  stringMode  --
-   ------------------
-   overriding
-   function getStringMode (conn : Base_Connection) return StringMode
-   is
-   begin
-      return conn.prop_string_mode;
-   end getStringMode;
-
-
    --------------------
    --  setMaxBlobSize  --
    --------------------

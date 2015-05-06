@@ -20,7 +20,6 @@ package AdaBase is
 
    type ErrorMode      is (silent, warning, raise_exception);
    type CaseMode       is (lower_case, natural_case, upper_case);
-   type StringMode     is (return_null, return_zero_length);
    type TransIsolation is (read_uncommitted, read_committed, repeatable_read,
                            serializable);
    type LogCategory    is (connecting, disconnecting, transaction, execution,

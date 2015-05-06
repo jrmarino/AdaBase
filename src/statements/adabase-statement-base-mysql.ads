@@ -31,7 +31,6 @@ package AdaBase.Statement.Base.MySQL is
                          mysql_conn        : ACM.MySQL_Connection_Access;
                          con_error_mode    : ErrorMode;
                          con_case_mode     : CaseMode;
-                         con_string_mode   : StringMode;
                          con_max_blob      : BLOB_maximum;
                          con_buffered      : Boolean)
    is limited new Base_Statement and AIS.iStatement with private;
@@ -122,7 +121,6 @@ private
                          mysql_conn        : ACM.MySQL_Connection_Access;
                          con_error_mode    : ErrorMode;
                          con_case_mode     : CaseMode;
-                         con_string_mode   : StringMode;
                          con_max_blob      : BLOB_maximum;
                          con_buffered      : Boolean)
    is limited new Base_Statement and AIS.iStatement with

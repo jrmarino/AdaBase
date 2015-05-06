@@ -32,13 +32,6 @@ package AdaBase.Interfaces.Connection is
    function  getCaseMode (conn : iConnection) return CaseMode is abstract;
 
 
-   --  Representation of empty strings
-   procedure setStringMode (conn : out iConnection; mode : StringMode)
-                            is null;
-   function  getStringMode (conn : iConnection) return StringMode
-                            is abstract;
-
-
    --  Setting of exception behavior (suppress, warn, break)
    procedure setErrorMode (conn : out iConnection; mode : ErrorMode)
                            is null;

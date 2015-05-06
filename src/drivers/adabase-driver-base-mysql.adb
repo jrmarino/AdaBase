@@ -382,7 +382,6 @@ package body AdaBase.Driver.Base.MySQL is
            mysql_conn        => driver.local_connection,
            con_error_mode    => driver.trait_error_mode,
            con_case_mode     => driver.trait_column_case,
-           con_string_mode   => driver.trait_string_mode,
            con_max_blob      => driver.trait_max_blob_size,
            con_buffered      => driver.trait_query_buffers_used);
    begin

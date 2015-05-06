@@ -51,17 +51,6 @@ package body AdaBase.Driver.Base is
    end trait_error_mode;
 
 
-   -------------------------
-   --  trait_string_mode  --
-   -------------------------
-   overriding
-   function trait_string_mode (driver : Base_Driver) return StringMode
-   is
-   begin
-      return driver.connection.all.getStringMode;
-   end trait_string_mode;
-
-
    -----------------------
    --  trait_connected  --
    -----------------------
@@ -178,18 +167,6 @@ package body AdaBase.Driver.Base is
    begin
       driver.connection.all.setErrorMode (mode => trait);
    end set_trait_error_mode;
-
-
-   -----------------------------
-   --  set_trait_string_mode  --
-   -----------------------------
-   overriding
-   procedure set_trait_string_mode (driver : Base_Driver;
-                                    trait  : StringMode)
-   is
-   begin
-      driver.connection.all.setStringMode (mode => trait);
-   end set_trait_string_mode;
 
 
    -------------------------------

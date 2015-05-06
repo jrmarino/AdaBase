@@ -58,10 +58,6 @@ package AdaBase.Driver.Base is
                                   return ErrorMode;
 
    overriding
-   function trait_string_mode    (driver : Base_Driver)
-                                  return StringMode;
-
-   overriding
    function trait_connected      (driver : Base_Driver)
                                   return Boolean;
 
@@ -100,10 +96,6 @@ package AdaBase.Driver.Base is
    overriding
    procedure set_trait_error_mode  (driver : Base_Driver;
                                     trait  : ErrorMode);
-
-   overriding
-   procedure set_trait_string_mode (driver : Base_Driver;
-                                    trait  : StringMode);
 
    overriding
    procedure set_trait_max_blob_size (driver : Base_Driver;
