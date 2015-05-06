@@ -365,11 +365,38 @@ package body AdaBase.Statement.Base.MySQL is
    --  fetch_all  --
    -----------------
    overriding
-   function fetch_all (Stmt : MySQL_statement) return ARS.DataRowSet_Access
+   function fetch_all (Stmt : MySQL_statement) return ARS.DataRowSet
    is
-      dataset : ARS.DataRowSet_Access := null;
+      use type ARS.DataRow_Access;
+      maxrows : Natural := Natural (Stmt.rows_returned);
+      tmpset  : ARS.DataRowSet (1 .. maxrows + 1) := (others => null);
+      nullset : ARS.DataRowSet (1 .. 0);
+      index   : Natural := 1;
    begin
-      return dataset;
+      if (delivery = completed) or else (maxrows = 0) then
+         return nullset;
+      end if;
+      --  It is possible that one or more rows was individually fetched
+      --  before the entire set was fetched.  Let's consider this legal so
+      --  use a repeat loop to check each row and return a partial set
+      --  if necessary.
+      loop
+         tmpset (index) := Stmt.fetch_next;
+         exit when tmpset (index) = null;
+         index := index + 1;
+         exit when index > maxrows + 1;  --  should never happen
+      end loop;
+      if index = 1 then
+         return nullset;   --  nothing was fetched
+      end if;
+      declare
+         dataset : ARS.DataRowSet (1 .. index - 1);
+      begin
+         for x in dataset'Range loop
+            dataset (x) := tmpset (x);
+         end loop;
+         return dataset;
+      end;
    end fetch_all;
 
 

@@ -386,7 +386,9 @@ package body AdaBase.Driver.Base.MySQL is
            con_buffered      => driver.trait_query_buffers_used);
    begin
       if driver.connection_active then
-         driver.log_nominal (category => execution, message => ASM.hack);
+         driver.log_nominal
+           (category => execution, message => SUS ("query succeeded," &
+              statement.rows_returned'Img & " rows returned"));
 
          --  driver.local_connection.all.initializeStatement (stmt => result);
          --  driver.connection.initializeStatement;

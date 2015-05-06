@@ -57,7 +57,7 @@ package AdaBase.Interfaces.Statement is
                              is abstract;
 
    function fetch_all       (Stmt : iStatement)
-                             return AdaBase.Results.Sets.DataRowSet_Access
+                             return AdaBase.Results.Sets.DataRowSet
                              is abstract;
 
    --  bindValue  (variant)

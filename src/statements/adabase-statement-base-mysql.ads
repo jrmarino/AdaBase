@@ -81,7 +81,7 @@ package AdaBase.Statement.Base.MySQL is
    function fetch_next (Stmt : MySQL_statement) return ARS.DataRow_Access;
 
    overriding
-   function fetch_all  (Stmt : MySQL_statement) return ARS.DataRowSet_Access;
+   function fetch_all  (Stmt : MySQL_statement) return ARS.DataRowSet;
 
 
    hack : stmttext := blank;
