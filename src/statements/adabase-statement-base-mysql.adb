@@ -188,7 +188,7 @@ package body AdaBase.Statement.Base.MySQL is
    procedure initialize (Object : in out MySQL_statement)
    is
       use type ACM.MySQL_Connection_Access;
-      len : Natural := SU.Length (hack);
+      len : Natural := SU.Length (Object.initial_sql.all);
    begin
       if Object.mysql_conn = null then
          return;
@@ -200,10 +200,10 @@ package body AdaBase.Statement.Base.MySQL is
       Object.connection := ACB.Base_Connection_Access (Object.mysql_conn);
       case Object.type_of_statement is
          when direct_statement =>
-            Object.sql_final.all := SU.To_String (hack);
+            Object.sql_final.all := SU.To_String (Object.initial_sql.all);
             Object.internal_execute;
          when prepared_statement =>
-            Object.transform_sql (sql => SU.To_String (hack),
+            Object.transform_sql (sql => SU.To_String (Object.initial_sql.all),
                                   new_sql => Object.sql_final.all);
       end case;
    end initialize;

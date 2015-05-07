@@ -99,7 +99,7 @@ private
                               socket   : String    := blankstring;
                               port     : PosixPort := portless);
 
-   function private_query (driver : MySQL_Driver)
+   function private_query (driver : MySQL_Driver; sql : String)
                            return ASM.MySQL_statement_access;
 
    overriding

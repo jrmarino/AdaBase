@@ -200,8 +200,7 @@ package body AdaBase.Driver.Base.MySQL is
                    return AID.ASB.basic_statement
    is
    begin
-      ASM.hack := SU.To_Unbounded_String (sql);
-      return AID.ASB.basic_statement (driver.private_query);
+      return AID.ASB.basic_statement (driver.private_query (sql => sql));
    end query;
 
 
@@ -370,16 +369,19 @@ package body AdaBase.Driver.Base.MySQL is
    ---------------------
    --  private_query  --
    ---------------------
-   function private_query (driver : MySQL_Driver)
+   function private_query (driver : MySQL_Driver; sql : String)
                    return ASM.MySQL_statement_access
    is
       err1 : constant drvtext :=
         SUS ("ACK! Query attempted on inactive connection");
+      duplicate : aliased constant AID.ASB.stmttext := SUS (sql);
+      shadow    : AID.ASB.stmttext_access := duplicate'Unrestricted_Access;
       statement : constant ASM.MySQL_statement_access :=
         new ASM.MySQL_statement
           (type_of_statement => AID.ASB.direct_statement,
            log_handler       => logger'Access,
            mysql_conn        => driver.local_connection,
+           initial_sql       => shadow,
            con_error_mode    => driver.trait_error_mode,
            con_case_mode     => driver.trait_column_case,
            con_max_blob      => driver.trait_max_blob_size,

@@ -45,6 +45,7 @@ package AdaBase.Statement.Base is
    package RGC renames AdaBase.Results.Generic_Converters;
 
    subtype stmttext is SU.Unbounded_String;
+   type stmttext_access is access all stmttext;
 
    blank : constant stmttext := SU.Null_Unbounded_String;
 

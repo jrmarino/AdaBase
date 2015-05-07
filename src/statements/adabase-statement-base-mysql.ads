@@ -29,6 +29,7 @@ package AdaBase.Statement.Base.MySQL is
    type MySQL_statement (type_of_statement : stmt_type;
                          log_handler       : ALF.LogFacility_access;
                          mysql_conn        : ACM.MySQL_Connection_Access;
+                         initial_sql       : stmttext_access;
                          con_error_mode    : ErrorMode;
                          con_case_mode     : CaseMode;
                          con_max_blob      : BLOB_maximum;
@@ -85,13 +86,7 @@ package AdaBase.Statement.Base.MySQL is
    overriding
    function fetch_bound (Stmt : MySQL_statement) return Boolean;
 
-   hack : stmttext := blank;
-
 private
-
-
-   --  procedure clear_buffer (Stmt : out MySQL_statement);
-
 
    procedure initialize (Object : in out MySQL_statement);
    procedure internal_execute (Stmt : in out MySQL_statement);
@@ -135,6 +130,7 @@ private
    type MySQL_statement (type_of_statement : stmt_type;
                          log_handler       : ALF.LogFacility_access;
                          mysql_conn        : ACM.MySQL_Connection_Access;
+                         initial_sql       : stmttext_access;
                          con_error_mode    : ErrorMode;
                          con_case_mode     : CaseMode;
                          con_max_blob      : BLOB_maximum;
