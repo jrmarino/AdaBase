@@ -52,7 +52,21 @@ package body AdaBase.Connection.Base.MySQL is
    is
    begin
       if conn.prop_active then
-         raise NOT_WHILE_CONNECTED;
+         declare
+            use type ABM.my_int;
+            setting : ABM.enum_mysql_set_option :=
+              ABM.MYSQL_OPTION_MULTI_STATEMENTS_ON;
+            result  : ABM.my_int;
+         begin
+            if not multiple then
+               setting := ABM.MYSQL_OPTION_MULTI_STATEMENTS_OFF;
+            end if;
+            result := ABM.mysql_set_server_option (handle => conn.handle,
+                                                option => setting);
+            if result /= 0 then
+               raise SET_OPTION_FAIL with "Failed to set MultiQuery option";
+            end if;
+         end;
       end if;
       conn.prop_multiquery := multiple;
    end setMultiQuery;
@@ -235,8 +249,10 @@ package body AdaBase.Connection.Base.MySQL is
       options : Natural := 0;
       opt_compress : constant Natural := 2 ** (ABM.client_flag_order'Pos
                                                (ABM.CLIENT_COMPRESS) - 1);
-      opt_multi : constant Natural := 2 ** (ABM.client_flag_order'Pos
-                                            (ABM.CLIENT_MULTI_RESULTS) - 1);
+      opt_multi : constant Natural :=
+        2 ** (ABM.client_flag_order'Pos (ABM.CLIENT_MULTI_RESULTS) - 1)
+          +
+        2 ** (ABM.client_flag_order'Pos (ABM.CLIENT_MULTI_STATEMENTS) - 1);
    begin
       if conn.prop_active then
          raise NOT_WHILE_CONNECTED;
@@ -701,6 +717,25 @@ package body AdaBase.Connection.Base.MySQL is
    begin
       return ABM.mysql_fetch_row (handle => result_handle);
    end fetch_row;
+
+
+   ----------------------
+   --  fetch_next_set  --
+   ----------------------
+   function fetch_next_set (conn : MySQL_Connection) return Boolean
+   is
+      use type ABM.my_int;
+      result : ABM.my_int;
+   begin
+      result := ABM.mysql_next_result (handle => conn.handle);
+      if result > 0 then
+         raise RESULT_FAIL with "Error fetching next result set";
+      end if;
+      if result = 0 then
+         return True;
+      end if;
+      return False;
+   end fetch_next_set;
 
 
    ---------------------

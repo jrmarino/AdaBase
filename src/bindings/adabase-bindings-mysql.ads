@@ -156,6 +156,11 @@ package AdaBase.Bindings.MySQL is
      MYSQL_DEFAULT_AUTH);
    pragma Convention (C, mysql_option);
 
+   type enum_mysql_set_option is
+     (MYSQL_OPTION_MULTI_STATEMENTS_ON,
+      MYSQL_OPTION_MULTI_STATEMENTS_OFF);
+   pragma Convention (C, enum_mysql_set_option);
+
    type client_flag_order is
     (CLIENT_LONG_PASSWORD,
      CLIENT_FOUND_ROWS,
@@ -368,10 +373,18 @@ package AdaBase.Bindings.MySQL is
                                  return my_ulong_access;
    pragma Import (C, mysql_fetch_lengths, "mysql_fetch_lengths");
 
+   function mysql_next_result (handle : not null access MYSQL) return my_int;
+   pragma Import (C, mysql_next_result, "mysql_next_result");
+
    procedure mysql_get_character_set_info (handle : not null access MYSQL;
                                            cs     : access MY_CHARSET_INFO);
    pragma Import (C, mysql_get_character_set_info,
-                    "mysql_get_character_set_info");
+                  "mysql_get_character_set_info");
+
+   function mysql_set_server_option (handle : not null access MYSQL;
+                                     option : enum_mysql_set_option)
+                                     return my_int;
+   pragma Import (C, mysql_set_server_option, "mysql_set_server_option");
 
 private
 

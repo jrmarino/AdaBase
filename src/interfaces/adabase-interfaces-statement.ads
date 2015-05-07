@@ -64,6 +64,9 @@ package AdaBase.Interfaces.Statement is
 
    function fetch_bound     (Stmt : iStatement) return Boolean is abstract;
 
+   procedure fetch_next_set (Stmt : out iStatement;
+                             success : out Boolean) is null;
+
    --  bindValue  (variant)
    --  bindTimeValue (generic time)
 --  fetch_nextRowSet

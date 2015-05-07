@@ -201,18 +201,18 @@ package body AdaBase.Statement.Base.MySQL is
       case Object.type_of_statement is
          when direct_statement =>
             Object.sql_final.all := SU.To_String (Object.initial_sql.all);
-            Object.internal_execute;
+            Object.internal_direct_post_exec;
          when prepared_statement =>
             Object.transform_sql (sql => SU.To_String (Object.initial_sql.all),
                                   new_sql => Object.sql_final.all);
       end case;
    end initialize;
 
+
    ---------------------
    --  direct_result  --
    ---------------------
-   procedure direct_result (Stmt    : in out MySQL_statement;
-                            present : out Boolean)
+   procedure process_direct_result (Stmt : in out MySQL_statement)
    is
       use type ABM.MYSQL_RES_Access;
    begin
@@ -222,8 +222,8 @@ package body AdaBase.Statement.Base.MySQL is
          when False => Stmt.mysql_conn.all.use_result
               (result_handle => Stmt.cheat.result_handle);
       end case;
-      present := Stmt.cheat.result_handle /= null;
-   end direct_result;
+      Stmt.result_present := (Stmt.cheat.result_handle /= null);
+   end process_direct_result;
 
 
    ---------------------
@@ -271,6 +271,9 @@ package body AdaBase.Statement.Base.MySQL is
          end case;
       end fn;
    begin
+      Stmt.column_info.Clear;
+      Stmt.crate.Clear;
+      Stmt.headings_map.Clear;
       loop
          field := Stmt.mysql_conn.fetch_field
            (result_handle => Stmt.cheat.result_handle);
@@ -428,6 +431,25 @@ package body AdaBase.Statement.Base.MySQL is
          return dataset;
       end;
    end fetch_all;
+
+
+   ----------------------
+   --  fetch_next_set  --
+   ----------------------
+   overriding
+   procedure fetch_next_set (Stmt    : out MySQL_statement;
+                             success : out Boolean)
+   is
+     another_set : Boolean;
+   begin
+      success := False;
+      another_set := Stmt.mysql_conn.fetch_next_set;
+      if not another_set then
+         return;
+      end if;
+      Stmt.internal_direct_post_exec (newset => True);
+      success := True;
+   end fetch_next_set;
 
 
    ---------------------------
@@ -767,16 +789,19 @@ package body AdaBase.Statement.Base.MySQL is
 
 
    ----------------------------------
-   --  internal_execute  (direct)  --
+   --  internal_direct_post_exec   --
    ----------------------------------
-   procedure internal_execute (Stmt : in out MySQL_statement)
-   is
-      --  num_columns is already 0, success_execution is already false
+   procedure internal_direct_post_exec (Stmt : in out MySQL_statement;
+                                        newset : Boolean := False) is
    begin
-      Stmt.connection.execute (sql => Stmt.sql_final.all);
-      Stmt.log_nominal (category => statement_execution,
-                        message => Stmt.sql_final.all);
-      Stmt.direct_result (present => Stmt.result_present);
+      Stmt.num_columns := 0;
+      Stmt.successful_execution := False;
+      if not newset then
+         Stmt.connection.execute (sql => Stmt.sql_final.all);
+         Stmt.log_nominal (category => statement_execution,
+                           message => Stmt.sql_final.all);
+      end if;
+      Stmt.process_direct_result;
       Stmt.successful_execution := True;
       if Stmt.result_present then
          Stmt.num_columns := Stmt.mysql_conn.fields_in_result
@@ -810,7 +835,7 @@ package body AdaBase.Statement.Base.MySQL is
          Stmt.log_problem (category   => statement_execution,
                            message    => EX.Exception_Message (X => RES),
                            pull_codes => True);
-   end internal_execute;
+   end internal_direct_post_exec;
 
 
 

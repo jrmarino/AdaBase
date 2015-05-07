@@ -122,6 +122,8 @@ package AdaBase.Connection.Base.MySQL is
                             result_handle : ABM.MYSQL_RES_Access)
                             return ABM.MYSQL_ROW_access;
 
+   function fetch_next_set (conn : MySQL_Connection) return Boolean;
+
    function fetch_lengths  (conn : MySQL_Connection;
                             result_handle : ABM.MYSQL_RES_Access;
                             num_columns   : Positive) return fldlen;
@@ -181,6 +183,7 @@ package AdaBase.Connection.Base.MySQL is
    STMT_NOT_VALID      : exception;
    RESULT_FAIL         : exception;
    BINDING_FAIL        : exception;
+   SET_OPTION_FAIL     : exception;
 
 private
 

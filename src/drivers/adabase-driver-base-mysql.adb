@@ -391,18 +391,9 @@ package body AdaBase.Driver.Base.MySQL is
          driver.log_nominal
            (category => execution, message => SUS ("query succeeded," &
               statement.rows_returned'Img & " rows returned"));
-
-         --  driver.local_connection.all.initializeStatement (stmt => result);
-         --  driver.connection.initializeStatement;
-         --  set sql ???
-         --  driver.connection.execute (sql => sql);
-         --  Result.successful := True;
-      --   driver.log_nominal (category => execution, message => SUS (sql));
-
       else
          --  Non-fatal attempt to query an unccnnected database
-         driver.log_problem (category => execution,
-                             message  => err1);
+         driver.log_problem (category => execution, message  => err1);
       end if;
       return statement;
    end private_query;

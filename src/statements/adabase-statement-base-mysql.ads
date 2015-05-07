@@ -86,12 +86,16 @@ package AdaBase.Statement.Base.MySQL is
    overriding
    function fetch_bound (Stmt : MySQL_statement) return Boolean;
 
+   overriding
+   procedure fetch_next_set (Stmt : out MySQL_statement;
+                             success : out Boolean);
+
 private
 
    procedure initialize (Object : in out MySQL_statement);
-   procedure internal_execute (Stmt : in out MySQL_statement);
-   procedure direct_result (Stmt    : in out MySQL_statement;
-                            present : out Boolean);
+   procedure internal_direct_post_exec (Stmt   : in out MySQL_statement;
+                                        newset : Boolean := False);
+   procedure process_direct_result (Stmt : in out MySQL_statement);
    procedure scan_column_information (Stmt : in out MySQL_statement);
    function internal_fetch_bound_direct (Stmt : MySQL_statement)
                                          return Boolean;
