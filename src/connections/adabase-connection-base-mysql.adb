@@ -408,10 +408,11 @@ package body AdaBase.Connection.Base.MySQL is
    --  free_result  --
    -------------------
    procedure free_result (conn : MySQL_Connection;
-                          result_handle : ABM.MYSQL_RES_Access)
+                          result_handle : out ABM.MYSQL_RES_Access)
    is
    begin
       ABM.mysql_free_result (handle => result_handle);
+      result_handle := null;
    end free_result;
 
 
@@ -805,7 +806,7 @@ package body AdaBase.Connection.Base.MySQL is
    --  prep_free_result  --
    ------------------------
    procedure prep_free_result (conn : MySQL_Connection;
-                               stmt : ABM.MYSQL_STMT_Access)
+                               stmt : out ABM.MYSQL_STMT_Access)
    is
       use type ABM.my_bool;
       result : ABM.my_bool;
@@ -814,6 +815,7 @@ package body AdaBase.Connection.Base.MySQL is
       if result /= 0 then
          raise RESULT_FAIL with "Prepared statement free result";
       end if;
+      stmt := null;
    end prep_free_result;
 
 

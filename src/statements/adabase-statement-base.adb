@@ -28,6 +28,17 @@ package body AdaBase.Statement.Base is
    end successful;
 
 
+   -------------------------
+   --  discards_possible  --
+   -------------------------
+   overriding
+   function discards_possible  (Stmt : Base_Statement) return Boolean
+   is
+   begin
+      return Stmt.rows_leftover;
+   end discards_possible;
+
+
    ---------------------
    --  rows_affected  --
    ---------------------

@@ -99,7 +99,7 @@ package AdaBase.Connection.Base.MySQL is
                            result_handle : out ABM.MYSQL_RES_Access);
 
    procedure free_result  (conn : MySQL_Connection;
-                           result_handle : ABM.MYSQL_RES_Access);
+                           result_handle : out ABM.MYSQL_RES_Access);
 
    procedure store_result (conn : MySQL_Connection;
                            result_handle : out ABM.MYSQL_RES_Access);
@@ -164,7 +164,7 @@ package AdaBase.Connection.Base.MySQL is
                                 stmt : ABM.MYSQL_STMT_Access) return String;
 
    procedure prep_free_result (conn : MySQL_Connection;
-                               stmt : ABM.MYSQL_STMT_Access);
+                               stmt : out ABM.MYSQL_STMT_Access);
 
    procedure prep_store_result (conn : MySQL_Connection;
                                 stmt : ABM.MYSQL_STMT_Access);

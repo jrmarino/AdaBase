@@ -69,6 +69,9 @@ package AdaBase.Statement.Base is
    overriding
    function successful (Stmt : Base_Statement) return Boolean;
 
+   overriding
+   function discards_possible  (Stmt : Base_Statement) return Boolean;
+
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
                    vaxx  : AR.nbyte0_access);
@@ -316,6 +319,7 @@ private
      abstract limited new Base_Pure and AIS.iStatement with record
       successful_execution : Boolean      := False;
       result_present       : Boolean      := False;
+      rows_leftover        : Boolean      := False;
       dialect              : TDriver      := foundation;
       impacted             : AffectedRows := 0;
       connection           : ACB.Base_Connection_Access;

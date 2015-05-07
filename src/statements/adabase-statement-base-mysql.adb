@@ -30,19 +30,24 @@ package body AdaBase.Statement.Base.MySQL is
    --  discard_rest  --
    --------------------
    overriding
-   procedure discard_rest  (Stmt : out MySQL_statement;
-                            was_complete : out Boolean)
+   procedure discard_rest (Stmt : out MySQL_statement)
    is
-      --  use type ACM.MySQL_Connection_Access;
-      --  use type ABM.MYSQL_STMT_Access;
+      use type ABM.MYSQL_RES_Access;
+      use type ABM.MYSQL_STMT_Access;
    begin
-      --  case Stmt.type_of_statement is
-      --   when direct_statement   => was_complete := Stmt.connection = null;
-      --   when prepared_statement => was_complete := Stmt.connection = null;
-      --  end case;
-      was_complete := False;
-      Stmt.impacted := 0;
-    --  Stmt.clear_buffer;
+      case Stmt.type_of_statement is
+      when direct_statement =>
+         if Stmt.cheat.result_handle /= null then
+            Stmt.rows_leftover := True;
+            Stmt.mysql_conn.all.free_result (Stmt.cheat.result_handle);
+         end if;
+      when prepared_statement =>
+         if Stmt.stmt_handle /= null then
+            Stmt.rows_leftover := True;
+            Stmt.mysql_conn.all.prep_free_result (Stmt.stmt_handle);
+         end if;
+      end case;
+      Stmt.cheat.delivery := completed;
    end discard_rest;
 
 
@@ -213,11 +218,11 @@ package body AdaBase.Statement.Base.MySQL is
    begin
       case Stmt.con_buffered is
          when True => Stmt.mysql_conn.all.store_result
-              (result_handle => Stmt.result_handle);
+              (result_handle => Stmt.cheat.result_handle);
          when False => Stmt.mysql_conn.all.use_result
-              (result_handle => Stmt.result_handle);
+              (result_handle => Stmt.cheat.result_handle);
       end case;
-      present := Stmt.result_handle /= null;
+      present := Stmt.cheat.result_handle /= null;
    end direct_result;
 
 
@@ -268,7 +273,7 @@ package body AdaBase.Statement.Base.MySQL is
    begin
       loop
          field := Stmt.mysql_conn.fetch_field
-           (result_handle => Stmt.result_handle);
+           (result_handle => Stmt.cheat.result_handle);
          exit when field = null;
          declare
             info : column_info;
@@ -354,7 +359,7 @@ package body AdaBase.Statement.Base.MySQL is
    is
       datarow : ARS.DataRow_Access := null;
    begin
-      if delivery = completed then
+      if Stmt.cheat.delivery = completed then
          return datarow;
       end if;
       case Stmt.type_of_statement is
@@ -373,7 +378,7 @@ package body AdaBase.Statement.Base.MySQL is
    overriding
    function fetch_bound (Stmt : MySQL_statement) return Boolean is
    begin
-      if delivery = completed then
+      if Stmt.cheat.delivery = completed then
          return False;
       end if;
       case Stmt.type_of_statement is
@@ -398,7 +403,7 @@ package body AdaBase.Statement.Base.MySQL is
       nullset : ARS.DataRowSet (1 .. 0);
       index   : Natural := 1;
    begin
-      if (delivery = completed) or else (maxrows = 0) then
+      if (Stmt.cheat.delivery = completed) or else (maxrows = 0) then
          return nullset;
       end if;
       --  It is possible that one or more rows was individually fetched
@@ -520,14 +525,14 @@ package body AdaBase.Statement.Base.MySQL is
       use type ABM.ICS.chars_ptr;
       use type ABM.MYSQL_ROW_access;
       rptr : ABM.MYSQL_ROW_access :=
-        Stmt.mysql_conn.fetch_row (Stmt.result_handle);
+        Stmt.mysql_conn.fetch_row (Stmt.cheat.result_handle);
    begin
       if rptr = null then
-         delivery := completed;
-         Stmt.mysql_conn.free_result (Stmt.result_handle);
+         Stmt.cheat.delivery := completed;
+         Stmt.mysql_conn.free_result (Stmt.cheat.result_handle);
          return null;
       end if;
-      delivery := progressing;
+      Stmt.cheat.delivery := progressing;
 
       declare
          maxlen : constant Natural := Natural (Stmt.column_info.Length);
@@ -538,7 +543,7 @@ package body AdaBase.Statement.Base.MySQL is
          result : ARS.DataRow_Access := new ARS.DataRow;
 
          field_lengths : constant ACM.fldlen := Stmt.mysql_conn.fetch_lengths
-           (result_handle => Stmt.result_handle,
+           (result_handle => Stmt.cheat.result_handle,
             num_columns   => maxlen);
 
          function Convert is new Ada.Unchecked_Conversion
@@ -644,14 +649,14 @@ package body AdaBase.Statement.Base.MySQL is
       use type ABM.ICS.chars_ptr;
       use type ABM.MYSQL_ROW_access;
       rptr : ABM.MYSQL_ROW_access :=
-        Stmt.mysql_conn.fetch_row (Stmt.result_handle);
+        Stmt.mysql_conn.fetch_row (Stmt.cheat.result_handle);
    begin
       if rptr = null then
-         delivery := completed;
-         Stmt.mysql_conn.free_result (Stmt.result_handle);
+         Stmt.cheat.delivery := completed;
+         Stmt.mysql_conn.free_result (Stmt.cheat.result_handle);
          return False;
       end if;
-      delivery := progressing;
+      Stmt.cheat.delivery := progressing;
 
       declare
          maxlen : constant Natural := Natural (Stmt.column_info.Length);
@@ -660,7 +665,7 @@ package body AdaBase.Statement.Base.MySQL is
 
          row : rowtype_access;
          field_lengths : constant ACM.fldlen := Stmt.mysql_conn.fetch_lengths
-           (result_handle => Stmt.result_handle,
+           (result_handle => Stmt.cheat.result_handle,
             num_columns   => maxlen);
 
          function Convert is new Ada.Unchecked_Conversion
@@ -775,13 +780,13 @@ package body AdaBase.Statement.Base.MySQL is
       Stmt.successful_execution := True;
       if Stmt.result_present then
          Stmt.num_columns := Stmt.mysql_conn.fields_in_result
-                               (Stmt.result_handle);
+                               (Stmt.cheat.result_handle);
          if Stmt.con_buffered then
             Stmt.size_of_rowset := Stmt.mysql_conn.rows_in_result
-                                     (Stmt.result_handle);
+                                     (Stmt.cheat.result_handle);
          end if;
          Stmt.scan_column_information;
-         delivery := pending;
+         Stmt.cheat.delivery := pending;
       else
          declare
             returned_cols : Natural;
@@ -793,7 +798,7 @@ package body AdaBase.Statement.Base.MySQL is
                raise ACM.RESULT_FAIL with "Columns returned without result";
             end if;
          end;
-         delivery := completed;
+         Stmt.cheat.delivery := completed;
       end if;
 
    exception

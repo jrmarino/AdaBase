@@ -52,8 +52,7 @@ package AdaBase.Statement.Base.MySQL is
    function last_driver_message (Stmt : MySQL_statement) return String;
 
    overriding
-   procedure discard_rest  (Stmt : out MySQL_statement;
-                            was_complete : out Boolean);
+   procedure discard_rest   (Stmt : out MySQL_statement);
 
    overriding
    function execute         (Stmt : MySQL_statement) return Boolean;
@@ -99,9 +98,9 @@ private
    procedure direct_result (Stmt    : in out MySQL_statement;
                             present : out Boolean);
    procedure scan_column_information (Stmt : in out MySQL_statement);
-   function internal_fetch_bound_direct (Stmt :  MySQL_statement)
+   function internal_fetch_bound_direct (Stmt : MySQL_statement)
                                          return Boolean;
-   function internal_fetch_row_direct (Stmt :  MySQL_statement)
+   function internal_fetch_row_direct (Stmt : MySQL_statement)
                                        return ARS.DataRow_Access;
    function convert (nv : String) return CAL.Time;
    function convert (nv : String) return AR.settype;
@@ -120,6 +119,19 @@ private
    package VColumns is new AC.Vectors (Index_Type   => Positive,
                                        Element_Type => column_info);
 
+   --  The "cheat" exists to work around Ada2005 restriction of no "out"
+   --  parameters for functions.  In some cases we need to adjust the
+   --  main object as a result of running the function -- otherwise we
+   --  have to switch to a procedure which is not desirable for fetching
+
+   type cheat2005 is record
+      delivery      : fetch_status          := completed;
+      result_handle : ABM.MYSQL_RES_Access  := null;
+   end record;
+   type cheat_access is access all cheat2005;
+
+   cheat_ada2005 : aliased cheat2005;
+
    type MySQL_statement (type_of_statement : stmt_type;
                          log_handler       : ALF.LogFacility_access;
                          mysql_conn        : ACM.MySQL_Connection_Access;
@@ -130,17 +142,11 @@ private
    is limited new Base_Statement and AIS.iStatement with
       record
          stmt_handle    : ABM.MYSQL_STMT_Access := null;
-         result_handle  : ABM.MYSQL_RES_Access  := null;
+         cheat          : cheat_access          := cheat_ada2005'Access;
          num_columns    : Natural               := 0;
          size_of_rowset : TraxID                := 0;
          column_info    : VColumns.Vector;
          sql_final      : access String;
       end record;
-
-   --  Delivery should be part of Statement, but the Ada 2005 restriction
-   --  of "in" only parameters for functions forces it outside (because we
-   --  really want fetch* to be functions, not procedures)
-
-   delivery  : fetch_status  := completed;
 
 end AdaBase.Statement.Base.MySQL;
