@@ -69,6 +69,7 @@ package body AdaBase.Statement.Base is
    begin
       new_sql := sql;
       Stmt.alpha_markers.Clear;
+      Stmt.realmccoy.Clear;
       if sql'Length = 0 then
          return;
       end if;
@@ -114,21 +115,22 @@ package body AdaBase.Statement.Base is
          --     replacement index, and pushes the string into alpha markers
          --  Normally ? and : aren't mixed but we will support it.
          procedure replace_alias;
-         index    : Natural  := 0;
          start    : Natural  := 0;
          arrow    : Positive := 1;
          scanning : Boolean  := False;
 
          procedure replace_alias is
             len    : Natural := arrow - start;
-            alias  : String (1 .. len) := sql_mask (start .. arrow - 1);
+            alias  : String (2 .. len) := sql_mask (start + 1 .. arrow - 1);
             scab   : String (1 .. len) := ('?', others => ' ');
+            brec   : bindrec;
          begin
             if Stmt.alpha_markers.Contains (Key => alias) then
                raise ILLEGAL_BIND_SQL with "multiple instances of " & alias;
             end if;
-            index := index + 1;
-            Stmt.alpha_markers.Insert (Key => alias, New_Item => index);
+            Stmt.realmccoy.Append (New_Item => brec);
+            Stmt.alpha_markers.Insert (Key => alias,
+                                       New_Item => Stmt.realmccoy.Last_Index);
             new_sql (start .. arrow - 1) := scab;
             scanning := False;
          end replace_alias;
@@ -140,7 +142,6 @@ package body AdaBase.Statement.Base is
                   if scanning then
                      replace_alias;
                   end if;
-                  index := index + 1;
                when ASCII.Colon =>
                   if scanning then
                      raise ILLEGAL_BIND_SQL with
@@ -663,6 +664,335 @@ package body AdaBase.Statement.Base is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
+
+
+
+
+   --------------------
+   --  assign_index  --
+   --------------------
+   function assign_index (Stmt : Base_Statement; moniker : String)
+                          return Positive
+   is
+      use type Markers.Cursor;
+      cursor : Markers.Cursor;
+   begin
+      cursor := Stmt.alpha_markers.Find (Key => moniker);
+      if cursor = Markers.No_Element then
+         raise MARKER_NOT_FOUND with
+           "There is no marker known as '" & moniker & "'.";
+      end if;
+      return Markers.Element (Position => cursor);
+   end assign_index;
+
+
+   ------------------------------------------------------------------
+   --  assign via headings                                         --
+   ------------------------------------------------------------------
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.nbyte0_access) is
+   begin
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.nbyte1_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.nbyte2_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.nbyte3_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.nbyte4_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.nbyte8_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.byte1_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.byte2_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.byte3_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.byte4_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.byte8_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.real9_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.real18_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.str1_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.str2_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.str4_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.time_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.chain_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.enum_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.settype_access) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+
+   ------------------------------------------------------
+   --  20 assign functions                             --
+   ------------------------------------------------------
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.nbyte0_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_nbyte0, a00 => vaxx, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.nbyte1_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_nbyte1, a01 => vaxx, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.nbyte2_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_nbyte2, a02 => vaxx, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.nbyte3_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_nbyte3, a03 => vaxx, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.nbyte4_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_nbyte4, a04 => vaxx, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.nbyte8_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_nbyte8, a05 => vaxx, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.byte1_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_byte1, a06 => vaxx, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.byte2_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_byte2, a07 => vaxx, bound => True));
+   end assign;
+
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.byte3_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_byte3, a08 => vaxx, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.byte4_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_byte4, a09 => vaxx, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.byte8_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_byte8, a10 => vaxx, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.real9_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_real9, a11 => vaxx, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.real18_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_real18, a12 => vaxx, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.str1_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_textual, a13 => vaxx, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.str2_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_widetext, a14 => vaxx, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.str4_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_supertext, a15 => vaxx, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.time_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_timestamp, a16 => vaxx, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.chain_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_chain, a17 => vaxx, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.enum_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_enumtype, a18 => vaxx, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.settype_access) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_settype, a19 => vaxx, bound => True));
+   end assign;
 
 
 end AdaBase.Statement.Base;

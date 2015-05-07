@@ -67,8 +67,23 @@ package AdaBase.Interfaces.Statement is
    procedure fetch_next_set (Stmt : out iStatement;
                              success : out Boolean) is null;
 
-   --  bindValue  (variant)
-   --  bindTimeValue (generic time)
---  fetch_nextRowSet
+   ------------------------------------------------------------------------
+   --  Technically there should be 20 of these listed.  They are all
+   --  implemented in the base class so they get inherited.  I'm too
+   --  Lazy to add 40 prototypes here.  Same with Assign
+   --
+   --     procedure bind    (Stmt    : out Base_Statement;
+   --                        index   : Positive;
+   --                        vaxx    : AR.nbyte0_access);
+   --     procedure bind    (Stmt    : out Base_Statement;
+   --                        heading : String;
+   --                        vaxx    : AR.nbyte0_access);
+   --     procedure assign  (Stmt    : out Base_Statement;
+   --                        index   : Positive;
+   --                        vaxx    : AR.nbyte0_access);
+   --     procedure assign  (Stmt    : out Base_Statement;
+   --                        heading : String;
+   --                        vaxx    : AR.nbyte0_access);
+   -------------------------------------------------------------------------
 
 end AdaBase.Interfaces.Statement;
