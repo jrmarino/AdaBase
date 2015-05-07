@@ -83,6 +83,8 @@ package AdaBase.Statement.Base.MySQL is
    overriding
    function fetch_all  (Stmt : MySQL_statement) return ARS.DataRowSet;
 
+   overriding
+   function fetch_bound (Stmt : MySQL_statement) return Boolean;
 
    hack : stmttext := blank;
 
@@ -97,6 +99,8 @@ private
    procedure direct_result (Stmt    : in out MySQL_statement;
                             present : out Boolean);
    procedure scan_column_information (Stmt : in out MySQL_statement);
+   function internal_fetch_bound_direct (Stmt :  MySQL_statement)
+                                         return Boolean;
    function internal_fetch_row_direct (Stmt :  MySQL_statement)
                                        return ARS.DataRow_Access;
    function convert (nv : String) return CAL.Time;

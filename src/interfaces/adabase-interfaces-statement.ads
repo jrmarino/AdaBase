@@ -60,6 +60,8 @@ package AdaBase.Interfaces.Statement is
                              return AdaBase.Results.Sets.DataRowSet
                              is abstract;
 
+   function fetch_bound     (Stmt : iStatement) return Boolean is abstract;
+
    --  bindValue  (variant)
    --  bindTimeValue (generic time)
    --  bindColumn

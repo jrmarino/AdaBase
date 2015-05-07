@@ -56,13 +56,31 @@ package AdaBase.Results is
    subtype nbyte0 is Boolean;
 
    type chain is array (Positive range <>) of nbyte1;
-   type chain_access is access all chain;
    type enumtype is record
       enumeration : textual;
       index       : Natural;
    end record;
    type settype is array (Positive range <>) of enumtype;
-   type settype_access is access all settype;
 
+   type nbyte0_access  is access all nbyte0;
+   type nbyte1_access  is access all nbyte1;
+   type nbyte2_access  is access all nbyte2;
+   type nbyte3_access  is access all nbyte3;
+   type nbyte4_access  is access all nbyte4;
+   type nbyte8_access  is access all nbyte8;
+   type byte1_access   is access all byte1;
+   type byte2_access   is access all byte2;
+   type byte3_access   is access all byte3;
+   type byte4_access   is access all byte4;
+   type byte8_access   is access all byte8;
+   type real9_access   is access all real9;
+   type real18_access  is access all real18;
+   type str1_access    is access all textual;
+   type str2_access    is access all textwide;
+   type str4_access    is access all textsuper;
+   type time_access    is access all AC.Time;
+   type chain_access   is access all chain;     --  stored as access
+   type enum_access    is access all enumtype;
+   type settype_access is access all settype;   --  stored as access
 
 end AdaBase.Results;
