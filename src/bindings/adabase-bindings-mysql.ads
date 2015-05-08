@@ -386,6 +386,12 @@ package AdaBase.Bindings.MySQL is
                                      return my_int;
    pragma Import (C, mysql_set_server_option, "mysql_set_server_option");
 
+   function mysql_stmt_prepare (handle   : not null access MYSQL_STMT;
+                                stmt_str : ICS.chars_ptr;
+                                length   : my_ulong) return my_int;
+   pragma Import (C, mysql_stmt_prepare, "mysql_stmt_prepare");
+
+
 private
 
    type MYSQL      is limited null record;

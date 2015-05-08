@@ -171,6 +171,14 @@ package AdaBase.Connection.Base.MySQL is
    procedure prep_store_result (conn : MySQL_Connection;
                                 stmt : ABM.MYSQL_STMT_Access);
 
+   procedure initialize_and_prepare_statement
+     (conn : MySQL_Connection;
+      stmt : out ABM.MYSQL_STMT_Access;
+      sql  : String);
+
+   function prep_markers_found (conn : MySQL_Connection;
+                                stmt : ABM.MYSQL_STMT_Access) return Natural;
+
    NOT_WHILE_CONNECTED : exception;
    AUTOCOMMIT_FAIL     : exception;
    COMMIT_FAIL         : exception;

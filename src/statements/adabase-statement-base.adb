@@ -289,11 +289,17 @@ package body AdaBase.Statement.Base is
    --------------------
    --  bind_proceed  --
    --------------------
-   function bind_proceed (Stmt : Base_Statement) return Boolean is
+   function bind_proceed (Stmt : Base_Statement; index : Positive)
+                          return Boolean is
    begin
       if not Stmt.successful_execution then
          raise PRIOR_EXECUTION_FAILED
            with "Use bind after 'execute' but before 'fetch_next'";
+      end if;
+      if index > Stmt.crate.Last_Index then
+         raise BINDING_COLUMN_NOT_FOUND
+           with "Index" & index'Img & " is too high; only" &
+           Stmt.crate.Last_Index'Img & " columns exist.";
       end if;
       return True;
    end bind_proceed;
@@ -324,7 +330,7 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.nbyte0_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_nbyte0, a00 => vaxx, bound => True));
       end if;
@@ -334,7 +340,7 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.nbyte1_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_nbyte1, a01 => vaxx, bound => True));
       end if;
@@ -344,7 +350,7 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.nbyte2_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_nbyte2, a02 => vaxx, bound => True));
       end if;
@@ -354,7 +360,7 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.nbyte3_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_nbyte3, a03 => vaxx, bound => True));
       end if;
@@ -364,7 +370,7 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.nbyte4_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_nbyte4, a04 => vaxx, bound => True));
       end if;
@@ -374,7 +380,7 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.nbyte8_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_nbyte8, a05 => vaxx, bound => True));
       end if;
@@ -384,7 +390,7 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.byte1_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_byte1, a06 => vaxx, bound => True));
       end if;
@@ -394,18 +400,17 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.byte2_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_byte2, a07 => vaxx, bound => True));
       end if;
    end bind;
 
-
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
                    vaxx  : AR.byte3_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_byte3, a08 => vaxx, bound => True));
       end if;
@@ -415,7 +420,7 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.byte4_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_byte4, a09 => vaxx, bound => True));
       end if;
@@ -425,7 +430,7 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.byte8_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_byte8, a10 => vaxx, bound => True));
       end if;
@@ -435,7 +440,7 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.real9_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_real9, a11 => vaxx, bound => True));
       end if;
@@ -445,7 +450,7 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.real18_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_real18, a12 => vaxx, bound => True));
       end if;
@@ -455,7 +460,7 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.str1_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_textual, a13 => vaxx, bound => True));
       end if;
@@ -465,7 +470,7 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.str2_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_widetext, a14 => vaxx, bound => True));
       end if;
@@ -475,7 +480,7 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.str4_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_supertext, a15 => vaxx, bound => True));
       end if;
@@ -485,7 +490,7 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.time_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_timestamp, a16 => vaxx, bound => True));
       end if;
@@ -495,7 +500,7 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.chain_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_chain, a17 => vaxx, bound => True));
       end if;
@@ -505,7 +510,7 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.enum_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_enumtype, a18 => vaxx, bound => True));
       end if;
@@ -515,7 +520,7 @@ package body AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.settype_access) is
    begin
-      if Stmt.bind_proceed then
+      if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_settype, a19 => vaxx, bound => True));
       end if;

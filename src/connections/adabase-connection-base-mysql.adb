@@ -870,6 +870,50 @@ package body AdaBase.Connection.Base.MySQL is
    end prep_store_result;
 
 
+   ----------------------------------------
+   --  initialize_and_prepare_statement  --
+   ----------------------------------------
+   procedure initialize_and_prepare_statement
+     (conn : MySQL_Connection;
+      stmt : out ABM.MYSQL_STMT_Access;
+      sql  : String)
+   is
+      use type ABM.MYSQL_STMT_Access;
+      use type ABM.my_int;
+      result : ABM.my_int;
+   begin
+      stmt := ABM.mysql_stmt_init (handle => conn.handle);
+      if stmt = null then
+         raise INITIALIZE_FAIL
+           with "Insufficient memory to initialize prepared statement";
+      end if;
+      declare
+         ss : ABM.ICS.chars_ptr := ABM.ICS.New_String (sql);
+      begin
+         result := ABM.mysql_stmt_prepare (handle => stmt, stmt_str => ss,
+                                           length   => sql'Length);
+         ABM.ICS.Free (ss);
+      end;
+      if result /= 0 then
+         raise INITIALIZE_FAIL
+           with "Failed to prepare SQL statement '" & sql & "'";
+      end if;
+   end initialize_and_prepare_statement;
+
+
+   --------------------------
+   --  prep_markers_found  --
+   --------------------------
+   function prep_markers_found (conn : MySQL_Connection;
+                                stmt : ABM.MYSQL_STMT_Access) return Natural
+   is
+      result : ABM.my_ulong;
+   begin
+      result := ABM.mysql_stmt_param_count (handle => stmt);
+      return Natural (result);
+   end prep_markers_found;
+
+
 
 
 

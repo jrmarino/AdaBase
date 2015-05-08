@@ -42,9 +42,9 @@ package body AdaBase.Statement.Base.MySQL is
             Stmt.mysql_conn.all.free_result (Stmt.cheat.result_handle);
          end if;
       when prepared_statement =>
-         if Stmt.stmt_handle /= null then
+         if Stmt.cheat.stmt_handle /= null then
             Stmt.rows_leftover := True;
-            Stmt.mysql_conn.all.prep_free_result (Stmt.stmt_handle);
+            Stmt.mysql_conn.all.prep_free_result (Stmt.cheat.stmt_handle);
          end if;
       end case;
       Stmt.cheat.delivery := completed;
@@ -73,7 +73,8 @@ package body AdaBase.Statement.Base.MySQL is
          when direct_statement   =>
             return Stmt.mysql_conn.all.driverMessage;
          when prepared_statement =>
-            return Stmt.mysql_conn.all.prep_DriverMessage (Stmt.stmt_handle);
+            return Stmt.mysql_conn.all.prep_DriverMessage
+              (Stmt.cheat.stmt_handle);
       end case;
 
    end last_driver_message;
@@ -90,7 +91,8 @@ package body AdaBase.Statement.Base.MySQL is
          when direct_statement   =>
             return Stmt.mysql_conn.all.lastInsertID;
          when prepared_statement =>
-            return Stmt.mysql_conn.all.prep_LastInsertID (Stmt.stmt_handle);
+            return Stmt.mysql_conn.all.prep_LastInsertID
+              (Stmt.cheat.stmt_handle);
       end case;
    end last_insert_id;
 
@@ -105,7 +107,8 @@ package body AdaBase.Statement.Base.MySQL is
          when direct_statement   =>
             return Stmt.mysql_conn.all.SqlState;
          when prepared_statement =>
-            return Stmt.mysql_conn.all.prep_SqlState (Stmt.stmt_handle);
+            return Stmt.mysql_conn.all.prep_SqlState
+              (Stmt.cheat.stmt_handle);
       end case;
    end last_sql_state;
 
@@ -120,33 +123,10 @@ package body AdaBase.Statement.Base.MySQL is
          when direct_statement   =>
             return Stmt.mysql_conn.all.driverCode;
          when prepared_statement =>
-            return Stmt.mysql_conn.all.prep_DriverCode (Stmt.stmt_handle);
+            return Stmt.mysql_conn.all.prep_DriverCode
+              (Stmt.cheat.stmt_handle);
       end case;
    end last_driver_code;
-
-
-   --------------------
-   --  clear_buffer  --
-   --------------------
---     procedure clear_buffer (Stmt : out MySQL_statement)
---     is
---        use type ABM.MYSQL_RES_Access;
---        use type ABM.MYSQL_STMT_Access;
---     begin
---        case Stmt.type_of_statement is
---           when direct_statement =>
---              if Stmt.result_handle /= null then
---                 Stmt.mysql_conn.all.free_result (Stmt.result_handle);
---              end if;
---           when prepared_statement =>
---              if Stmt.stmt_handle /= null then
---                 Stmt.mysql_conn.all.prep_free_result (Stmt.stmt_handle);
---              end if;
---        end case;
---        Stmt.num_columns := 0;
---
---        --  MORE
---     end clear_buffer;
 
 
    ----------------------------
@@ -205,6 +185,18 @@ package body AdaBase.Statement.Base.MySQL is
          when prepared_statement =>
             Object.transform_sql (sql => SU.To_String (Object.initial_sql.all),
                                   new_sql => Object.sql_final.all);
+            Object.mysql_conn.initialize_and_prepare_statement
+              (stmt => Object.cheat.stmt_handle, sql => Object.sql_final.all);
+            declare
+                 params : Natural := Object.mysql_conn.prep_markers_found
+                   (stmt => Object.cheat.stmt_handle);
+            begin
+               if params /= Natural (Object.alpha_markers.Length) then
+                  raise ILLEGAL_BIND_SQL
+                    with "marker mismatch," & Object.alpha_markers.Length'Img
+                      & " expected but " & params'Img & " is the real number";
+               end if;
+            end;
       end case;
    end initialize;
 

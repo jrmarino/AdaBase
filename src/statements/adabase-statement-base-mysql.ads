@@ -126,6 +126,7 @@ private
    type cheat2005 is record
       delivery      : fetch_status          := completed;
       result_handle : ABM.MYSQL_RES_Access  := null;
+      stmt_handle   : ABM.MYSQL_STMT_Access := null;
    end record;
    type cheat_access is access all cheat2005;
 
@@ -141,7 +142,6 @@ private
                          con_buffered      : Boolean)
    is limited new Base_Statement and AIS.iStatement with
       record
-         stmt_handle    : ABM.MYSQL_STMT_Access := null;
          cheat          : cheat_access          := cheat_ada2005'Access;
          num_columns    : Natural               := 0;
          size_of_rowset : TraxID                := 0;

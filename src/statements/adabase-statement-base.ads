@@ -467,7 +467,8 @@ private
 
 
    --  For fetch_bound
-   function bind_proceed (Stmt : Base_Statement) return Boolean;
+   function bind_proceed (Stmt : Base_Statement; index : Positive)
+                          return Boolean;
 
    function bind_index (Stmt : Base_Statement; heading : String)
                         return Positive;
