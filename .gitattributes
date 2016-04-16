@@ -6,7 +6,7 @@
 *.gpr	text
 *.md	text
 *.html	text
-*.shmlt	text
+*.shtml	text
 *.css	text
 *.tpl	text
 
