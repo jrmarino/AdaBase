@@ -50,7 +50,7 @@ package AdaBase.Driver.Base.MySQL is
                                             trait  : Boolean);
    procedure set_trait_multiquery_enabled  (driver : MySQL_Driver;
                                             trait  : Boolean);
-   procedure set_query_buffers_used        (driver : MySQL_Driver;
+   procedure set_trait_query_buffers_used  (driver : MySQL_Driver;
                                             trait  : Boolean);
 
    overriding

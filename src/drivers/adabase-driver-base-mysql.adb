@@ -248,12 +248,12 @@ package body AdaBase.Driver.Base.MySQL is
    ------------------------------
    --  set_query_buffers_used  --
    ------------------------------
-   procedure set_query_buffers_used (driver : MySQL_Driver;
-                                     trait  : Boolean)
+   procedure set_trait_query_buffers_used (driver : MySQL_Driver;
+                                           trait  : Boolean)
    is
    begin
       driver.local_connection.all.setUseBuffer (buffered => trait);
-   end set_query_buffers_used;
+   end set_trait_query_buffers_used;
 
 
    ---------------------
