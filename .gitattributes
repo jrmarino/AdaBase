@@ -5,3 +5,10 @@
 *.ads	text
 *.gpr	text
 *.md	text
+*.html	text
+*.shmlt	text
+*.css	text
+*.tpl	text
+
+*.png	binary
+*.jpg	binary
