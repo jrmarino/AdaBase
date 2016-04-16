@@ -5,7 +5,8 @@ project AdaBase is
    Os_Version : Os_Type := external ("OS_VERSION", "windows");
    for Source_Dirs use ("src/**");
    for Object_Dir use "obj";
-   for Main use ("killme.adb");
+   for Library_Name use "adabase";
+   for Library_Kind use "static";
 
    package Ide is
       for Vcs_Kind use "Auto";
@@ -30,6 +31,27 @@ project AdaBase is
             for Default_Switches ("ada") use ("-lmysql", "-g");
       end case;
    end Linker;
+
+   case Os_Version is
+
+      when "unix" =>
+         for Source_Files use ("adabase-bindings-mysql.ads", "adabase-bindings.ads", "adabase-connection-base-mysql.adb", "adabase-connection-base-mysql.ads", "adabase-connection-base.adb", "adabase-connection-base.ads", 
+            "adabase-connection.ads", "adabase-driver-base-mysql.adb", "adabase-driver-base-mysql.ads", "adabase-driver-base.adb", "adabase-driver-base.ads", "adabase-driver.ads", "adabase-interfaces-connection.ads", 
+            "adabase-interfaces-driver.ads", "adabase-interfaces-logger.ads", "adabase-interfaces-statement.ads", "adabase-interfaces.ads", "adabase-logger-base-file.adb", "adabase-logger-base-file.ads", 
+            "adabase-logger-base-screen.adb", "adabase-logger-base-screen.ads", "adabase-logger-base.adb", "adabase-logger-base.ads", "adabase-logger-facility.adb", "adabase-logger-facility.ads", "adabase-logger.ads", 
+            "adabase-results-converters.adb", "adabase-results-converters.ads", "adabase-results-field.adb", "adabase-results-field.ads", "adabase-results-generic_converters.adb", 
+            "adabase-results-generic_converters.ads", "adabase-results-sets.adb", "adabase-results-sets.ads", "adabase-results.ads", "adabase-statement-base-mysql.adb", "adabase-statement-base-mysql.ads", 
+            "adabase-statement-base.adb", "adabase-statement-base.ads", "adabase-statement.ads", "adabase.ads");
+
+      when "windows" =>
+         for Source_Files use ("adabase-bindings-mysql.ads", "adabase-bindings.ads", "adabase-connection-base-mysql.adb", "adabase-connection-base-mysql.ads", "adabase-connection-base.adb", "adabase-connection-base.ads", 
+            "adabase-connection.ads", "adabase-driver-base-mysql.adb", "adabase-driver-base-mysql.ads", "adabase-driver-base.adb", "adabase-driver-base.ads", "adabase-driver.ads", "adabase-interfaces-connection.ads", 
+            "adabase-interfaces-driver.ads", "adabase-interfaces-logger.ads", "adabase-interfaces-statement.ads", "adabase-interfaces.ads", "adabase-logger-base-file.adb", "adabase-logger-base-file.ads", 
+            "adabase-logger-base-screen.adb", "adabase-logger-base-screen.ads", "adabase-logger-base.adb", "adabase-logger-base.ads", "adabase-logger-facility.adb", "adabase-logger-facility.ads", "adabase-logger.ads", 
+            "adabase-results-converters.adb", "adabase-results-converters.ads", "adabase-results-field.adb", "adabase-results-field.ads", "adabase-results-generic_converters.adb", 
+            "adabase-results-generic_converters.ads", "adabase-results-sets.adb", "adabase-results-sets.ads", "adabase-results.ads", "adabase-statement-base-mysql.adb", "adabase-statement-base-mysql.ads", 
+            "adabase-statement-base.adb", "adabase-statement-base.ads", "adabase-statement.ads", "adabase.ads");
+   end case;
 
 end AdaBase;
 
