@@ -1,0 +1,54 @@
+with "adabase";
+
+project Common is
+
+   type Os_Type is ("unix", "windows");
+   type Drivers  is ("mysql", "postgresql", "sqlite", "firebird");
+   Driver : Drivers := external ("driver", "mysql");
+   Opsys  : Os_Type := external ("opsys", "unix");
+   for Object_Dir use "obj";
+
+   case Driver is
+      when "mysql" =>
+         for Source_Dirs use ("driver_connections/mysql");
+      when "postgresql" =>
+         for Source_Dirs use ("driver_connections/pgsql");
+      when "sqlite" =>
+         for Source_Dirs use ("driver_connections/sqlite");
+      when "firebird" =>
+         for Source_Dirs use ("driver_connections/firebird");
+   end case;
+
+   package Compiler is
+      for Default_Switches ("Ada") use ("-gnaty");
+   end Compiler;
+
+   package Linker is
+      case Opsys is
+         when "unix" =>
+            case Driver is
+               when "mysql" =>
+                  for Default_Switches ("ada") use ("-L/usr/local/lib/mysql",
+                     "-lmysqlclient");
+               when "postgresql" =>
+                   null;
+               when "sqlite" =>
+                   null;
+               when "firebird" =>
+                   null;
+            end case;
+         when "windows" =>
+            case Driver is
+               when "mysql" =>
+                  for Default_Switches ("ada") use ("-lmysql");
+               when "postgresql" =>
+                   null;
+               when "sqlite" =>
+                   null;
+               when "firebird" =>
+                   null;
+            end case;
+      end case;
+   end Linker;
+
+end Common;
