@@ -17,7 +17,6 @@ package body AdaBase.Driver.Base.MySQL is
    begin
       if driver.connection_active then
          driver.connection.disconnect;
-         driver.connection := null;
          driver.connection_active := False;
 
          driver.log_nominal (category => disconnecting,
