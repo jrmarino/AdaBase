@@ -5,6 +5,7 @@ defaults:
      values:
        layout: "default"
        supported_drivers: "[DB] is &quot;MySQL&quot;, &quot;PostgreSQL&quot;, or &quot;SQLite&quot;"
+       trait_client: '<a href="trait_client.html">client traits</a>'
        trait_server: '<a href="trait_server.html">server traits</a>'
        trait_driver: '<a href="trait_driver.html">driver identification</a>'
        trait_autocommit: '<a href="autocommit.html">autocommit settings</a>'
