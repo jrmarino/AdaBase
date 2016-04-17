@@ -1,0 +1,7 @@
+defaults:
+  -
+     scope:
+       path: ""
+     values:
+       layout: "default"
+       supported_drivers: "[DB] is &quot;MySQL&quot;, &quot;PostgreSQL&quot;, or &quot;SQLite&quot;"

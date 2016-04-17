@@ -220,3 +220,13 @@ pre.code {
 .clearer {
 	clear: both;
 }
+.caption {
+  font-style: italic;
+  font-weight: bold;
+  padding-top: 0;
+  text-align: center;
+}
+pre.output {
+  background-color: #000020;
+  color: #C0C000;
+}
