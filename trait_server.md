@@ -1,4 +1,5 @@
 ---
+title: Server Traits
 ---
 
 <div class="leftside">
@@ -13,9 +14,9 @@ AdaBase.Driver.Base.[DB].trait_server_info ()</h3>
 information about the the database server, such as the client library version
 number.</p>
 <br/>
-<p>{{ page.supported_drivers }}</p>
-<br/>
 <p class="caption">See {{ page.trait_client }} for a usage example.</p>
+<br/>
+<p>{{ page.supported_drivers }}</p>
 </div>
 <div class="sidenav">
   <h3>See Also</h3>

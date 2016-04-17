@@ -13,8 +13,6 @@ AdaBase.Driver.Base.[DB].trait_client_info ()</h3>
 <p>This is a connection attribute.  It returns a string containing additional
 information about the the database client, such as the client library version
 number.</p>
-<br/>
-<p>{{ page.supported_drivers }}</p>
 <pre class="code">
 with Ada.Text_IO;
 with AdaBase;
@@ -92,6 +90,8 @@ server version: 5.06.27
      blob_size:  65536
 </pre>
 <p class="caption">Output using MySQL Driver</p>
+<br/>
+<p>{{ page.supported_drivers }}</p>
 </div>
 <div class="sidenav">
   <h3>See Also</h3>
