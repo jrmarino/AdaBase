@@ -9,6 +9,8 @@ procedure Traits_MySQL is
    package ALF renames AdaBase.Logger.Facility;
    package CON renames Connect;
 
+   --  Database_Driver renames MySQL driver using subtype
+
    procedure display_versions (driver : CON.Database_Driver);
    procedure display_traits   (driver : CON.Database_Driver);
 

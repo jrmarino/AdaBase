@@ -7,6 +7,8 @@ procedure Traits is
    package TIO renames Ada.Text_IO;
    package CON renames Connect;
 
+   --  Database_Driver renames specific driver using subtype
+
    procedure display_versions (driver : CON.Database_Driver);
    procedure display_traits   (driver : CON.Database_Driver);
 
