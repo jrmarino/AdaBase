@@ -96,11 +96,11 @@ server version: 5.06.27
 <div class="sidenav">
   <h3>See Also</h3>
   <ul>
-    <li><a href="trait_server.html">server traits</a></li>
-    <li><a href="trait_driver.html">driver identification</a></li>
-    <li><a href="autocommit.html">autocommit settings</a></li>
-    <li><a href="column_case.html">column case settings</a></li>
-    <li><a href="error_mode.html">error mode settings</a></li>
-    <li><a href="max_blob_size.html">BLOB size settings</a></li>
+    <li>{{ page.trait_server }}</li>
+    <li>{{ page.trait_driver }}</li>
+    <li>{{ page.trait_autocommit }}</li>
+    <li>{{ page.trait_column_case}}</li>
+    <li>{{ page.trait_error_mode }}</li>
+    <li>{{ page.trait_blob_size }}</li>
   </ul>
 </div>

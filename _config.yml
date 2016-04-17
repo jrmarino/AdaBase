@@ -5,3 +5,9 @@ defaults:
      values:
        layout: "default"
        supported_drivers: "[DB] is &quot;MySQL&quot;, &quot;PostgreSQL&quot;, or &quot;SQLite&quot;"
+       trait_server: '<a href="trait_server.html">server traits</a>'
+       trait_driver: '<a href="trait_driver.html">driver identification</a>'
+       trait_autocommit: '<a href="autocommit.html">autocommit settings</a>'
+       trait_column_case: '<a href="column_case.html">column case settings</a>'
+       trait_error_mode: '<a href="error_mode.html">error mode settings</a>'
+       trait_blob_size: '<a href="max_blob_size.html">BLOB size settings</a>'
