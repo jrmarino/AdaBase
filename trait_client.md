@@ -93,14 +93,14 @@ server version: 5.06.27
 </pre>
 <p class="caption">Output using MySQL Driver</p>
         </div>
-		<div class="sidenav">
-			<h3>See Also</h3>
-			<ul>
-				<li><a href="trait_server.html">server traits</a></li>
-				<li><a href="trait_driver.html">driver identification</a></li>
-				<li><a href="autocommit.html">autocommit settings</a></li>
-				<li><a href="column_case.html">column case settings</a></li>
-				<li><a href="error_mode.html">error mode settings</a></li>
-				<li><a href="max_blob_size.html">BLOB size settings</a></li>
-			</ul>
-		</div>
+        <div class="sidenav">
+            <h3>See Also</h3>
+            <ul>
+                <li><a href="trait_server.html">server traits</a></li>
+                <li><a href="trait_driver.html">driver identification</a></li>
+                <li><a href="autocommit.html">autocommit settings</a></li>
+                <li><a href="column_case.html">column case settings</a></li>
+                <li><a href="error_mode.html">error mode settings</a></li>
+                <li><a href="max_blob_size.html">BLOB size settings</a></li>
+            </ul>
+        </div>
