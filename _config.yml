@@ -12,3 +12,7 @@ defaults:
        trait_column_case: '<a href="column_case.html">column case settings</a>'
        trait_error_mode: '<a href="error_mode.html">error mode settings</a>'
        trait_blob_size: '<a href="max_blob_size.html">BLOB size settings</a>'
+       trait_compressed: '<a href="trait_compressed.html">compression settings [DS]</a>'
+       trait_multiquery: '<a href="trait_multiquery.html">multiquery settings [DS]</a>'
+       trait_buffers: '<a href="trait_buffers.html">query buffer settings [DS]</a>'
+       screen_logger: '<a href="screen_logger.html">logging to screen</a>'
