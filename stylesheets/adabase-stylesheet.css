@@ -188,12 +188,12 @@ pre.code {
 }
 .leftside {
 	float: left;
-	width: 82%;
+	width: 78%;
 }
 .sidenav {
 	float: left;
-    width: 18%;
-    padding-left: 10px;
+	width: 22%;
+	padding-left: 10px;
 }
 .sidenav h3 {
 	border-bottom: 2px dotted #CCF;

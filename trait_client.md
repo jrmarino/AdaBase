@@ -102,5 +102,8 @@ server version: 5.06.27
     <li>{{ page.trait_column_case}}</li>
     <li>{{ page.trait_error_mode }}</li>
     <li>{{ page.trait_blob_size }}</li>
+    <li>{{ page.trait_compressed }}</li>
+    <li>{{ page.trait_multiquery }}</li>
+    <li>{{ page.trait_buffers }}</li>
   </ul>
 </div>
