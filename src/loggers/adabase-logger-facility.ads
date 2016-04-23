@@ -17,7 +17,6 @@ package AdaBase.Logger.Facility is
 
    ALREADY_ATTACHED  : exception;
    ALREADY_DETACHED  : exception;
-   ERRMODE_EXCEPTION : exception;
 
    procedure standard_logger (facility : out LogFacility;
                               logger   : TLogger;

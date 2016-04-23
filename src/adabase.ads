@@ -38,4 +38,7 @@ package AdaBase is
                         ft_byte8, ft_real9, ft_real18, ft_textual,
                         ft_widetext, ft_supertext, ft_timestamp,
                         ft_chain, ft_enumtype, ft_settype);
+
+   ERRMODE_EXCEPTION : exception;
+
 end AdaBase;
