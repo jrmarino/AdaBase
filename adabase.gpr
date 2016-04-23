@@ -14,6 +14,7 @@ project AdaBase is
             "adabase-logger-base-screen.adb", "adabase-logger-base-screen.ads", "adabase-logger-base.adb", "adabase-logger-base.ads", "adabase-logger-facility.adb", "adabase-logger-facility.ads", "adabase-logger.ads",
             "adabase-results-converters.adb", "adabase-results-converters.ads", "adabase-results-field.adb", "adabase-results-field.ads", "adabase-results-generic_converters.adb",
             "adabase-results-generic_converters.ads", "adabase-results-sets.adb", "adabase-results-sets.ads", "adabase-results.ads", "adabase-statement-base-mysql.adb", "adabase-statement-base-mysql.ads",
+            "commontext.ads", "commontext.adb",
             "adabase-statement-base.adb", "adabase-statement-base.ads", "adabase-statement.ads", "adabase.ads");
    for Library_Dir use "lib";
    for Library_Ali_Dir use "lib";

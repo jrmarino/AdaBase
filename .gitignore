@@ -3,3 +3,4 @@ lib/
 gnatinspect.db
 src/killme.adb
 docs/dont-sync
+Makefile

@@ -1,35 +1,35 @@
 --  This file is covered by the Internet Software Consortium (ISC) License
 --  Reference: ../../License.txt
 
-with Ada.Text_IO;
+with Ada.Text_IO.Unbounded_IO;
 
 package body AdaBase.Logger.Base.File is
 
    package TIO renames Ada.Text_IO;
+   package UIO renames Ada.Text_IO.Unbounded_IO;
 
    overriding
    procedure reaction (listener : File_Logger)
    is
-      use type logtext;
       output : TIO.File_Type;
    begin
-      if listener.filepath = blank then
+      if CT.IsBlank (listener.filepath) then
          return;
       end if;
 
       begin
          TIO.Open (File => output,
                    Mode => TIO.Append_File,
-                   Name => SU.To_String (listener.filepath));
+                   Name => CT.USS (listener.filepath));
       exception
          when TIO.Name_Error =>
             TIO.Create (File => output,
                         Mode => TIO.Out_File,
-                        Name => SU.To_String (listener.filepath));
+                        Name => CT.USS (listener.filepath));
       end;
 
-      TIO.Put_Line (File => output,
-                   Item => SU.To_String (listener.composite));
+      UIO.Put_Line (File => output,
+                    Item => listener.composite);
 
       TIO.Close (File => output);
 

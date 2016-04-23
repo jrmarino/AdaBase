@@ -1,11 +1,13 @@
 --  This file is covered by the Internet Software Consortium (ISC) License
 --  Reference: ../../License.txt
 
+with CommonText;
 with AdaBase.Logger.Base.File;
 with AdaBase.Logger.Base.Screen;
 
 package AdaBase.Logger.Facility is
 
+   package CT  renames CommonText;
    package AL  renames AdaBase.Logger.Base;
    package ALF renames AdaBase.Logger.Base.File;
    package ALS renames AdaBase.Logger.Base.Screen;
@@ -31,14 +33,14 @@ package AdaBase.Logger.Facility is
    procedure log_nominal (facility  : LogFacility;
                           driver    : TDriver;
                           category  : LogCategory;
-                          message   : AL.logtext);
+                          message   : CT.Text);
 
    procedure log_problem
      (facility   : LogFacility;
       driver     : TDriver;
       category   : LogCategory;
-      message    : AL.logtext;
-      error_msg  : AL.logtext  := AL.blank;
+      message    : CT.Text;
+      error_msg  : CT.Text  := CT.blank;
       error_code : DriverCodes := 0;
       sqlstate   : TSqlState   := stateless;
       break      : Boolean     := False);

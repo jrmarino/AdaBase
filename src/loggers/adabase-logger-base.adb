@@ -7,15 +7,6 @@ package body AdaBase.Logger.Base is
 
    package ACF renames Ada.Calendar.Formatting;
 
-   ---------
-   --  S  --
-   ---------
-   function S (before : String) return logtext
-   is
-   begin
-      return SU.To_Unbounded_String (before);
-   end S;
-
 
    -----------------------
    --  set_information  --
@@ -24,20 +15,19 @@ package body AdaBase.Logger.Base is
                (listener   : out Base_Logger;
                 category   : LogCategory;
                 driver     : TDriver;
-                message    : logtext;
-                error_msg  : logtext     := blank;
+                message    : CT.Text;
+                error_msg  : CT.Text     := CT.blank;
                 error_code : DriverCodes := 0;
                 sqlstate   : TSqlState   := stateless)
    is
-      use type logtext;
       prefix    : String (1 .. 17);
       drv       : String (1 .. 11);
       timestamp : constant AC.Time := AC.Clock;
       TS        : constant String  := ACF.Image (Date => timestamp);
-      error     : logtext :=
-                  S (error_code'Img &  " : SQLSTATE[" & sqlstate & "] : ");
-      err_label : logtext := S (" : Driver code :");
-      composite : logtext := SU.Null_Unbounded_String;
+      error     : CT.Text := CT.SUS (error_code'Img &  " : SQLSTATE[" &
+                                     sqlstate & "] : ");
+      err_label : CT.Text := CT.SUS (" : Driver code :");
+      composite : CT.Text := CT.blank;
    begin
       listener.prop_timestamp  := timestamp;
       listener.prop_category   := category;
@@ -65,13 +55,13 @@ package body AdaBase.Logger.Base is
          when note                  => prefix := "          Note : ";
       end case;
 
-      composite := S (TS & drv & prefix);
+      composite := CT.SUS (TS & drv & prefix);
 
-      SU.Append (Source => composite, New_Item => message);
-      if error_msg /= SU.Null_Unbounded_String then
-         SU.Append (Source => composite, New_Item => err_label);
-         SU.Append (Source => composite, New_Item => error);
-         SU.Append (Source => composite, New_Item => error_msg);
+      CT.SU.Append (Source => composite, New_Item => message);
+      if not CT.IsBlank (error_msg) then
+         CT.SU.Append (Source => composite, New_Item => err_label);
+         CT.SU.Append (Source => composite, New_Item => error);
+         CT.SU.Append (Source => composite, New_Item => error_msg);
       end if;
 
       listener.prop_composite  := composite;
@@ -111,7 +101,7 @@ package body AdaBase.Logger.Base is
    -----------------
    --  composite  --
    -----------------
-   function composite (listener : Base_Logger) return logtext
+   function composite (listener : Base_Logger) return CT.Text
    is
    begin
       return listener.prop_composite;
@@ -121,7 +111,7 @@ package body AdaBase.Logger.Base is
    ---------------
    --  message  --
    ---------------
-   function message (listener : Base_Logger) return logtext
+   function message (listener : Base_Logger) return CT.Text
    is
    begin
       return listener.prop_message;
@@ -131,7 +121,7 @@ package body AdaBase.Logger.Base is
    -----------------
    --  error_msg  --
    -----------------
-   function error_msg  (listener : Base_Logger) return logtext
+   function error_msg  (listener : Base_Logger) return CT.Text
    is
    begin
       return listener.prop_error_msg;
