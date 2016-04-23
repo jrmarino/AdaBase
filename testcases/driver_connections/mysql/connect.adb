@@ -1,8 +1,6 @@
 --  Used for all testcases for MySQL driver
 --  Modify connection parameters as necessary
 
-with AdaBase.Driver.Base.MySQL;
-
 package body Connect is
 
    procedure connect_database is
