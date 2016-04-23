@@ -7,8 +7,8 @@ package body Connect is
 
    procedure connect_database is
    begin
-      DR.basic_connect (database => "test",
-                        username => "anon",
+      DR.basic_connect (database => "adabase_examples",
+                        username => "root",
                         password => "",
                         hostname => "localhost",
                         port     => 3306);
