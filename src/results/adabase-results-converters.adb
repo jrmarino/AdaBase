@@ -1,9 +1,7 @@
 --  This file is covered by the Internet Software Consortium (ISC) License
 --  Reference: ../../License.txt
 
-with Ada.Strings.Fixed;
-with Ada.Strings.Wide_Fixed;
-with Ada.Strings.Wide_Wide_Fixed;
+with Ada.Strings;
 with Ada.Characters.Conversions;
 with Ada.Calendar.Formatting;
 with Interfaces;
@@ -1213,7 +1211,7 @@ package body AdaBase.Results.Converters is
    ---------------------------------
    function convert (nv : textual) return nbyte0
    is
-      nvstr : constant String := SU.To_String (Source => nv);
+      nvstr : constant String := CT.USS (nv);
    begin
       if nvstr = "0" then
          return False;
@@ -1258,19 +1256,19 @@ package body AdaBase.Results.Converters is
    ---------------------------------
    function convert (nv : textual) return String is
    begin
-      return SU.To_String (nv);
+      return CT.USS (nv);
    end convert;
 
    function convert (nv : textual) return Wide_String
    is
-      nvstr : constant String := SU.To_String (nv);
+      nvstr : constant String := CT.USS (nv);
    begin
       return ACC.To_Wide_String (Item => nvstr);
    end convert;
 
    function convert (nv : textual) return Wide_Wide_String
    is
-      nvstr : constant String := SU.To_String (nv);
+      nvstr : constant String := CT.USS (nv);
    begin
       return ACC.To_Wide_Wide_String (Item => nvstr);
    end convert;
@@ -1434,19 +1432,19 @@ package body AdaBase.Results.Converters is
 
    function convert (nv : enumtype) return String is
    begin
-      return SU.To_String (Source => nv.enumeration);
+      return CT.USS (nv.enumeration);
    end convert;
 
    function convert (nv : enumtype) return Wide_String
    is
-      str : constant String := SU.To_String (Source => nv.enumeration);
+      str : constant String := CT.USS (nv.enumeration);
    begin
       return ACC.To_Wide_String (Item => str);
    end convert;
 
    function convert (nv : enumtype) return Wide_Wide_String
    is
-      str : constant String := SU.To_String (Source => nv.enumeration);
+      str : constant String := CT.USS (nv.enumeration);
    begin
       return ACC.To_Wide_Wide_String (Item => str);
    end convert;
@@ -1594,11 +1592,11 @@ package body AdaBase.Results.Converters is
          return "";
       end if;
       for x in 1 .. nvlen loop
-         len := len + SU.Length (nv.all (x).enumeration);
+         len := len + CT.SU.Length (nv.all (x).enumeration);
       end loop;
       len := len + nvlen - 1;
       for x in 1 .. nvlen loop
-         len := len + SU.Length (nv.all (x).enumeration);
+         len := len + CT.SU.Length (nv.all (x).enumeration);
       end loop;
       declare
          cursor : Natural := 1;
@@ -1606,8 +1604,8 @@ package body AdaBase.Results.Converters is
          result : String (1 .. len) := (others => ',');
       begin
          for x in 1 .. nvlen loop
-            curend := cursor - 1 + SU.Length (nv.all (x).enumeration);
-            result (cursor .. curend) := SU.To_String (nv.all (x).enumeration);
+            curend := cursor - 1 + CT.SU.Length (nv.all (x).enumeration);
+            result (cursor .. curend) := CT.USS (nv.all (x).enumeration);
             cursor := curend + 2;
          end loop;
          return result;

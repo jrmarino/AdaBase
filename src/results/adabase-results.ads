@@ -1,19 +1,19 @@
 --  This file is covered by the Internet Software Consortium (ISC) License
 --  Reference: ../../License.txt
 
+with CommonText;
 with Ada.Calendar;
-with Ada.Strings.Unbounded;
 with Ada.Strings.Wide_Unbounded;
 with Ada.Strings.Wide_Wide_Unbounded;
 
 package AdaBase.Results is
 
+   package CT   renames CommonText;
    package AC   renames Ada.Calendar;
-   package SU   renames Ada.Strings.Unbounded;
    package SUW  renames Ada.Strings.Wide_Unbounded;
    package SUWW renames Ada.Strings.Wide_Wide_Unbounded;
 
-   subtype textual   is SU.Unbounded_String;
+   subtype textual   is CT.Text;
    subtype textwide  is SUW.Unbounded_Wide_String;
    subtype textsuper is SUWW.Unbounded_Wide_Wide_String;
 

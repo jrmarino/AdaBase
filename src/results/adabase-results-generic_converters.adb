@@ -16,7 +16,7 @@ package body AdaBase.Results.Generic_Converters is
    --------------------------
    function convertstr (nv : textual) return IntType
    is
-      nverr : constant String := SU.To_String (nv);
+      nverr : constant String := CT.USS (nv);
    begin
       return IntType'Value (nverr);
    exception
@@ -30,7 +30,7 @@ package body AdaBase.Results.Generic_Converters is
    --------------------------
    function convertst2 (nv : textual) return RealType
    is
-      nverr : constant String := SU.To_String (nv);
+      nverr : constant String := CT.USS (nv);
    begin
       return RealType'Value (nverr);
    exception
