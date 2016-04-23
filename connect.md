@@ -19,7 +19,7 @@ by an exception which cannot be ignored.</p>
 <br/>
 <h3>Procedure<br/>
 AdaBase.Driver.Base.[DB].connect (database, username, password, socket : String)</h3>
-This overloaded version of connect supports the use of UNIX sockets on the
+<p>This overloaded version of connect supports the use of UNIX sockets on the
 localhost instead of host plus TCP/IP port.</p>
 <br/>
 <p class="caption">See {{ page.execute }} for a usage example.</p>
