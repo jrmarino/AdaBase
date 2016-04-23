@@ -92,8 +92,8 @@ private
    function convert (nv : String) return AR.settype;
 
    type column_info is record
-      table         : stmttext;
-      field_name    : stmttext;
+      table         : CT.Text;
+      field_name    : CT.Text;
       field_type    : field_types;
       field_size    : Natural;
       null_possible : Boolean;

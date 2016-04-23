@@ -183,7 +183,7 @@ package body AdaBase.Statement.Base is
       if maxlinks > maxsize then
          maxlinks := maxsize;
       end if;
-      return SU.To_Unbounded_String (nv (nv'First .. maxlinks));
+      return CT.SUS (nv (nv'First .. maxlinks));
    end convert;
 
    ----------------------------------
@@ -236,7 +236,7 @@ package body AdaBase.Statement.Base is
       logger_access.all.log_nominal
         (driver   => statement.dialect,
          category => category,
-         message  => SU.To_Unbounded_String (message));
+         message  => CT.SUS (message));
    end log_nominal;
 
 
@@ -250,13 +250,12 @@ package body AdaBase.Statement.Base is
       pull_codes : Boolean := False;
       break      : Boolean := False)
    is
-      error_msg  : stmttext    := blank;
+      error_msg  : CT.Text     := CT.blank;
       error_code : DriverCodes := 0;
       sqlstate   : TSqlState   := stateless;
    begin
       if pull_codes then
-         error_msg  := SU.To_Unbounded_String
-                      (statement.connection.all.driverMessage);
+         error_msg  := CT.SUS (statement.connection.all.driverMessage);
          error_code := statement.connection.all.driverCode;
          sqlstate   := statement.connection.all.SqlState;
       end if;
@@ -264,7 +263,7 @@ package body AdaBase.Statement.Base is
       logger_access.all.log_problem
           (driver     => statement.dialect,
            category   => category,
-           message    => SU.To_Unbounded_String (message),
+           message    => CT.SUS (message),
            error_msg  => error_msg,
            error_code => error_code,
            sqlstate   => sqlstate,

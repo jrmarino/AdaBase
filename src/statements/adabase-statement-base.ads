@@ -1,6 +1,7 @@
 --  This file is covered by the Internet Software Consortium (ISC) License
 --  Reference: ../../License.txt
 
+with CommonText;
 with AdaBase.Connection.Base;
 with AdaBase.Interfaces.Statement;
 with AdaBase.Logger.Facility;
@@ -10,14 +11,13 @@ with Ada.Calendar.Formatting;
 with Ada.Containers.Indefinite_Hashed_Maps;
 with Ada.Containers.Vectors;
 with Ada.Strings.Hash;
-with Ada.Strings.Unbounded;
 with Ada.Strings.Wide_Unbounded;
 with Ada.Strings.Wide_Wide_Unbounded;
 with Ada.Characters.Conversions;
 
 package AdaBase.Statement.Base is
 
-   package SU  renames Ada.Strings.Unbounded;
+   package CT  renames CommonText;
    package SUW renames Ada.Strings.Wide_Unbounded;
    package SWW renames Ada.Strings.Wide_Wide_Unbounded;
    package CAL renames Ada.Calendar;
@@ -30,10 +30,7 @@ package AdaBase.Statement.Base is
    package ARC renames AdaBase.Results.Converters;
    package RGC renames AdaBase.Results.Generic_Converters;
 
-   subtype stmttext is SU.Unbounded_String;
-   type stmttext_access is access all stmttext;
-
-   blank : constant stmttext := SU.Null_Unbounded_String;
+   type stmttext_access is access all CT.Text;
 
    type Base_Statement is
      abstract limited new Base_Pure and AIS.iStatement with private;

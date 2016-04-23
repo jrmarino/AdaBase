@@ -154,7 +154,7 @@ package body AdaBase.Statement.Base.MySQL is
    procedure initialize (Object : in out MySQL_statement)
    is
       use type ACM.MySQL_Connection_Access;
-      len : Natural := SU.Length (Object.initial_sql.all);
+      len : Natural := CT.SU.Length (Object.initial_sql.all);
    begin
       if Object.mysql_conn = null then
          return;
@@ -166,10 +166,10 @@ package body AdaBase.Statement.Base.MySQL is
       Object.connection := ACB.Base_Connection_Access (Object.mysql_conn);
       case Object.type_of_statement is
          when direct_statement =>
-            Object.sql_final.all := SU.To_String (Object.initial_sql.all);
+            Object.sql_final.all := CT.USS (Object.initial_sql.all);
             Object.internal_direct_post_exec;
          when prepared_statement =>
-            Object.transform_sql (sql => SU.To_String (Object.initial_sql.all),
+            Object.transform_sql (sql => CT.USS (Object.initial_sql.all),
                                   new_sql => Object.sql_final.all);
             Object.mysql_conn.initialize_and_prepare_statement
               (stmt => Object.cheat.stmt_handle, sql => Object.sql_final.all);
@@ -236,16 +236,16 @@ package body AdaBase.Statement.Base.MySQL is
    is
       use type ABM.MYSQL_FIELD_Access;
       field : ABM.MYSQL_FIELD_Access;
-      function fn (raw : String) return stmttext;
-      function fn (raw : String) return stmttext is
+      function fn (raw : String) return CT.Text;
+      function fn (raw : String) return CT.Text is
       begin
          case Stmt.con_case_mode is
             when upper_case =>
-               return SU.To_Unbounded_String (ACH.To_Upper (raw));
+               return CT.SUS (ACH.To_Upper (raw));
             when lower_case =>
-               return SU.To_Unbounded_String (ACH.To_Lower (raw));
+               return CT.SUS (ACH.To_Lower (raw));
             when natural_case =>
-               return SU.To_Unbounded_String (raw);
+               return CT.SUS (raw);
          end case;
       end fn;
    begin
@@ -292,8 +292,7 @@ package body AdaBase.Statement.Base.MySQL is
          raise INVALID_COLUMN_INDEX with "Max index is" & maxlen'Img &
            " but" & index'Img & " attempted";
       end if;
-      return SU.To_String
-        (Stmt.column_info.Element (Index => index).field_name);
+      return CT.USS (Stmt.column_info.Element (Index => index).field_name);
    end column_name;
 
 
@@ -310,8 +309,7 @@ package body AdaBase.Statement.Base.MySQL is
          raise INVALID_COLUMN_INDEX with "Max index is" & maxlen'Img &
            " but" & index'Img & " attempted";
       end if;
-      return SU.To_String
-        (Stmt.column_info.Element (Index => index).table);
+      return CT.USS (Stmt.column_info.Element (Index => index).table);
    end column_table;
 
 
@@ -500,16 +498,14 @@ package body AdaBase.Statement.Base.MySQL is
       begin
          for x in nv'Range loop
             if nv (x) = ',' then
-               result (index).enumeration := SU.To_Unbounded_String
-                 (Source => nv (cursor .. curend));
+               result (index).enumeration := CT.SUS (nv (cursor .. curend));
                result (index).index := 0;  -- not supported on MySQL
                index := index + 1;
                cursor := x + 1;
             end if;
             curend := curend + 1;
          end loop;
-         result (index).enumeration := SU.To_Unbounded_String
-           (Source => nv (cursor .. curend));
+         result (index).enumeration := CT.SUS (nv (cursor .. curend));
          result (index).index := 0;
          return result;
       end;
@@ -554,7 +550,7 @@ package body AdaBase.Statement.Base.MySQL is
             declare
                field    : ARF.field_access;
                last_one : constant Boolean := (F = maxlen);
-               heading  : constant String := SU.To_String
+               heading  : constant String := CT.USS
                  (Stmt.column_info.Element (Index => F).field_name);
                sz : constant Natural := field_lengths (F);
                EN : constant Boolean := row (F) = ABM.ICS.Null_Ptr;
@@ -676,7 +672,7 @@ package body AdaBase.Statement.Base.MySQL is
             if Stmt.crate.Element (Index => F).bound then
                declare
                   last_one : constant Boolean := (F = maxlen);
-                  heading  : constant String := SU.To_String
+                  heading  : constant String := CT.USS
                     (Stmt.column_info.Element (Index => F).field_name);
                   sz : constant Natural := field_lengths (F);
                   EN : constant Boolean := row (F) = ABM.ICS.Null_Ptr;

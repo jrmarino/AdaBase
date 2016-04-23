@@ -359,7 +359,7 @@ package body AdaBase.Driver.Base.MySQL is
    is
       err1 : constant CT.Text :=
         CT.SUS ("ACK! Query attempted on inactive connection");
-      duplicate : aliased constant AID.ASB.stmttext := CT.SUS (sql);
+      duplicate : aliased constant CT.Text := CT.SUS (sql);
       shadow    : AID.ASB.stmttext_access := duplicate'Unrestricted_Access;
       statement : constant ASM.MySQL_statement_access :=
         new ASM.MySQL_statement
