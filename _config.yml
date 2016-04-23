@@ -4,7 +4,7 @@ defaults:
        path: ""
      values:
        layout: "default"
-       supported_drivers: "[DB] is &quot;MySQL&quot;, &quot;PostgreSQL&quot;, or &quot;SQLite&quot;"
+       supported_drivers: "[DB] is &quot;MySQL.MySQL_Driver&quot;, &quot;PgSQL.PgSQL_Driver&quot;, or &quot;SQLite.SQLite_Driver&quot;"
        trait_client: '<a href="trait_client.html">client traits</a>'
        trait_server: '<a href="trait_server.html">server traits</a>'
        trait_driver: '<a href="trait_driver.html">driver identification</a>'
