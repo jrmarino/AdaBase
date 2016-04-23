@@ -11,7 +11,7 @@ end AdaBase;
 </pre>
 <h3>AffectedRows function<br/>
 AdaBase.Driver.Base.[DB].execute (sql : String)</h3>
-<p>executes an SQL statement in a single function call,
+<p>This executes an SQL statement in a single function call,
 returning the number of rows affected by the statement.</p>
 <p>This function does not return results from a SELECT statement.
 If results are desired, use the {{ page.query }} function to obtain a direct
@@ -67,6 +67,7 @@ Result: Deleted 5 rows
     <li>{{ page.connect }}</li>
     <li>{{ page.disconnect }}</li>
     <li>{{ page.query }}</li>
+    <li>{{ page.commit }}</li>
     <li>{{ page.rollback }}</li>
   </ul>
 </div>

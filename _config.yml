@@ -19,5 +19,6 @@ defaults:
        query: '<a href="query.html">query</a>'
        execute: '<a href="execute.html">execute (driver)</a>'
        rollback: '<a href="rollback.html">rollback</a>'
+       commit: '<a href="commit.html">commit</a>'
        connect: '<a href="connect.html">connect</a>'
        disconnect: '<a href="disconnect.html">disconnect</a>'
