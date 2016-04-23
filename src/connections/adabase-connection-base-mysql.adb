@@ -309,7 +309,7 @@ package body AdaBase.Connection.Base.MySQL is
          --  populate client information
          result : ABM.ICS.chars_ptr := ABM.mysql_get_client_info;
       begin
-         conn.info_client := SUS (ABM.ICS.Value (Item => result));
+         conn.info_client := CT.SUS (ABM.ICS.Value (Item => result));
       end;
 
       declare
@@ -323,7 +323,7 @@ package body AdaBase.Connection.Base.MySQL is
          --  populate server information
          result : ABM.ICS.chars_ptr := ABM.mysql_get_server_info (conn.handle);
       begin
-         conn.info_server := SUS (ABM.ICS.Value (Item => result));
+         conn.info_server := CT.SUS (ABM.ICS.Value (Item => result));
       end;
 
       conn.set_character_set;
@@ -391,7 +391,6 @@ package body AdaBase.Connection.Base.MySQL is
    procedure setTransactionIsolation (conn      : out MySQL_Connection;
                                       isolation :     TransIsolation)
    is
-      use type conntext;
       use type TransIsolation;
       sql : constant String := "SET SESSION TRANSACTION ISOLATION LEVEL " &
                                IsoKeywords (isolation);
@@ -922,15 +921,14 @@ package body AdaBase.Connection.Base.MySQL is
    -----------------------
    --  convert_version  --
    -----------------------
-   function convert_version (mysql_version : Natural)
-     return conntext
+   function convert_version (mysql_version : Natural) return CT.Text
    is
       raw : constant String := mysql_version'Img;
    begin
       if raw'Length > 6 then
-         return SUS (raw (2 .. 3) & '.' & raw (4 .. 5) & '.' & raw (6 .. 7));
+         return CT.SUS (raw (2 .. 3) & '.' & raw (4 .. 5) & '.' & raw (6 .. 7));
       else
-         return SUS (raw (2) & '.' & raw (3 .. 4) & '.' & raw (5 .. 6));
+         return CT.SUS (raw (2) & '.' & raw (3 .. 4) & '.' & raw (5 .. 6));
       end if;
    end convert_version;
 
@@ -938,10 +936,10 @@ package body AdaBase.Connection.Base.MySQL is
    -----------
    --  S2P  --
    -----------
-   function S2P (S : conntext) return ABM.ICS.chars_ptr
+   function S2P (S : CT.Text) return ABM.ICS.chars_ptr
    is
    begin
-      return ABM.ICS.New_String (Str => SU.To_String (Source => S));
+      return ABM.ICS.New_String (Str => CT.USS (S));
    end S2P;
 
 
@@ -960,11 +958,11 @@ package body AdaBase.Connection.Base.MySQL is
    -------------------------
    procedure set_character_set (conn : MySQL_Connection)
    is
-      use type conntext;
-      sql : constant String := "SET CHARACTER SET " & USS (conn.character_set);
+      sql : constant String := "SET CHARACTER SET " &
+                               CT.USS (conn.character_set);
    begin
       if conn.prop_active then
-         if conn.character_set /= SU.Null_Unbounded_String then
+         if not CT.IsBlank (conn.character_set) then
             execute (conn => conn, sql => sql);
          end if;
       end if;

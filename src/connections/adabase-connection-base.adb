@@ -112,7 +112,7 @@ package body AdaBase.Connection.Base is
                            return String
    is
    begin
-      return USS (conn.info_server_version);
+      return CT.USS (conn.info_server_version);
    end serverVersion;
 
 
@@ -123,7 +123,7 @@ package body AdaBase.Connection.Base is
    function serverInfo (conn : Base_Connection) return String
    is
    begin
-      return USS (conn.info_server);
+      return CT.USS (conn.info_server);
    end serverInfo;
 
 
@@ -135,7 +135,7 @@ package body AdaBase.Connection.Base is
                            return String
    is
    begin
-      return USS (conn.info_client_version);
+      return CT.USS (conn.info_client_version);
    end clientVersion;
 
 
@@ -146,31 +146,12 @@ package body AdaBase.Connection.Base is
    function clientInfo (conn : Base_Connection) return String
    is
    begin
-      return USS (conn.info_client);
+      return CT.USS (conn.info_client);
    end clientInfo;
+
 
    ------------------------------------------------------------------------
    --  PRIVATE ROUTINES NOT COVERED BY INTERFACES                        --
    ------------------------------------------------------------------------
-
-   -----------
-   --  SUS  --
-   -----------
-   function SUS (fixed : String) return conntext
-   is
-   begin
-      return SU.To_Unbounded_String (Source => fixed);
-   end SUS;
-
-
-   -----------
-   --  USS  --
-   -----------
-   function USS (loose : conntext) return String
-   is
-   begin
-      return SU.To_String (Source => loose);
-   end USS;
-
 
 end AdaBase.Connection.Base;

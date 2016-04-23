@@ -1,20 +1,17 @@
 --  This file is covered by the Internet Software Consortium (ISC) License
 --  Reference: ../../License.txt
 
+with CommonText;
 with AdaBase.Interfaces.Connection;
-with Ada.Strings.Unbounded;
 
 package AdaBase.Connection.Base is
 
+   package CT  renames CommonText;
    package AIC renames AdaBase.Interfaces.Connection;
-   package SU  renames Ada.Strings.Unbounded;
 
    type Base_Connection is abstract new Base_Pure and
                                         AIC.iConnection with private;
    type Base_Connection_Access is access all Base_Connection'Class;
-   subtype conntext is SU.Unbounded_String;
-
-   blank : constant conntext := SU.Null_Unbounded_String;
 
    overriding
    function autoCommit (conn : Base_Connection) return Boolean;
@@ -72,14 +69,11 @@ private
          prop_case_mode      : CaseMode         := natural_case;
          prop_max_blob       : BLOB_maximum     := 2 ** 12;  -- 4kb
 
-         info_server         : conntext := blank;
-         info_server_version : conntext := blank;
-         info_client         : conntext := blank;
-         info_client_version : conntext := blank;
+         info_server         : CT.Text := CT.blank;
+         info_server_version : CT.Text := CT.blank;
+         info_client         : CT.Text := CT.blank;
+         info_client_version : CT.Text := CT.blank;
       end record;
-
-   function SUS (fixed : String) return conntext;
-   function USS (loose : conntext) return String;
 
    overriding
    procedure finalize (conn : in out Base_Connection) is null;

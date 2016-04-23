@@ -9,7 +9,7 @@ package AdaBase.Connection.Base.MySQL is
 
    package AIC renames AdaBase.Interfaces.Connection;
    package ABM renames AdaBase.Bindings.MySQL;
-   package EX renames Ada.Exceptions;
+   package EX  renames Ada.Exceptions;
 
    type MySQL_Connection is new Base_Connection and AIC.iConnection
    with private;
@@ -190,14 +190,14 @@ private
       info_description : String (1 .. 24) := "MySQL 5.5+ native driver";
 
       handle           : ABM.MYSQL_Access := null;
-      character_set    : conntext := blank;
+      character_set    : CT.Text := CT.blank;
    end record;
 
    function convert_version (mysql_version : Natural)
-                             return conntext;
+                             return CT.Text;
 
-   function S2P (S : conntext) return ABM.ICS.chars_ptr;
-   function S2P (S : String)   return ABM.ICS.chars_ptr;
+   function S2P (S : CT.Text) return ABM.ICS.chars_ptr;
+   function S2P (S : String)  return ABM.ICS.chars_ptr;
 
    procedure set_character_set (conn : MySQL_Connection);
 
