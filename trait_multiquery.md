@@ -15,6 +15,7 @@ AdaBase.Driver.Base.[DB].set_trait_multiquery_enabled (trait : Boolean)</h3>
 <p>This procedure is used to set the multiquery support.  It can be set
 anytime (before or after establishing the connection).</p>
 <br/>
+<p class="caption">See {{ page.trait_compressed }} for a usage example.</p>
 <p class="caption">TBW: Reference example of multiquery support</p>
 <br/>
 <p>This trait is limited to specific drivers.  Specially [DB] is limited to "MySQL"</p>
