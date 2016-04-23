@@ -75,7 +75,7 @@ private
    type MySQL_Driver is new Base_Driver and AID.iDriver with
       record
          local_connection : ACM.MySQL_Connection_Access := null;
-         database : drvtext := blank;
+         database : CT.Text := CT.blank;
       end record;
 
    procedure private_connect (driver   : out MySQL_Driver;

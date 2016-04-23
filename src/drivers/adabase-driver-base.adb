@@ -233,23 +233,23 @@ package body AdaBase.Driver.Base is
       --  MySQL and PostgreSQL can use this versions, but FireBird
       --  needs if_exists implementation and doesn't know CASCADE, so it
       --  needs an overriding implementation.
-      sql : drvtext;
+      sql : CT.Text;
       AR  : AffectedRows;
    begin
       if cascade and then driver.dialect = driver_mysql
       then
          driver.log_nominal (category => note, message =>
-                        SUS ("Requested CASCADE has no effect on MySQL"));
+                        CT.SUS ("Requested CASCADE has no effect on MySQL"));
       end if;
       case when_exists is
-         when True  => sql := SUS ("DROP TABLE IF EXISTS " & tables);
-         when False => sql := SUS ("DROP TABLE " & tables);
+         when True  => sql := CT.SUS ("DROP TABLE IF EXISTS " & tables);
+         when False => sql := CT.SUS ("DROP TABLE " & tables);
       end case;
       if cascade then
-         SU.Append (Source => sql, New_Item => " CASCADE");
+         CT.SU.Append (Source => sql, New_Item => " CASCADE");
       end if;
       AR := execute (driver => Base_Driver'Class (driver),
-                     sql    => USS (sql));
+                     sql    => CT.USS (sql));
    end query_drop_table;
 
 
@@ -257,31 +257,12 @@ package body AdaBase.Driver.Base is
    --  PRIVATE ROUTINES NOT COVERED BY INTERFACES                        --
    ------------------------------------------------------------------------
 
-   -----------
-   --  SUS  --
-   -----------
-   function SUS (fixed : String) return drvtext
-   is
-   begin
-      return SU.To_Unbounded_String (Source => fixed);
-   end SUS;
-
-
-   -----------
-   --  USS  --
-   -----------
-   function USS (loose : drvtext) return String
-   is
-   begin
-      return SU.To_String (Source => loose);
-   end USS;
-
    ------------------
    --  log_nominal --
    ------------------
    procedure log_nominal (driver    : Base_Driver;
                           category  : LogCategory;
-                          message   : drvtext)
+                          message   : CT.Text)
    is
    begin
          logger.log_nominal (driver   => driver.dialect,
@@ -296,17 +277,16 @@ package body AdaBase.Driver.Base is
    procedure log_problem
      (driver     : Base_Driver;
       category   : LogCategory;
-      message    : drvtext;
+      message    : CT.Text;
       pull_codes : Boolean := False;
       break      : Boolean := False)
    is
-      error_msg  : drvtext      := blank;
+      error_msg  : CT.Text      := CT.blank;
       error_code : DriverCodes  := 0;
       sqlstate   : TSqlState    := stateless;
    begin
       if pull_codes then
-         error_msg  := SU.To_Unbounded_String
-                      (driver.connection.all.driverMessage);
+         error_msg  := CT.SUS (driver.connection.all.driverMessage);
          error_code := driver.connection.all.driverCode;
          sqlstate   := driver.connection.all.SqlState;
       end if;
