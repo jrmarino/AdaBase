@@ -128,7 +128,7 @@ server version: 5.06.27
 </pre>
 <p class="caption">Output using MySQL Driver</p>
 <br/>
-<p>This trait is limited to specific drivers.  Specially [DB] is limited to "MySQL"</p>
+<p>This trait is limited to specific drivers.  Specially [DB] is limited to "MySQL.MySQL_Driver"</p>
 </div>
 <div class="sidenav">
   <h3>See Also</h3>

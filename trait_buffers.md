@@ -25,7 +25,7 @@ take several round trips within the protocol.</p>
 <br/>
 <p class="caption">See {{ page.trait_compressed }} for a usage example.</p>
 <br/>
-<p>This trait is limited to specific drivers.  Specially [DB] is limited to "MySQL"</p>
+<p>This trait is limited to specific drivers.  Specially [DB] is limited to "MySQL.MySQL_Driver"</p>
 </div>
 <div class="sidenav">
   <h3>See Also</h3>

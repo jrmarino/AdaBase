@@ -18,7 +18,7 @@ anytime (before or after establishing the connection).</p>
 <p class="caption">See {{ page.trait_compressed }} for a usage example.</p>
 <p class="caption">TBW: Reference example of multiquery support</p>
 <br/>
-<p>This trait is limited to specific drivers.  Specially [DB] is limited to "MySQL"</p>
+<p>This trait is limited to specific drivers.  Specially [DB] is limited to "MySQL.MySQL_Driver"</p>
 </div>
 <div class="sidenav">
   <h3>See Also</h3>
