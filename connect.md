@@ -1,5 +1,5 @@
 ---
-title: Connect
+title: Connect to database
 ---
 
 <div class="leftside">
@@ -9,7 +9,7 @@ package AdaBase is
 end AdaBase;
 </pre>
 <h3>Procedure<br/>
-AdaBase.Driver.Base.[DB].connect (database, username, password, hostname : String; port : PosixPort)</h3>
+AdaBase.Driver.Base.[DB].basic_connect (database, username, password, hostname : String; port : PosixPort)</h3>
 <p>This procedure initiates a persistent connection to the database server.
 The connection can be explicitly closed using the <b>disconnect</b> procedure,
 and it will be automatically closed if the driver object is destroyed.
@@ -18,7 +18,7 @@ and the attempt logged.  All connection failures will also be logged, followed
 by an exception which cannot be ignored.</p>
 <br/>
 <h3>Procedure<br/>
-AdaBase.Driver.Base.[DB].connect (database, username, password, socket : String)</h3>
+AdaBase.Driver.Base.[DB].basic_connect (database, username, password, socket : String)</h3>
 <p>This overloaded version of connect supports the use of UNIX sockets on the
 localhost instead of host plus TCP/IP port.</p>
 <pre class="code">
