@@ -21,8 +21,27 @@ by an exception which cannot be ignored.</p>
 AdaBase.Driver.Base.[DB].connect (database, username, password, socket : String)</h3>
 <p>This overloaded version of connect supports the use of UNIX sockets on the
 localhost instead of host plus TCP/IP port.</p>
+<pre class="code">
+--  Used for all testcases for MySQL driver
+--  Modify connection parameters as necessary
+
+with AdaBase.Driver.Base.MySQL;
+
+package body Connect is
+
+   procedure connect_database is
+   begin
+      DR.basic_connect (database => "adabase_examples",
+                        username => "root",
+                        password => "",
+                        hostname => "localhost",
+                        port     => 3306);
+   end connect_database;
+
+end Connect;
+</pre>
 <br/>
-<p class="caption">See {{ page.execute }} for a usage example.</p>
+<p class="caption">See {{ page.execute }} for a usage example coupled with code above.</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>
 </div>
