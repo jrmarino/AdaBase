@@ -15,6 +15,7 @@ command is issued to the SQL server and autocommit is not set.</p>
 "DROP TABLE" or "CREATE TABLE" is issued within a transaction.  The implicit
 <b>commit</b> will prevent the rollback of the other changes within the
 transaction boundary.</p>
+<br/>
 <p class="caption">See {{ page.execute }} for a usage example.</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>

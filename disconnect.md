@@ -9,6 +9,7 @@ AdaBase.Driver.Base.[DB].disconnect ()</h3>
 this is run when no connection to the database has yet been made.  When
 the driver is destroyed, any active connection will automatically be
 closed, so it's not strictly required to explicitly close a connection.</p>
+<br/>
 <p class="caption">See {{ page.execute }} for a usage example.</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>
