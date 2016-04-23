@@ -16,3 +16,8 @@ defaults:
        trait_multiquery: '<a href="trait_multiquery.html">multiquery settings [DS]</a>'
        trait_buffers: '<a href="trait_buffers.html">query buffer settings [DS]</a>'
        screen_logger: '<a href="screen_logger.html">logging to screen</a>'
+       query: '<a href="query.html">query</a>'
+       execute: '<a href="execute.html">execute (driver)</a>'
+       rollback: '<a href="rollback.html">rollback</a>'
+       connect: '<a href="connect.html">connect</a>'
+       disconnect: '<a href="disconnect.html">disconnect</a>'
