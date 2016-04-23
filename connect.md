@@ -23,9 +23,7 @@ AdaBase.Driver.Base.[DB].basic_connect (database, username, password, socket : S
 localhost instead of host plus TCP/IP port.</p>
 <pre class="code">
 --  Used for all testcases for MySQL driver
---  Modify connection parameters as necessary
-
-with AdaBase.Driver.Base.MySQL;
+--  DR is a variable of type AdaBase.Driver.Base.MySQL.MySQL_Driver
 
 package body Connect is
 
