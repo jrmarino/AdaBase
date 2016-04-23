@@ -217,4 +217,22 @@ package body CommonText is
       return template;
    end zeropad;
 
+
+   --------------
+   --  len #1  --
+   --------------
+   function len (US : Text) return Natural is
+   begin
+      return SU.Length (US);
+   end len;
+
+
+   --------------
+   --  len #2  --
+   --------------
+   function len (S : String) return Natural is
+   begin
+      return S'Length;
+   end len;
+
 end CommonText;

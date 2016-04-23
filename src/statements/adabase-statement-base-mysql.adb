@@ -154,7 +154,7 @@ package body AdaBase.Statement.Base.MySQL is
    procedure initialize (Object : in out MySQL_statement)
    is
       use type ACM.MySQL_Connection_Access;
-      len : Natural := CT.SU.Length (Object.initial_sql.all);
+      len : Natural := CT.len (Object.initial_sql.all);
    begin
       if Object.mysql_conn = null then
          return;

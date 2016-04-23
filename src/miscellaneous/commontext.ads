@@ -52,4 +52,8 @@ package CommonText is
    --  Numeric image with left-padded zeros
    function zeropad (N : Natural; places : Positive) return String;
 
+   --  Returns length of string
+   function len (US : Text) return Natural;
+   function len (S : String) return Natural;
+
 end CommonText;

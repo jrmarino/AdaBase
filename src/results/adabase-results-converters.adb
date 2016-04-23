@@ -1592,11 +1592,11 @@ package body AdaBase.Results.Converters is
          return "";
       end if;
       for x in 1 .. nvlen loop
-         len := len + CT.SU.Length (nv.all (x).enumeration);
+         len := len + CT.len (nv.all (x).enumeration);
       end loop;
       len := len + nvlen - 1;
       for x in 1 .. nvlen loop
-         len := len + CT.SU.Length (nv.all (x).enumeration);
+         len := len + CT.len (nv.all (x).enumeration);
       end loop;
       declare
          cursor : Natural := 1;
@@ -1604,7 +1604,7 @@ package body AdaBase.Results.Converters is
          result : String (1 .. len) := (others => ',');
       begin
          for x in 1 .. nvlen loop
-            curend := cursor - 1 + CT.SU.Length (nv.all (x).enumeration);
+            curend := cursor - 1 + CT.len (nv.all (x).enumeration);
             result (cursor .. curend) := CT.USS (nv.all (x).enumeration);
             cursor := curend + 2;
          end loop;
