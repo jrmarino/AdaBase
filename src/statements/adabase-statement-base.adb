@@ -173,6 +173,7 @@ package body AdaBase.Statement.Base is
       end;
    end convert;
 
+
    ---------------------------------
    --  convert string to textual  --
    ---------------------------------
@@ -185,6 +186,7 @@ package body AdaBase.Statement.Base is
       end if;
       return CT.SUS (nv (nv'First .. maxlinks));
    end convert;
+
 
    ----------------------------------
    --  convert string to textwide  --
@@ -654,8 +656,6 @@ package body AdaBase.Statement.Base is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
-
-
 
 
    --------------------

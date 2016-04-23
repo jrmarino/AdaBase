@@ -41,8 +41,7 @@ package body AdaBase.Statement.Base.MySQL is
    --  column_count  --
    --------------------
    overriding
-   function column_count (Stmt : MySQL_statement) return Natural
-   is
+   function column_count (Stmt : MySQL_statement) return Natural is
    begin
       return Stmt.num_columns;
    end column_count;
@@ -52,8 +51,7 @@ package body AdaBase.Statement.Base.MySQL is
    --  last_driver_message  --
    ---------------------------
    overriding
-   function last_driver_message (Stmt : MySQL_statement) return String
-   is
+   function last_driver_message (Stmt : MySQL_statement) return String is
    begin
       case Stmt.type_of_statement is
          when direct_statement   =>
@@ -70,8 +68,7 @@ package body AdaBase.Statement.Base.MySQL is
    --  last_insert_id  --
    ----------------------
    overriding
-   function last_insert_id (Stmt : MySQL_statement) return TraxID
-   is
+   function last_insert_id (Stmt : MySQL_statement) return TraxID is
    begin
       case Stmt.type_of_statement is
          when direct_statement   =>
@@ -119,8 +116,7 @@ package body AdaBase.Statement.Base.MySQL is
    --  execute  (version 1)  --
    ----------------------------
    overriding
-   function execute (Stmt : MySQL_statement) return Boolean
-   is
+   function execute (Stmt : MySQL_statement) return Boolean is
    begin
       if Stmt.type_of_statement = direct_statement then
          raise INVALID_FOR_DIRECT_QUERY
@@ -137,7 +133,6 @@ package body AdaBase.Statement.Base.MySQL is
    function execute (Stmt : MySQL_statement; bind_piped : String)
                      return Boolean
    is
-
    begin
       if Stmt.type_of_statement = direct_statement then
          raise INVALID_FOR_DIRECT_QUERY
@@ -208,8 +203,7 @@ package body AdaBase.Statement.Base.MySQL is
    --  rows_returned  --
    ---------------------
    overriding
-   function rows_returned (Stmt : MySQL_statement) return AffectedRows
-   is
+   function rows_returned (Stmt : MySQL_statement) return AffectedRows is
    begin
       if not Stmt.successful_execution then
          raise PRIOR_EXECUTION_FAILED
@@ -760,8 +754,6 @@ package body AdaBase.Statement.Base.MySQL is
    end internal_fetch_bound_direct;
 
 
-
-
    ----------------------------------
    --  internal_direct_post_exec   --
    ----------------------------------
@@ -810,7 +802,5 @@ package body AdaBase.Statement.Base.MySQL is
                            message    => EX.Exception_Message (X => RES),
                            pull_codes => True);
    end internal_direct_post_exec;
-
-
 
 end AdaBase.Statement.Base.MySQL;
