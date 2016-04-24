@@ -5,7 +5,7 @@ title: Last Driver Code
 <div class="leftside">
 <pre class="code">
 package AdaBase is
-   subtype DriverCodes  is Integer range -999 .. 1999;
+   subtype DriverCodes is Integer range -999 .. 1999;
 end AdaBase;
 </pre>
 <h3>DriverCodes function<br/>
