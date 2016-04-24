@@ -88,12 +88,25 @@ title: AdaBase by jrmarino
 <li>func fetch_next </li>
 <li>func fetch_all </li>
 <li>func fetch_bound </li>
-<li>## conversions transfer ##</li>
 <li>proc bind (x20)</li>
 <li>proc assign (x20)</li>
 <li>proc fetch_next_set</li>
 <li>proc iterate</li>
 <li>proc iterate_bound</li>
+</ul>
+
+<h3>AdaBase.Results.Field.std_field</h3>
+<ul>
+<li>is_null</li>
+<li>native_type</li>
+<li>as_[type] (20/convertibility)</li>
+</ul>
+
+<h3>AdaBase.Results.Sets</h3>
+<ul>
+<li>DataRow.Count</li>
+<li>DataRow.Column (x2)</li>
+<li>DataRowSet</li>
 </ul>
 
 </div>
