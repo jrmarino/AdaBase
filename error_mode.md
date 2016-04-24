@@ -27,7 +27,7 @@ AdaBase.Driver.Base.[DB].set_trait_error_mode (trait : ErrorMode)</h3>
 <p>This procedure is used to set the error mode.  It can be set
 anytime.</p>
 <br/>
-<p class="caption">See {{ page.trait_client }} and {{ page.last_driver_msg }}
+<p class="caption">See {{ page.trait_client }} and {{ page.driver_msg }}
 for usage examples.</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>
