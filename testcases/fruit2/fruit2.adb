@@ -9,7 +9,7 @@ procedure Fruit2 is
 
    numrows : AdaBase.AffectedRows;
 
-   --  Intentionally broken UPDATE command (calories misspelling)
+   --  Intentionally broken UPDATE command (calories misspelled)
    cmd : constant String := "UPDATE fruits set caloriesx = 14 " &
                             "WHERE fruit = 'strawberry'";
 
