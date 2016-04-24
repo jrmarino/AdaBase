@@ -230,3 +230,17 @@ pre.output {
   background-color: #000020;
   color: #C0C000;
 }
+.twocol {
+	float: left;
+	width: 50%;
+}
+.twocol li { 
+    font-size: 0.8rem;
+}
+.twocol li a {
+	display: block;
+	padding: 1px 4px;
+}
+.twocol li a:hover {
+	color: #111;
+}

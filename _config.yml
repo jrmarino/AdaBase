@@ -5,16 +5,46 @@ defaults:
      values:
        layout: "default"
        supported_drivers: "[DB] is &quot;MySQL.MySQL_Driver&quot;, &quot;PgSQL.PgSQL_Driver&quot;, or &quot;SQLite.SQLite_Driver&quot;"
+
        trait_client: '<a href="trait_client.html">client traits</a>'
+       f_trait_client_info: '<a href="trait_client.html">func trait_client_info)</a>'
+       f_trait_client_version: '<a href="trait_client.html">func trait_client_version</a>'
+
        trait_server: '<a href="trait_server.html">server traits</a>'
+       f_trait_server_info: '<a href="trait_server.html">func trait_server_info</a>'
+       f_trait_server_version: '<a href="trait_server.html">func trait_server_version</a>'
+
        trait_driver: '<a href="trait_driver.html">driver identification</a>'
+       f_trait_driver: '<a href="trait_driver.html">func trait_driver</a>'
+
        trait_autocommit: '<a href="autocommit.html">autocommit settings</a>'
+       f_trait_autocommit: '<a href="autocommit.html">func trait_autocommit</a>'
+       p_trait_autocommit: '<a href="autocommit.html">proc set_trait_autocommit</a>'
+
        trait_column_case: '<a href="column_case.html">column case settings</a>'
+       f_trait_column_case: '<a href="column_case.html">func trait_column_case</a>'
+       p_trait_column_case: '<a href="column_case.html">proc set_trait_column_case</a>'
+
        trait_error_mode: '<a href="error_mode.html">error mode settings</a>'
+       f_trait_error_mode: '<a href="error_mode.html">func trait_error_mode</a>'
+       p_trait_error_mode: '<a href="error_mode.html">proc set_trait_error_mode</a>'
+
        trait_blob_size: '<a href="max_blob_size.html">BLOB size settings</a>'
+       f_trait_blob_size: '<a href="max_blob_size.html">func trait_blob_size</a>'
+       p_trait_blob_size: '<a href="max_blob_size.html">proc set_trait_blob_size</a>'
+
        trait_compressed: '<a href="trait_compressed.html">compression settings [DS]</a>'
+       f_trait_compressed: '<a href="trait_compressed.html">func trait_protocol_compressed [DS]</a>'
+       p_trait_compressed: '<a href="trait_compressed.html">proc set_trait_protocol_compressed [DS]</a>'
+
        trait_multiquery: '<a href="trait_multiquery.html">multiquery settings [DS]</a>'
+       f_trait_multiquery: '<a href="trait_multiquery.html">func trait_multiquery_enabled [DS]</a>'
+       p_trait_multiquery: '<a href="trait_multiquery.html">proc set_trait_multiquery_enabled [DS]</a>'
+
        trait_buffers: '<a href="trait_buffers.html">query buffer settings [DS]</a>'
+       f_trait_buffers: '<a href="trait_buffers.html">func trait_query_buffers_used [DS]</a>'
+       p_trait_buffers: '<a href="trait_buffers.html">proc set_trait_query_buffers_used [DS]</a>'
+
        standard_logger: '<a href="standard_logger.html">standard loggers</a>'
        custom_logger: '<a href="custom_logger.html">custom loggers</a>'
        query: '<a href="query.html">query</a>'
