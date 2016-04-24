@@ -22,3 +22,6 @@ defaults:
        commit: '<a href="commit.html">commit</a>'
        connect: '<a href="connect.html">connect</a>'
        disconnect: '<a href="disconnect.html">disconnect</a>'
+       driver_msg: '<a href="last_driver_message.html">last driver message</a>'
+       driver_code: '<a href="last_driver_code.html">last driver code</a>'
+       driver_state: '<a href="last_driver_state.html">last driver state</a>'
