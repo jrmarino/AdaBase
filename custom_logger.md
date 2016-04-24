@@ -150,5 +150,6 @@ The custom logger has been attached.
     <li>{{ page.execute }}</li>
     <li>{{ page.commit }}</li>
     <li>{{ page.last_insert_id }}</li>
+    <li>{{ page.standard_logger }}</li>
   </ul>
 </div>
