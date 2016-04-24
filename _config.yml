@@ -80,7 +80,9 @@ defaults:
        driver_state: '<a href="last_driver_state.html">last driver state</a>'
        f_driver_state: '<a href="last_driver_state.html">func last_sql_state</a>'
 
+       last_insert_id: '<a href="last_insert_id.html">last insert id</a>'
        f_last_insert_id: '<a href="last_insert_id.html">func last_insert_id</a>'
+
        p_query_clear_table: '<a href="query_clear_table.html">proc query_clear_table</a>'
        p_query_drop_table: '<a href="query_drop_table.html">proc query_drop_table</a>'
 
