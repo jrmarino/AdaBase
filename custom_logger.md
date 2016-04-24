@@ -145,11 +145,11 @@ The custom logger has been attached.
 <div class="sidenav">
   <h3>See Also</h3>
   <ul>
+    <li>{{ page.standard_logger }}</li>
     <li>{{ page.connect }}</li>
     <li>{{ page.disconnect }}</li>
     <li>{{ page.execute }}</li>
     <li>{{ page.commit }}</li>
     <li>{{ page.last_insert_id }}</li>
-    <li>{{ page.standard_logger }}</li>
   </ul>
 </div>
