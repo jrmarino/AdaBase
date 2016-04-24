@@ -36,6 +36,7 @@ package body AdaBase.Logger.Base is
       listener.prop_error_msg  := error_msg;
       listener.prop_error_code := error_code;
       listener.prop_sqlstate   := sqlstate;
+      listener.prop_is_error   := not CT.IsBlank (error_msg);
 
       case driver is
          when driver_mysql      => drv := "    mysql :";
@@ -58,7 +59,7 @@ package body AdaBase.Logger.Base is
       composite := CT.SUS (TS & drv & prefix);
 
       CT.SU.Append (Source => composite, New_Item => message);
-      if not CT.IsBlank (error_msg) then
+      if listener.prop_is_error then
          CT.SU.Append (Source => composite, New_Item => err_label);
          CT.SU.Append (Source => composite, New_Item => error);
          CT.SU.Append (Source => composite, New_Item => error_msg);
@@ -141,10 +142,19 @@ package body AdaBase.Logger.Base is
    ----------------
    --  sqlstate  --
    ----------------
-   function sqlstate   (listener : Base_Logger) return TSqlState is
+   function sqlstate (listener : Base_Logger) return TSqlState is
    begin
       return listener.prop_sqlstate;
    end sqlstate;
+
+
+   ----------------
+   --  is_error  --
+   ----------------
+   function is_error (listener : Base_Logger) return Boolean is
+   begin
+      return listener.prop_is_error;
+   end is_error;
 
 
 end AdaBase.Logger.Base;

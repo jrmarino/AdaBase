@@ -31,6 +31,7 @@ package AdaBase.Logger.Base is
    function error_msg  (listener : Base_Logger) return CT.Text;
    function error_code (listener : Base_Logger) return DriverCodes;
    function sqlstate   (listener : Base_Logger) return TSqlState;
+   function is_error   (listener : Base_Logger) return Boolean;
 
 private
 
@@ -43,6 +44,7 @@ private
       prop_error_msg  : CT.Text := CT.blank;
       prop_error_code : DriverCodes;
       prop_sqlstate   : TSqlState;
+      prop_is_error   : Boolean;
    end record;
 
 end AdaBase.Logger.Base;
