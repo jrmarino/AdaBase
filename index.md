@@ -15,6 +15,7 @@ title: AdaBase by jrmarino
 <li>{{ page.p_execute }}</li>
 <li>{{ page.p_commit }}</li>
 <li>{{ page.p_rollback }}</li>
+<li>{{ page.f_last_insert_id }}</li>
 <li>{{ page.f_driver_msg }}</li>
 <li>{{ page.f_driver_code }}</li>
 <li>{{ page.f_driver_state }}</li>
