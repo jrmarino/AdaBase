@@ -239,7 +239,7 @@ pre.output {
 }
 .twocol li a {
 	display: block;
-	padding: 1px 4px;
+	padding: 0px 4px;
 }
 .twocol li a:hover {
 	color: #111;

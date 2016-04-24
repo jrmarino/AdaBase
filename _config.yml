@@ -7,7 +7,7 @@ defaults:
        supported_drivers: "[DB] is &quot;MySQL.MySQL_Driver&quot;, &quot;PgSQL.PgSQL_Driver&quot;, or &quot;SQLite.SQLite_Driver&quot;"
 
        trait_client: '<a href="trait_client.html">client traits</a>'
-       f_trait_client_info: '<a href="trait_client.html">func trait_client_info)</a>'
+       f_trait_client_info: '<a href="trait_client.html">func trait_client_info</a>'
        f_trait_client_version: '<a href="trait_client.html">func trait_client_version</a>'
 
        trait_server: '<a href="trait_server.html">server traits</a>'
@@ -46,13 +46,40 @@ defaults:
        p_trait_buffers: '<a href="trait_buffers.html">proc set_trait_query_buffers_used [DS]</a>'
 
        standard_logger: '<a href="standard_logger.html">standard loggers</a>'
+       p_standard_logger: '<a href="standard_logger.html">proc command_standard_logger</a>'
+       p_logger_filename: '<a href="standard_logger.html">proc set_logger_filename</a>'
+
        custom_logger: '<a href="custom_logger.html">custom loggers</a>'
+       p_attach_logger: '<a href="custom_logger.html">proc attach_custom_logger</a>'
+       p_detach_logger: '<a href="custom_logger.html">proc detach_custom_logger</a>'
+
        query: '<a href="query.html">query</a>'
+       f_query: '<a href="query.html">func query</a>'
+
        execute: '<a href="execute.html">execute (driver)</a>'
+       p_execute: '<a href="execute.html">proc execute</a>'
+
        rollback: '<a href="rollback.html">rollback</a>'
+       p_rollback: '<a href="rollback.html">proc rollback</a>'
+
        commit: '<a href="commit.html">commit</a>'
+       p_commit: '<a href="commit.html">proc commit</a>'
+
        connect: '<a href="connect.html">connect</a>'
+       p_connect: '<a href="connect.html">proc connect (x2)</a>'
+
        disconnect: '<a href="disconnect.html">disconnect</a>'
+       p_disconnect: '<a href="disconnect.html">proc disconnect</a>'
+
        driver_msg: '<a href="last_driver_message.html">last driver message</a>'
+       f_driver_msg: '<a href="last_driver_message.html">func last_driver_message</a>'
+
        driver_code: '<a href="last_driver_code.html">last driver code</a>'
+       f_driver_code: '<a href="last_driver_code.html">func last_driver_code</a>'
+
        driver_state: '<a href="last_driver_state.html">last driver state</a>'
+       f_driver_state: '<a href="last_driver_state.html">func last_sql_state</a>'
+
+       f_last_insert_id: '<a href="last_insert_id.html">func last_insert_id</a>'
+       p_query_clear_table: '<a href="query_clear_table.html">proc query_clear_table</a>'
+       p_query_drop_table: '<a href="query_drop_table.html">proc query_drop_table</a>'
