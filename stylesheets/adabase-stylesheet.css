@@ -244,3 +244,6 @@ pre.output {
 .twocol li a:hover {
 	color: #111;
 }
+.introduction li { 
+    font-size: 1rem;
+}

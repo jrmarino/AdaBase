@@ -2,6 +2,7 @@
 title: Introduction to AdaBase
 ---
 
+<div class="introduction">
 <h3>Thick database bindings to MySQL, PostgreSQL, and SQLite for Ada</h3>
 <p>
 There are several options for Ada enthusiasts to connect their programs
@@ -46,9 +47,10 @@ and statement handler behaves identically regardless of which database is
 being used.
 </li>
 <li>
-Open: It's been hosted on GitHub to encourage visibilities and contributions
+Open. It's been hosted on GitHub to encourage visibilities and contributions
 from Ada enthusiasts.
 </li>
 </ol>
 <br/>
 <a href="index.html">Go back to Index</a>
+</div>

@@ -5,6 +5,7 @@ title: AdaBase by jrmarino
 <h3>Thick database bindings to MySQL, PostgreSQL, and SQLite for Ada</h3>
 {{ page.introduction }}
 <br/>
+<br/>
 
 <div class="twocol">
 <h3>AdaBase.Driver (core)</h3>
