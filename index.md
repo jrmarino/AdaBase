@@ -69,4 +69,30 @@ title: AdaBase by jrmarino
 
 <div class="twocol">
 <h3>AdaBase.Statement</h3>
+<ul>
+<li>func rows_affected</li>
+<li>func rows_returned </li>
+<li>func successful </li>
+<li>func discards_possible </li>
+<li>func column_count </li>
+<li>func last_insert_id </li>
+<li>func last_sql_state </li>
+<li>func last_driver_code </li>
+<li>func last_driver_message </li>
+<li>proc discard_rest </li>
+<li>proc execute (x2) </li>
+<li>func column_name </li>
+<li>func column_table </li>
+<li>func column_native_type </li>
+<li>func fetch_next </li>
+<li>func fetch_all </li>
+<li>func fetch_bound </li>
+<li>## conversions transfer ##</li>
+<li>proc bind (x20)</li>
+<li>proc assign (x20)</li>
+<li>proc fetch_next_set</li>
+<li>proc iterate</li>
+<li>proc iterate_bound</li>
+</ul>
+
 </div>
