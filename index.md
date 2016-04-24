@@ -7,6 +7,29 @@ title: AdaBase by jrmarino
 <br/>
 
 <div class="twocol">
+<h3>AdaBase.Driver (core)</h3>
+<ul>
+<li>{{ page.p_connect }}</li>
+<li>{{ page.p_disconnect }}</li>
+<li>{{ page.p_execute }}</li>
+<li>{{ page.p_commit }}</li>
+<li>{{ page.p_rollback }}</li>
+<li>{{ page.f_driver_msg }}</li>
+<li>{{ page.f_driver_code }}</li>
+<li>{{ page.f_driver_state }}</li>
+</ul>
+
+<h3>AdaBase.Driver (Abstract SQL)</h3>
+<ul>
+<li>{{ page.p_query_clear_table }}</li>
+<li>{{ page.p_query_drop_table }}</li>
+</ul>
+
+<h3>AdaBase.Driver (statement generation)</h3>
+<ul>
+<li>{{ page.f_query }}</li>
+</ul>
+
 <h3>AdaBase.Driver (Get Attributes)</h3>
 <ul>
 <li>{{ page.f_trait_client_info }}</li>
@@ -22,6 +45,7 @@ title: AdaBase by jrmarino
 <li>{{ page.f_trait_multiquery }}</li>
 <li>{{ page.f_trait_buffers }}</li>
 </ul>
+
 <h3>AdaBase.Driver (Set Attributes)</h3>
 <ul>
 <li>{{ page.p_trait_autocommit }}</li>
@@ -32,6 +56,7 @@ title: AdaBase by jrmarino
 <li>{{ page.p_trait_multiquery }}</li>
 <li>{{ page.p_trait_buffers }}</li>
 </ul>
+
 <h3>AdaBase.Driver (Logger functionality)</h3>
 <ul>
 <li>{{ page.p_standard_logger }}</li>
@@ -39,26 +64,7 @@ title: AdaBase by jrmarino
 <li>{{ page.p_attach_logger }}</li>
 <li>{{ page.p_detach_logger }}</li>
 </ul>
-<h3>AdaBase.Driver (core)</h3>
-<ul>
-<li>{{ page.p_connect }}</li>
-<li>{{ page.p_disconnect }}</li>
-<li>{{ page.p_execute }}</li>
-<li>{{ page.p_commit }}</li>
-<li>{{ page.p_rollback }}</li>
-<li>{{ page.f_driver_msg }}</li>
-<li>{{ page.f_driver_code }}</li>
-<li>{{ page.f_driver_state }}</li>
-</ul>
-<h3>AdaBase.Driver (Abstract SQL)</h3>
-<ul>
-<li>{{ page.p_query_clear_table }}</li>
-<li>{{ page.p_query_drop_table }}</li>
-</ul>
-<h3>AdaBase.Driver (generates statements)</h3>
-<ul>
-<li>{{ page.p_query }}</li>
-</ul>
+
 </div>
 
 <div class="twocol">

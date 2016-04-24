@@ -66,7 +66,7 @@ defaults:
        p_commit: '<a href="commit.html">proc commit</a>'
 
        connect: '<a href="connect.html">connect</a>'
-       p_connect: '<a href="connect.html">proc connect (x2)</a>'
+       p_connect: '<a href="connect.html">proc basic_connect (x2)</a>'
 
        disconnect: '<a href="disconnect.html">disconnect</a>'
        p_disconnect: '<a href="disconnect.html">proc disconnect</a>'
