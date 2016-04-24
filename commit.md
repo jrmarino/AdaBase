@@ -17,6 +17,7 @@ is set to autocommit mode (which effectively prohibits transactions).</p>
   <h3>See Also</h3>
   <ul>
     <li>{{ page.connect }}</li>
+    <li>{{ page.trait_autocommit }}</li>
     <li>{{ page.execute }}</li>
     <li>{{ page.disconnect }}</li>
   </ul>
