@@ -7,6 +7,7 @@ title: Introduction to AdaBase
 <p>
 There are several options for Ada enthusiasts to connect their programs
 to databases.  What makes AdaBase special?</p>
+<br/>
 <ol>
 <li>It doesn't come with the kitchen sink.  Several of the database
 bindings are part of large library with many unneeded components presented
