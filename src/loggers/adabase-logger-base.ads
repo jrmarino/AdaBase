@@ -30,6 +30,7 @@ package AdaBase.Logger.Base is
    function message    (listener : Base_Logger) return CT.Text;
    function error_msg  (listener : Base_Logger) return CT.Text;
    function error_code (listener : Base_Logger) return DriverCodes;
+   function sqlstate   (listener : Base_Logger) return TSqlState;
 
 private
 

@@ -138,4 +138,13 @@ package body AdaBase.Logger.Base is
    end error_code;
 
 
+   ----------------
+   --  sqlstate  --
+   ----------------
+   function sqlstate   (listener : Base_Logger) return TSqlState is
+   begin
+      return listener.prop_sqlstate;
+   end sqlstate;
+
+
 end AdaBase.Logger.Base;
