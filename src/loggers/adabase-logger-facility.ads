@@ -40,7 +40,7 @@ package AdaBase.Logger.Facility is
       driver     : TDriver;
       category   : LogCategory;
       message    : CT.Text;
-      error_msg  : CT.Text  := CT.blank;
+      error_msg  : CT.Text     := CT.blank;
       error_code : DriverCodes := 0;
       sqlstate   : TSqlState   := stateless;
       break      : Boolean     := False);

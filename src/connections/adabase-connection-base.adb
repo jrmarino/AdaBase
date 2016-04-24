@@ -37,28 +37,6 @@ package body AdaBase.Connection.Base is
 
 
    --------------------
-   --  setErrorMode  --
-   --------------------
-   overriding
-   procedure setErrorMode (conn : out Base_Connection; mode : ErrorMode)
-   is
-   begin
-      conn.prop_error_mode := mode;
-   end setErrorMode;
-
-
-   -----------------
-   --  ErrorMode  --
-   -----------------
-   overriding
-   function getErrorMode (conn : Base_Connection) return ErrorMode
-   is
-   begin
-      return conn.prop_error_mode;
-   end getErrorMode;
-
-
-   --------------------
    --  setMaxBlobSize  --
    --------------------
    overriding

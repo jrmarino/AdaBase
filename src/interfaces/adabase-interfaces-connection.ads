@@ -19,13 +19,6 @@ package AdaBase.Interfaces.Connection is
    function  getCaseMode (conn : iConnection) return CaseMode is abstract;
 
 
-   --  Setting of exception behavior (suppress, warn, break)
-   procedure setErrorMode (conn : out iConnection; mode : ErrorMode)
-                           is null;
-   function  getErrorMode (conn : iConnection) return ErrorMode
-                           is abstract;
-
-
    --  Set Compression Mode (if supported)
    procedure setCompressed (conn : out iConnection; compressed : Boolean)
                             is null;

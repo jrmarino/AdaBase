@@ -23,12 +23,6 @@ package AdaBase.Connection.Base is
    function getCaseMode (conn : Base_Connection) return CaseMode;
 
    overriding
-   procedure setErrorMode (conn : out Base_Connection; mode : ErrorMode);
-
-   overriding
-   function getErrorMode (conn : Base_Connection) return ErrorMode;
-
-   overriding
    procedure setMaxBlobSize (conn : out Base_Connection;
                              maxsize : BLOB_maximum);
 
@@ -65,7 +59,6 @@ private
          prop_auto_commit    : Boolean          := False;
          prop_active         : Boolean          := False;
          prop_trax_isolation : TransIsolation   := repeatable_read;
-         prop_error_mode     : ErrorMode        := warning;
          prop_case_mode      : CaseMode         := natural_case;
          prop_max_blob       : BLOB_maximum     := 2 ** 12;  -- 4kb
 

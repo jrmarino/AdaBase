@@ -33,7 +33,7 @@ package body AdaBase.Driver.Base is
    function trait_error_mode (driver : Base_Driver) return ErrorMode
    is
    begin
-      return driver.connection.all.getErrorMode;
+      return logger.error_mode;
    end trait_error_mode;
 
 
@@ -151,7 +151,7 @@ package body AdaBase.Driver.Base is
                                     trait  : ErrorMode)
    is
    begin
-      driver.connection.all.setErrorMode (mode => trait);
+      logger.set_error_mode (mode => trait);
    end set_trait_error_mode;
 
 
