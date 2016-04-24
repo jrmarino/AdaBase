@@ -23,6 +23,8 @@ package AdaBase.Logger.Facility is
    procedure standard_logger (facility : out LogFacility;
                               logger   : TLogger;
                               action   : TAction);
+   procedure set_log_file    (facility : LogFacility;
+                              filename : String);
    procedure set_error_mode (facility : out LogFacility; mode : ErrorMode);
    function  error_mode     (facility : LogFacility) return ErrorMode;
 

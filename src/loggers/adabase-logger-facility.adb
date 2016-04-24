@@ -24,6 +24,15 @@ package body AdaBase.Logger.Facility is
    end set_error_mode;
 
 
+   --------------------
+   --  set_log_file  --
+   --------------------
+   procedure set_log_file (facility : LogFacility; filename : String) is
+   begin
+      facility.listener_file.all.set_filepath (filename);
+   end set_log_file;
+
+
    ---------------------
    --  standard_logger  --
    ---------------------

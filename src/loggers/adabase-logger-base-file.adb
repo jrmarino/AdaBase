@@ -35,4 +35,13 @@ package body AdaBase.Logger.Base.File is
 
    end reaction;
 
+
+   --------------------
+   --  set_filepath  --
+   --------------------
+   procedure set_filepath (listener : out File_Logger; filename : String) is
+   begin
+      listener.filepath := CT.SUS (filename);
+   end set_filepath;
+
 end AdaBase.Logger.Base.File;
