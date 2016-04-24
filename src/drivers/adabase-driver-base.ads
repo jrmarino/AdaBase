@@ -21,6 +21,9 @@ package AdaBase.Driver.Base is
                                       action : ALF.TAction);
 
    overriding
+   procedure set_logger_filename (driver  : Base_Driver; filename : String);
+
+   overriding
    procedure detach_custom_logger (driver : Base_Driver);
 
    overriding

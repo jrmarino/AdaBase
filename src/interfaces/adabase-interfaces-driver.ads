@@ -68,6 +68,9 @@ package AdaBase.Interfaces.Driver is
                                       device : ALF.TLogger;
                                       action : ALF.TAction) is null;
 
+   procedure set_logger_filename (driver  : iDriver;
+                                  filename : String) is null;
+
    procedure detach_custom_logger (driver : iDriver) is null;
    procedure attach_custom_logger
      (driver        : iDriver;

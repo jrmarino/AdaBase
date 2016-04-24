@@ -180,6 +180,16 @@ package body AdaBase.Driver.Base is
    end command_standard_logger;
 
 
+   ---------------------------
+   --  set_logger_filename  --
+   ---------------------------
+   overriding
+   procedure set_logger_filename (driver  : Base_Driver; filename : String) is
+   begin
+      logger.set_log_file (filename);
+   end set_logger_filename;
+
+
    ----------------------------
    --  detach_custom_logger  --
    ----------------------------
