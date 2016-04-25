@@ -10,7 +10,7 @@ when_exists : Boolean := False; cascade : Boolean := False)</h3>
 query to drop a table in the connected database. Existence checks and
 cascading deletions only occur if explicitly requested.  Multiple tables
 can be dropped simulaneously by separating them with commas (however this
-is not supported by all drivers (e.g. FireBird, SQLite), so it's more
+is not supported by all drivers (e.g. Firebird, SQLite), so it's more
 portable to issue multiple single table query_drop_table commands).</p>
 
 <pre class="code">
