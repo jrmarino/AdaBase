@@ -102,10 +102,12 @@ title: AdaBase by jrmarino
 <li>is_null</li>
 <li>native_type</li>
 <li>as_[type] (20/convertibility)</li>
+<li>spawn_field (x3)</li>
 </ul>
 
 <h3>AdaBase.Results.Sets</h3>
 <ul>
+<li>complete</li>
 <li>DataRow.Count</li>
 <li>DataRow.Column (x2)</li>
 <li>DataRowSet</li>
