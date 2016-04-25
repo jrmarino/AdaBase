@@ -56,6 +56,9 @@ defaults:
        query: '<a href="query.html">query</a>'
        f_query: '<a href="query.html">func query</a>'
 
+       query_select: '<a href="query_select.html">select query</a>'
+       f_query_select: '<a href="query_select.html">func query_select</a>'
+
        execute: '<a href="execute.html">execute (driver)</a>'
        p_execute: '<a href="execute.html">proc execute</a>'
 

@@ -21,7 +21,7 @@ title: AdaBase by jrmarino
 <li>{{ page.f_driver_state }}</li>
 </ul>
 
-<h3>AdaBase.Driver (Abstract SQL)</h3>
+<h3>AdaBase.Driver (no result queries)</h3>
 <ul>
 <li>{{ page.p_query_clear_table }}</li>
 <li>{{ page.p_query_drop_table }}</li>
@@ -30,9 +30,10 @@ title: AdaBase by jrmarino
 <h3>AdaBase.Driver (statement generation)</h3>
 <ul>
 <li>{{ page.f_query }}</li>
+<li>{{ page.f_query_select }}</li>
 </ul>
 
-<h3>AdaBase.Driver (Get Attributes)</h3>
+<h3>AdaBase.Driver (get attributes)</h3>
 <ul>
 <li>{{ page.f_trait_client_info }}</li>
 <li>{{ page.f_trait_client_version }}</li>
@@ -48,7 +49,7 @@ title: AdaBase by jrmarino
 <li>{{ page.f_trait_buffers }}</li>
 </ul>
 
-<h3>AdaBase.Driver (Set Attributes)</h3>
+<h3>AdaBase.Driver (set attributes)</h3>
 <ul>
 <li>{{ page.p_trait_autocommit }}</li>
 <li>{{ page.p_trait_column_case }}</li>
@@ -59,7 +60,7 @@ title: AdaBase by jrmarino
 <li>{{ page.p_trait_buffers }}</li>
 </ul>
 
-<h3>AdaBase.Driver (Logger functionality)</h3>
+<h3>AdaBase.Driver (logger functionality)</h3>
 <ul>
 <li>{{ page.p_standard_logger }}</li>
 <li>{{ page.p_logger_filename }}</li>
