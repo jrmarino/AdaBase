@@ -89,7 +89,7 @@ title: AdaBase by jrmarino
 <li>func column_name </li>
 <li>func column_table </li>
 <li>func column_native_type </li>
-<li>func fetch_next </li>
+<li>{{ page.f_fetch_next }}</li>
 <li>func fetch_all </li>
 <li>func fetch_bound </li>
 <li>proc bind (x20)</li>

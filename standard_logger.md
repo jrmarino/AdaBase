@@ -1,5 +1,5 @@
 ---
-title: Error Mode Settings
+title: Standard Logger Commands
 ---
 
 <div class="leftside">

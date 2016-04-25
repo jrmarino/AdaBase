@@ -4,7 +4,8 @@ defaults:
        path: ""
      values:
        layout: "default"
-       supported_drivers: "[DB] is &quot;MySQL.MySQL_Driver&quot;, &quot;PgSQL.PgSQL_Driver&quot;, or &quot;SQLite.SQLite_Driver&quot;"
+       supported_drivers: '[DB] is "MySQL.MySQL_Driver", "PgSQL.PgSQL_Driver", or "SQLite.SQLite_Driver"'
+       supported_stmts: '[STMT] is "MySQL.MySQL_statement", "PgSQL.PgSQL_statement", or "SQLite.SQLite_statement"'
 
        trait_client: '<a href="trait_client.html">client traits</a>'
        f_trait_client_info: '<a href="trait_client.html">func trait_client_info</a>'
@@ -60,7 +61,7 @@ defaults:
        f_query_select: '<a href="query_select.html">func query_select</a>'
 
        prepare: '<a href="prepare.html">prepare</a>'
-       f_query: '<a href="prepare.html">func prepare</a>'
+       f_prepare: '<a href="prepare.html">func prepare</a>'
 
        prepare_select: '<a href="prepare_select.html">select prepare</a>'
        f_prepare_select: '<a href="prepare_select.html">func prepare_select</a>'
@@ -99,3 +100,16 @@ defaults:
        p_query_drop_table: '<a href="drop_table.html">proc query_drop_table</a>'
 
        introduction: '<a href="introduction.html">Introduction to AdaBase</a>'
+
+       fetch_next: '<a href="fetch_next.html">fetch next datarow</a>'
+       f_fetch_next: '<a href="fetch_next.html">func fetch_next</a>'
+
+       complete: '<a href="complete.html">fetch complete</a>'
+       stmt_successful: '<a href="stmt_successful.html">stmt successful</a>'
+       stmt_discards_possible: '<a href="stmt_discards_possible.html">stmt discards possible</a>'
+       stmt_rows_returned: '<a href="stmt_rows_returned.html">stmt rows returned</a>'
+       stmt_column_count: '<a href="stmt_column_count.html">stmt column count</a>'
+       stmt_column_table: '<a href="stmt_column_table.html">stmt column's table</a>'
+       stmt_column_name: '<a href="stmt_column_name.html">stmt column's name</a>'
+       stmt_column_native_type: '<a href="stmt_column_native_type.html">stmt column's type</a>'
+       res_column: '<a href="res_column.html">result column handler</a>'
