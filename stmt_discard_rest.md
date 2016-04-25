@@ -95,6 +95,9 @@ Query successful: TRUE
     <li>{{ page.stmt_successful }}</li>
     <li>{{ page.stmt_data_discarded }}</li>
     <li>{{ page.stmt_query }}</li>
+    <li>{{ page.stmt_driver_msg }}</li>
+    <li>{{ page.stmt_driver_code }}</li>
+    <li>{{ page.stmt_driver_state }}</li>
     <li>{{ page.query }}</li>
     <li>{{ page.fetch_next }}</li>
     <li>{{ page.connect }}</li>

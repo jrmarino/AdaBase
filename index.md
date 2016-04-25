@@ -81,10 +81,10 @@ title: AdaBase by jrmarino
 <li>{{ page.f_data_discarded }}</li>
 <li>{{ page.f_column_count }}</li>
 <li>func last_insert_id </li>
-<li>func last_sql_state </li>
-<li>func last_driver_code </li>
-<li>func last_driver_message </li>
-<li>proc discard_rest </li>
+<li>{{ page.f_stmt_driver_state }}</li>
+<li>{{ page.f_stmt_driver_code }}</li>
+<li>{{ page.f_stmt_driver_msg }}</li>
+<li>{{ page.p_discard_rest }}</li>
 <li>proc execute (x2) </li>
 <li>{{ page.f_column_table }}</li>
 <li>{{ page.f_column_name }}</li>

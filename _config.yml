@@ -135,4 +135,15 @@ defaults:
        f_stmt_query: '<a href="stmt_query.html">func query</a>'
 
        stmt_discard_rest: '<a href="stmt_discard_rest.html">stmt discard rest</a>'
+       p_discard_rest: '<a href="stmt_discard_rest.html">proc discard_rest</a>'
+
        res_count: '<a href="res_count.html">result column count</a>'
+
+       stmt_driver_msg: '<a href="last_driver_message.html">last driver message (stmt)</a>'
+       f_stmt_driver_msg: '<a href="last_driver_message.html">func last_driver_message (stmt)</a>'
+
+       stmt_driver_code: '<a href="last_driver_code.html">last driver code (stmt)</a>'
+       f_stmt_driver_code: '<a href="last_driver_code.html">func last_driver_code (stmt)</a>'
+
+       stmt_driver_state: '<a href="last_driver_state.html">last driver state (stmt)</a>'
+       f_stmt_driver_state: '<a href="last_driver_state.html">func last_sql_state (stmt)</a>'

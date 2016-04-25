@@ -16,6 +16,11 @@ end AdaBase;
 AdaBase.Driver.Base.[DB].last_driver_message ()</h3>
 <p>This function returns a driver-specific error message regarding the last
 operation performed by the database handle.</p>
+<br/>
+<h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].last_driver_message ()</h3>
+<p>This function returns a driver-specific error message regarding the last
+operation performed by the statement handle.</p>
 <pre class="code">
 with AdaBase;
 with Connect;
@@ -72,13 +77,19 @@ Driver message: Unknown column 'caloriesx' in 'field list'
 </pre>
 <p class="caption">Output using MySQL Driver</p>
 <br/>
+<p class="caption">See {{ page.p_discard_rest }}
+for another usage example.</p>
+<br/>
 <p>{{ page.supported_drivers }}</p>
+<p>{{ page.supported_statements }}</p>
 </div>
 <div class="sidenav">
   <h3>See Also</h3>
   <ul>
     <li>{{ page.driver_code }}</li>
     <li>{{ page.driver_state }}</li>
+    <li>{{ page.stmt_driver_code }}</li>
+    <li>{{ page.stmt_driver_state }}</li>
     <li>{{ page.connect }}</li>
     <li>{{ page.disconnect }}</li>
     <li>{{ page.execute }}</li>
