@@ -7,6 +7,7 @@ title: Result Column functions (field handlers)
 package AdaBase.Results.Field is
    type std_field is tagged private;
 end AdaBase.Results.Field;
+
 package AdaBase.Results.Sets is
    type DataRow is tagged limited private;
 end AdaBase.Results.Sets;
