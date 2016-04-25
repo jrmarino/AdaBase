@@ -395,6 +395,7 @@ package body AdaBase.Driver.Base.MySQL is
    is
       err1 : constant CT.Text :=
         CT.SUS ("ACK! Query attempted on inactive connection");
+      err2 : constant CT.Text := CT.SUS ("Query failed!");
       duplicate : aliased constant CT.Text := CT.SUS (sql);
       shadow    : AID.ASB.stmttext_access := duplicate'Unrestricted_Access;
       statement : constant ASM.MySQL_statement_access :=
@@ -409,9 +410,13 @@ package body AdaBase.Driver.Base.MySQL is
            con_buffered      => driver.trait_query_buffers_used);
    begin
       if driver.connection_active then
-         driver.log_nominal
-           (category => execution, message => CT.SUS ("query succeeded," &
-              statement.rows_returned'Img & " rows returned"));
+         if statement.successful then
+            driver.log_nominal (category => execution, message => CT.SUS
+              ("query succeeded," & statement.rows_returned'Img &
+               " rows returned"));
+         else
+            driver.log_nominal (category => execution, message => err2);
+         end if;
       else
          --  Non-fatal attempt to query an unccnnected database
          driver.log_problem (category => execution, message  => err1);
