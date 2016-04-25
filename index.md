@@ -78,7 +78,7 @@ title: AdaBase by jrmarino
 <li>func rows_affected</li>
 <li>{{ page.f_rows_returned }}</li>
 <li>{{ page.f_successful }}</li>
-<li>{{ page.f_discards_possible }}</li>
+<li>{{ page.f_data_discarded }}</li>
 <li>{{ page.f_column_count }}</li>
 <li>func last_insert_id </li>
 <li>func last_sql_state </li>

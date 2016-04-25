@@ -110,8 +110,8 @@ defaults:
        stmt_successful: '<a href="stmt_successful.html">stmt successful</a>'
        f_successful: '<a href="stmt_successful.html">func successful</a>'
 
-       stmt_discards_possible: '<a href="stmt_discards_possible.html">stmt discards possible</a>'
-       f_discards_possible: '<a href="stmt_discards_possible.html">func discards_possible</a>'
+       stmt_data_discarded: '<a href="stmt_discards_possible.html">stmt data discarded</a>'
+       f_data_discarded: '<a href="stmt_discards_possible.html">func data_discarded</a>'
 
        stmt_rows_returned: '<a href="stmt_rows_returned.html">stmt rows returned</a>'
        f_rows_returned: '<a href="stmt_rows_returned.html">func rows_returned</a>'

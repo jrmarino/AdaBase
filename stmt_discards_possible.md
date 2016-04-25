@@ -4,11 +4,11 @@ title: Indication of discarded data
 
 <div class="leftside">
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].discards_possible ()</h3>
+AdaBase.Statement.Base.[STMT].data_discarded ()</h3>
 <p>
 After a new query, this function returns False until the <b>discard_rest</b>
 procedure is executed.  That procedure releases the result resource.  If it
-was still being used at the time it was released, the <b>discards_possible</b>
+was still being used at the time it was released, the <b>data_discarded</b>
 function returns True until it can be reset by the next query.
 </p>
 <br/>

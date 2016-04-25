@@ -49,7 +49,7 @@ begin
    CON.STMT := CON.DR.query (sql);
 
    TIO.Put_Line (" Query successful: " & CON.STMT.successful'Img);
-   TIO.Put_Line (" Discard possible: " & CON.STMT.discards_possible'Img);
+   TIO.Put_Line ("   Data Discarded: " & CON.STMT.data_discarded'Img);
    TIO.Put_Line ("Number of columns:" & CON.STMT.column_count'Img);
    TIO.Put_Line ("   Number of rows:" & CON.STMT.rows_returned'Img);
 
@@ -85,7 +85,7 @@ end DS_Fetch;
 <br/>
 <pre class="output">
  Query successful: TRUE
- Discard possible: FALSE
+   Data Discarded: FALSE
 Number of columns: 4
    Number of rows: 7
 
@@ -124,7 +124,7 @@ Column 4:
     <li>{{ page.complete }}</li>
     <li>{{ page.query }}</li>
     <li>{{ page.stmt_successful }}</li>
-    <li>{{ page.stmt_discards_possible }}</li>
+    <li>{{ page.stmt_data_discarded }}</li>
     <li>{{ page.stmt_rows_returned }}</li>
     <li>{{ page.stmt_column_count }}</li>
     <li>{{ page.stmt_column_table }}</li>
