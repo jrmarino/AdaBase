@@ -114,7 +114,7 @@ defaults:
        f_discards_possible: '<a href="stmt_discards_possible.html">func discards_possible</a>'
 
        stmt_rows_returned: '<a href="stmt_rows_returned.html">stmt rows returned</a>'
-       f_rows_returned: '<a href="stmt_rows_returned.html">stmt rows_returned</a>'
+       f_rows_returned: '<a href="stmt_rows_returned.html">func rows_returned</a>'
 
        stmt_column_count: '<a href="stmt_column_count.html">stmt column count</a>'
        f_column_count: '<a href="stmt_column_count.html">func column_count</a>'
@@ -133,3 +133,6 @@ defaults:
 
        stmt_close_cursor: '<a href="close_cursor.html">stmt close cursor</a>'
        f_close_cursor: '<a href="close_cursor.html">func close_cursor</a>'
+
+       stmt_query: '<a href="stmt_query.html">stmt query</a>'
+       f_stmt_query: '<a href="stmt_query.html">func query</a>'
