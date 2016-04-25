@@ -68,6 +68,18 @@ package AdaBase.Driver.Base.MySQL is
                             hostname : String;
                             port     : PosixPort);
 
+   overriding
+   function query_select (driver      : MySQL_Driver;
+                          distinct    : Boolean := False;
+                          tables      : String;
+                          columns     : String;
+                          conditions  : String := "";
+                          groupby     : String := "";
+                          having      : String := "";
+                          order       : String := "";
+                          limit       : TraxID := 0;
+                          offset      : TraxID := 0)
+                          return AID.ASB.basic_statement;
 private
 
    backend : aliased ACM.MySQL_Connection;

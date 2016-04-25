@@ -94,6 +94,17 @@ package AdaBase.Interfaces.Driver is
                                   when_exists : Boolean := False;
                                   cascade     : Boolean := False) is abstract;
 
+   function query_select         (driver      : iDriver;
+                                  distinct    : Boolean := False;
+                                  tables      : String;
+                                  columns     : String;
+                                  conditions  : String := "";
+                                  groupby     : String := "";
+                                  having      : String := "";
+                                  order       : String := "";
+                                  limit       : TraxID := 0;
+                                  offset      : TraxID := 0)
+                                  return ASB.basic_statement is abstract;
 
    ------------------------------------------------------------------------
    -- CONNECTIONS                                                        --

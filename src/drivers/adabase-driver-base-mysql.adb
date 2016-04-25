@@ -177,6 +177,7 @@ package body AdaBase.Driver.Base.MySQL is
          return 0;
    end execute;
 
+
    -------------
    --  query  --
    -------------
@@ -187,6 +188,40 @@ package body AdaBase.Driver.Base.MySQL is
    begin
       return AID.ASB.basic_statement (driver.private_query (sql => sql));
    end query;
+
+
+   --------------------
+   --  query_select  --
+   --------------------
+   overriding
+   function query_select (driver      : MySQL_Driver;
+                          distinct    : Boolean := False;
+                          tables      : String;
+                          columns     : String;
+                          conditions  : String := "";
+                          groupby     : String := "";
+                          having      : String := "";
+                          order       : String := "";
+                          limit       : TraxID := 0;
+                          offset      : TraxID := 0)
+                          return AID.ASB.basic_statement
+   is
+      vanilla : String := assembly_common_select
+        (distinct, tables, columns, conditions, groupby, having, order);
+   begin
+      if limit > 0 then
+         if offset > 0 then
+            return AID.ASB.basic_statement
+              (driver.private_query (sql => vanilla &
+                                       " LIMIT" & limit'Img &
+                                       " OFFSET" & offset'Img));
+         else
+            return AID.ASB.basic_statement
+              (driver.private_query (sql => vanilla & " LIMIT" & limit'Img));
+         end if;
+      end if;
+      return AID.ASB.basic_statement (driver.private_query (vanilla));
+   end query_select;
 
 
    ------------------------------------------------------------------------

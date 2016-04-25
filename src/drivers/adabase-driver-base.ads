@@ -122,5 +122,12 @@ private
    overriding
    procedure initialize (Object : in out Base_Driver) is null;
 
+   function assembly_common_select (distinct   : Boolean;
+                                    tables     : String;
+                                    columns    : String;
+                                    conditions : String;
+                                    groupby    : String;
+                                    having     : String;
+                                    order      : String) return String;
 
 end AdaBase.Driver.Base;

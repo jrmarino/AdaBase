@@ -311,5 +311,65 @@ package body AdaBase.Driver.Base is
    end log_problem;
 
 
+   ------------------------------
+   --  assembly_common_select  --
+   ------------------------------
+   function assembly_common_select (distinct   : Boolean;
+                                    tables     : String;
+                                    columns    : String;
+                                    conditions : String;
+                                    groupby    : String;
+                                    having     : String;
+                                    order      : String) return String
+   is
+      function proc_distinct   (given : Boolean) return String;
+      function proc_conditions (given : String) return String;
+      function proc_groupby    (given : String) return String;
+      function proc_having     (given : String) return String;
+      function proc_order      (given : String) return String;
+
+      function proc_distinct (given : Boolean) return String is
+      begin
+         if given then
+            return "DISTINCT ";
+         end if;
+         return "ALL ";
+      end proc_distinct;
+      function proc_conditions (given : String) return String is
+      begin
+         if CT.IsBlank (given) then
+            return "";
+         end if;
+         return " WHERE " & given;
+      end proc_conditions;
+      function proc_groupby (given : String) return String is
+      begin
+         if CT.IsBlank (given) then
+            return "";
+         end if;
+         return " GROUP BY " & given;
+      end proc_groupby;
+      function proc_having (given : String) return String is
+      begin
+         if CT.IsBlank (given) then
+            return "";
+         end if;
+         return " HAVING " & given;
+      end proc_having;
+      function proc_order (given : String) return String is
+      begin
+         if CT.IsBlank (given) then
+            return "";
+         end if;
+         return " ORDER BY " & given;
+      end proc_order;
+   begin
+      return "SELECT " & proc_distinct (distinct) & columns &
+        " FROM " & tables &
+        proc_conditions (conditions) &
+        proc_groupby (groupby) &
+        proc_having (having) &
+        proc_order (order);
+   end assembly_common_select;
 
 end AdaBase.Driver.Base;
