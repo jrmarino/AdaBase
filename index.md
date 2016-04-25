@@ -29,6 +29,8 @@ title: AdaBase by jrmarino
 
 <h3>AdaBase.Driver (statement generation)</h3>
 <ul>
+<li>{{ page.f_prepare }}</li>
+<li>{{ page.f_prepare_select }}</li>
 <li>{{ page.f_query }}</li>
 <li>{{ page.f_query_select }}</li>
 </ul>
