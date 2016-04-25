@@ -28,7 +28,7 @@ begin
    CON.STMT := CON.DR.query (sql);
 
    TIO.Put_Line (" Query successful: " & CON.STMT.successful'Img);
-   TIO.Put_Line ("   Data Discarded: " & CON.STMT.data_discard'Img);
+   TIO.Put_Line ("   Data Discarded: " & CON.STMT.data_discarded'Img);
    TIO.Put_Line ("Number of columns:" & CON.STMT.column_count'Img);
    TIO.Put_Line ("   Number of rows:" & CON.STMT.rows_returned'Img);
 
