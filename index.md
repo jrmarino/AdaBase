@@ -89,7 +89,6 @@ title: AdaBase by jrmarino
 <li>{{ page.f_column_table }}</li>
 <li>{{ page.f_column_name }}</li>
 <li>{{ page.f_native_type }}</li>
-<li>{{ page.f_close_cursor }}</li>
 <li>{{ page.f_fetch_next }}</li>
 <li>func fetch_all </li>
 <li>func fetch_bound </li>
