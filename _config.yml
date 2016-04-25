@@ -105,11 +105,28 @@ defaults:
        f_fetch_next: '<a href="fetch_next.html">func fetch_next</a>'
 
        complete: '<a href="complete.html">fetch complete</a>'
+       f_complete: '<a href="complete.html">func complete</a>'
+
        stmt_successful: '<a href="stmt_successful.html">stmt successful</a>'
+       f_successful: '<a href="stmt_successful.html">func successful</a>'
+
        stmt_discards_possible: '<a href="stmt_discards_possible.html">stmt discards possible</a>'
+       f_discards_possible: '<a href="stmt_discards_possible.html">func discards_possible</a>'
+
        stmt_rows_returned: '<a href="stmt_rows_returned.html">stmt rows returned</a>'
+       f_rows_returned: '<a href="stmt_rows_returned.html">stmt rows_returned</a>'
+
        stmt_column_count: '<a href="stmt_column_count.html">stmt column count</a>'
+       f_column_count: '<a href="stmt_column_count.html">func column_count</a>'
+
        stmt_column_table: '<a href="stmt_column_table.html">stmt column's table</a>'
+       f_column_table: '<a href="stmt_column_table.html">func column_table</a>'
+
        stmt_column_name: '<a href="stmt_column_name.html">stmt column's name</a>'
+       f_column_name: '<a href="stmt_column_name.html">func column_name</a>'
+
        stmt_column_native_type: '<a href="stmt_column_native_type.html">stmt column's type</a>'
+       f_native_type: '<a href="stmt_column_native_type.html">func native_type</a>'
+
        res_column: '<a href="res_column.html">result column handler</a>'
+       f_column: '<a href="res_column.html">func column (x2)</a>'

@@ -76,19 +76,19 @@ title: AdaBase by jrmarino
 <h3>AdaBase.Statement</h3>
 <ul>
 <li>func rows_affected</li>
-<li>func rows_returned </li>
-<li>func successful </li>
-<li>func discards_possible </li>
-<li>func column_count </li>
+<li>{{ page.f_rows_returned }}</li>
+<li>{{ page.f_successful }}</li>
+<li>{{ page.f_discards_possible }}</li>
+<li>{{ page.f_column_count }}</li>
 <li>func last_insert_id </li>
 <li>func last_sql_state </li>
 <li>func last_driver_code </li>
 <li>func last_driver_message </li>
 <li>proc discard_rest </li>
 <li>proc execute (x2) </li>
-<li>func column_name </li>
-<li>func column_table </li>
-<li>func column_native_type </li>
+<li>{{ page.f_column_table }}</li>
+<li>{{ page.f_column_name }}</li>
+<li>{{ page.f_native_type }}</li>
 <li>{{ page.f_fetch_next }}</li>
 <li>func fetch_all </li>
 <li>func fetch_bound </li>
@@ -109,9 +109,9 @@ title: AdaBase by jrmarino
 
 <h3>AdaBase.Results.Sets</h3>
 <ul>
-<li>complete</li>
+<li>{{ page.f_complete }}</li>
 <li>DataRow.Count</li>
-<li>DataRow.Column (x2)</li>
+<li>{{ page.f_column }}</li>
 <li>DataRowSet</li>
 </ul>
 
