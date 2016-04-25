@@ -14,15 +14,15 @@ package body AdaBase.Statement.Base is
    end successful;
 
 
-   -------------------------
-   --  discards_possible  --
-   -------------------------
+   ----------------------
+   --  data_discarded  --
+   ----------------------
    overriding
-   function discards_possible  (Stmt : Base_Statement) return Boolean
+   function data_discarded  (Stmt : Base_Statement) return Boolean
    is
    begin
       return Stmt.rows_leftover;
-   end discards_possible;
+   end data_discarded;
 
 
    ---------------------

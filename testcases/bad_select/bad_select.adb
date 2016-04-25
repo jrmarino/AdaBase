@@ -45,7 +45,7 @@ begin
       TIO.Put_Line ("   Number fields:" & row.count'Img);
 
       CON.STMT.discard_rest;
-      TIO.Put_Line ("  Data discarded: " & CON.STMT.discards_possible'Img);
+      TIO.Put_Line ("  Data discarded: " & CON.STMT.data_discarded'Img);
    end if;
    CON.DR.disconnect;
 

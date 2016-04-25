@@ -55,7 +55,7 @@ package AdaBase.Statement.Base is
    function successful (Stmt : Base_Statement) return Boolean;
 
    overriding
-   function discards_possible  (Stmt : Base_Statement) return Boolean;
+   function data_discarded (Stmt : Base_Statement) return Boolean;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
