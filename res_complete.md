@@ -19,8 +19,6 @@ available data has already been extracted from the result set.
 </p>
 <br/>
 <p class="caption">See {{ page.fetch_next }} for a usage example.</p>
-<br/>
-<p>{{ page.supported_stmts }}</p>
 </div>
 <div class="sidenav">
   <h3>See Also</h3>
