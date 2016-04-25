@@ -178,22 +178,25 @@ package body AdaBase.Driver.Base.MySQL is
    end execute;
 
 
+   ------------------------------------------------------------------------
+   --  ROUTINES OF ALL DRIVERS NOT COVERED BY INTERFACES (TECH REASON)   --
+   ------------------------------------------------------------------------
+
+
    -------------
    --  query  --
    -------------
-   overriding
    function query (driver : MySQL_Driver; sql : String)
-                   return AID.ASB.basic_statement
+                   return ASM.MySQL_statement_access
    is
    begin
-      return AID.ASB.basic_statement (driver.private_query (sql => sql));
+      return driver.private_query (sql);
    end query;
 
 
    --------------------
    --  query_select  --
    --------------------
-   overriding
    function query_select (driver      : MySQL_Driver;
                           distinct    : Boolean := False;
                           tables      : String;
@@ -204,23 +207,21 @@ package body AdaBase.Driver.Base.MySQL is
                           order       : String := "";
                           limit       : TraxID := 0;
                           offset      : TraxID := 0)
-                          return AID.ASB.basic_statement
+                          return ASM.MySQL_statement_access
    is
       vanilla : String := assembly_common_select
         (distinct, tables, columns, conditions, groupby, having, order);
    begin
       if limit > 0 then
          if offset > 0 then
-            return AID.ASB.basic_statement
-              (driver.private_query (sql => vanilla &
-                                       " LIMIT" & limit'Img &
-                                       " OFFSET" & offset'Img));
+            return driver.private_query (vanilla &
+                                          " LIMIT" & limit'Img &
+                                          " OFFSET" & offset'Img);
          else
-            return AID.ASB.basic_statement
-              (driver.private_query (sql => vanilla & " LIMIT" & limit'Img));
+            return driver.private_query (vanilla & " LIMIT" & limit'Img);
          end if;
       end if;
-      return AID.ASB.basic_statement (driver.private_query (vanilla));
+      return driver.private_query (vanilla);
    end query_select;
 
 

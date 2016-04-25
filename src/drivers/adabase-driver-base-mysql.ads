@@ -23,10 +23,6 @@ package AdaBase.Driver.Base.MySQL is
    procedure rollback (driver : MySQL_Driver);
 
    overriding
-   function query (driver : MySQL_Driver; sql : String)
-                   return AID.ASB.basic_statement;
-
-   overriding
    function last_insert_id (driver : MySQL_Driver) return TraxID;
 
    overriding
@@ -68,7 +64,9 @@ package AdaBase.Driver.Base.MySQL is
                             hostname : String;
                             port     : PosixPort);
 
-   overriding
+   function query (driver : MySQL_Driver; sql : String)
+                   return ASM.MySQL_statement_access;
+
    function query_select (driver      : MySQL_Driver;
                           distinct    : Boolean := False;
                           tables      : String;
@@ -79,7 +77,7 @@ package AdaBase.Driver.Base.MySQL is
                           order       : String := "";
                           limit       : TraxID := 0;
                           offset      : TraxID := 0)
-                          return AID.ASB.basic_statement;
+                          return ASM.MySQL_statement_access;
 private
 
    backend : aliased ACM.MySQL_Connection;

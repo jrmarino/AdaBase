@@ -80,12 +80,6 @@ package AdaBase.Interfaces.Driver is
    ------------------------------------------------------------------------
    -- QUERIES                                                            --
    ------------------------------------------------------------------------
-
-
-   function query                (driver : iDriver;
-                                  sql    : String)
-                                  return ASB.basic_statement is abstract;
-
    procedure query_clear_table   (driver : iDriver;
                                   table  : String) is abstract;
 
@@ -94,17 +88,26 @@ package AdaBase.Interfaces.Driver is
                                   when_exists : Boolean := False;
                                   cascade     : Boolean := False) is abstract;
 
-   function query_select         (driver      : iDriver;
-                                  distinct    : Boolean := False;
-                                  tables      : String;
-                                  columns     : String;
-                                  conditions  : String := "";
-                                  groupby     : String := "";
-                                  having      : String := "";
-                                  order       : String := "";
-                                  limit       : TraxID := 0;
-                                  offset      : TraxID := 0)
-                                  return ASB.basic_statement is abstract;
+   --  This query functions returning statements were intended to part of the
+   --  interface, but the return type also must be an interface (iStatement)
+   --  and I can't see how to accomplish that.  For now, remove them from the
+   --  interface requirements and just implement them on each specific driver.
+   --
+   --  function query                (driver : iDriver;
+   --                                 sql    : String)
+   --                                 return ASB.basic_statement is abstract;
+   --
+   --  function query_select         (driver      : iDriver;
+   --                                 distinct    : Boolean := False;
+   --                                 tables      : String;
+   --                                 columns     : String;
+   --                                 conditions  : String := "";
+   --                                 groupby     : String := "";
+   --                                 having      : String := "";
+   --                                 order       : String := "";
+   --                                 limit       : TraxID := 0;
+   --                                 offset      : TraxID := 0)
+   --                                 return ASB.basic_statement is abstract;
 
    ------------------------------------------------------------------------
    -- CONNECTIONS                                                        --
