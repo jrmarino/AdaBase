@@ -19,7 +19,7 @@ AdaBase.Statement.Base.[STMT].last_sql_state ()</h3>
 <p>This function returns the SQLSTATE error code regarding the last
 operation performed by the statement handle.</p>
 </br>
-<p class="caption">See {{ page.driver_msg }} and {{ page.p_discard_rest }}
+<p class="caption">See {{ page.driver_msg }} and {{ page.stmt_discard_rest }}
 for usage examples.</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>

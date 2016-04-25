@@ -77,7 +77,7 @@ Driver message: Unknown column 'caloriesx' in 'field list'
 </pre>
 <p class="caption">Output using MySQL Driver</p>
 <br/>
-<p class="caption">See {{ page.p_discard_rest }}
+<p class="caption">See {{ page.stmt_discard_rest }}
 for another usage example.</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>
