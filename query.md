@@ -12,11 +12,12 @@ performance if the <b>prepare</b> function is used which returns access to
 a prepared statement object instead.</p>
 <p>This call may fail if the previous query was incompletely fetched and
 the resource is still open.  The <b>close_cursor</b> function should be
-used to release the database resources associated the query in that case.
+used to release the database resources associated the query in that case.</p>
 <br/>
 <p class="caption">See {{ page.fetch_next }} for a usage example.</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>
+<p>{{ page.supported_stmts }}</p>
 </div>
 <div class="sidenav">
   <h3>See Also</h3>
