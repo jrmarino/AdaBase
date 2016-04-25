@@ -17,6 +17,7 @@ depending on driver.  For example, on MySQL, using this function results in an
 exception if the connection was made with query buffering turned off, since
 the value will be inaccurate in that case.
 </p>
+<br/>
 <p class="caption">See {{ page.fetch_next }} for a usage example.</p>
 <br/>
 <p>{{ page.supported_stmts }}</p>

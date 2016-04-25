@@ -101,8 +101,8 @@ defaults:
 
        introduction: '<a href="introduction.html">Introduction to AdaBase</a>'
 
-       fetch_next: '<a href="fetch_next.html">fetch next datarow</a>'
-       f_fetch_next: '<a href="fetch_next.html">func fetch_next</a>'
+       fetch_next: '<a href="stmt_fetch_next.html">stmt fetch next row</a>'
+       f_fetch_next: '<a href="stmt_fetch_next.html">func fetch_next</a>'
 
        complete: '<a href="complete.html">fetch complete</a>'
        f_complete: '<a href="complete.html">func complete</a>'
