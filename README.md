@@ -1,4 +1,7 @@
 # AdaBase
-Thick database bindings to MySQL, PostgreSQL and FireBird for Ada
+Thick database bindings to MySQL, PostgreSQL and SQLite for Ada
 
-(Under heavy construction at the moment, ignore for now)
+Please refer to http://jrmarino.github.io/AdaBase/ for the user's guide.
+
+(Future drivers may include FireBird, Oracle, DB2, and MSSQL drivers,
+and contributions are always welcome.)
