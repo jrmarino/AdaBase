@@ -1,0 +1,11 @@
+with "../common.gpr";
+
+project DS_Fetch is
+
+   for Main use ("ds_fetch");
+   for Object_Dir use "obj";
+
+   package Compiler renames Common.Compiler;
+   package Linker renames Common.Linker;
+
+end DS_Fetch;
