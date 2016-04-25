@@ -81,7 +81,7 @@ Driver message: Unknown column 'caloriesx' in 'field list'
 for another usage example.</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>
-<p>{{ page.supported_statements }}</p>
+<p>{{ page.supported_stmts }}</p>
 </div>
 <div class="sidenav">
   <h3>See Also</h3>

@@ -22,7 +22,7 @@ operation performed by the statement handle.</p>
 for a usage examples.</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>
-<p>{{ page.supported_statements }}</p>
+<p>{{ page.supported_stmts }}</p>
 </div>
 <div class="sidenav">
   <h3>See Also</h3>
