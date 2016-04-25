@@ -130,3 +130,6 @@ defaults:
 
        res_column: '<a href="res_column.html">result column handler</a>'
        f_column: '<a href="res_column.html">func column (x2)</a>'
+
+       stmt_close_cursor: '<a href="close_cursor.html">stmt close cursor</a>'
+       f_close_cursor: '<a href="close_cursor.html">func close_cursor</a>'
