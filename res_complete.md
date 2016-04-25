@@ -12,7 +12,7 @@ end AdaBase.Results.Sets;
 <h3>Boolean function<br/>
 AdaBase.Results.Sets.complete (DRA : DataRow_Access)</h3>
 <p>
-This function returns True if <i>DRI</i> is null.  The intended use is
+This function returns True if <i>DRA</i> is null.  The intended use is
 to execute <b>fetch_next</b> inside a loop and use <b>complete</b> to
 check its result in order to exit the loop because that indicates all
 available data has already been extracted from the result set.
