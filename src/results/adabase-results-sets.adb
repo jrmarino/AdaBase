@@ -7,6 +7,15 @@ package body AdaBase.Results.Sets is
 
    package ACH renames Ada.Characters.Handling;
 
+   ----------------
+   --  complete  --
+   ----------------
+   function complete (DRA : DataRow_Access) return Boolean is
+   begin
+      return (DRA = null);
+   end complete;
+
+
    --------------
    --  column  --
    --------------
