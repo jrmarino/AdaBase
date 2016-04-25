@@ -110,7 +110,7 @@ title: AdaBase by jrmarino
 <h3>AdaBase.Results.Sets</h3>
 <ul>
 <li>{{ page.f_complete }}</li>
-<li>DataRow.Count</li>
+<li>{{ page.f_res_count }}</li>
 <li>{{ page.f_column }}</li>
 <li>DataRowSet</li>
 </ul>
