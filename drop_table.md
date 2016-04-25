@@ -8,7 +8,10 @@ AdaBase.Driver.Base.[DB].query_drop_table (tables : String;
 when_exists : Boolean := False; cascade : Boolean := False)</h3>
 <p>The procedure constructs and an appropriate and potentially driver-specific
 query to drop a table in the connected database. Existence checks and
-cascading deletions only occur if explicitly requested</p>
+cascading deletions only occur if explicitly requested.  Multiple tables
+can be dropped simulaneously by separating them with commas (however this
+is not supported by all drivers, so it's more portable to issue multiple
+single table query_drop_table commands).</p>
 
 <pre class="code">
 with AdaBase;

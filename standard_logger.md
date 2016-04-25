@@ -100,8 +100,8 @@ The /tmp/fruit3.test.log has been attached.
 </pre>
 <p class="caption">Contents of /tmp/fruit3.test.log</p>
 <br/>
-<p class="caption">See {{ page.trait_compressed }} for an example using the
-standard screen logger.</p>
+<p class="caption">See {{ page.query_drop_table }} and {{ page.trait_compressed }}
+for other examples using the standard screen logger.</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>
 </div>

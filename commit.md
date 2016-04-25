@@ -9,7 +9,8 @@ AdaBase.Driver.Base.[DB].commit ()</h3>
 if this executed without an active database connection, or if the connection
 is set to autocommit mode (which effectively prohibits transactions).</p>
 <br/>
-<p class="caption">See {{ page.custom_logger }} for a usage example.</p>
+<p class="caption">See {{ page.query_drop_table }} and {{ page.custom_logger }}
+for usage examples.</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>
 </div>
