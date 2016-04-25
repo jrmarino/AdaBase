@@ -83,7 +83,10 @@ defaults:
        last_insert_id: '<a href="last_insert_id.html">last insert id</a>'
        f_last_insert_id: '<a href="last_insert_id.html">func last_insert_id</a>'
 
-       p_query_clear_table: '<a href="query_clear_table.html">proc query_clear_table</a>'
-       p_query_drop_table: '<a href="query_drop_table.html">proc query_drop_table</a>'
+       query_clear_table: '<a href="clear_table.html">clear table query</a>'
+       p_query_clear_table: '<a href="clear_table.html">proc query_clear_table</a>'
+
+       query_drop_table: '<a href="drop_table.html">drop table query</a>'
+       p_query_drop_table: '<a href="drop_table.html">proc query_drop_table</a>'
 
        introduction: '<a href="introduction.html">Introduction to AdaBase</a>'
