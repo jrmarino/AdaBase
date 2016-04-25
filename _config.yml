@@ -136,3 +136,5 @@ defaults:
 
        stmt_query: '<a href="stmt_query.html">stmt query</a>'
        f_stmt_query: '<a href="stmt_query.html">func query</a>'
+
+       stmt_discard_rest: '<a href="stmt_discard_rest.html">stmt discard rest</a>'
