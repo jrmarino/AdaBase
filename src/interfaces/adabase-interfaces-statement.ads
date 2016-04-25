@@ -17,9 +17,9 @@ package AdaBase.Interfaces.Statement is
    function last_driver_code    (Stmt : iStatement) return DriverCodes
                                  is abstract;
 
-   function discards_possible  (Stmt : iStatement) return Boolean is abstract;
+   function data_discarded      (Stmt : iStatement) return Boolean is abstract;
 
-   procedure discard_rest      (Stmt : out iStatement) is null;
+   procedure discard_rest       (Stmt : out iStatement) is null;
 
 
    function execute         (Stmt : iStatement) return Boolean is abstract;
