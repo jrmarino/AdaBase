@@ -1,0 +1,11 @@
+with "../common.gpr";
+
+project Bad_Select is
+
+   for Main use ("bad_select");
+   for Object_Dir use "obj";
+
+   package Compiler renames Common.Compiler;
+   package Linker renames Common.Linker;
+
+end Bad_Select;
