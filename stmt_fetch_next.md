@@ -131,6 +131,7 @@ Column 4:
     <li>{{ page.stmt_column_name }}</li>
     <li>{{ page.stmt_column_native_type }}</li>
     <li>{{ page.res_column }}</li>
+    <li>{{ page.res_std_field }}</li>
     <li>{{ page.connect }}</li>
     <li>{{ page.disconnect }}</li>
   </ul>

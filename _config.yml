@@ -149,6 +149,7 @@ defaults:
        stmt_driver_state: '<a href="last_driver_state.html">last driver state (stmt)</a>'
        f_stmt_driver_state: '<a href="last_driver_state.html">func last_sql_state (stmt)</a>'
 
+       res_std_field: '<a href="res_std_field.html">data type conversions</a>'
        f_field_as_byte1: '<a href="res_std_field.html">func as_byte1</a>'
        f_field_as_byte2: '<a href="res_std_field.html">func as_byte2</a>'
        f_field_as_byte3: '<a href="res_std_field.html">func as_byte3</a>'
