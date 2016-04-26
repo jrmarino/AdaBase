@@ -370,7 +370,6 @@ package body AdaBase.Statement.Base.MySQL is
    overriding
    function fetch_all (Stmt : MySQL_statement) return ARS.DataRowSet
    is
-      use type ARS.DataRow_Access;
       maxrows : Natural := Natural (Stmt.rows_returned);
       tmpset  : ARS.DataRowSet (1 .. maxrows + 1) := (others => null);
       nullset : ARS.DataRowSet (1 .. 0);
@@ -385,7 +384,7 @@ package body AdaBase.Statement.Base.MySQL is
       --  if necessary.
       loop
          tmpset (index) := Stmt.fetch_next;
-         exit when tmpset (index) = null;
+         exit when ARS.complete (tmpset (index));
          index := index + 1;
          exit when index > maxrows + 1;  --  should never happen
       end loop;
