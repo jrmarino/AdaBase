@@ -231,6 +231,7 @@ package body AdaBase.Statement.Base.MySQL is
       use type ABM.MYSQL_FIELD_Access;
       field : ABM.MYSQL_FIELD_Access;
       function fn (raw : String) return CT.Text;
+      function sn (raw : String) return String;
       function fn (raw : String) return CT.Text is
       begin
          case Stmt.con_case_mode is
@@ -242,6 +243,17 @@ package body AdaBase.Statement.Base.MySQL is
                return CT.SUS (raw);
          end case;
       end fn;
+      function sn (raw : String) return String is
+      begin
+         case Stmt.con_case_mode is
+            when upper_case =>
+               return ACH.To_Upper (raw);
+            when lower_case =>
+               return ACH.To_Lower (raw);
+            when natural_case =>
+               return raw;
+         end case;
+      end sn;
    begin
       Stmt.column_info.Clear;
       Stmt.crate.Clear;
@@ -266,7 +278,7 @@ package body AdaBase.Statement.Base.MySQL is
             --  The following pre-populates for bind support
             Stmt.crate.Append (New_Item => brec);
             Stmt.headings_map.Insert
-              (Key => Stmt.mysql_conn.field_name_field (field),
+              (Key => sn (Stmt.mysql_conn.field_name_field (field)),
                New_Item => Stmt.crate.Last_Index);
          end;
       end loop;
