@@ -338,28 +338,28 @@ package body AdaBase.Driver.Base is
       function proc_conditions (given : String) return String is
       begin
          if CT.IsBlank (given) then
-            return "";
+            return blankstring;
          end if;
          return " WHERE " & given;
       end proc_conditions;
       function proc_groupby (given : String) return String is
       begin
          if CT.IsBlank (given) then
-            return "";
+            return blankstring;
          end if;
          return " GROUP BY " & given;
       end proc_groupby;
       function proc_having (given : String) return String is
       begin
          if CT.IsBlank (given) then
-            return "";
+            return blankstring;
          end if;
          return " HAVING " & given;
       end proc_having;
       function proc_order (given : String) return String is
       begin
          if CT.IsBlank (given) then
-            return "";
+            return blankstring;
          end if;
          return " ORDER BY " & given;
       end proc_order;

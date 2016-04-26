@@ -71,10 +71,10 @@ package AdaBase.Driver.Base.MySQL is
                           distinct    : Boolean := False;
                           tables      : String;
                           columns     : String;
-                          conditions  : String := "";
-                          groupby     : String := "";
-                          having      : String := "";
-                          order       : String := "";
+                          conditions  : String := blankstring;
+                          groupby     : String := blankstring;
+                          having      : String := blankstring;
+                          order       : String := blankstring;
                           limit       : TraxID := 0;
                           offset      : TraxID := 0)
                           return ASM.MySQL_statement_access;

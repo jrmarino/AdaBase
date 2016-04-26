@@ -1589,7 +1589,7 @@ package body AdaBase.Results.Converters is
       nvlen  : Natural := nv.all'Length;
    begin
       if nvlen = 0 then
-         return "";
+         return blankstring;
       end if;
       for x in 1 .. nvlen loop
          len := len + CT.len (nv.all (x).enumeration) + 1;
