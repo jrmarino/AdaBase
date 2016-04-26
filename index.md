@@ -131,7 +131,7 @@ title: AdaBase by jrmarino
 <li>{{ page.f_field_as_settype }}</li>
 <li>{{ page.f_field_is_null }}</li>
 <li>{{ page.f_field_native_type }}</li>
-<li>spawn_field (x3)</li>
+<li>{{ page.f_spawn_field }}</li>
 </ul>
 
 </div>
