@@ -135,7 +135,8 @@ Time type can only be converted to a string, and this has the form of the
 ISO 8601 format (no timezone information).  Similarly, the natural types can
 be converted into a array of bytes (aka "chain") up to 8 bytes.
 </p>
-<p class="caption">See {{ page.fetch_next }} for a usage example.</p>
+<p class="caption">See {{ page.fetch_next }} and {{ page.res_spawn_field }}
+for usage examples.</p>
 </div>
 <div class="sidenav">
   <h3>See Also</h3>
