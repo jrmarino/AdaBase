@@ -391,14 +391,7 @@ package body AdaBase.Statement.Base.MySQL is
       if index = 1 then
          return nullset;   --  nothing was fetched
       end if;
-      declare
-         dataset : ARS.DataRowSet (1 .. index - 1);
-      begin
-         for x in dataset'Range loop
-            dataset (x) := tmpset (x);
-         end loop;
-         return dataset;
-      end;
+      return tmpset (1 .. index - 1);
    end fetch_all;
 
 
