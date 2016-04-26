@@ -21,6 +21,7 @@ error.  The function returns False when no more data is available.
 <div class="sidenav">
   <h3>See Also</h3>
   <ul>
+    <li>{{ page.stmt_bind }}</li>
     <li>{{ page.fetch_all }}</li>
     <li>{{ page.fetch_next }}</li>
     <li>{{ page.query_select }}</li>
