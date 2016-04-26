@@ -99,20 +99,39 @@ title: AdaBase by jrmarino
 <li>proc iterate_bound</li>
 </ul>
 
-<h3>AdaBase.Results.Field.std_field</h3>
-<ul>
-<li>is_null</li>
-<li>native_type</li>
-<li>as_[type] (20/convertibility)</li>
-<li>spawn_field (x3)</li>
-</ul>
-
 <h3>AdaBase.Results.Sets</h3>
 <ul>
 <li>{{ page.f_complete }}</li>
 <li>{{ page.f_res_count }}</li>
 <li>{{ page.f_column }}</li>
 <li>DataRowSet</li>
+</ul>
+
+<h3>AdaBase.Results.Field.std_field</h3>
+<ul>
+<li>{{ page.f_field_as_byte1 }}</li>
+<li>{{ page.f_field_as_byte2 }}</li>
+<li>{{ page.f_field_as_byte3 }}</li>
+<li>{{ page.f_field_as_byte4 }}</li>
+<li>{{ page.f_field_as_byte8 }}</li>
+<li>{{ page.f_field_as_nbyte0 }}</li>
+<li>{{ page.f_field_as_nbyte1 }}</li>
+<li>{{ page.f_field_as_nbyte2 }}</li>
+<li>{{ page.f_field_as_nbyte3 }}</li>
+<li>{{ page.f_field_as_nbyte4 }}</li>
+<li>{{ page.f_field_as_nbyte8 }}</li>
+<li>{{ page.f_field_as_real9 }}</li>
+<li>{{ page.f_field_as_real18 }}</li>
+<li>{{ page.f_field_as_string }}</li>
+<li>{{ page.f_field_as_wstring }}</li>
+<li>{{ page.f_field_as_wwstring }}</li>
+<li>{{ page.f_field_as_time }}</li>
+<li>{{ page.f_field_as_chain }}</li>
+<li>{{ page.f_field_as_enumtype }}</li>
+<li>{{ page.f_field_as_settype }}</li>
+<li>{{ page.f_field_is_null }}</li>
+<li>{{ page.f_field_native_type }}</li>
+<li>spawn_field (x3)</li>
 </ul>
 
 </div>
