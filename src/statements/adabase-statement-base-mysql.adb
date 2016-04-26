@@ -33,6 +33,7 @@ package body AdaBase.Statement.Base.MySQL is
             Stmt.mysql_conn.all.prep_free_result (Stmt.cheat.stmt_handle);
          end if;
       end case;
+      Stmt.clear_column_information;
       Stmt.cheat.delivery := completed;
    end discard_rest;
 
@@ -223,6 +224,17 @@ package body AdaBase.Statement.Base.MySQL is
    end rows_returned;
 
 
+   --------------------------------
+   --  clear_column_information  --
+   --------------------------------
+   procedure clear_column_information (Stmt : in out MySQL_statement) is
+   begin
+      Stmt.column_info.Clear;
+      Stmt.crate.Clear;
+      Stmt.headings_map.Clear;
+   end clear_column_information;
+
+
    -------------------------------
    --  scan_column_information  --
    -------------------------------
@@ -255,9 +267,7 @@ package body AdaBase.Statement.Base.MySQL is
          end case;
       end sn;
    begin
-      Stmt.column_info.Clear;
-      Stmt.crate.Clear;
-      Stmt.headings_map.Clear;
+      Stmt.clear_column_information;
       loop
          field := Stmt.mysql_conn.fetch_field
            (result_handle => Stmt.cheat.result_handle);
@@ -524,6 +534,7 @@ package body AdaBase.Statement.Base.MySQL is
       if rptr = null then
          Stmt.cheat.delivery := completed;
          Stmt.mysql_conn.free_result (Stmt.cheat.result_handle);
+         --  Stmt.clear_column_information;  (won't work inside func in Ada05)
          return null;
       end if;
       Stmt.cheat.delivery := progressing;
@@ -648,6 +659,7 @@ package body AdaBase.Statement.Base.MySQL is
       if rptr = null then
          Stmt.cheat.delivery := completed;
          Stmt.mysql_conn.free_result (Stmt.cheat.result_handle);
+         --  Stmt.clear_column_information;  (won't work inside func in Ada05)
          return False;
       end if;
       Stmt.cheat.delivery := progressing;
