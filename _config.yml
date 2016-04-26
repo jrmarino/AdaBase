@@ -63,7 +63,7 @@ defaults:
        prepare: '<a href="prepare.html">prepare</a>'
        f_prepare: '<a href="prepare.html">func prepare</a>'
 
-       prepare_select: '<a href="prepare_select.html">select prepare</a>'
+       prepare_select: '<a href="prepare_select.html">prepare select</a>'
        f_prepare_select: '<a href="prepare_select.html">func prepare_select</a>'
 
        execute: '<a href="execute.html">execute (driver)</a>'

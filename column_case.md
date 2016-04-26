@@ -21,8 +21,8 @@ case letters (<b>lower_case</b>).</p>
 AdaBase.Driver.Base.[DB].set_trait_column_case (trait : CaseMode)</h3>
 <p>This procedure is used to set the column case behavior.</p>
 <br/>
-<p class="caption">See {{ page.trait_client }} for a usage example.</p>
-<p class="caption">TBW: Reference example of upper case column referencing</p>
+<p class="caption">See {{ page.trait_client }} and {{ page.query_select }}
+for usage examples.</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>
 </div>

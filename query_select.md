@@ -173,6 +173,7 @@ grapefruit: 100 calories, yellow
 banana: 107 calories, yellow
 avocado: 150 calories, green
 </pre>
+<p class="caption">Output using MySQL Driver</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>
 <p>{{ page.supported_stmts }}</p>
@@ -182,12 +183,12 @@ avocado: 150 calories, green
   <ul>
     <li>{{ page.stmt_successful }}</li>
     <li>{{ page.stmt_discard_rest }}</li>
-    <li>{{ page.query }}</li>
-    <li>{{ page.prepare }}</li>
-    <li>{{ page.prepare_select }}</li>
     <li>{{ page.fetch_all }}</li>
     <li>{{ page.fetch_bound }}</li>
     <li>{{ page.stmt_bind }}</li>
     <li>{{ page.res_std_field }}</li>
+    <li>{{ page.query }}</li>
+    <li>{{ page.prepare }}</li>
+    <li>{{ page.prepare_select }}</li>
   </ul>
 </div>
