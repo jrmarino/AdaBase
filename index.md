@@ -104,7 +104,6 @@ title: AdaBase by jrmarino
 <li>{{ page.f_complete }}</li>
 <li>{{ page.f_res_count }}</li>
 <li>{{ page.f_column }}</li>
-<li>DataRowSet</li>
 </ul>
 
 <h3>AdaBase.Results.Field.std_field</h3>
