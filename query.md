@@ -26,5 +26,5 @@ associated the query in that case.</p>
     <li>{{ page.stmt_discard_rest }}</li>
     <li>{{ page.prepare }}</li>
     <li>{{ page.prepare_select }}</li>
-  </ul>
+    <li>{{ page.query_select }}</li>  </ul>
 </div>

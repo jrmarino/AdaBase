@@ -90,8 +90,8 @@ title: AdaBase by jrmarino
 <li>{{ page.f_column_name }}</li>
 <li>{{ page.f_native_type }}</li>
 <li>{{ page.f_fetch_next }}</li>
-<li>func fetch_all </li>
-<li>func fetch_bound </li>
+<li>{{ page.f_fetch_all }}</li>
+<li>{{ page.f_fetch_bound }}</li>
 <li>proc bind (x20)</li>
 <li>proc assign (x20)</li>
 <li>proc fetch_next_set</li>

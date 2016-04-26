@@ -75,7 +75,7 @@ defaults:
        commit: '<a href="commit.html">commit</a>'
        p_commit: '<a href="commit.html">proc commit</a>'
 
-       connect: '<a href="connect.html">connect</a>'
+       connect: '<a href="connect.html">connect (x2)</a>'
        p_connect: '<a href="connect.html">proc basic_connect (x2)</a>'
 
        disconnect: '<a href="disconnect.html">disconnect</a>'
@@ -128,7 +128,7 @@ defaults:
        stmt_column_native_type: '<a href="stmt_column_native_type.html">stmt column&apos;s type</a>'
        f_native_type: '<a href="stmt_column_native_type.html">func native_type</a>'
 
-       res_column: '<a href="res_column.html">result column handler</a>'
+       res_column: '<a href="res_column.html">result column handler (x2)</a>'
        f_column: '<a href="res_column.html">func column (x2)</a>'
 
        stmt_query: '<a href="stmt_query.html">stmt query</a>'
@@ -175,3 +175,12 @@ defaults:
 
        res_spawn_field: '<a href="res_spawn_field.html">result spawn field</a>'
        f_spawn_field: '<a href="res_spawn_field.html">func spawn_field (x3)</a>'
+
+       fetch_all: '<a href="stmt_fetch_all.html">stmt fetch all</a>'
+       f_fetch_all: '<a href="stmt_fetch_all.html">func fetch_all</a>'
+
+       fetch_bound: '<a href="stmt_fetch_bound.html">stmt fetch bound</a>'
+       f_fetch_bound: '<a href="stmt_fetch_bound.html">func fetch_bound</a>'
+
+       stmt_bind: '<a href="stmt_bind.html">stmt bind (x40)</a>'
+       f_bind: '<a href="stmt_bind.html">func bind (x40)</a>'
