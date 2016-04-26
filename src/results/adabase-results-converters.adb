@@ -1592,16 +1592,12 @@ package body AdaBase.Results.Converters is
          return "";
       end if;
       for x in 1 .. nvlen loop
-         len := len + CT.len (nv.all (x).enumeration);
-      end loop;
-      len := len + nvlen - 1;
-      for x in 1 .. nvlen loop
-         len := len + CT.len (nv.all (x).enumeration);
+         len := len + CT.len (nv.all (x).enumeration) + 1;
       end loop;
       declare
          cursor : Natural := 1;
          curend : Natural;
-         result : String (1 .. len) := (others => ',');
+         result : String (1 .. len - 1) := (others => ',');
       begin
          for x in 1 .. nvlen loop
             curend := cursor - 1 + CT.len (nv.all (x).enumeration);
