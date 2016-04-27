@@ -450,6 +450,10 @@ package AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
+                     vaxx  : String);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
                      vaxx  : AR.textual);
 
    procedure assign (Stmt  : out Base_Statement;
@@ -523,6 +527,10 @@ package AdaBase.Statement.Base is
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.real18);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : String);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;

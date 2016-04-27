@@ -950,6 +950,13 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
+                     vaxx    : String) is
+   begin
+        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
                      vaxx    : AR.textual) is
    begin
         Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
@@ -1228,6 +1235,15 @@ package body AdaBase.Statement.Base is
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_textual, a13 => vaxx, v13 => CT.blank,
                  bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : String) is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_textual, a13 => null,
+                 v13 => CT.SUS (vaxx), bound => True));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
