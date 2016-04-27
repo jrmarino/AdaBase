@@ -56,9 +56,9 @@ package AdaBase.Interfaces.Statement is
                              data_fetched : out Boolean) is null;
 
    ------------------------------------------------------------------------
-   --  Technically there should be 20 of these listed.  They are all
+   --  Technically there should be 18-20 of each listed.  They are all
    --  implemented in the base class so they get inherited.  I'm too
-   --  Lazy to add ~120 prototypes here.
+   --  Lazy to add 116 prototypes here.
    --
    --     procedure bind    (Stmt    : out Base_Statement;
    --                        index   : Positive;

@@ -108,6 +108,9 @@ package AdaBase.Interfaces.Driver is
    --                                 limit       : TraxID := 0;
    --                                 offset      : TraxID := 0)
    --                                 return ASB.basic_statement is abstract;
+   --
+   --  function prepare (same as query)
+   --  function prepare_select (same as query_select)
 
    ------------------------------------------------------------------------
    -- CONNECTIONS                                                        --

@@ -1,8 +1,11 @@
 --  This file is covered by the Internet Software Consortium (ISC) License
 --  Reference: ../../License.txt
 
+with Ada.Exceptions;
+
 package body AdaBase.Driver.Base.MySQL is
 
+   package EX renames Ada.Exceptions;
 
    ------------------
    --  disconnect  --
@@ -194,6 +197,17 @@ package body AdaBase.Driver.Base.MySQL is
    end query;
 
 
+   ---------------
+   --  prepare  --
+   ---------------
+   function prepare (driver : MySQL_Driver; sql : String)
+                     return ASM.MySQL_statement_access
+   is
+   begin
+      return driver.private_prepare (sql);
+   end prepare;
+
+
    --------------------
    --  query_select  --
    --------------------
@@ -223,6 +237,37 @@ package body AdaBase.Driver.Base.MySQL is
       end if;
       return driver.private_query (vanilla);
    end query_select;
+
+
+   ----------------------
+   --  prepare_select  --
+   ----------------------
+   function prepare_select (driver      : MySQL_Driver;
+                            distinct    : Boolean := False;
+                            tables      : String;
+                            columns     : String;
+                            conditions  : String := blankstring;
+                            groupby     : String := blankstring;
+                            having      : String := blankstring;
+                            order       : String := blankstring;
+                            limit       : TraxID := 0;
+                            offset      : TraxID := 0)
+                            return ASM.MySQL_statement_access
+   is
+      vanilla : String := assembly_common_select
+        (distinct, tables, columns, conditions, groupby, having, order);
+   begin
+      if limit > 0 then
+         if offset > 0 then
+            return driver.private_prepare (vanilla &
+                                          " LIMIT" & limit'Img &
+                                          " OFFSET" & offset'Img);
+         else
+            return driver.private_prepare (vanilla & " LIMIT" & limit'Img);
+         end if;
+      end if;
+      return driver.private_prepare (vanilla);
+   end prepare_select;
 
 
    ------------------------------------------------------------------------
@@ -391,38 +436,90 @@ package body AdaBase.Driver.Base.MySQL is
    --  private_query  --
    ---------------------
    function private_query (driver : MySQL_Driver; sql : String)
-                   return ASM.MySQL_statement_access
+                           return ASM.MySQL_statement_access
    is
       err1 : constant CT.Text :=
         CT.SUS ("ACK! Query attempted on inactive connection");
-      err2 : constant CT.Text := CT.SUS ("Query failed!");
-      duplicate : aliased constant CT.Text := CT.SUS (sql);
-      shadow    : AID.ASB.stmttext_access := duplicate'Unrestricted_Access;
-      statement : constant ASM.MySQL_statement_access :=
-        new ASM.MySQL_statement
-          (type_of_statement => AID.ASB.direct_statement,
-           log_handler       => logger'Access,
-           mysql_conn        => driver.local_connection,
-           initial_sql       => shadow,
-           con_error_mode    => driver.trait_error_mode,
-           con_case_mode     => driver.trait_column_case,
-           con_max_blob      => driver.trait_max_blob_size,
-           con_buffered      => driver.trait_query_buffers_used);
    begin
       if driver.connection_active then
-         if statement.successful then
-            driver.log_nominal (category => execution, message => CT.SUS
-              ("query succeeded," & statement.rows_returned'Img &
-               " rows returned"));
-         else
-            driver.log_nominal (category => execution, message => err2);
-         end if;
+         declare
+            err2 : constant CT.Text := CT.SUS ("Query failed!");
+            duplicate : aliased constant CT.Text := CT.SUS (sql);
+            shadow    : AID.ASB.stmttext_access := duplicate'Unrestricted_Access;
+            statement : constant ASM.MySQL_statement_access :=
+              new ASM.MySQL_statement
+                (type_of_statement => AID.ASB.direct_statement,
+                 log_handler       => logger'Access,
+                 mysql_conn        => driver.local_connection,
+                 initial_sql       => shadow,
+                 con_error_mode    => driver.trait_error_mode,
+                 con_case_mode     => driver.trait_column_case,
+                 con_max_blob      => driver.trait_max_blob_size,
+                 con_buffered      => driver.trait_query_buffers_used);
+         begin
+            if statement.successful then
+               driver.log_nominal (category => execution,
+                                   message => CT.SUS ("query succeeded," &
+                                       statement.rows_returned'Img &
+                                       " rows returned"));
+            else
+               driver.log_nominal (category => execution, message => err2);
+            end if;
+            return statement;
+         end;
       else
-         --  Non-fatal attempt to query an unconnected database
-         driver.log_problem (category => execution, message  => err1);
+         --  Fatal attempt to query an unconnected database
+         driver.log_problem (category => execution,
+                             message  => err1,
+                             break    => True);
+         return null;  -- never gets here
       end if;
-      return statement;
    end private_query;
+
+
+   -----------------------
+   --  private_prepare  --
+   -----------------------
+   function private_prepare (driver : MySQL_Driver; sql : String)
+                             return ASM.MySQL_statement_access
+   is
+      err1 : constant CT.Text :=
+        CT.SUS ("ACK! Query attempted on inactive connection");
+   begin
+      if driver.connection_active then
+         declare
+            duplicate : aliased constant CT.Text := CT.SUS (sql);
+            shadow    : AID.ASB.stmttext_access := duplicate'Unrestricted_Access;
+            statement : constant ASM.MySQL_statement_access :=
+              new ASM.MySQL_statement
+                (type_of_statement => AID.ASB.prepared_statement,
+                 log_handler       => logger'Access,
+                 mysql_conn        => driver.local_connection,
+                 initial_sql       => shadow,
+                 con_error_mode    => driver.trait_error_mode,
+                 con_case_mode     => driver.trait_column_case,
+                 con_max_blob      => driver.trait_max_blob_size,
+                 con_buffered      => driver.trait_query_buffers_used);
+         begin
+            return statement;
+         exception
+            when RES : others =>
+               --  Fatal attempt to prepare a statement
+               driver.log_problem
+                 (category   => statement_preparation,
+                  message    => CT.SUS (EX.Exception_Message (RES)),
+                  pull_codes => True,
+                  break      => True);
+               return null;
+         end;
+      else
+         --  Fatal attempt to query an unconnected database
+         driver.log_problem (category => execution,
+                             message  => err1,
+                             break    => True);
+         return null;
+      end if;
+   end private_prepare;
 
 
 end AdaBase.Driver.Base.MySQL;

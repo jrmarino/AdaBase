@@ -64,20 +64,38 @@ package AdaBase.Driver.Base.MySQL is
                             hostname : String;
                             port     : PosixPort);
 
-   function query (driver : MySQL_Driver; sql : String)
-                   return ASM.MySQL_statement_access;
+   function query          (driver     : MySQL_Driver;
+                            sql        : String)
+                            return ASM.MySQL_statement_access;
 
-   function query_select (driver      : MySQL_Driver;
-                          distinct    : Boolean := False;
-                          tables      : String;
-                          columns     : String;
-                          conditions  : String := blankstring;
-                          groupby     : String := blankstring;
-                          having      : String := blankstring;
-                          order       : String := blankstring;
-                          limit       : TraxID := 0;
-                          offset      : TraxID := 0)
-                          return ASM.MySQL_statement_access;
+   function prepare        (driver     : MySQL_Driver;
+                            sql        : String)
+                            return ASM.MySQL_statement_access;
+
+   function query_select   (driver     : MySQL_Driver;
+                            distinct   : Boolean := False;
+                            tables     : String;
+                            columns    : String;
+                            conditions : String := blankstring;
+                            groupby    : String := blankstring;
+                            having     : String := blankstring;
+                            order      : String := blankstring;
+                            limit      : TraxID := 0;
+                            offset     : TraxID := 0)
+                            return ASM.MySQL_statement_access;
+
+   function prepare_select (driver     : MySQL_Driver;
+                            distinct   : Boolean := False;
+                            tables     : String;
+                            columns    : String;
+                            conditions : String := blankstring;
+                            groupby    : String := blankstring;
+                            having     : String := blankstring;
+                            order      : String := blankstring;
+                            limit      : TraxID := 0;
+                            offset     : TraxID := 0)
+                            return ASM.MySQL_statement_access;
+
 private
 
    backend : aliased ACM.MySQL_Connection;
@@ -96,8 +114,11 @@ private
                               socket   : String    := blankstring;
                               port     : PosixPort := portless);
 
-   function private_query (driver : MySQL_Driver; sql : String)
-                           return ASM.MySQL_statement_access;
+   function private_query   (driver : MySQL_Driver; sql : String)
+                             return ASM.MySQL_statement_access;
+
+   function private_prepare (driver : MySQL_Driver; sql : String)
+                             return ASM.MySQL_statement_access;
 
    overriding
    procedure initialize (Object : in out MySQL_Driver);
