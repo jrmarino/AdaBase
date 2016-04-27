@@ -81,14 +81,14 @@ package AdaBase.Statement.Base.MySQL is
 private
 
    procedure initialize (Object : in out MySQL_statement);
-   procedure internal_direct_post_exec (Stmt   : in out MySQL_statement;
+   procedure internal_direct_post_exec (Stmt   : out MySQL_statement;
                                         newset : Boolean := False);
-   procedure process_direct_result (Stmt : in out MySQL_statement);
-   procedure scan_column_information (Stmt : in out MySQL_statement);
-   procedure clear_column_information (Stmt : in out MySQL_statement);
-   function internal_fetch_bound_direct (Stmt : in out MySQL_statement)
+   procedure process_direct_result (Stmt : out MySQL_statement);
+   procedure scan_column_information (Stmt : out MySQL_statement);
+   procedure clear_column_information (Stmt : out MySQL_statement);
+   function internal_fetch_bound_direct (Stmt : out MySQL_statement)
                                          return Boolean;
-   function internal_fetch_row_direct (Stmt : in out MySQL_statement)
+   function internal_fetch_row_direct (Stmt : out MySQL_statement)
                                        return ARS.DataRow_Access;
    function convert (nv : String) return CAL.Time;
    function convert (nv : String) return AR.settype;

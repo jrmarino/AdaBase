@@ -186,7 +186,7 @@ package body AdaBase.Statement.Base.MySQL is
    ---------------------
    --  direct_result  --
    ---------------------
-   procedure process_direct_result (Stmt : in out MySQL_statement)
+   procedure process_direct_result (Stmt : out MySQL_statement)
    is
       use type ABM.MYSQL_RES_Access;
    begin
@@ -227,7 +227,7 @@ package body AdaBase.Statement.Base.MySQL is
    --------------------------------
    --  clear_column_information  --
    --------------------------------
-   procedure clear_column_information (Stmt : in out MySQL_statement) is
+   procedure clear_column_information (Stmt : out MySQL_statement) is
    begin
       Stmt.column_info.Clear;
       Stmt.crate.Clear;
@@ -238,7 +238,7 @@ package body AdaBase.Statement.Base.MySQL is
    -------------------------------
    --  scan_column_information  --
    -------------------------------
-   procedure scan_column_information (Stmt : in out MySQL_statement)
+   procedure scan_column_information (Stmt : out MySQL_statement)
    is
       use type ABM.MYSQL_FIELD_Access;
       field : ABM.MYSQL_FIELD_Access;
@@ -537,7 +537,7 @@ package body AdaBase.Statement.Base.MySQL is
    ---------------------------------
    --  internal_fetch_row_direct  --
    ---------------------------------
-   function internal_fetch_row_direct (Stmt : in out MySQL_statement)
+   function internal_fetch_row_direct (Stmt : out MySQL_statement)
                                        return ARS.DataRow_Access
    is
       use type ABM.ICS.chars_ptr;
@@ -662,7 +662,7 @@ package body AdaBase.Statement.Base.MySQL is
    -----------------------------------
    --  internal_fetch_bound_direct  --
    -----------------------------------
-   function internal_fetch_bound_direct (Stmt : in out MySQL_statement)
+   function internal_fetch_bound_direct (Stmt : out MySQL_statement)
                                          return Boolean
    is
       use type ABM.ICS.chars_ptr;
@@ -787,7 +787,7 @@ package body AdaBase.Statement.Base.MySQL is
    ----------------------------------
    --  internal_direct_post_exec   --
    ----------------------------------
-   procedure internal_direct_post_exec (Stmt : in out MySQL_statement;
+   procedure internal_direct_post_exec (Stmt : out MySQL_statement;
                                         newset : Boolean := False) is
    begin
       Stmt.num_columns := 0;
