@@ -179,6 +179,9 @@ defaults:
        fetch_all: '<a href="stmt_fetch_all.html">stmt fetch all</a>'
        f_fetch_all: '<a href="stmt_fetch_all.html">func fetch_all</a>'
 
+       fetch_next_set: '<a href="stmt_fetch_next_set.html">stmt fetch next set</a>'
+       f_fetch_next_set: '<a href="stmt_fetch_next_set.html">proc fetch_next_set</a>'
+
        fetch_bound: '<a href="stmt_fetch_bound.html">stmt fetch bound</a>'
        f_fetch_bound: '<a href="stmt_fetch_bound.html">func fetch_bound</a>'
 
