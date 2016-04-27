@@ -42,8 +42,7 @@ begin
 
    TIO.Put_Line ("");
    loop
-      row := CON.STMT.fetch_next;
-      exit when ARS.complete (row);
+      exit when not CON.STMT.fetch_next (row);
       TIO.Put (CT.zeropad (Natural (row.column (1).as_byte2), 2) & " ");
       declare
          fruit : String := row.column ("fruit").as_string;

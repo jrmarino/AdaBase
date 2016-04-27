@@ -55,7 +55,7 @@ begin
       TIO.Put_Line ("");
    end if;
 
-   --  Demonstrate bind/fetch_bound 
+   --  Demonstrate bind/fetch_bound
    declare
       event_code : aliased AR.nbyte2;
       home_town, home_mascot  : aliased AR.textual;

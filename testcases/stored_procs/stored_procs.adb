@@ -34,8 +34,7 @@ procedure Stored_Procs is
       end loop;
       TIO.Put_Line ("");
       loop
-         row := CON.STMT.fetch_next;
-         exit when ARS.complete (row);
+         exit when not CON.STMT.fetch_next (row);
          for c in Natural range 1 .. numcols loop
             TIO.Put (pad (row.column (c).as_string));
          end loop;
