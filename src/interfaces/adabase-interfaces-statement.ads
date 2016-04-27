@@ -41,15 +41,15 @@ package AdaBase.Interfaces.Statement is
    function column_native_type (Stmt : iStatement; index : Positive)
                                 return field_types is abstract;
 
-   function fetch_next      (Stmt : iStatement)
+   function fetch_next      (Stmt : out iStatement)
                              return AdaBase.Results.Sets.DataRow_Access
                              is abstract;
 
-   function fetch_all       (Stmt : iStatement)
+   function fetch_all       (Stmt : out iStatement)
                              return AdaBase.Results.Sets.DataRowSet
                              is abstract;
 
-   function fetch_bound     (Stmt : iStatement) return Boolean is abstract;
+   function fetch_bound     (Stmt : out iStatement) return Boolean is abstract;
 
    procedure fetch_next_set (Stmt         : out iStatement;
                              data_present : out Boolean;

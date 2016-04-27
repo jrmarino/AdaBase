@@ -65,13 +65,13 @@ package AdaBase.Statement.Base.MySQL is
                                 return field_types;
 
    overriding
-   function fetch_next (Stmt : MySQL_statement) return ARS.DataRow_Access;
+   function fetch_next (Stmt : out MySQL_statement) return ARS.DataRow_Access;
 
    overriding
-   function fetch_all  (Stmt : MySQL_statement) return ARS.DataRowSet;
+   function fetch_all  (Stmt : out MySQL_statement) return ARS.DataRowSet;
 
    overriding
-   function fetch_bound (Stmt : MySQL_statement) return Boolean;
+   function fetch_bound (Stmt : out MySQL_statement) return Boolean;
 
    overriding
    procedure fetch_next_set (Stmt         : out MySQL_statement;
@@ -86,9 +86,9 @@ private
    procedure process_direct_result (Stmt : in out MySQL_statement);
    procedure scan_column_information (Stmt : in out MySQL_statement);
    procedure clear_column_information (Stmt : in out MySQL_statement);
-   function internal_fetch_bound_direct (Stmt : MySQL_statement)
+   function internal_fetch_bound_direct (Stmt : in out MySQL_statement)
                                          return Boolean;
-   function internal_fetch_row_direct (Stmt : MySQL_statement)
+   function internal_fetch_row_direct (Stmt : in out MySQL_statement)
                                        return ARS.DataRow_Access;
    function convert (nv : String) return CAL.Time;
    function convert (nv : String) return AR.settype;
@@ -107,20 +107,6 @@ private
    package VColumns is new AC.Vectors (Index_Type   => Positive,
                                        Element_Type => column_info);
 
-   --  The "cheat" exists to work around Ada2005 restriction of no "out"
-   --  parameters for functions.  In some cases we need to adjust the
-   --  main object as a result of running the function -- otherwise we
-   --  have to switch to a procedure which is not desirable for fetching
-
-   type cheat2005 is record
-      delivery      : fetch_status          := completed;
-      result_handle : ABM.MYSQL_RES_Access  := null;
-      stmt_handle   : ABM.MYSQL_STMT_Access := null;
-   end record;
-   type cheat_access is access all cheat2005;
-
-   cheat_ada2005 : aliased cheat2005;
-
    type MySQL_statement (type_of_statement : stmt_type;
                          log_handler       : ALF.LogFacility_access;
                          mysql_conn        : ACM.MySQL_Connection_Access;
@@ -131,7 +117,9 @@ private
                          con_buffered      : Boolean)
    is limited new Base_Statement and AIS.iStatement with
       record
-         cheat          : cheat_access          := cheat_ada2005'Access;
+         delivery       : fetch_status          := completed;
+         result_handle  : ABM.MYSQL_RES_Access  := null;
+         stmt_handle    : ABM.MYSQL_STMT_Access := null;
          num_columns    : Natural               := 0;
          size_of_rowset : TraxID                := 0;
          column_info    : VColumns.Vector;
