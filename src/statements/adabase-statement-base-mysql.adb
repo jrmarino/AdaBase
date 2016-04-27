@@ -548,7 +548,7 @@ package body AdaBase.Statement.Base.MySQL is
       if rptr = null then
          Stmt.delivery := completed;
          Stmt.mysql_conn.free_result (Stmt.result_handle);
-         --  Stmt.clear_column_information;  (won't work inside func in Ada05)
+         Stmt.clear_column_information;
          return null;
       end if;
       Stmt.delivery := progressing;
@@ -673,7 +673,7 @@ package body AdaBase.Statement.Base.MySQL is
       if rptr = null then
          Stmt.delivery := completed;
          Stmt.mysql_conn.free_result (Stmt.result_handle);
-         --  Stmt.clear_column_information;  (won't work inside func in Ada05)
+         Stmt.clear_column_information;
          return False;
       end if;
       Stmt.delivery := progressing;
