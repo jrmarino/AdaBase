@@ -176,7 +176,7 @@ package body AdaBase.Statement.Base.MySQL is
                if params /= Natural (Object.alpha_markers.Length) then
                   raise ILLEGAL_BIND_SQL
                     with "marker mismatch," & Object.alpha_markers.Length'Img
-                      & " expected but " & params'Img & " is the real number";
+                      & " expected but" & params'Img & " found by MySQL;
                end if;
             end;
       end case;

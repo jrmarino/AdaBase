@@ -101,14 +101,15 @@ package body AdaBase.Statement.Base is
          --     replacement index, and pushes the string into alpha markers
          --  Normally ? and : aren't mixed but we will support it.
          procedure replace_alias;
+         procedure save_classic_marker;
          start    : Natural  := 0;
          arrow    : Positive := 1;
          scanning : Boolean  := False;
 
          procedure replace_alias is
             len    : Natural := arrow - start;
-            alias  : String (2 .. len) := sql_mask (start + 1 .. arrow - 1);
-            scab   : String (1 .. len) := ('?', others => ' ');
+            alias  : String (1 .. len) := sql_mask (start + 1 .. arrow);
+            scab   : String (1 .. len + 1) := ('?', others => ' ');
             brec   : bindrec;
          begin
             if Stmt.alpha_markers.Contains (Key => alias) then
@@ -118,21 +119,32 @@ package body AdaBase.Statement.Base is
             Stmt.realmccoy.Append (New_Item => brec);
             Stmt.alpha_markers.Insert (Key => alias,
                                        New_Item => Stmt.realmccoy.Last_Index);
-            new_sql (start .. arrow - 1) := scab;
+            new_sql (start .. arrow) := scab;
             scanning := False;
          end replace_alias;
+
+         procedure save_classic_marker
+         is
+            brec   : bindrec;
+         begin
+            brec.v00 := False;
+            Stmt.realmccoy.Append (New_Item => brec);
+         end save_classic_marker;
+
+         adjacent_error : constant String :=
+                          "Bindings are not separated; they are touching";
 
       begin
          loop
             case sql_mask (arrow) is
                when ASCII.Query =>
                   if scanning then
-                     replace_alias;
+                     raise ILLEGAL_BIND_SQL with adjacent_error;
                   end if;
+                  save_classic_marker;
                when ASCII.Colon =>
                   if scanning then
-                     raise ILLEGAL_BIND_SQL with
-                       "Bindings are not separated; they are touching";
+                     raise ILLEGAL_BIND_SQL with adjacent_error;
                   end if;
                   scanning := True;
                   start := arrow;
