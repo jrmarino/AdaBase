@@ -439,7 +439,11 @@ package body AdaBase.Statement.Base.MySQL is
       begin
          Stmt.process_direct_result;
       exception
-         when others => return;
+         when others =>
+            Stmt.log_nominal (category => statement_execution,
+                              message  => "Result set missing from: "
+                                          & Stmt.sql_final.all);
+            return;
       end;
       Stmt.internal_direct_post_exec (newset => True);
       data_fetched := True;
