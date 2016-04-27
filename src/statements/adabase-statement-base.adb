@@ -724,133 +724,133 @@ package body AdaBase.Statement.Base is
                      moniker : String;
                      vaxx    : AR.nbyte1_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.nbyte2_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.nbyte3_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.nbyte4_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.nbyte8_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.byte1_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.byte2_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.byte3_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.byte4_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.byte8_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.real9_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.real18_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.str1_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.str2_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.str4_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.time_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.chain_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.enum_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.settype_access) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
 
@@ -868,126 +868,126 @@ package body AdaBase.Statement.Base is
                      moniker : String;
                      vaxx    : AR.nbyte1) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.nbyte2) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.nbyte3) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.nbyte4) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.nbyte8) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.byte1) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.byte2) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.byte3) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.byte4) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.byte8) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.real9) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.real18) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : String) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.textual) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.textwide) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.textsuper) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : CAL.Time) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.enumtype) is
    begin
-        Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
 
