@@ -418,7 +418,7 @@ package body AdaBase.Driver.Base.MySQL is
             driver.log_nominal (category => execution, message => err2);
          end if;
       else
-         --  Non-fatal attempt to query an unccnnected database
+         --  Non-fatal attempt to query an unconnected database
          driver.log_problem (category => execution, message  => err1);
       end if;
       return statement;

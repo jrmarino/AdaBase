@@ -424,9 +424,14 @@ package body AdaBase.Statement.Base.MySQL is
    procedure fetch_next_set (Stmt    : out MySQL_statement;
                              success : out Boolean)
    is
+     use type ABM.MYSQL_RES_Access;
+
      another_set : Boolean;
    begin
       success := False;
+      if Stmt.cheat.result_handle /= null then
+         Stmt.mysql_conn.all.free_result (Stmt.cheat.result_handle);
+      end if;
       another_set := Stmt.mysql_conn.fetch_next_set;
       if not another_set then
          return;
