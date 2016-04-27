@@ -17,7 +17,6 @@ package AdaBase.Results.Sets is
    function column (row : DataRow; index : Positive) return ARF.std_field;
    function column (row : DataRow; heading : String) return ARF.std_field;
    function count  (row : DataRow) return Natural;
-   function complete (DRA : DataRow_Access) return Boolean;
 
    --  Since it doesn't seem to be possible to construct this type with
    --  descriminates, it needs to be created first and populated with data,

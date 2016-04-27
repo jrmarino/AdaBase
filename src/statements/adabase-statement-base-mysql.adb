@@ -350,20 +350,23 @@ package body AdaBase.Statement.Base.MySQL is
    --  fetch_next  --
    ------------------
    overriding
-   function fetch_next (Stmt : out MySQL_statement) return ARS.DataRow_Access
+   function fetch_next (Stmt    : out MySQL_statement;
+                        datarow : out ARS.DataRow_Access) return Boolean
    is
-      datarow : ARS.DataRow_Access := null;
+      use type ARS.DataRow_Access;
    begin
+      datarow := null;
       if Stmt.delivery = completed then
-         return datarow;
+         return False;
       end if;
       case Stmt.type_of_statement is
          when prepared_statement =>
             raise INVALID_FOR_RESULT_SET with "not yet implemented";
-            return datarow;
+            --  TBW
          when direct_statement =>
-            return Stmt.internal_fetch_row_direct;
+            datarow := Stmt.internal_fetch_row_direct;
       end case;
+      return (datarow /= null);
    end fetch_next;
 
 
@@ -405,8 +408,7 @@ package body AdaBase.Statement.Base.MySQL is
       --  use a repeat loop to check each row and return a partial set
       --  if necessary.
       loop
-         tmpset (index) := Stmt.fetch_next;
-         exit when ARS.complete (tmpset (index));
+         exit when not Stmt.fetch_next (tmpset (index));
          index := index + 1;
          exit when index > maxrows + 1;  --  should never happen
       end loop;

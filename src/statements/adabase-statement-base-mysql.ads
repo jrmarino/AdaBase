@@ -65,7 +65,8 @@ package AdaBase.Statement.Base.MySQL is
                                 return field_types;
 
    overriding
-   function fetch_next (Stmt : out MySQL_statement) return ARS.DataRow_Access;
+   function fetch_next (Stmt    : out MySQL_statement;
+                        datarow : out ARS.DataRow_Access) return Boolean;
 
    overriding
    function fetch_all  (Stmt : out MySQL_statement) return ARS.DataRowSet;
