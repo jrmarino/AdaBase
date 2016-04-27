@@ -132,19 +132,21 @@ package body AdaBase.Statement.Base is
          end save_classic_marker;
 
          adjacent_error : constant String :=
-                          "Bindings are not separated; they are touching";
+                          "Bindings are not separated; they are touching: ";
 
       begin
          loop
             case sql_mask (arrow) is
                when ASCII.Query =>
                   if scanning then
-                     raise ILLEGAL_BIND_SQL with adjacent_error;
+                     raise ILLEGAL_BIND_SQL
+                       with adjacent_error & new_sql (start .. arrow);
                   end if;
                   save_classic_marker;
                when ASCII.Colon =>
                   if scanning then
-                     raise ILLEGAL_BIND_SQL with adjacent_error;
+                     raise ILLEGAL_BIND_SQL
+                       with adjacent_error & new_sql (start .. arrow);
                   end if;
                   scanning := True;
                   start := arrow;

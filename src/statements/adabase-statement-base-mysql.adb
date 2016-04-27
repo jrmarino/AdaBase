@@ -173,9 +173,9 @@ package body AdaBase.Statement.Base.MySQL is
                  params : Natural := Object.mysql_conn.prep_markers_found
                    (stmt => Object.stmt_handle);
             begin
-               if params /= Natural (Object.alpha_markers.Length) then
+               if params /= Natural (Object.realmccoy.Length) then
                   raise ILLEGAL_BIND_SQL
-                    with "marker mismatch," & Object.alpha_markers.Length'Img
+                    with "marker mismatch," & Object.realmccoy.Length'Img
                       & " expected but" & params'Img & " found by MySQL";
                end if;
             end;
