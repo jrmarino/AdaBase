@@ -101,7 +101,6 @@ title: AdaBase by jrmarino
 
 <h3>AdaBase.Results.Sets</h3>
 <ul>
-<li>{{ page.f_complete }}</li>
 <li>{{ page.f_res_count }}</li>
 <li>{{ page.f_column }}</li>
 </ul>

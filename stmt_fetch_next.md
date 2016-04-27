@@ -9,14 +9,14 @@ package AdaBase.Results.Sets is
    type DataRow_Access is access all DataRow;
 end AdaBase.Results.Sets;
 </pre>
-<h3>DataRow_Access function<br/>
-AdaBase.Statement.Base.[STMT].fetch_next ()</h3>
+<h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].fetch_next (datarow : DataRow_Access)</h3>
 <p>
 This function attempts to fetch the next row of data that was retrieved
 prior as a result of a query.  If there is not another row of data
-available, a null value for DataRow_Access is returned.  If more data
-are available, access to the next row is returned and internally the database
-client library advances the cursor.
+available, False is returned and value of <i>datarow</i> is set to null.
+If more data are available, the function returns True and <i>datarow</i> points
+to the DataRow type fetched while the client library advances the cursor.
 </p>
 <pre class="code">
 with AdaBase;
@@ -63,8 +63,7 @@ begin
 
    TIO.Put_Line ("");
    loop
-      row := CON.STMT.fetch_next;
-      exit when ARS.complete (row);
+      exit when not CON.STMT.fetch_next (row);
       TIO.Put (CT.zeropad (Natural (row.column (1).as_byte2), 2) & " ");
       declare
          fruit : String := row.column ("fruit").as_string;
@@ -121,7 +120,6 @@ Column 4:
 <div class="sidenav">
   <h3>See Also</h3>
   <ul>
-    <li>{{ page.complete }}</li>
     <li>{{ page.query }}</li>
     <li>{{ page.stmt_successful }}</li>
     <li>{{ page.stmt_data_discarded }}</li>

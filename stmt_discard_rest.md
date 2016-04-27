@@ -62,11 +62,12 @@ begin
       CON.STMT := CON.DR.query (sql);
       TIO.Put_Line ("Query successful: " & CON.STMT.successful'Img);
 
-      row := CON.STMT.fetch_next;
-      TIO.Put_Line ("   Number fields:" & row.count'Img);
+      if CON.STMT.fetch_next (row) then
+         TIO.Put_Line ("   Number fields:" & row.count'Img);
 
-      CON.STMT.discard_rest;
-      TIO.Put_Line ("  Data discarded: " & CON.STMT.data_discarded'Img);
+         CON.STMT.discard_rest;
+         TIO.Put_Line ("  Data discarded: " & CON.STMT.data_discarded'Img);
+      end if;
    end if;
    CON.DR.disconnect;
 

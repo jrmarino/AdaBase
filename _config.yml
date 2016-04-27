@@ -104,9 +104,6 @@ defaults:
        fetch_next: '<a href="stmt_fetch_next.html">stmt fetch next row</a>'
        f_fetch_next: '<a href="stmt_fetch_next.html">func fetch_next</a>'
 
-       complete: '<a href="res_complete.html">fetch complete</a>'
-       f_complete: '<a href="res_complete.html">func complete</a>'
-
        stmt_successful: '<a href="stmt_successful.html">stmt successful</a>'
        f_successful: '<a href="stmt_successful.html">func successful</a>'
 

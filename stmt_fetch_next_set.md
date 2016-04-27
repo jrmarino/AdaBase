@@ -60,8 +60,7 @@ procedure Stored_Procs is
       end loop;
       TIO.Put_Line ("");
       loop
-         row := CON.STMT.fetch_next;
-         exit when ARS.complete (row);
+         exit when not CON.STMT.fetch_next (row);
          for c in Natural range 1 .. numcols loop
             TIO.Put (pad (row.column (c).as_string));
          end loop;
@@ -133,7 +132,6 @@ team_id        abbreviation
 <div class="sidenav">
   <h3>See Also</h3>
   <ul>
-    <li>{{ page.complete }}</li>
     <li>{{ page.query }}</li>
     <li>{{ page.stmt_column_count }}</li>
     <li>{{ page.stmt_column_name }}</li>
