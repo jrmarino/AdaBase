@@ -436,6 +436,12 @@ package body AdaBase.Statement.Base.MySQL is
       if not another_set then
          return;
       end if;
+      declare
+      begin
+         Stmt.process_direct_result;
+      exception
+         when others => return;
+      end;
       Stmt.internal_direct_post_exec (newset => True);
       success := True;
    end fetch_next_set;
@@ -791,8 +797,8 @@ package body AdaBase.Statement.Base.MySQL is
          Stmt.connection.execute (sql => Stmt.sql_final.all);
          Stmt.log_nominal (category => statement_execution,
                            message => Stmt.sql_final.all);
+         Stmt.process_direct_result;
       end if;
-      Stmt.process_direct_result;
       Stmt.successful_execution := True;
       if Stmt.result_present then
          Stmt.num_columns := Stmt.mysql_conn.fields_in_result
