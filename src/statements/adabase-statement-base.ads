@@ -57,6 +57,10 @@ package AdaBase.Statement.Base is
    overriding
    function data_discarded (Stmt : Base_Statement) return Boolean;
 
+
+   -------------------------------------------
+   --      20 bind using integer index      --
+   -------------------------------------------
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
                    vaxx  : AR.nbyte0_access);
@@ -137,6 +141,10 @@ package AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.settype_access);
 
+
+   -------------------------------------------
+   --    20 bind using header for index     --
+   -------------------------------------------
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
                    vaxx    : AR.nbyte0_access);
@@ -217,6 +225,10 @@ package AdaBase.Statement.Base is
                    heading : String;
                    vaxx    : AR.settype_access);
 
+
+   --------------------------------------------
+   --  20 assign/access using integer index  --
+   --------------------------------------------
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
                      vaxx  : AR.nbyte0_access);
@@ -297,6 +309,9 @@ package AdaBase.Statement.Base is
                      index : Positive;
                      vaxx  : AR.settype_access);
 
+   ------------------------------------------------
+   --  20 assign/access using moniker for index  --
+   ------------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.nbyte0_access);
@@ -377,6 +392,158 @@ package AdaBase.Statement.Base is
                      moniker : String;
                      vaxx    : AR.settype_access);
 
+
+   -------------------------------------------
+   --  18 assign/value using integer index  --
+   -------------------------------------------
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.nbyte0);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.nbyte1);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.nbyte2);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.nbyte3);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.nbyte4);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.nbyte8);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.byte1);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.byte2);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.byte3);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.byte4);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.byte8);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.real9);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.real18);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.textual);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.textwide);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.textsuper);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : CAL.Time);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.enumtype);
+
+
+   -----------------------------------------------
+   --  18 assign/value using moniker for index  --
+   -----------------------------------------------
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.nbyte0);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.nbyte1);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.nbyte2);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.nbyte3);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.nbyte4);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.nbyte8);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.byte1);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.byte2);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.byte3);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.byte4);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.byte8);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.real9);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.real18);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.textual);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.textwide);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.textsuper);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : CAL.Time);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.enumtype);
+
 private
 
    logger_access : ALF.LogFacility_access;
@@ -425,24 +592,42 @@ private
       bound : Boolean := False;
       case output_type is
          when ft_nbyte0    => a00 : AR.nbyte0_access;
+                              v00 : AR.nbyte0;
          when ft_nbyte1    => a01 : AR.nbyte1_access;
+                              v01 : AR.nbyte1;
          when ft_nbyte2    => a02 : AR.nbyte2_access;
+                              v02 : AR.nbyte2;
          when ft_nbyte3    => a03 : AR.nbyte3_access;
+                              v03 : AR.nbyte3;
          when ft_nbyte4    => a04 : AR.nbyte4_access;
+                              v04 : AR.nbyte4;
          when ft_nbyte8    => a05 : AR.nbyte8_access;
+                              v05 : AR.nbyte8;
          when ft_byte1     => a06 : AR.byte1_access;
+                              v06 : AR.byte1;
          when ft_byte2     => a07 : AR.byte2_access;
+                              v07 : AR.byte2;
          when ft_byte3     => a08 : AR.byte3_access;
+                              v08 : AR.byte3;
          when ft_byte4     => a09 : AR.byte4_access;
+                              v09 : AR.byte4;
          when ft_byte8     => a10 : AR.byte8_access;
+                              v10 : AR.byte8;
          when ft_real9     => a11 : AR.real9_access;
+                              v11 : AR.real9;
          when ft_real18    => a12 : AR.real18_access;
+                              v12 : AR.real18;
          when ft_textual   => a13 : AR.str1_access;
+                              v13 : AR.textual;
          when ft_widetext  => a14 : AR.str2_access;
+                              v14 : AR.textwide;
          when ft_supertext => a15 : AR.str4_access;
+                              v15 : AR.textsuper;
          when ft_timestamp => a16 : AR.time_access;
+                              v16 : CAL.Time;
          when ft_chain     => a17 : AR.chain_access;
          when ft_enumtype  => a18 : AR.enum_access;
+                              v18 : AR.enumtype;
          when ft_settype   => a19 : AR.settype_access;
       end case;
    end record;

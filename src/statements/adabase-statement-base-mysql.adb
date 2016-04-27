@@ -276,6 +276,7 @@ package body AdaBase.Statement.Base.MySQL is
             info : column_info;
             brec : bindrec;
          begin
+            brec.v00         := False;   --  placeholder
             info.field_name  := fn (Stmt.mysql_conn.field_name_field (field));
             info.table       := fn (Stmt.mysql_conn.field_name_table (field));
             info.mysql_type  := field.field_type;

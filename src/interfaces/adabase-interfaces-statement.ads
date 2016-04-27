@@ -58,7 +58,7 @@ package AdaBase.Interfaces.Statement is
    ------------------------------------------------------------------------
    --  Technically there should be 20 of these listed.  They are all
    --  implemented in the base class so they get inherited.  I'm too
-   --  Lazy to add 40 prototypes here.  Same with Assign
+   --  Lazy to add ~120 prototypes here.
    --
    --     procedure bind    (Stmt    : out Base_Statement;
    --                        index   : Positive;
@@ -70,8 +70,14 @@ package AdaBase.Interfaces.Statement is
    --                        index   : Positive;
    --                        vaxx    : AR.nbyte0_access);
    --     procedure assign  (Stmt    : out Base_Statement;
-   --                        heading : String;
+   --                        moniker : String;
    --                        vaxx    : AR.nbyte0_access);
+   --     procedure assign  (Stmt    : out Base_Statement;
+   --                        index   : Positive;
+   --                        vaxx    : AR.nbyte0);
+   --     procedure assign  (Stmt    : out Base_Statement;
+   --                        moniker : String;
+   --                        vaxx    : AR.nbyte0);
    -------------------------------------------------------------------------
 
 end AdaBase.Interfaces.Statement;
