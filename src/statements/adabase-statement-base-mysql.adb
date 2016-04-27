@@ -783,7 +783,11 @@ package body AdaBase.Statement.Base.MySQL is
    begin
       Stmt.num_columns := 0;
       Stmt.successful_execution := False;
-      if not newset then
+      if newset then
+         Stmt.log_nominal (category => statement_execution,
+                           message => "Fetch next rowset from: "
+                                       & Stmt.sql_final.all);
+      else
          Stmt.connection.execute (sql => Stmt.sql_final.all);
          Stmt.log_nominal (category => statement_execution,
                            message => Stmt.sql_final.all);
