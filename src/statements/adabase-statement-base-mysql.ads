@@ -74,8 +74,9 @@ package AdaBase.Statement.Base.MySQL is
    function fetch_bound (Stmt : MySQL_statement) return Boolean;
 
    overriding
-   procedure fetch_next_set (Stmt : out MySQL_statement;
-                             success : out Boolean);
+   procedure fetch_next_set (Stmt         : out MySQL_statement;
+                             data_present : out Boolean;
+                             data_fetched : out Boolean);
 
 private
 

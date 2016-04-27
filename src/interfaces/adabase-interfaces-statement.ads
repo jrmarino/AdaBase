@@ -51,8 +51,9 @@ package AdaBase.Interfaces.Statement is
 
    function fetch_bound     (Stmt : iStatement) return Boolean is abstract;
 
-   procedure fetch_next_set (Stmt : out iStatement;
-                             success : out Boolean) is null;
+   procedure fetch_next_set (Stmt         : out iStatement;
+                             data_present : out Boolean;
+                             data_fetched : out Boolean) is null;
 
    ------------------------------------------------------------------------
    --  Technically there should be 20 of these listed.  They are all

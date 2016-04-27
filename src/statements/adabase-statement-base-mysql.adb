@@ -421,19 +421,18 @@ package body AdaBase.Statement.Base.MySQL is
    --  fetch_next_set  --
    ----------------------
    overriding
-   procedure fetch_next_set (Stmt    : out MySQL_statement;
-                             success : out Boolean)
+   procedure fetch_next_set (Stmt         : out MySQL_statement;
+                             data_present : out Boolean;
+                             data_fetched : out Boolean)
    is
      use type ABM.MYSQL_RES_Access;
-
-     another_set : Boolean;
    begin
-      success := False;
+      data_fetched := False;
       if Stmt.cheat.result_handle /= null then
          Stmt.mysql_conn.all.free_result (Stmt.cheat.result_handle);
       end if;
-      another_set := Stmt.mysql_conn.fetch_next_set;
-      if not another_set then
+      data_present := Stmt.mysql_conn.fetch_next_set;
+      if not data_present then
          return;
       end if;
       declare
@@ -443,7 +442,7 @@ package body AdaBase.Statement.Base.MySQL is
          when others => return;
       end;
       Stmt.internal_direct_post_exec (newset => True);
-      success := True;
+      data_fetched := True;
    end fetch_next_set;
 
 
