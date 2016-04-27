@@ -108,6 +108,31 @@ LOCK TABLES `nhl_teams` WRITE;
 INSERT INTO `nhl_teams` VALUES (0,'-','-','-'),(1,'NJ','New Jersey','Devils'),(2,'NYI','New York','Islanders'),(3,'NYR','New York','Rangers'),(4,'PHI','Philadelphia','Flyers'),(5,'PIT','Pittsburg','Penguins'),(6,'BOS','Boston','Bruins'),(7,'BUF','Buffalo','Sabres'),(8,'MON','Montreal','Canadiens'),(9,'OTT','Ottawa','Senators'),(10,'TOR','Toronto','Maple Leafs'),(11,'ATL','Atlanta','Thrashers'),(12,'CAR','Carolina','Hurricanes'),(13,'FL','Florida','Panthers'),(15,'WAS','Washington','Capitols'),(16,'CHI','Chicago','Blackhawks'),(17,'CLM','Columbus','Blue Jackets'),(18,'DET','Detroit','Red Wings'),(19,'NAS','Nashville','Predators'),(20,'STL','St. Louis','Blues'),(21,'CAL','Calgary','Flames'),(22,'COL','Colorado','Avalanche'),(23,'EDM','Edmunton','Oilers'),(24,'MIN','Minnesota','Wild'),(25,'VAN','Vancouver','Canucks'),(26,'ANA','Anaheim','Ducks'),(27,'DAL','Dallas','Stars'),(28,'LA','Los Angeles','Kings'),(29,'PHO','Phoenix','Coyotes'),(30,'SJ','San Jose','Sharks'),(31,'WIN','Winnepeg','Jets');
 /*!40000 ALTER TABLE `nhl_teams` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'adabase_examples'
+--
+/*!50003 DROP PROCEDURE IF EXISTS `multiple_rowsets` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` PROCEDURE `multiple_rowsets`()
+BEGIN
+   SELECT * FROM fruits ORDER BY calories DESC LIMIT 8;
+   SELECT fruit FROM fruits WHERE color = 'red';
+   SELECT team_id, abbreviation FROM nhl_teams WHERE team_id > 28;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -118,4 +143,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-04-27  2:10:24
+-- Dump completed on 2016-04-27 10:21:34
