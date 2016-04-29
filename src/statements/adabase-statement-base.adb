@@ -257,37 +257,6 @@ package body AdaBase.Statement.Base is
    end log_nominal;
 
 
-   -------------------
-   --  log_problem  --
-   -------------------
-   procedure log_problem
-     (statement  : Base_Statement;
-      category   : LogCategory;
-      message    : String;
-      pull_codes : Boolean := False;
-      break      : Boolean := False)
-   is
-      error_msg  : CT.Text     := CT.blank;
-      error_code : DriverCodes := 0;
-      sqlstate   : TSqlState   := stateless;
-   begin
-      if pull_codes then
-         error_msg  := CT.SUS (statement.connection.all.driverMessage);
-         error_code := statement.connection.all.driverCode;
-         sqlstate   := statement.connection.all.SqlState;
-      end if;
-
-      logger_access.all.log_problem
-          (driver     => statement.dialect,
-           category   => category,
-           message    => CT.SUS (message),
-           error_msg  => error_msg,
-           error_code => error_code,
-           sqlstate   => sqlstate,
-           break      => break);
-   end log_problem;
-
-
    --------------------
    --  bind_proceed  --
    --------------------
@@ -500,7 +469,7 @@ package body AdaBase.Statement.Base is
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_supertext, a15 => vaxx,
-                    v15 => AR.SUWW.Null_Unbounded_Wide_Wide_String,
+                    v15 => SWW.Null_Unbounded_Wide_Wide_String,
                     bound => True));
       end if;
    end bind;
@@ -1242,8 +1211,8 @@ package body AdaBase.Statement.Base is
                      vaxx  : String) is
    begin
       Stmt.realmccoy.Replace_Element
-        (index, (output_type => ft_textual, a13 => null,
-                 v13 => CT.SUS (vaxx), bound => True));
+        (index, (output_type => ft_textual, a13 => null, v13 => CT.SUS (vaxx),
+                 bound => True));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1261,7 +1230,7 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_widetext, a14 => vaxx,
-                 v14 => AR.SUW.Null_Unbounded_Wide_String, bound => True));
+                 v14 => SUW.Null_Unbounded_Wide_String, bound => True));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1279,7 +1248,7 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_supertext, a15 => vaxx,
-                 v15 => AR.SUWW.Null_Unbounded_Wide_Wide_String,
+                 v15 => SWW.Null_Unbounded_Wide_Wide_String,
                  bound => True));
    end assign;
 

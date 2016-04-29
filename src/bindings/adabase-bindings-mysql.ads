@@ -211,6 +211,61 @@ package AdaBase.Bindings.MySQL is
    type MYSQL_ROW_access is access all MYSQL_ROW;
    pragma Convention (C, MYSQL_ROW_access);
 
+   type MYSQL_BIND is limited record
+      length           : access IC.unsigned_long := null;
+      is_null          : access my_bool          := null;
+      buffer           : System.Address          := System.Null_Address;
+      error            : access my_bool          := null;
+      row_ptr          : access IC.unsigned_char := null;
+      store_param_func : System.Address          := System.Null_Address;
+      fetch_result     : System.Address          := System.Null_Address;
+      skip_result      : System.Address          := System.Null_Address;
+      buffer_length    : IC.unsigned_long        := 0;
+      offset           : IC.unsigned_long        := 0;
+      length_value     : IC.unsigned_long        := 0;
+      param_number     : IC.unsigned             := 0;
+      pack_length      : IC.unsigned             := 0;
+      buffer_type      : enum_field_types        := MYSQL_TYPE_NULL;
+      error_value      : my_bool                 := 0;
+      is_unsigned      : my_bool                 := 0;
+      long_data_used   : my_bool                 := 0;
+      is_null_value    : my_bool                 := 0;
+      extension        : System.Address          := System.Null_Address;
+   end record;
+   pragma Convention (C, MYSQL_BIND);
+
+   type MYSQL_BIND_Array is array (Positive range <>) of aliased MYSQL_BIND;
+   pragma Convention (C, MYSQL_BIND_Array);
+
+   type MYSQL_BIND_Array_Access is access all MYSQL_BIND_Array;
+
+   type enum_mysql_timestamp_type is
+    (MYSQL_TIMESTAMP_NONE,
+     MYSQL_TIMESTAMP_ERROR,
+     MYSQL_TIMESTAMP_DATE,
+     MYSQL_TIMESTAMP_DATETIME,
+     MYSQL_TIMESTAMP_TIME);
+   for enum_mysql_timestamp_type use
+    (MYSQL_TIMESTAMP_NONE     => -2,
+     MYSQL_TIMESTAMP_ERROR    => -1,
+     MYSQL_TIMESTAMP_DATE     => 0,
+     MYSQL_TIMESTAMP_DATETIME => 1,
+     MYSQL_TIMESTAMP_TIME     => 2);
+   pragma Convention (C, enum_mysql_timestamp_type);
+
+   type MYSQL_TIME is record
+      year        : IC.unsigned      := 0;
+      month       : IC.unsigned      := 0;
+      day         : IC.unsigned      := 0;
+      hour        : IC.unsigned      := 0;
+      minute      : IC.unsigned      := 0;
+      second      : IC.unsigned      := 0;
+      second_part : IC.unsigned_long := 0;
+      neg         : my_bool          := 0;
+      time_type   : enum_mysql_timestamp_type := MYSQL_TIMESTAMP_DATETIME;
+   end record;
+   pragma Convention (C, MYSQL_TIME);
+
    ---------------------
    --  Library calls  --
    ---------------------
@@ -377,7 +432,17 @@ package AdaBase.Bindings.MySQL is
                                 length   : my_ulong) return my_int;
    pragma Import (C, mysql_stmt_prepare, "mysql_stmt_prepare");
 
+   function mysql_stmt_result_metadata (handle : not null access MYSQL_STMT)
+                                        return MYSQL_RES_Access;
+   pragma Import (C, mysql_stmt_result_metadata, "mysql_stmt_result_metadata");
 
+   function mysql_stmt_bind_param (handle : not null access MYSQL_STMT;
+                                   bind   : access MYSQL_BIND) return my_bool;
+   pragma Import (C, mysql_stmt_bind_param, "mysql_stmt_bind_param");
+
+   function mysql_stmt_execute  (handle : not null access MYSQL_STMT)
+                                 return IC.int;
+   pragma Import (C, mysql_stmt_execute, "mysql_stmt_execute");
 private
 
    type MYSQL      is limited null record;

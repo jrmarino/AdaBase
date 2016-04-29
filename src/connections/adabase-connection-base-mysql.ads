@@ -24,19 +24,19 @@ package AdaBase.Connection.Base.MySQL is
    procedure setCompressed (conn : out MySQL_Connection; compressed : Boolean);
 
    overriding
-   function compressed (conn : MySQL_Connection) return Boolean;
+   function compressed     (conn : MySQL_Connection) return Boolean;
 
    overriding
-   procedure setUseBuffer (conn : out MySQL_Connection; buffered : Boolean);
+   procedure setUseBuffer  (conn : out MySQL_Connection; buffered : Boolean);
 
    overriding
-   function useBuffer (conn : MySQL_Connection) return Boolean;
+   function useBuffer      (conn : MySQL_Connection) return Boolean;
 
    overriding
    procedure setMultiQuery (conn : out MySQL_Connection; multiple : Boolean);
 
    overriding
-   function multiquery (conn : MySQL_Connection) return Boolean;
+   function multiquery     (conn : MySQL_Connection) return Boolean;
 
    overriding
    procedure setTransactionIsolation (conn      : out MySQL_Connection;
@@ -70,13 +70,13 @@ package AdaBase.Connection.Base.MySQL is
    procedure execute      (conn : MySQL_Connection; sql : String);
 
    overriding
-   procedure connect (conn     : out MySQL_Connection;
-                      database : String;
-                      username : String;
-                      password : String;
-                      hostname : String := blankstring;
-                      socket   : String := blankstring;
-                      port     : PosixPort := portless);
+   procedure connect      (conn     : out MySQL_Connection;
+                           database : String;
+                           username : String;
+                           password : String;
+                           hostname : String := blankstring;
+                           socket   : String := blankstring;
+                           port     : PosixPort := portless);
 
    overriding
    function rows_affected_by_execution (conn : MySQL_Connection)
@@ -152,19 +152,32 @@ package AdaBase.Connection.Base.MySQL is
    function prep_DriverMessage (conn : MySQL_Connection;
                                 stmt : ABM.MYSQL_STMT_Access) return String;
 
-   procedure prep_free_result (conn : MySQL_Connection;
-                               stmt : out ABM.MYSQL_STMT_Access);
+   procedure prep_free_result  (conn : MySQL_Connection;
+                                stmt : out ABM.MYSQL_STMT_Access);
 
    procedure prep_store_result (conn : MySQL_Connection;
                                 stmt : ABM.MYSQL_STMT_Access);
 
    procedure initialize_and_prepare_statement
-     (conn : MySQL_Connection;
-      stmt : out ABM.MYSQL_STMT_Access;
-      sql  : String);
+                               (conn : MySQL_Connection;
+                                stmt : out ABM.MYSQL_STMT_Access;
+                                sql  : String);
 
    function prep_markers_found (conn : MySQL_Connection;
                                 stmt : ABM.MYSQL_STMT_Access) return Natural;
+
+   function prep_result_metadata (conn : MySQL_Connection;
+                                  stmt : ABM.MYSQL_STMT_Access)
+                                  return ABM.MYSQL_RES_Access;
+
+   function prep_bind_parameters (conn : MySQL_Connection;
+                                  stmt : ABM.MYSQL_STMT_Access;
+                                  bind : out ABM.MYSQL_BIND_Array)
+                                  return Boolean;
+
+   function prep_execute         (conn : MySQL_Connection;
+                                  stmt : ABM.MYSQL_STMT_Access)
+                                  return Boolean;
 
    NOT_WHILE_CONNECTED : exception;
    AUTOCOMMIT_FAIL     : exception;

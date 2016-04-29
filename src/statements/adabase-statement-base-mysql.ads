@@ -81,18 +81,32 @@ package AdaBase.Statement.Base.MySQL is
 
 private
 
+   type mysql_canvas;
+
    procedure initialize (Object : in out MySQL_statement);
    procedure internal_direct_post_exec (Stmt   : out MySQL_statement;
                                         newset : Boolean := False);
    procedure process_direct_result (Stmt : out MySQL_statement);
    procedure scan_column_information (Stmt : out MySQL_statement);
    procedure clear_column_information (Stmt : out MySQL_statement);
+   procedure construct_bind_slot (Stmt   : MySQL_statement;
+                                  struct : out ABM.MYSQL_BIND;
+                                  canvas : out mysql_canvas;
+                                  marker : Positive);
    function internal_fetch_bound_direct (Stmt : out MySQL_statement)
                                          return Boolean;
    function internal_fetch_row_direct (Stmt : out MySQL_statement)
                                        return ARS.DataRow_Access;
+
    function convert (nv : String) return CAL.Time;
    function convert (nv : String) return AR.settype;
+
+   procedure log_problem
+     (statement  : MySQL_statement;
+      category   : LogCategory;
+      message    : String;
+      pull_codes : Boolean := False;
+      break      : Boolean := False);
 
    type column_info is record
       table         : CT.Text;
@@ -126,5 +140,27 @@ private
          column_info    : VColumns.Vector;
          sql_final      : access String;
       end record;
+
+   --  mysql_canvas is used by prepared statement execution
+   --  The Ada types are converted to C types and stored in this record which
+   --  MySQL finds through pointers.
+
+   type mysql_canvas is record
+      length        : aliased ABM.IC.unsigned_long := 0;
+      is_null       : ABM.IC.signed_char    := 0;
+      buffer_uint8  : ABM.IC.unsigned_char  := 0;
+      buffer_uint16 : ABM.IC.unsigned_short := 0;
+      buffer_uint32 : ABM.IC.unsigned       := 0;
+      buffer_uint64 : ABM.IC.unsigned_long  := 0;
+      buffer_int8   : ABM.IC.signed_char    := 0;
+      buffer_int16  : ABM.IC.short          := 0;
+      buffer_int32  : ABM.IC.int            := 0;
+      buffer_int64  : ABM.IC.long           := 0;
+      buffer_float  : ABM.IC.C_float        := 0.0;
+      buffer_double : ABM.IC.double         := 0.0;
+      buffer_binary : ABM.ICS.chars_ptr     := ABM.ICS.Null_Ptr;
+      buffer_time   : ABM.MYSQL_TIME;
+   end record;
+   type mysql_canvases is array (Positive range <>) of aliased mysql_canvas;
 
 end AdaBase.Statement.Base.MySQL;

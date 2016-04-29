@@ -46,6 +46,7 @@ package AdaBase.Statement.Base is
    BINDING_COLUMN_NOT_FOUND : exception;
    BINDING_TYPE_MISMATCH    : exception;
    BINDING_SIZE_MISMATCH    : exception;
+   PS_COLUMN_UNBOUND        : exception;
    MARKER_NOT_FOUND         : exception;
 
    overriding
@@ -564,14 +565,6 @@ private
    procedure log_nominal (statement : Base_Statement;
                           category  : LogCategory;
                           message   : String);
-
-   procedure log_problem
-     (statement  : Base_Statement;
-      category   : LogCategory;
-      message    : String;
-      pull_codes : Boolean := False;
-      break      : Boolean := False);
-
 
    package Markers is new Ada.Containers.Indefinite_Hashed_Maps
      (Key_Type        => String,

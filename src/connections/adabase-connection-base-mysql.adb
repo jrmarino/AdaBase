@@ -900,7 +900,46 @@ package body AdaBase.Connection.Base.MySQL is
    end prep_markers_found;
 
 
+   ----------------------------
+   --  prep_result_metadata  --
+   ----------------------------
+   function prep_result_metadata (conn : MySQL_Connection;
+                                  stmt : ABM.MYSQL_STMT_Access)
+                                  return ABM.MYSQL_RES_Access is
+   begin
+      return ABM.mysql_stmt_result_metadata (handle => stmt);
+   end prep_result_metadata;
 
+
+   ----------------------------
+   --  prep_bind_parameters  --
+   ----------------------------
+   function prep_bind_parameters (conn : MySQL_Connection;
+                                  stmt : ABM.MYSQL_STMT_Access;
+                                  bind : out ABM.MYSQL_BIND_Array)
+                                  return Boolean
+   is
+      use type ABM.my_bool;
+      result : ABM.my_bool;
+   begin
+      result := ABM.mysql_stmt_bind_param (handle => stmt,
+                                           bind => bind (1)'Access);
+      return (result = 0);
+   end prep_bind_parameters;
+
+
+   --------------------
+   --  prep_execute  --
+   --------------------
+   function prep_execute (conn : MySQL_Connection;
+                          stmt : ABM.MYSQL_STMT_Access) return Boolean
+   is
+      use type ABM.IC.int;
+      result : ABM.IC.int;
+   begin
+      result := ABM.mysql_stmt_execute (handle => stmt);
+      return (result = 0);
+   end prep_execute;
 
 
    ------------------------------------------------------------------------
