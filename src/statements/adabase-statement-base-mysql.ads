@@ -43,10 +43,10 @@ package AdaBase.Statement.Base.MySQL is
    procedure discard_rest   (Stmt : out MySQL_statement);
 
    overriding
-   function execute         (Stmt : MySQL_statement) return Boolean;
+   function execute         (Stmt : out MySQL_statement) return Boolean;
 
    overriding
-   function execute         (Stmt : MySQL_statement; bind_piped : String)
+   function execute         (Stmt : out MySQL_statement; bind_piped : String)
                              return Boolean;
 
    overriding
@@ -84,6 +84,7 @@ private
    type mysql_canvas;
 
    procedure initialize (Object : in out MySQL_statement);
+   procedure internal_post_prep_stmt   (Stmt   : out MySQL_statement);
    procedure internal_direct_post_exec (Stmt   : out MySQL_statement;
                                         newset : Boolean := False);
    procedure process_direct_result (Stmt : out MySQL_statement);

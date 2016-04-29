@@ -117,7 +117,7 @@ package body AdaBase.Statement.Base.MySQL is
    --  execute  (version 1)  --
    ----------------------------
    overriding
-   function execute (Stmt : MySQL_statement) return Boolean
+   function execute (Stmt : out MySQL_statement) return Boolean
    is
       num_markers : constant Natural := Natural (Stmt.realmccoy.Length);
       status_successful : Boolean := True;
@@ -126,6 +126,7 @@ package body AdaBase.Statement.Base.MySQL is
          raise INVALID_FOR_DIRECT_QUERY
            with "execute is for prepared statements";
       end if;
+      Stmt.successful_execution := False;
       if num_markers > 0 then
          --  Check to make sure all prepared markers are bound
          for sx in Natural range 1 .. num_markers loop
@@ -157,7 +158,9 @@ package body AdaBase.Statement.Base.MySQL is
                Stmt.log_nominal (category => statement_execution,
                                  message => "Exec with" & num_markers'Img &
                                    " bound parameters");
-               if not Stmt.mysql_conn.all.prep_execute (Stmt.stmt_handle) then
+               if Stmt.mysql_conn.all.prep_execute (Stmt.stmt_handle) then
+                  Stmt.successful_execution := True;
+               else
                   Stmt.log_problem (category => statement_execution,
                                     message => "failed to exec prep stmt",
                                     pull_codes => True);
@@ -180,13 +183,16 @@ package body AdaBase.Statement.Base.MySQL is
          --  No binding required, just execute the prepared statement
          Stmt.log_nominal (category => statement_execution,
                            message => "Exec without bound parameters");
-         if not Stmt.mysql_conn.all.prep_execute (Stmt.stmt_handle) then
+         if Stmt.mysql_conn.all.prep_execute (Stmt.stmt_handle) then
+            Stmt.successful_execution := True;
+         else
             Stmt.log_problem (category => statement_execution,
                               message => "failed to exec prep stmt",
                               pull_codes => True);
             status_successful := False;
          end if;
       end if;
+      Stmt.internal_post_prep_stmt;
 
       return status_successful;
    end execute;
@@ -196,7 +202,7 @@ package body AdaBase.Statement.Base.MySQL is
    --  execute  (version 2)  --
    ----------------------------
    overriding
-   function execute (Stmt : MySQL_statement; bind_piped : String)
+   function execute (Stmt : out MySQL_statement; bind_piped : String)
                      return Boolean
    is
    begin
@@ -907,6 +913,38 @@ package body AdaBase.Statement.Base.MySQL is
                            message    => EX.Exception_Message (X => RES),
                            pull_codes => True);
    end internal_direct_post_exec;
+
+
+   -------------------------------
+   --  internal_post_prep_stmt  --
+   -------------------------------
+   procedure internal_post_prep_stmt (Stmt : out MySQL_statement) is
+   begin
+      Stmt.num_columns := 0;
+      Stmt.process_direct_result;
+      if Stmt.result_present then
+         Stmt.num_columns := Stmt.mysql_conn.fields_in_result
+                               (Stmt.result_handle);
+         if Stmt.con_buffered then
+            Stmt.size_of_rowset := Stmt.mysql_conn.rows_in_result
+                                     (Stmt.result_handle);
+         end if;
+         Stmt.scan_column_information;
+         Stmt.delivery := pending;
+      else
+         declare
+            returned_cols : Natural;
+         begin
+            returned_cols := Stmt.mysql_conn.all.field_count;
+            if returned_cols = 0 then
+               Stmt.impacted := Stmt.mysql_conn.rows_affected_by_execution;
+            else
+               raise ACM.RESULT_FAIL with "Columns returned without result";
+            end if;
+         end;
+         Stmt.delivery := completed;
+      end if;
+   end internal_post_prep_stmt;
 
 
    ---------------------------

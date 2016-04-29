@@ -22,8 +22,8 @@ package AdaBase.Interfaces.Statement is
    procedure discard_rest       (Stmt : out iStatement) is null;
 
 
-   function execute         (Stmt : iStatement) return Boolean is abstract;
-   function execute         (Stmt : iStatement; bind_piped : String)
+   function execute         (Stmt : out iStatement) return Boolean is abstract;
+   function execute         (Stmt : out iStatement; bind_piped : String)
                              return Boolean is abstract;
 
    function rows_affected   (Stmt : iStatement)
