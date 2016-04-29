@@ -154,6 +154,9 @@ package body AdaBase.Statement.Base.MySQL is
             end if;
 
             if status_successful then
+               Stmt.log_nominal (category => statement_execution,
+                                 message => "Exec with" & num_markers'Img &
+                                   "bound parameters");
                if not Stmt.mysql_conn.all.prep_execute (Stmt.stmt_handle) then
                   Stmt.log_problem (category => statement_execution,
                                     message => "failed to exec prep stmt",
@@ -175,6 +178,8 @@ package body AdaBase.Statement.Base.MySQL is
          end;
       else
          --  No binding required, just execute the prepared statement
+         Stmt.log_nominal (category => statement_execution,
+                           message => "Exec without bound parameters");
          if not Stmt.mysql_conn.all.prep_execute (Stmt.stmt_handle) then
             Stmt.log_problem (category => statement_execution,
                               message => "failed to exec prep stmt",
@@ -241,6 +246,9 @@ package body AdaBase.Statement.Base.MySQL is
                     with "marker mismatch," & Object.realmccoy.Length'Img
                       & " expected but" & params'Img & " found by MySQL";
                end if;
+               Object.log_nominal
+                 (category => statement_preparation,
+                  message => Object.sql_final.all);
             end;
             Object.result_handle := Object.mysql_conn.prep_result_metadata
                                     (Object.stmt_handle);
