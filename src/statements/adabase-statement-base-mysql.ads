@@ -93,10 +93,9 @@ private
                                   struct : out ABM.MYSQL_BIND;
                                   canvas : out mysql_canvas;
                                   marker : Positive);
-   function internal_fetch_bound_direct (Stmt : out MySQL_statement)
-                                         return Boolean;
-   function internal_fetch_row_direct (Stmt : out MySQL_statement)
-                                       return ARS.DataRow_Access;
+   function internal_fetch_bound (Stmt : out MySQL_statement) return Boolean;
+   function internal_fetch_row   (Stmt : out MySQL_statement)
+                                  return ARS.DataRow_Access;
 
    function convert (nv : String) return CAL.Time;
    function convert (nv : String) return AR.settype;

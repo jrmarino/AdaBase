@@ -156,7 +156,7 @@ package body AdaBase.Statement.Base.MySQL is
             if status_successful then
                Stmt.log_nominal (category => statement_execution,
                                  message => "Exec with" & num_markers'Img &
-                                   "bound parameters");
+                                   " bound parameters");
                if not Stmt.mysql_conn.all.prep_execute (Stmt.stmt_handle) then
                   Stmt.log_problem (category => statement_execution,
                                     message => "failed to exec prep stmt",
@@ -441,13 +441,7 @@ package body AdaBase.Statement.Base.MySQL is
       if Stmt.delivery = completed then
          return False;
       end if;
-      case Stmt.type_of_statement is
-         when prepared_statement =>
-            raise INVALID_FOR_RESULT_SET with "not yet implemented";
-            --  TBW
-         when direct_statement =>
-            datarow := Stmt.internal_fetch_row_direct;
-      end case;
+      datarow := Stmt.internal_fetch_row;
       return (datarow /= null);
    end fetch_next;
 
@@ -461,13 +455,7 @@ package body AdaBase.Statement.Base.MySQL is
       if Stmt.delivery = completed then
          return False;
       end if;
-      case Stmt.type_of_statement is
-         when prepared_statement =>
-            raise INVALID_FOR_RESULT_SET with "not yet implemented";
-            return False;
-         when direct_statement =>
-            return Stmt.internal_fetch_bound_direct;
-      end case;
+      return Stmt.internal_fetch_bound;
    end fetch_bound;
 
 
@@ -621,8 +609,8 @@ package body AdaBase.Statement.Base.MySQL is
    ---------------------------------
    --  internal_fetch_row_direct  --
    ---------------------------------
-   function internal_fetch_row_direct (Stmt : out MySQL_statement)
-                                       return ARS.DataRow_Access
+   function internal_fetch_row (Stmt : out MySQL_statement)
+                                return ARS.DataRow_Access
    is
       use type ABM.ICS.chars_ptr;
       use type ABM.MYSQL_ROW_access;
@@ -740,14 +728,13 @@ package body AdaBase.Statement.Base.MySQL is
          return result;
       end;
 
-   end internal_fetch_row_direct;
+   end internal_fetch_row;
 
 
    -----------------------------------
    --  internal_fetch_bound_direct  --
    -----------------------------------
-   function internal_fetch_bound_direct (Stmt : out MySQL_statement)
-                                         return Boolean
+   function internal_fetch_bound (Stmt : out MySQL_statement) return Boolean
    is
       use type ABM.ICS.chars_ptr;
       use type ABM.MYSQL_ROW_access;
@@ -865,7 +852,7 @@ package body AdaBase.Statement.Base.MySQL is
          end loop;
          return True;
       end;
-   end internal_fetch_bound_direct;
+   end internal_fetch_bound;
 
 
    ----------------------------------
