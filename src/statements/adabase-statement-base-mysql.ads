@@ -5,6 +5,7 @@ with AdaBase.Connection.Base.MySQL;
 with AdaBase.Bindings.MySQL;
 with AdaBase.Results.Sets;
 with Ada.Containers.Vectors;
+with Ada.Unchecked_Deallocation;
 
 package AdaBase.Statement.Base.MySQL is
 
@@ -84,12 +85,13 @@ private
    type mysql_canvas;
 
    procedure initialize (Object : in out MySQL_statement);
+   procedure finalize   (Object : in out MySQL_statement);
    procedure internal_post_prep_stmt   (Stmt   : out MySQL_statement);
    procedure internal_direct_post_exec (Stmt   : out MySQL_statement;
                                         newset : Boolean := False);
-   procedure process_direct_result (Stmt : out MySQL_statement);
-   procedure scan_column_information (Stmt : out MySQL_statement);
-   procedure clear_column_information (Stmt : out MySQL_statement);
+   procedure process_direct_result     (Stmt : out MySQL_statement);
+   procedure scan_column_information   (Stmt : out MySQL_statement);
+   procedure clear_column_information  (Stmt : out MySQL_statement);
    procedure construct_bind_slot (Stmt   : MySQL_statement;
                                   struct : out ABM.MYSQL_BIND;
                                   canvas : out mysql_canvas;
@@ -98,8 +100,17 @@ private
    function internal_fetch_row   (Stmt : out MySQL_statement)
                                   return ARS.DataRow_Access;
 
+   function internal_ps_fetch_row (Stmt : out MySQL_statement)
+                                   return ARS.DataRow_Access;
+
    function convert (nv : String) return CAL.Time;
    function convert (nv : String) return AR.settype;
+   function bincopy (data : ABM.ICS.char_array_access;
+                     datalen, max_size : Natural)
+                     return String;
+   function bincopy (data : ABM.ICS.char_array_access;
+                     datalen, max_size : Natural)
+                     return AR.chain;
 
    procedure log_problem
      (statement  : MySQL_statement;
@@ -122,6 +133,34 @@ private
    package VColumns is new AC.Vectors (Index_Type   => Positive,
                                        Element_Type => column_info);
 
+   --  mysql_canvas is used by prepared statement execution
+   --  The Ada types are converted to C types and stored in this record which
+   --  MySQL finds through pointers.
+
+   type mysql_canvas is record
+      length        : aliased ABM.IC.unsigned_long := 0;
+      is_null       : aliased ABM.my_bool          := 0;
+      error         : aliased ABM.my_bool          := 0;
+      buffer_uint8  : ABM.IC.unsigned_char         := 0;
+      buffer_uint16 : ABM.IC.unsigned_short        := 0;
+      buffer_uint32 : ABM.IC.unsigned              := 0;
+      buffer_uint64 : ABM.IC.unsigned_long         := 0;
+      buffer_int8   : ABM.IC.signed_char           := 0;
+      buffer_int16  : ABM.IC.short                 := 0;
+      buffer_int32  : ABM.IC.int                   := 0;
+      buffer_int64  : ABM.IC.long                  := 0;
+      buffer_float  : ABM.IC.C_float               := 0.0;
+      buffer_double : ABM.IC.double                := 0.0;
+      buffer_binary : ABM.ICS.char_array_access    := null;
+      buffer_time   : ABM.MYSQL_TIME;
+   end record;
+   type mysql_canvases is array (Positive range <>) of aliased mysql_canvas;
+   type mysql_canvases_Access is access all mysql_canvases;
+   procedure free_canvas is new Ada.Unchecked_Deallocation
+     (mysql_canvases, mysql_canvases_Access);
+   procedure free_binary is new Ada.Unchecked_Deallocation
+     (ABM.IC.char_array, ABM.ICS.char_array_access);
+
    type MySQL_statement (type_of_statement : stmt_type;
                          log_handler       : ALF.LogFacility_access;
                          mysql_conn        : ACM.MySQL_Connection_Access;
@@ -135,32 +174,11 @@ private
          delivery       : fetch_status          := completed;
          result_handle  : ABM.MYSQL_RES_Access  := null;
          stmt_handle    : ABM.MYSQL_STMT_Access := null;
+         bind_canvas    : mysql_canvases_Access := null;
          num_columns    : Natural               := 0;
          size_of_rowset : TraxID                := 0;
          column_info    : VColumns.Vector;
          sql_final      : access String;
       end record;
-
-   --  mysql_canvas is used by prepared statement execution
-   --  The Ada types are converted to C types and stored in this record which
-   --  MySQL finds through pointers.
-
-   type mysql_canvas is record
-      length        : aliased ABM.IC.unsigned_long := 0;
-      is_null       : ABM.IC.signed_char    := 0;
-      buffer_uint8  : ABM.IC.unsigned_char  := 0;
-      buffer_uint16 : ABM.IC.unsigned_short := 0;
-      buffer_uint32 : ABM.IC.unsigned       := 0;
-      buffer_uint64 : ABM.IC.unsigned_long  := 0;
-      buffer_int8   : ABM.IC.signed_char    := 0;
-      buffer_int16  : ABM.IC.short          := 0;
-      buffer_int32  : ABM.IC.int            := 0;
-      buffer_int64  : ABM.IC.long           := 0;
-      buffer_float  : ABM.IC.C_float        := 0.0;
-      buffer_double : ABM.IC.double         := 0.0;
-      buffer_binary : ABM.ICS.chars_ptr     := ABM.ICS.Null_Ptr;
-      buffer_time   : ABM.MYSQL_TIME;
-   end record;
-   type mysql_canvases is array (Positive range <>) of aliased mysql_canvas;
 
 end AdaBase.Statement.Base.MySQL;

@@ -266,6 +266,9 @@ package AdaBase.Bindings.MySQL is
    end record;
    pragma Convention (C, MYSQL_TIME);
 
+   MYSQL_NO_DATA        : constant := 100;
+   MYSQL_DATA_TRUNCATED : constant := 101;
+
    ---------------------
    --  Library calls  --
    ---------------------
@@ -366,6 +369,35 @@ package AdaBase.Bindings.MySQL is
                                  return my_ulonglong;
    pragma Import (C, mysql_affected_rows, "mysql_affected_rows");
 
+   function mysql_fetch_field (handle : not null access MYSQL_RES)
+                              return MYSQL_FIELD_Access;
+   pragma Import (C, mysql_fetch_field, "mysql_fetch_field");
+
+   function mysql_fetch_row (handle : not null access MYSQL_RES)
+                             return MYSQL_ROW_access;
+   pragma Import (C, mysql_fetch_row, "mysql_fetch_row");
+
+   function mysql_fetch_lengths (result : not null access MYSQL_RES)
+                                 return my_ulong_access;
+   pragma Import (C, mysql_fetch_lengths, "mysql_fetch_lengths");
+
+   function mysql_next_result (handle : not null access MYSQL) return my_int;
+   pragma Import (C, mysql_next_result, "mysql_next_result");
+
+   procedure mysql_get_character_set_info (handle : not null access MYSQL;
+                                           cs     : access MY_CHARSET_INFO);
+   pragma Import (C, mysql_get_character_set_info,
+                  "mysql_get_character_set_info");
+
+   function mysql_set_server_option (handle : not null access MYSQL;
+                                     option : enum_mysql_set_option)
+                                     return my_int;
+   pragma Import (C, mysql_set_server_option, "mysql_set_server_option");
+
+
+   ------------------------------------
+   --  Prepared Statement functions  --
+   ------------------------------------
    function mysql_stmt_init (handle : not null access MYSQL)
                              return MYSQL_STMT_Access;
    pragma Import (C, mysql_stmt_init, "mysql_stmt_init");
@@ -402,31 +434,6 @@ package AdaBase.Bindings.MySQL is
                                      return my_int;
    pragma Import (C, mysql_stmt_store_result, "mysql_stmt_store_result");
 
-   function mysql_fetch_field (handle : not null access MYSQL_RES)
-                              return MYSQL_FIELD_Access;
-   pragma Import (C, mysql_fetch_field, "mysql_fetch_field");
-
-   function mysql_fetch_row (handle : not null access MYSQL_RES)
-                             return MYSQL_ROW_access;
-   pragma Import (C, mysql_fetch_row, "mysql_fetch_row");
-
-   function mysql_fetch_lengths (result : not null access MYSQL_RES)
-                                 return my_ulong_access;
-   pragma Import (C, mysql_fetch_lengths, "mysql_fetch_lengths");
-
-   function mysql_next_result (handle : not null access MYSQL) return my_int;
-   pragma Import (C, mysql_next_result, "mysql_next_result");
-
-   procedure mysql_get_character_set_info (handle : not null access MYSQL;
-                                           cs     : access MY_CHARSET_INFO);
-   pragma Import (C, mysql_get_character_set_info,
-                  "mysql_get_character_set_info");
-
-   function mysql_set_server_option (handle : not null access MYSQL;
-                                     option : enum_mysql_set_option)
-                                     return my_int;
-   pragma Import (C, mysql_set_server_option, "mysql_set_server_option");
-
    function mysql_stmt_prepare (handle   : not null access MYSQL_STMT;
                                 stmt_str : ICS.chars_ptr;
                                 length   : my_ulong) return my_int;
@@ -440,9 +447,30 @@ package AdaBase.Bindings.MySQL is
                                    bind   : access MYSQL_BIND) return my_bool;
    pragma Import (C, mysql_stmt_bind_param, "mysql_stmt_bind_param");
 
+   function mysql_stmt_bind_result (handle : not null access MYSQL_STMT;
+                                    bind   : access MYSQL_BIND) return my_bool;
+   pragma Import (C, mysql_stmt_bind_result, "mysql_stmt_bind_result");
+
    function mysql_stmt_execute  (handle : not null access MYSQL_STMT)
                                  return IC.int;
    pragma Import (C, mysql_stmt_execute, "mysql_stmt_execute");
+
+   function mysql_stmt_num_rows (handle : not null access MYSQL_STMT)
+                                 return my_ulonglong;
+   pragma Import (C, mysql_stmt_num_rows, "mysql_stmt_num_rows");
+
+   function mysql_stmt_affected_rows (handle : not null access MYSQL_STMT)
+                                      return my_ulonglong;
+   pragma Import (C, mysql_stmt_affected_rows, "mysql_stmt_affected_rows");
+
+   function mysql_stmt_field_count (handle : not null access MYSQL_STMT)
+                                    return my_uint;
+   pragma Import (C, mysql_stmt_field_count, "mysql_stmt_field_count");
+
+   function mysql_stmt_fetch (handle : not null access MYSQL_STMT)
+                              return my_int;
+   pragma Import (C, mysql_stmt_fetch, "mysql_stmt_fetch");
+
 private
 
    type MYSQL      is limited null record;

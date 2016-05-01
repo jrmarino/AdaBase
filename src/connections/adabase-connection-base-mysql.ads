@@ -17,6 +17,8 @@ package AdaBase.Connection.Base.MySQL is
 
    type fldlen is array (Positive range <>) of Natural;
 
+   type fetch_status is (success, truncated, spent, error);
+
    overriding
    procedure setAutoCommit (conn : out MySQL_Connection; auto : Boolean);
 
@@ -175,9 +177,30 @@ package AdaBase.Connection.Base.MySQL is
                                   bind : out ABM.MYSQL_BIND_Array)
                                   return Boolean;
 
+   function prep_bind_result     (conn : MySQL_Connection;
+                                  stmt : ABM.MYSQL_STMT_Access;
+                                  bind : out ABM.MYSQL_BIND_Array)
+                                  return Boolean;
+
    function prep_execute         (conn : MySQL_Connection;
                                   stmt : ABM.MYSQL_STMT_Access)
                                   return Boolean;
+
+   function prep_rows_in_result  (conn : MySQL_Connection;
+                                  stmt : ABM.MYSQL_STMT_Access)
+                                  return AffectedRows;
+
+   function prep_fetch_bound     (conn : MySQL_Connection;
+                                  stmt : ABM.MYSQL_STMT_Access)
+                                  return fetch_status;
+
+   function prep_close_statement (conn : MySQL_Connection;
+                                  stmt : ABM.MYSQL_STMT_Access)
+                                  return Boolean;
+
+   function prep_rows_affected_by_execution (conn : MySQL_Connection;
+                                             stmt : ABM.MYSQL_STMT_Access)
+                                             return AffectedRows;
 
    NOT_WHILE_CONNECTED : exception;
    AUTOCOMMIT_FAIL     : exception;

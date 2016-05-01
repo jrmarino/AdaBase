@@ -203,9 +203,9 @@ package body AdaBase.Statement.Base is
    end convert;
 
 
-   ----------------------------------
-   --  convert string to textwide  --
-   ----------------------------------
+   -------------------------------------
+   --  convert string to textwide #1  --
+   -------------------------------------
    function convert (nv : String; maxsize : BLOB_maximum) return AR.textwide
    is
       maxlinks : Natural := nv'Last;
@@ -218,9 +218,18 @@ package body AdaBase.Statement.Base is
    end convert;
 
 
-   -----------------------------------
-   --  convert string to textsuper  --
-   -----------------------------------
+   -------------------------------------
+   --  convert string to textwide #2  --
+   -------------------------------------
+   function convert (nv : String) return AR.textwide is
+   begin
+      return SUW.To_Unbounded_Wide_String (ACC.To_Wide_String (nv));
+   end convert;
+
+
+   --------------------------------------
+   --  convert string to textsuper #1  --
+   --------------------------------------
    function convert (nv : String; maxsize : BLOB_maximum) return AR.textsuper
    is
       maxlinks : Natural := nv'Last;
@@ -230,6 +239,15 @@ package body AdaBase.Statement.Base is
       end if;
       return SWW.To_Unbounded_Wide_Wide_String
         (ACC.To_Wide_Wide_String (nv (nv'First .. maxlinks)));
+   end convert;
+
+
+   --------------------------------------
+   --  convert string to textsuper #2  --
+   --------------------------------------
+   function convert (nv : String) return AR.textsuper is
+   begin
+      return SWW.To_Unbounded_Wide_Wide_String (ACC.To_Wide_Wide_String (nv));
    end convert;
 
 

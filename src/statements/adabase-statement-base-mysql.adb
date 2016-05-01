@@ -25,12 +25,12 @@ package body AdaBase.Statement.Base.MySQL is
       when direct_statement =>
          if Stmt.result_handle /= null then
             Stmt.rows_leftover := True;
-            Stmt.mysql_conn.all.free_result (Stmt.result_handle);
+            Stmt.mysql_conn.free_result (Stmt.result_handle);
          end if;
       when prepared_statement =>
          if Stmt.stmt_handle /= null then
             Stmt.rows_leftover := True;
-            Stmt.mysql_conn.all.prep_free_result (Stmt.stmt_handle);
+            Stmt.mysql_conn.prep_free_result (Stmt.stmt_handle);
          end if;
       end case;
       Stmt.clear_column_information;
@@ -56,9 +56,9 @@ package body AdaBase.Statement.Base.MySQL is
    begin
       case Stmt.type_of_statement is
          when direct_statement   =>
-            return Stmt.mysql_conn.all.driverMessage;
+            return Stmt.mysql_conn.driverMessage;
          when prepared_statement =>
-            return Stmt.mysql_conn.all.prep_DriverMessage
+            return Stmt.mysql_conn.prep_DriverMessage
               (Stmt.stmt_handle);
       end case;
 
@@ -73,9 +73,9 @@ package body AdaBase.Statement.Base.MySQL is
    begin
       case Stmt.type_of_statement is
          when direct_statement   =>
-            return Stmt.mysql_conn.all.lastInsertID;
+            return Stmt.mysql_conn.lastInsertID;
          when prepared_statement =>
-            return Stmt.mysql_conn.all.prep_LastInsertID
+            return Stmt.mysql_conn.prep_LastInsertID
               (Stmt.stmt_handle);
       end case;
    end last_insert_id;
@@ -89,9 +89,9 @@ package body AdaBase.Statement.Base.MySQL is
    begin
       case Stmt.type_of_statement is
          when direct_statement   =>
-            return Stmt.mysql_conn.all.SqlState;
+            return Stmt.mysql_conn.SqlState;
          when prepared_statement =>
-            return Stmt.mysql_conn.all.prep_SqlState
+            return Stmt.mysql_conn.prep_SqlState
               (Stmt.stmt_handle);
       end case;
    end last_sql_state;
@@ -105,9 +105,9 @@ package body AdaBase.Statement.Base.MySQL is
    begin
       case Stmt.type_of_statement is
          when direct_statement   =>
-            return Stmt.mysql_conn.all.driverCode;
+            return Stmt.mysql_conn.driverCode;
          when prepared_statement =>
-            return Stmt.mysql_conn.all.prep_DriverCode
+            return Stmt.mysql_conn.prep_DriverCode
               (Stmt.stmt_handle);
       end case;
    end last_driver_code;
@@ -131,8 +131,8 @@ package body AdaBase.Statement.Base.MySQL is
          --  Check to make sure all prepared markers are bound
          for sx in Natural range 1 .. num_markers loop
             if not Stmt.realmccoy.Element (sx).bound then
-               raise PS_COLUMN_UNBOUND
-                 with "Prep Stmt column" & sx'Img & " missing value";
+               raise STMT_PREPARATION
+                 with "Prep Stmt column" & sx'Img & " unbound";
             end if;
          end loop;
          declare
@@ -145,7 +145,7 @@ package body AdaBase.Statement.Base.MySQL is
                                          marker => sx);
             end loop;
 
-            if not Stmt.mysql_conn.all.prep_bind_parameters
+            if not Stmt.mysql_conn.prep_bind_parameters
               (Stmt.stmt_handle, slots)
             then
                Stmt.log_problem (category => statement_preparation,
@@ -158,7 +158,7 @@ package body AdaBase.Statement.Base.MySQL is
                Stmt.log_nominal (category => statement_execution,
                                  message => "Exec with" & num_markers'Img &
                                    " bound parameters");
-               if Stmt.mysql_conn.all.prep_execute (Stmt.stmt_handle) then
+               if Stmt.mysql_conn.prep_execute (Stmt.stmt_handle) then
                   Stmt.successful_execution := True;
                else
                   Stmt.log_problem (category => statement_execution,
@@ -170,20 +170,14 @@ package body AdaBase.Statement.Base.MySQL is
 
             --  Recover dynamically allocated data
             for sx in slots'Range loop
-               case Stmt.realmccoy.Element (sx).output_type is
-                  when ft_textual | ft_widetext | ft_supertext |
-                       ft_chain | ft_enumtype | ft_settype =>
-                     ABM.ICS.Free (vault (sx).buffer_binary);
-                  when others =>
-                     null;
-               end case;
+               free_binary (vault (sx).buffer_binary);
             end loop;
          end;
       else
          --  No binding required, just execute the prepared statement
          Stmt.log_nominal (category => statement_execution,
                            message => "Exec without bound parameters");
-         if Stmt.mysql_conn.all.prep_execute (Stmt.stmt_handle) then
+         if Stmt.mysql_conn.prep_execute (Stmt.stmt_handle) then
             Stmt.successful_execution := True;
          else
             Stmt.log_problem (category => statement_execution,
@@ -192,6 +186,7 @@ package body AdaBase.Statement.Base.MySQL is
             status_successful := False;
          end if;
       end if;
+
       Stmt.internal_post_prep_stmt;
 
       return status_successful;
@@ -252,9 +247,8 @@ package body AdaBase.Statement.Base.MySQL is
                     with "marker mismatch," & Object.realmccoy.Length'Img
                       & " expected but" & params'Img & " found by MySQL";
                end if;
-               Object.log_nominal
-                 (category => statement_preparation,
-                  message => Object.sql_final.all);
+               Object.log_nominal (category => statement_preparation,
+                                   message => Object.sql_final.all);
             end;
             Object.result_handle := Object.mysql_conn.prep_result_metadata
                                     (Object.stmt_handle);
@@ -262,8 +256,26 @@ package body AdaBase.Statement.Base.MySQL is
             --  statements very well may not.  The procedure below ends early
             --  after erasing column data if the result_handle above is null.
             Object.scan_column_information;
+            Object.mysql_conn.free_result (Object.result_handle);
       end case;
    end initialize;
+
+
+   ----------------
+   --  finalize  --
+   ----------------
+   overriding
+   procedure finalize (Object : in out MySQL_statement) is
+   begin
+      if Object.type_of_statement = prepared_statement then
+         if not Object.mysql_conn.prep_close_statement (Object.stmt_handle)
+         then
+            Object.log_problem (category   => statement_preparation,
+                                message    => "Deallocating statement memory",
+                                pull_codes => True);
+         end if;
+      end if;
+   end finalize;
 
 
    ---------------------
@@ -274,9 +286,9 @@ package body AdaBase.Statement.Base.MySQL is
       use type ABM.MYSQL_RES_Access;
    begin
       case Stmt.con_buffered is
-         when True => Stmt.mysql_conn.all.store_result
+         when True => Stmt.mysql_conn.store_result
               (result_handle => Stmt.result_handle);
-         when False => Stmt.mysql_conn.all.use_result
+         when False => Stmt.mysql_conn.use_result
               (result_handle => Stmt.result_handle);
       end case;
       Stmt.result_present := (Stmt.result_handle /= null);
@@ -312,9 +324,14 @@ package body AdaBase.Statement.Base.MySQL is
    --------------------------------
    procedure clear_column_information (Stmt : out MySQL_statement) is
    begin
+      Stmt.num_columns := 0;
       Stmt.column_info.Clear;
       Stmt.crate.Clear;
       Stmt.headings_map.Clear;
+      for sx in Stmt.bind_canvas.all'Range loop
+         free_binary (Stmt.bind_canvas (sx).buffer_binary);
+      end loop;
+      free_canvas (Stmt.bind_canvas);
    end clear_column_information;
 
 
@@ -355,6 +372,8 @@ package body AdaBase.Statement.Base.MySQL is
       if Stmt.result_handle = null then
          return;
       end if;
+      Stmt.num_columns := Stmt.mysql_conn.fields_in_result
+                          (Stmt.result_handle);
       loop
          field := Stmt.mysql_conn.fetch_field
            (result_handle => Stmt.result_handle);
@@ -368,10 +387,9 @@ package body AdaBase.Statement.Base.MySQL is
             info.table       := fn (Stmt.mysql_conn.field_name_table (field));
             info.mysql_type  := field.field_type;
             info.null_possible := Stmt.mysql_conn.field_allows_null (field);
-            Stmt.mysql_conn.field_data_type
-              (field    => field,
-               std_type => info.field_type,
-               size     => info.field_size);
+            Stmt.mysql_conn.field_data_type (field    => field,
+                                             std_type => info.field_type,
+                                             size     => info.field_size);
             Stmt.column_info.Append (New_Item => info);
             --  The following pre-populates for bind support
             Stmt.crate.Append (New_Item => brec);
@@ -447,7 +465,13 @@ package body AdaBase.Statement.Base.MySQL is
       if Stmt.delivery = completed then
          return False;
       end if;
-      datarow := Stmt.internal_fetch_row;
+      case Stmt.type_of_statement is
+         when prepared_statement =>
+            raise INVALID_FOR_RESULT_SET with "not yet implemented";
+            --  TBW
+         when direct_statement =>
+            datarow := Stmt.internal_fetch_row;
+      end case;
       return (datarow /= null);
    end fetch_next;
 
@@ -461,7 +485,13 @@ package body AdaBase.Statement.Base.MySQL is
       if Stmt.delivery = completed then
          return False;
       end if;
-      return Stmt.internal_fetch_bound;
+      case Stmt.type_of_statement is
+         when prepared_statement =>
+            raise INVALID_FOR_RESULT_SET with "not yet implemented";
+            return False;
+         when direct_statement =>
+            return Stmt.internal_fetch_bound;
+      end case;
    end fetch_bound;
 
 
@@ -507,7 +537,7 @@ package body AdaBase.Statement.Base.MySQL is
    begin
       data_fetched := False;
       if Stmt.result_handle /= null then
-         Stmt.mysql_conn.all.free_result (Stmt.result_handle);
+         Stmt.mysql_conn.free_result (Stmt.result_handle);
       end if;
       data_present := Stmt.mysql_conn.fetch_next_set;
       if not data_present then
@@ -612,9 +642,9 @@ package body AdaBase.Statement.Base.MySQL is
    end convert;
 
 
-   ---------------------------------
-   --  internal_fetch_row_direct  --
-   ---------------------------------
+   --------------------------
+   --  internal_fetch_row  --
+   --------------------------
    function internal_fetch_row (Stmt : out MySQL_statement)
                                 return ARS.DataRow_Access
    is
@@ -736,6 +766,186 @@ package body AdaBase.Statement.Base.MySQL is
 
    end internal_fetch_row;
 
+
+   ------------------
+   --  bincopy #1  --
+   ------------------
+   function bincopy (data : ABM.ICS.char_array_access;
+                     datalen, max_size : Natural) return String
+   is
+      reslen : Natural := datalen;
+   begin
+      if reslen > max_size then
+         reslen := max_size;
+      end if;
+      declare
+         result : String (1 .. reslen) := (others => '_');
+      begin
+         for x in Natural range 1 .. reslen loop
+            result (x) := Character (data.all (ABM.IC.size_t (x)));
+         end loop;
+         return result;
+      end;
+   end bincopy;
+
+
+   ------------------
+   --  bincopy #2  --
+   ------------------
+   function bincopy (data : ABM.ICS.char_array_access;
+                     datalen, max_size : Natural) return AR.chain
+   is
+      reslen : Natural := datalen;
+   begin
+      if reslen > max_size then
+         reslen := max_size;
+      end if;
+      declare
+         result : AR.chain (1 .. reslen) := (others => 0);
+         jimmy : Character;
+      begin
+         for x in Natural range 1 .. reslen loop
+            jimmy := Character (data.all (ABM.IC.size_t (x)));
+            result (x) := AR.nbyte1 (Character'Pos (jimmy));
+         end loop;
+         return result;
+      end;
+   end bincopy;
+
+
+   -----------------------------
+   --  internal_ps_fetch_row  --
+   -----------------------------
+   function internal_ps_fetch_row (Stmt : out MySQL_statement)
+                                   return ARS.DataRow_Access
+   is
+      use type ABM.ICS.chars_ptr;
+      use type ABM.MYSQL_ROW_access;
+      use type ACM.fetch_status;
+      status : ACM.fetch_status;
+   begin
+      status := Stmt.mysql_conn.prep_fetch_bound (Stmt.stmt_handle);
+      if status = ACM.spent then
+         Stmt.delivery := completed;
+         Stmt.clear_column_information;
+      elsif status = ACM.truncated then
+         Stmt.log_nominal (category => statement_execution,
+                           message  => "data truncated");
+         Stmt.delivery := progressing;
+      elsif status = ACM.error then
+         Stmt.log_problem (category => statement_execution,
+                           message  => "prep statement fetch error",
+                           pull_codes => True);
+         Stmt.delivery := completed;
+      else
+         Stmt.delivery := progressing;
+      end if;
+
+      declare
+         maxlen : constant Natural := Stmt.num_columns;
+         result : ARS.DataRow_Access := new ARS.DataRow;
+      begin
+         for F in 1 .. maxlen loop
+            declare
+               cv       : mysql_canvas renames Stmt.bind_canvas (F);
+               dvariant : ARF.variant;
+               field    : ARF.field_access;
+               last_one : constant Boolean := (F = maxlen);
+               datalen  : constant Natural := Natural (cv.length);
+               heading  : constant String := CT.USS
+                 (Stmt.column_info.Element (Index => F).field_name);
+            begin
+               case Stmt.column_info.Element (Index => F).field_type is
+                  when ft_nbyte0 =>
+                     dvariant := (datatype => ft_nbyte0,
+                                  v00 => Natural (cv.buffer_uint8) = 1);
+                  when ft_nbyte1 =>
+                     dvariant := (datatype => ft_nbyte1,
+                                  v01 => AR.nbyte1 (cv.buffer_uint8));
+                  when ft_nbyte2 =>
+                     dvariant := (datatype => ft_nbyte2,
+                                  v02 => AR.nbyte2 (cv.buffer_uint16));
+                  when ft_nbyte3 =>
+                     dvariant := (datatype => ft_nbyte3,
+                                  v03 => AR.nbyte3 (cv.buffer_uint32));
+                  when ft_nbyte4 =>
+                     dvariant := (datatype => ft_nbyte4,
+                                  v04 => AR.nbyte4 (cv.buffer_uint32));
+                  when ft_nbyte8 =>
+                     dvariant := (datatype => ft_nbyte8,
+                                  v05 => AR.nbyte8 (cv.buffer_uint64));
+                  when ft_byte1  =>
+                     dvariant := (datatype => ft_byte1,
+                                  v06 => AR.byte1 (cv.buffer_int8));
+                  when ft_byte2  =>
+                     dvariant := (datatype => ft_byte2,
+                                  v07 => AR.byte2 (cv.buffer_int16));
+                  when ft_byte3  =>
+                     dvariant := (datatype => ft_byte3,
+                                  v08 => AR.byte3 (cv.buffer_int32));
+                  when ft_byte4  =>
+                     dvariant := (datatype => ft_byte4,
+                                  v09 => AR.byte4 (cv.buffer_int32));
+                  when ft_byte8  =>
+                     dvariant := (datatype => ft_byte8,
+                                  v10 => AR.byte8 (cv.buffer_int64));
+                  when ft_real9  =>
+                     dvariant := (datatype => ft_real9,
+                                  v11 => AR.real9 (cv.buffer_float));
+                  when ft_real18 =>
+                     dvariant := (datatype => ft_real18,
+                                  v12 => AR.real18 (cv.buffer_double));
+                  when ft_textual =>
+                     dvariant := (datatype => ft_textual,
+                                  v13 => CT.SUS (bincopy (cv.buffer_binary,
+                                    datalen, Stmt.con_max_blob)));
+                  when ft_widetext =>
+                     dvariant := (datatype => ft_widetext,
+                                  v14 => convert (bincopy (cv.buffer_binary,
+                                    datalen, Stmt.con_max_blob)));
+                  when ft_supertext =>
+                     dvariant := (datatype => ft_supertext,
+                                  v15 => convert (bincopy (cv.buffer_binary,
+                                    datalen, Stmt.con_max_blob)));
+                  when ft_timestamp =>
+                     dvariant := (datatype => ft_timestamp,
+                                  v16 => CFM.Time_Of
+                                    (Year => Natural (cv.buffer_time.year),
+                                     Month => Natural (cv.buffer_time.month),
+                                     Day => Natural (cv.buffer_time.day),
+                                     Hour => Natural (cv.buffer_time.hour),
+                                     Minute => Natural (cv.buffer_time.minute),
+                                     Second => Natural (cv.buffer_time.second),
+                                     Sub_Second => CFM.Second_Duration
+                                       (Natural (cv.buffer_time.second_part)
+                                        / 1000000))
+                                 );
+                  when ft_enumtype | ft_settype =>
+                     raise STMT_EXECUTION
+                       with "The data is not expected to be labeled as " &
+                       Stmt.column_info.Element (F).field_type'Img & " type";
+                  when ft_chain => null;
+               end case;
+               case Stmt.column_info.Element (Index => F).field_type is
+                  when ft_chain =>
+                     field := ARF.spawn_field
+                       (binob => bincopy (cv.buffer_binary, datalen,
+                        Stmt.con_max_blob));
+                  when others =>
+                     field := ARF.spawn_field
+                       (data => dvariant,
+                        null_data => Natural (cv.is_null) = 1);
+               end case;
+
+               result.push (heading    => heading,
+                            field      => field,
+                            last_field => last_one);
+            end;
+         end loop;
+         return result;
+      end;
+
+   end internal_ps_fetch_row;
 
    -----------------------------------
    --  internal_fetch_bound_direct  --
@@ -867,8 +1077,8 @@ package body AdaBase.Statement.Base.MySQL is
    procedure internal_direct_post_exec (Stmt : out MySQL_statement;
                                         newset : Boolean := False) is
    begin
-      Stmt.num_columns := 0;
       Stmt.successful_execution := False;
+      Stmt.size_of_rowset := 0;
       if newset then
          Stmt.log_nominal (category => statement_execution,
                            message => "Fetch next rowset from: "
@@ -881,19 +1091,17 @@ package body AdaBase.Statement.Base.MySQL is
       end if;
       Stmt.successful_execution := True;
       if Stmt.result_present then
-         Stmt.num_columns := Stmt.mysql_conn.fields_in_result
-                               (Stmt.result_handle);
+         Stmt.scan_column_information;
          if Stmt.con_buffered then
             Stmt.size_of_rowset := Stmt.mysql_conn.rows_in_result
                                      (Stmt.result_handle);
          end if;
-         Stmt.scan_column_information;
          Stmt.delivery := pending;
       else
          declare
             returned_cols : Natural;
          begin
-            returned_cols := Stmt.mysql_conn.all.field_count;
+            returned_cols := Stmt.mysql_conn.field_count;
             if returned_cols = 0 then
                Stmt.impacted := Stmt.mysql_conn.rows_affected_by_execution;
             else
@@ -918,32 +1126,115 @@ package body AdaBase.Statement.Base.MySQL is
    -------------------------------
    --  internal_post_prep_stmt  --
    -------------------------------
-   procedure internal_post_prep_stmt (Stmt : out MySQL_statement) is
+   procedure internal_post_prep_stmt (Stmt : out MySQL_statement)
+   is
+      use type mysql_canvases_Access;
    begin
-      Stmt.num_columns := 0;
-      Stmt.process_direct_result;
-      if Stmt.result_present then
-         Stmt.num_columns := Stmt.mysql_conn.fields_in_result
-                               (Stmt.result_handle);
-         if Stmt.con_buffered then
-            Stmt.size_of_rowset := Stmt.mysql_conn.rows_in_result
-                                     (Stmt.result_handle);
-         end if;
-         Stmt.scan_column_information;
-         Stmt.delivery := pending;
-      else
-         declare
-            returned_cols : Natural;
-         begin
-            returned_cols := Stmt.mysql_conn.all.field_count;
-            if returned_cols = 0 then
-               Stmt.impacted := Stmt.mysql_conn.rows_affected_by_execution;
-            else
-               raise ACM.RESULT_FAIL with "Columns returned without result";
-            end if;
-         end;
-         Stmt.delivery := completed;
+      Stmt.delivery := completed;  --  default for early returns
+      if Stmt.num_columns = 0 then
+         Stmt.impacted := Stmt.mysql_conn.prep_rows_affected_by_execution
+           (Stmt.stmt_handle);
+         return;
       end if;
+
+      if Stmt.bind_canvas /= null then
+         raise STMT_PREPARATION with
+           "Previous bind canvas present (expected to be null)";
+      end if;
+      Stmt.bind_canvas := new mysql_canvases (1 .. Stmt.num_columns);
+
+      declare
+         slots : ABM.MYSQL_BIND_Array (1 .. Stmt.num_columns);
+         ft    : field_types;
+         fsize : Natural;
+      begin
+         for sx in slots'Range loop
+            slots (sx).is_null     := Stmt.bind_canvas (sx).is_null'Access;
+            slots (sx).length      := Stmt.bind_canvas (sx).length'Access;
+            slots (sx).error       := Stmt.bind_canvas (sx).error'Access;
+            slots (sx).buffer_type := Stmt.column_info.Element (sx).mysql_type;
+            ft := Stmt.column_info.Element (sx).field_type;
+            case slots (sx).buffer_type is
+               when ABM.MYSQL_TYPE_DECIMAL | ABM.MYSQL_TYPE_DOUBLE =>
+                  slots (sx).buffer :=
+                    Stmt.bind_canvas (sx).buffer_double'Address;
+               when ABM.MYSQL_TYPE_FLOAT =>
+                  slots (sx).buffer :=
+                    Stmt.bind_canvas (sx).buffer_float'Address;
+               when ABM.MYSQL_TYPE_TINY =>
+                  if ft = ft_nbyte0 or else ft = ft_nbyte1 then
+                     slots (sx).is_unsigned := 1;
+                     slots (sx).buffer :=
+                       Stmt.bind_canvas (sx).buffer_uint8'Address;
+                  else
+                     slots (sx).buffer :=
+                       Stmt.bind_canvas (sx).buffer_int8'Address;
+                  end if;
+               when ABM.MYSQL_TYPE_SHORT | ABM.MYSQL_TYPE_YEAR =>
+                  if ft = ft_nbyte2 then
+                     slots (sx).is_unsigned := 1;
+                     slots (sx).buffer :=
+                       Stmt.bind_canvas (sx).buffer_uint16'Address;
+                  else
+                     slots (sx).buffer :=
+                       Stmt.bind_canvas (sx).buffer_int16'Address;
+                  end if;
+               when ABM.MYSQL_TYPE_INT24 | ABM.MYSQL_TYPE_LONG =>
+                  if ft = ft_nbyte3 or else ft = ft_nbyte4 then
+                     slots (sx).is_unsigned := 1;
+                     slots (sx).buffer :=
+                       Stmt.bind_canvas (sx).buffer_uint32'Address;
+                  else
+                     slots (sx).buffer :=
+                       Stmt.bind_canvas (sx).buffer_int32'Address;
+                  end if;
+               when ABM.MYSQL_TYPE_LONGLONG =>
+                  if ft = ft_nbyte8 then
+                     slots (sx).is_unsigned := 1;
+                     slots (sx).buffer :=
+                       Stmt.bind_canvas (sx).buffer_uint64'Address;
+                  else
+                     slots (sx).buffer :=
+                       Stmt.bind_canvas (sx).buffer_int64'Address;
+                  end if;
+               when ABM.MYSQL_TYPE_DATE | ABM.MYSQL_TYPE_TIMESTAMP |
+                    ABM.MYSQL_TYPE_TIME | ABM.MYSQL_TYPE_DATETIME =>
+                  slots (sx).buffer :=
+                    Stmt.bind_canvas (sx).buffer_time'Address;
+               when ABM.MYSQL_TYPE_BIT | ABM.MYSQL_TYPE_TINY_BLOB |
+                    ABM.MYSQL_TYPE_MEDIUM_BLOB | ABM.MYSQL_TYPE_LONG_BLOB |
+                    ABM.MYSQL_TYPE_BLOB | ABM.MYSQL_TYPE_STRING |
+                    ABM.MYSQL_TYPE_VAR_STRING | ABM.MYSQL_TYPE_NEWDECIMAL =>
+                  fsize := Stmt.column_info.Element (sx).field_size;
+                  slots (sx).buffer_length := ABM.IC.unsigned_long (fsize);
+                  Stmt.bind_canvas (sx).buffer_binary := new ABM.IC.char_array
+                    (1 .. ABM.IC.size_t (fsize));
+                  slots (sx).buffer :=
+                    Stmt.bind_canvas (sx).buffer_binary'Address;
+               when ABM.MYSQL_TYPE_NULL | ABM.MYSQL_TYPE_NEWDATE |
+                    ABM.MYSQL_TYPE_VARCHAR | ABM.MYSQL_TYPE_GEOMETRY |
+                    ABM.MYSQL_TYPE_ENUM | ABM.MYSQL_TYPE_SET =>
+                  raise STMT_PREPARATION with
+                    "Unsupported MySQL type for result binding attempted";
+            end case;
+         end loop;
+
+         if not Stmt.mysql_conn.prep_bind_result (Stmt.stmt_handle, slots)
+         then
+            Stmt.log_problem (category => statement_preparation,
+                              message => "failed to bind result structures",
+                              pull_codes => True);
+            return;
+         end if;
+      end;
+
+      if Stmt.con_buffered then
+         Stmt.mysql_conn.prep_store_result (Stmt.stmt_handle);
+         Stmt.size_of_rowset := Stmt.mysql_conn.prep_rows_in_result
+                                (Stmt.stmt_handle);
+      end if;
+      Stmt.delivery := pending;
+
    end internal_post_prep_stmt;
 
 
@@ -955,6 +1246,8 @@ package body AdaBase.Statement.Base.MySQL is
                                   canvas : out mysql_canvas;
                                   marker : Positive)
    is
+      procedure set_binary_buffer (Str : String);
+
       zone    : bindrec renames Stmt.realmccoy.Element (marker);
       vartype : constant field_types := zone.output_type;
 
@@ -977,6 +1270,19 @@ package body AdaBase.Statement.Base.MySQL is
       use type AR.time_access;
       use type AR.enum_access;
       use type AR.settype_access;
+
+      procedure set_binary_buffer (Str : String)
+      is
+         len : constant ABM.IC.size_t := ABM.IC.size_t (Str'Length);
+      begin
+         canvas.buffer_binary := new ABM.IC.char_array (1 .. len);
+         canvas.buffer_binary.all := ABM.IC.To_C (Str, False);
+         canvas.length := ABM.IC.unsigned_long (len);
+
+         struct.buffer       := canvas.buffer_binary'Address;
+         struct.length       := canvas.length'Unchecked_Access;
+      end set_binary_buffer;
+
    begin
       case vartype is
          when ft_nbyte0 | ft_nbyte1 | ft_nbyte2 | ft_nbyte3 | ft_nbyte4 |
@@ -1095,60 +1401,24 @@ package body AdaBase.Statement.Base.MySQL is
             end if;
          when ft_textual =>
             struct.buffer_type := ABM.MYSQL_TYPE_STRING;
-            struct.buffer      := canvas.buffer_binary'Address;
-            struct.length      := canvas.length'Unchecked_Access;
             if zone.a13 = null then
-               declare
-                  str : constant String := ARC.convert (zone.v13);
-               begin
-                  canvas.buffer_binary := ABM.ICS.New_String (str);
-                  canvas.length := ABM.IC.unsigned_long (str'Length + 1);
-               end;
+               set_binary_buffer (ARC.convert (zone.v13));
             else
-               declare
-                  str : constant String := ARC.convert (zone.a13.all);
-               begin
-                  canvas.buffer_binary := ABM.ICS.New_String (str);
-                  canvas.length := ABM.IC.unsigned_long (str'Length + 1);
-               end;
+               set_binary_buffer (ARC.convert (zone.a13.all));
             end if;
          when ft_widetext =>
             struct.buffer_type := ABM.MYSQL_TYPE_STRING;
-            struct.buffer      := canvas.buffer_binary'Address;
-            struct.length      := canvas.length'Unchecked_Access;
             if zone.a14 = null then
-               declare
-                  str : constant String := ARC.convert (zone.v14);
-               begin
-                  canvas.buffer_binary := ABM.ICS.New_String (str);
-                  canvas.length := ABM.IC.unsigned_long (str'Length + 1);
-               end;
+               set_binary_buffer (ARC.convert (zone.v14));
             else
-               declare
-                  str : constant String := ARC.convert (zone.a14.all);
-               begin
-                  canvas.buffer_binary := ABM.ICS.New_String (str);
-                  canvas.length := ABM.IC.unsigned_long (str'Length + 1);
-               end;
+               set_binary_buffer (ARC.convert (zone.a14.all));
             end if;
          when ft_supertext =>
             struct.buffer_type := ABM.MYSQL_TYPE_STRING;
-            struct.buffer      := canvas.buffer_binary'Address;
-            struct.length      := canvas.length'Unchecked_Access;
             if zone.a15 = null then
-               declare
-                  str : constant String := ARC.convert (zone.v15);
-               begin
-                  canvas.buffer_binary := ABM.ICS.New_String (str);
-                  canvas.length := ABM.IC.unsigned_long (str'Length + 1);
-               end;
+               set_binary_buffer (ARC.convert (zone.v15));
             else
-               declare
-                  str : constant String := ARC.convert (zone.a15.all);
-               begin
-                  canvas.buffer_binary := ABM.ICS.New_String (str);
-                  canvas.length := ABM.IC.unsigned_long (str'Length + 1);
-               end;
+               set_binary_buffer (ARC.convert (zone.a15.all));
             end if;
          when ft_timestamp =>
             struct.buffer_type := ABM.MYSQL_TYPE_DATETIME;
@@ -1173,51 +1443,28 @@ package body AdaBase.Statement.Base.MySQL is
             end;
          when ft_chain =>
             struct.buffer_type := ABM.MYSQL_TYPE_BLOB;
-            struct.buffer      := canvas.buffer_binary'Address;
-            struct.length      := canvas.length'Unchecked_Access;
             --  Chains are only available via access
-            canvas.length := ABM.IC.unsigned_long (zone.a17.all'Length);
             declare
                chainstr : String (1 .. zone.a17.all'Length);
             begin
                for x in chainstr'Range loop
                   chainstr (x) := Character'Val (zone.a17.all (x));
                end loop;
-               canvas.buffer_binary := ABM.ICS.New_Char_Array
-                 (ABM.IC.To_C (Item => chainstr, Append_Nul => False));
+               set_binary_buffer (chainstr);
             end;
          when ft_enumtype =>
             --  ENUM is essentially a specific string on MySQL
             struct.buffer_type := ABM.MYSQL_TYPE_STRING;
-            struct.buffer      := canvas.buffer_binary'Address;
-            struct.length      := canvas.length'Unchecked_Access;
             if zone.a18 = null then
-               declare
-                  str : constant String := ARC.convert (zone.v18);
-               begin
-                  canvas.buffer_binary := ABM.ICS.New_String (str);
-                  canvas.length := ABM.IC.unsigned_long (str'Length + 1);
-               end;
+               set_binary_buffer (ARC.convert (zone.v18));
             else
-               declare
-                  str : constant String := ARC.convert (zone.a18.all);
-               begin
-                  canvas.buffer_binary := ABM.ICS.New_String (str);
-                  canvas.length := ABM.IC.unsigned_long (str'Length + 1);
-               end;
+               set_binary_buffer (ARC.convert (zone.a18.all));
             end if;
          when ft_settype =>
             --  Set types are imploded strings on MySQL
             --  Only access is available here
             struct.buffer_type := ABM.MYSQL_TYPE_STRING;
-            struct.buffer      := canvas.buffer_binary'Address;
-            struct.length      := canvas.length'Unchecked_Access;
-            declare
-               str : constant String := ARC.convert (zone.a19);
-            begin
-               canvas.buffer_binary := ABM.ICS.New_String (str);
-               canvas.length := ABM.IC.unsigned_long (str'Length + 1);
-            end;
+            set_binary_buffer (ARC.convert (zone.a19));
       end case;
    end construct_bind_slot;
 

@@ -928,6 +928,23 @@ package body AdaBase.Connection.Base.MySQL is
    end prep_bind_parameters;
 
 
+   ------------------------
+   --  prep_bind_result  --
+   ------------------------
+   function prep_bind_result (conn : MySQL_Connection;
+                              stmt : ABM.MYSQL_STMT_Access;
+                              bind : out ABM.MYSQL_BIND_Array)
+                              return Boolean
+   is
+      use type ABM.my_bool;
+      result : ABM.my_bool;
+   begin
+      result := ABM.mysql_stmt_bind_result (handle => stmt,
+                                            bind => bind (1)'Access);
+      return (result = 0);
+   end prep_bind_result;
+
+
    --------------------
    --  prep_execute  --
    --------------------
@@ -940,6 +957,74 @@ package body AdaBase.Connection.Base.MySQL is
       result := ABM.mysql_stmt_execute (handle => stmt);
       return (result = 0);
    end prep_execute;
+
+
+   ---------------------------
+   --  prep_rows_in_result  --
+   ---------------------------
+   function prep_rows_in_result (conn : MySQL_Connection;
+                                 stmt : ABM.MYSQL_STMT_Access)
+                                 return AffectedRows
+   is
+      result : ABM.my_ulonglong;
+   begin
+      result := ABM.mysql_stmt_num_rows (handle => stmt);
+      return AffectedRows (result);
+   end prep_rows_in_result;
+
+
+   ------------------------
+   --  prep_fetch_bound  --
+   ------------------------
+   function prep_fetch_bound (conn : MySQL_Connection;
+                              stmt : ABM.MYSQL_STMT_Access)
+                              return fetch_status
+   is
+      use type ABM.my_int;
+      result : ABM.my_int;
+   begin
+      result := ABM.mysql_stmt_fetch (handle => stmt);
+      if result = 0 then
+         return success;
+      elsif result = 1 then
+         return error;
+      elsif result = ABM.MYSQL_NO_DATA then
+         return spent;
+      elsif result = ABM.MYSQL_DATA_TRUNCATED then
+         return truncated;
+      else
+         raise RESULT_FAIL with "Statement fetch result unrecognized";
+      end if;
+   end prep_fetch_bound;
+
+
+   ---------------------------------------
+   --  prep_rows_affected_by_execution  --
+   ---------------------------------------
+   function prep_rows_affected_by_execution (conn : MySQL_Connection;
+                                             stmt : ABM.MYSQL_STMT_Access)
+                                             return AffectedRows
+   is
+      result : ABM.my_ulonglong;
+   begin
+      result := ABM.mysql_stmt_affected_rows (handle => stmt);
+      return AffectedRows (result);
+   end prep_rows_affected_by_execution;
+
+
+   ----------------------------
+   --  prep_close_statement  --
+   ----------------------------
+   function prep_close_statement (conn : MySQL_Connection;
+                                  stmt : ABM.MYSQL_STMT_Access)
+                                  return Boolean
+   is
+      use type ABM.my_bool;
+      result : ABM.my_bool;
+   begin
+      result := ABM.mysql_stmt_close (handle => stmt);
+      return (result = 0);
+   end prep_close_statement;
 
 
    ------------------------------------------------------------------------

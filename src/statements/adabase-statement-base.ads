@@ -46,7 +46,8 @@ package AdaBase.Statement.Base is
    BINDING_COLUMN_NOT_FOUND : exception;
    BINDING_TYPE_MISMATCH    : exception;
    BINDING_SIZE_MISMATCH    : exception;
-   PS_COLUMN_UNBOUND        : exception;
+   STMT_PREPARATION         : exception;
+   STMT_EXECUTION           : exception;
    MARKER_NOT_FOUND         : exception;
 
    overriding
@@ -588,6 +589,8 @@ private
    function convert (nv : String; maxsize : BLOB_maximum) return AR.textual;
    function convert (nv : String; maxsize : BLOB_maximum) return AR.textwide;
    function convert (nv : String; maxsize : BLOB_maximum) return AR.textsuper;
+   function convert (nv : String) return AR.textwide;
+   function convert (nv : String) return AR.textsuper;
 
    type bindrec (output_type : field_types := ft_nbyte0) is record
       bound : Boolean := False;
