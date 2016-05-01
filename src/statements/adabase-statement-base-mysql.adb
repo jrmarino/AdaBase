@@ -328,10 +328,12 @@ package body AdaBase.Statement.Base.MySQL is
       Stmt.column_info.Clear;
       Stmt.crate.Clear;
       Stmt.headings_map.Clear;
-      for sx in Stmt.bind_canvas.all'Range loop
-         free_binary (Stmt.bind_canvas (sx).buffer_binary);
-      end loop;
-      free_canvas (Stmt.bind_canvas);
+      if Stmt.bind_canvas /= null then
+         for sx in Stmt.bind_canvas.all'Range loop
+            free_binary (Stmt.bind_canvas (sx).buffer_binary);
+         end loop;
+         free_canvas (Stmt.bind_canvas);
+      end if;
    end clear_column_information;
 
 
@@ -1131,10 +1133,12 @@ package body AdaBase.Statement.Base.MySQL is
    begin
       Stmt.delivery := completed;  --  default for early returns
       if Stmt.num_columns = 0 then
+         Stmt.result_present := False;
          Stmt.impacted := Stmt.mysql_conn.prep_rows_affected_by_execution
-           (Stmt.stmt_handle);
+                           (Stmt.stmt_handle);
          return;
       end if;
+      Stmt.result_present := True;
 
       if Stmt.bind_canvas /= null then
          raise STMT_PREPARATION with
