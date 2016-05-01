@@ -467,8 +467,7 @@ package body AdaBase.Statement.Base.MySQL is
       end if;
       case Stmt.type_of_statement is
          when prepared_statement =>
-            raise INVALID_FOR_RESULT_SET with "not yet implemented";
-            --  TBW
+            datarow := Stmt.internal_ps_fetch_row;
          when direct_statement =>
             datarow := Stmt.internal_fetch_row;
       end case;
