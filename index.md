@@ -75,12 +75,12 @@ title: AdaBase by jrmarino
 <div class="twocol">
 <h3>AdaBase.Statement</h3>
 <ul>
-<li>func rows_affected</li>
+<li>{{ page.rows_affected }}</li>
 <li>{{ page.f_rows_returned }}</li>
 <li>{{ page.f_successful }}</li>
 <li>{{ page.f_data_discarded }}</li>
 <li>{{ page.f_column_count }}</li>
-<li>func last_insert_id </li>
+<li>{{ page.f_stmt_last_insert_id }}</li>
 <li>{{ page.f_stmt_driver_state }}</li>
 <li>{{ page.f_stmt_driver_code }}</li>
 <li>{{ page.f_stmt_driver_msg }}</li>
