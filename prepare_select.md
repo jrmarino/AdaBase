@@ -107,6 +107,7 @@ begin
       CON.STMT := CON.DR.prepare (sql);
       if CON.STMT.execute then
          TIO.Put_Line ("Inserted row " & CON.STMT.last_insert_id'Img);
+         TIO.Put_Line ("Affected rows: " & CON.STMT.rows_affected'Img);
       end if;
       CON.DR.rollback;
    end;
@@ -132,6 +133,7 @@ tomato (red) 9 calories
 2016-05-02 18:28:28    mysql :  Prepare Stmt : INSERT INTO fruits (fruit, color, calories) VALUES ('potato','tan', 77)
 2016-05-02 18:28:28    mysql :  Execute Stmt : Exec without bound parameters
 Inserted row  36
+Affected rows:  1
 2016-05-02 18:28:28    mysql :    Disconnect : Disconnect From database
 </pre>
 <p class="caption">Output using MySQL Driver</p>
@@ -147,6 +149,8 @@ Inserted row  36
     <li>{{ page.stmt_discard_rest }}</li>
     <li>{{ page.stmt_assign }}</li>
     <li>{{ page.stmt_last_insert_id }}</li>
+    <li>{{ page.stmt_rows_returned }}</li>
+    <li>{{ page.stmt_affected }}</li>
     <li>{{ page.res_std_field }}</li>
     <li>{{ page.prepare }}</li>
     <li>{{ page.query }}</li>
