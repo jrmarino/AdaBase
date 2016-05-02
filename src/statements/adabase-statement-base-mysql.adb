@@ -235,6 +235,7 @@ package body AdaBase.Statement.Base.MySQL is
             Object.internal_direct_post_exec;
          when prepared_statement =>
             declare
+               use type ABM.MYSQL_RES_Access;
             begin
                Object.transform_sql (sql => CT.USS (Object.initial_sql.all),
                                      new_sql => Object.sql_final.all);
@@ -259,8 +260,9 @@ package body AdaBase.Statement.Base.MySQL is
                --  statements very well may not. The next procedure ends early
                --  after clearing column data if there is results.
                Object.scan_column_information;
-               Object.mysql_conn.free_result (Object.result_handle);
-
+               if Object.result_handle /= null then
+                  Object.mysql_conn.free_result (Object.result_handle);
+               end if;
             exception
                when HELL : others =>
                   Object.log_problem (category => statement_preparation,
