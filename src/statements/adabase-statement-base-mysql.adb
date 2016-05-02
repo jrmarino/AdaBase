@@ -238,37 +238,35 @@ package body AdaBase.Statement.Base.MySQL is
             begin
                Object.transform_sql (sql => CT.USS (Object.initial_sql.all),
                                      new_sql => Object.sql_final.all);
+               Object.mysql_conn.initialize_and_prepare_statement
+                 (stmt => Object.stmt_handle, sql => Object.sql_final.all);
+               declare
+                  params : Natural := Object.mysql_conn.prep_markers_found
+                    (stmt => Object.stmt_handle);
+                  errmsg : String := "marker mismatch," &
+                    Object.realmccoy.Length'Img & " expected but" &
+                    params'Img & " found by MySQL";
+               begin
+                  if params /= Natural (Object.realmccoy.Length) then
+                     raise ILLEGAL_BIND_SQL with errmsg;
+                  end if;
+                  Object.log_nominal (category => statement_preparation,
+                                      message => Object.sql_final.all);
+               end;
+               Object.result_handle := Object.mysql_conn.prep_result_metadata
+                 (Object.stmt_handle);
+               --  Direct statements always produce result sets, but prepared
+               --  statements very well may not. The next procedure ends early
+               --  after clearing column data if there is results.
+               Object.scan_column_information;
+               Object.mysql_conn.free_result (Object.result_handle);
+
             exception
-               when XSQL : others =>
+               when HELL : others =>
                   Object.log_problem (category => statement_preparation,
-                                      message  => EX.Exception_Message (XSQL));
+                                      message  => EX.Exception_Message (HELL));
                   raise;
             end;
-
-            Object.mysql_conn.initialize_and_prepare_statement
-              (stmt => Object.stmt_handle, sql => Object.sql_final.all);
-            declare
-               params : Natural := Object.mysql_conn.prep_markers_found
-                                   (stmt => Object.stmt_handle);
-               errmsg : String := "marker mismatch," &
-                 Object.realmccoy.Length'Img & " expected but" &
-                 params'Img & " found by MySQL";
-            begin
-               if params /= Natural (Object.realmccoy.Length) then
-                  Object.log_problem (category => statement_preparation,
-                                      message  => errmsg);
-                  raise ILLEGAL_BIND_SQL with errmsg;
-               end if;
-               Object.log_nominal (category => statement_preparation,
-                                   message => Object.sql_final.all);
-            end;
-            Object.result_handle := Object.mysql_conn.prep_result_metadata
-                                    (Object.stmt_handle);
-            --  Direct statements always produce result sets, but prepared
-            --  statements very well may not.  The procedure below ends early
-            --  after erasing column data if the result_handle above is null.
-            Object.scan_column_information;
-            Object.mysql_conn.free_result (Object.result_handle);
       end case;
    end initialize;
 
