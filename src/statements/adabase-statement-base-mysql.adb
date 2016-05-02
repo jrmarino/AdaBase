@@ -1219,7 +1219,7 @@ package body AdaBase.Statement.Base.MySQL is
                   Stmt.bind_canvas (sx).buffer_binary := new ABM.IC.char_array
                     (1 .. ABM.IC.size_t (fsize));
                   slots (sx).buffer :=
-                    Stmt.bind_canvas (sx).buffer_binary'Address;
+                    Stmt.bind_canvas (sx).buffer_binary.all'Address;
                when ABM.MYSQL_TYPE_NULL | ABM.MYSQL_TYPE_NEWDATE |
                     ABM.MYSQL_TYPE_VARCHAR | ABM.MYSQL_TYPE_GEOMETRY |
                     ABM.MYSQL_TYPE_ENUM | ABM.MYSQL_TYPE_SET =>
