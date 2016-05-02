@@ -3,24 +3,19 @@ title: Query_select (Abstract SQL)
 ---
 
 <div class="leftside">
-<pre class="code">
-package AdaBase is
-   blankstring : constant String := "";
-end AdaBase;
-</pre>
 <h3>AdaBase.Statement.Base.[STMT]_access function<br/>
 AdaBase.Driver.Base.[DB].query_select  (
                           distinct    : Boolean := False;
                           tables      : String;
                           columns     : String;
-                          conditions  : String := blankstring;
-                          groupby     : String := blankstring;
-                          having      : String := blankstring;
-                          order       : String := blankstring;
+                          conditions  : String := "";
+                          groupby     : String := "";
+                          having      : String := "";
+                          order       : String := "";
                           limit       : TraxID := 0;
                           offset      : TraxID := 0)</h3>
 
-<p>This function assemblies a driver-specific (SQL dialect-specific)
+<p>This function assembles a driver-specific (SQL dialect-specific)
 SELECT query based on which arguments are provided.  Generally the
 <i>limit</i> and <i>offset</i> parameters are the ones that vary the
 most between dialects.  The only required parameters are <i>tables</i>

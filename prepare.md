@@ -15,7 +15,7 @@ converted the question marks in the same order.  The named parameters
 can only be used in one location though.
 </p>
 <p>
-One the statement has been prepared, it can be executed repeatedly after
+Once the statement has been prepared, it can be executed repeatedly after
 updating the parameter bindings before each execution.  THis is a big
 performance improvement over executing similar statements directly
 and individually.  Another major benefit is that SQL injection attacks
@@ -31,6 +31,7 @@ are prevented by using parameter bindings instead of passing text strings.
   <h3>See Also</h3>
   <ul>
     <li>{{ page.stmt_successful }}</li>
+    <li>{{ page.stmt_execute }}</li>
     <li>{{ page.stmt_discard_rest }}</li>
     <li>{{ page.query }}</li>
     <li>{{ page.query_select }}</li>  </ul>
