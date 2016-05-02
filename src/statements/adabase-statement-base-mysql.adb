@@ -1288,7 +1288,7 @@ package body AdaBase.Statement.Base.MySQL is
          canvas.buffer_binary.all := ABM.IC.To_C (Str, False);
          canvas.length := ABM.IC.unsigned_long (len);
 
-         struct.buffer       := canvas.buffer_binary'Address;
+         struct.buffer       := canvas.buffer_binary.all'Address;
          struct.length       := canvas.length'Unchecked_Access;
       end set_binary_buffer;
 
