@@ -185,8 +185,8 @@ defaults:
        stmt_bind: '<a href="stmt_bind.html">stmt bind (x40)</a>'
        f_bind: '<a href="stmt_bind.html">func bind (x40)</a>'
 
-       stmt_assign: '<a href="stmt_assign.html">stmt bind (x76)</a>'
-       f_assign: '<a href="stmt_assign.html">func bind (x76)</a>'
+       stmt_assign: '<a href="stmt_assign.html">stmt assign (x76)</a>'
+       f_assign: '<a href="stmt_assign.html">func assign (x76)</a>'
 
        stmt_last_insert_id: '<a href="stmt_last_insert_id.html">stmt last insert id</a>'
        f_stmt_last_insert_id: '<a href="stmt_last_insert_id.html">func last_insert_id</a>'
@@ -195,4 +195,4 @@ defaults:
        f_stmt_execute: '<a href="stmt_execute.html">func execute</a>'
 
        stmt_affected: '<a href="stmt_rows_affected.html">stmt rows affected</a>'
-       f_stmt_affected: '<a href="stmt_rows_affected.html">func rows_affected</a>'
+       f_stmt_affected: '<a href="stmt_rows_affected.html">func rows_affected</a>'  
