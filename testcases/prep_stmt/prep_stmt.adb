@@ -66,6 +66,7 @@ begin
       CON.STMT := CON.DR.prepare (sql);
       if CON.STMT.execute then
          TIO.Put_Line ("Inserted row " & CON.STMT.last_insert_id'Img);
+         TIO.Put_Line ("Affected rows: " & CON.STMT.rows_affected'Img);
       end if;
       CON.DR.rollback;
    end;
