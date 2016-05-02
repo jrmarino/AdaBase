@@ -234,18 +234,30 @@ package body AdaBase.Statement.Base.MySQL is
             Object.sql_final.all := CT.USS (Object.initial_sql.all);
             Object.internal_direct_post_exec;
          when prepared_statement =>
-            Object.transform_sql (sql => CT.USS (Object.initial_sql.all),
-                                  new_sql => Object.sql_final.all);
+            declare
+            begin
+               Object.transform_sql (sql => CT.USS (Object.initial_sql.all),
+                                     new_sql => Object.sql_final.all);
+            exception
+               when XSQL : others =>
+                  Object.log_problem (category => statement_preparation,
+                                      message  => EX.Exception_Message (XSQL));
+                  raise;
+            end;
+
             Object.mysql_conn.initialize_and_prepare_statement
               (stmt => Object.stmt_handle, sql => Object.sql_final.all);
             declare
-                 params : Natural := Object.mysql_conn.prep_markers_found
-                   (stmt => Object.stmt_handle);
+               params : Natural := Object.mysql_conn.prep_markers_found
+                                   (stmt => Object.stmt_handle);
+               errmsg : String := "marker mismatch," &
+                 Object.realmccoy.Length'Img & " expected but" &
+                 params'Img & " found by MySQL";
             begin
                if params /= Natural (Object.realmccoy.Length) then
-                  raise ILLEGAL_BIND_SQL
-                    with "marker mismatch," & Object.realmccoy.Length'Img
-                      & " expected but" & params'Img & " found by MySQL";
+                  Object.log_problem (category => statement_preparation,
+                                      message  => errmsg);
+                  raise ILLEGAL_BIND_SQL with errmsg;
                end if;
                Object.log_nominal (category => statement_preparation,
                                    message => Object.sql_final.all);
