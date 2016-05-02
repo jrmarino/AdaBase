@@ -103,12 +103,13 @@ package body AdaBase.Statement.Base is
          procedure replace_alias;
          procedure save_classic_marker;
          start    : Natural  := 0;
+         final    : Natural  := 0;
          arrow    : Positive := 1;
          scanning : Boolean  := False;
 
          procedure replace_alias is
-            len    : Natural := arrow - start;
-            alias  : String (1 .. len) := sql_mask (start + 1 .. arrow);
+            len    : Natural := final - start;
+            alias  : String (1 .. len) := sql_mask (start + 1 .. final);
             scab   : String (1 .. len + 1) := ('?', others => ' ');
             brec   : bindrec;
          begin
@@ -119,7 +120,7 @@ package body AdaBase.Statement.Base is
             Stmt.realmccoy.Append (New_Item => brec);
             Stmt.alpha_markers.Insert (Key => alias,
                                        New_Item => Stmt.realmccoy.Last_Index);
-            new_sql (start .. arrow) := scab;
+            new_sql (start .. final) := scab;
             scanning := False;
          end replace_alias;
 
@@ -153,7 +154,8 @@ package body AdaBase.Statement.Base is
                when others =>
                   if scanning then
                      case sql_mask (arrow) is
-                        when 'A' .. 'Z' | 'a' .. 'z' | '0' .. '9' => null;
+                        when 'A' .. 'Z' | 'a' .. 'z' | '0' .. '9' =>
+                           final := arrow;
                         when others => replace_alias;
                      end case;
                   end if;
