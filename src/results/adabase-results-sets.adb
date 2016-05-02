@@ -14,7 +14,7 @@ package body AdaBase.Results.Sets is
    begin
       if index > Natural (row.crate.Length) then
          raise COLUMN_DOES_NOT_EXIST with "Column" & index'Img &
-           " requested, but only" & row.crate.Length'Img & " rows present.";
+           " requested, but only" & row.crate.Length'Img & " columns present.";
       end if;
       return row.crate.Element (Index => index).all;
    end column;

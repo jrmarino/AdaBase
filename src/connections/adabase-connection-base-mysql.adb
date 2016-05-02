@@ -566,6 +566,7 @@ package body AdaBase.Connection.Base.MySQL is
       decimals : constant Natural := Natural (field.decimals);
       fieldlen : constant Natural := Natural (field.length);
       maxlen   : constant Natural := Natural (field.max_length);
+      bestlen  : Natural := fieldlen;
    begin
       case mytype is
          when ABM.MYSQL_TYPE_FLOAT      => std_type := ft_real9;
@@ -659,11 +660,14 @@ package body AdaBase.Connection.Base.MySQL is
          when ABM.MYSQL_TYPE_NULL     => std_type := ft_textual;
 
       end case;
+      if maxlen /= 0 then
+         bestlen := maxlen;
+      end if;
       case mytype is
          when ABM.MYSQL_TYPE_BIT =>
             case maxlen is
                when 0 .. 1               => size := 0;
-               when others               => size := ((maxlen - 1) / 8) + 1;
+               when others               => size := ((bestlen - 1) / 8) + 1;
             end case;
          when ABM.MYSQL_TYPE_TINY_BLOB   |
               ABM.MYSQL_TYPE_BLOB        |
@@ -671,7 +675,7 @@ package body AdaBase.Connection.Base.MySQL is
               ABM.MYSQL_TYPE_LONG_BLOB   |
               ABM.MYSQL_TYPE_VARCHAR     |
               ABM.MYSQL_TYPE_VAR_STRING  |
-              ABM.MYSQL_TYPE_STRING      => size := maxlen;
+              ABM.MYSQL_TYPE_STRING      => size := bestlen;
          when others                     => size := 0;
       end case;
    end field_data_type;

@@ -392,6 +392,9 @@ package body AdaBase.Statement.Base.MySQL is
             Stmt.mysql_conn.field_data_type (field    => field,
                                              std_type => info.field_type,
                                              size     => info.field_size);
+            if info.field_size > Stmt.con_max_blob then
+               info.field_size := Stmt.con_max_blob;
+            end if;
             Stmt.column_info.Append (New_Item => info);
             --  The following pre-populates for bind support
             Stmt.crate.Append (New_Item => brec);
@@ -782,7 +785,7 @@ package body AdaBase.Statement.Base.MySQL is
       declare
          result : String (1 .. reslen) := (others => '_');
       begin
-         for x in Natural range 1 .. reslen loop
+         for x in result'Range loop
             result (x) := Character (data.all (ABM.IC.size_t (x)));
          end loop;
          return result;
@@ -840,6 +843,9 @@ package body AdaBase.Statement.Base.MySQL is
          Stmt.delivery := completed;
       else
          Stmt.delivery := progressing;
+      end if;
+      if Stmt.delivery = completed then
+         return null;
       end if;
 
       declare
