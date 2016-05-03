@@ -93,7 +93,7 @@ title: AdaBase by jrmarino
 <li>{{ page.f_fetch_all }}</li>
 <li>{{ page.f_fetch_bound }}</li>
 <li>{{ page.f_bind }}</li>
-<li>proc assign (x20)</li>
+<li>{{ page.f_assign }}</li>
 <li>{{ page.f_fetch_next_set }}</li>
 <li>proc iterate</li>
 <li>proc iterate_bound</li>
