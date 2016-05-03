@@ -579,12 +579,12 @@ package body AdaBase.Connection.Base.MySQL is
                std_type := ft_real18;
             end if;
          when ABM.MYSQL_TYPE_TINY =>
-            if unsigned then
-               if fieldlen = 1 then
-                  std_type := ft_nbyte0;
-               else
-                  std_type := ft_nbyte1;
-               end if;
+            --  Signed is irrelevant when field length is 1
+            --  TINY_INT(1) is boolean, both signed and unsigned
+            if fieldlen = 1 then
+               std_type := ft_nbyte0;
+            elsif unsigned then
+               std_type := ft_nbyte1;
             else
                std_type := ft_byte1;
             end if;
