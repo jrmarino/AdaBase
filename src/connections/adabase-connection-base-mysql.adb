@@ -602,7 +602,7 @@ package body AdaBase.Connection.Base.MySQL is
             else
                std_type := ft_byte1;
             end if;
-         when ABM.MYSQL_TYPE_SHORT =>
+         when ABM.MYSQL_TYPE_SHORT | ABM.MYSQL_TYPE_YEAR =>
             if unsigned then
                std_type := ft_nbyte2;
             else
@@ -630,7 +630,6 @@ package body AdaBase.Connection.Base.MySQL is
               ABM.MYSQL_TYPE_DATE        |
               ABM.MYSQL_TYPE_TIME        |
               ABM.MYSQL_TYPE_DATETIME    |
-              ABM.MYSQL_TYPE_YEAR        |
               ABM.MYSQL_TYPE_NEWDATE     => std_type := ft_timestamp;
          when ABM.MYSQL_TYPE_BIT =>
             case bestlen is

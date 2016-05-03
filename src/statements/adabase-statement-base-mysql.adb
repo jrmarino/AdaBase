@@ -592,7 +592,6 @@ package body AdaBase.Statement.Base.MySQL is
       --  DATE      [10]: YYYY-MM-DD
       --  DATETIME  [19]: YYYY-MM-DD HH:MM:SS
       --  TIMESTAMP [19]: YYYY-MM-DD HH:MM:SS
-      --  YEAR      [04]: YYYY
       --  TIME      [08]: HH:MM:SS
 
       --  Handle HH:MM:SS formats
@@ -611,8 +610,6 @@ package body AdaBase.Statement.Base.MySQL is
 
       --  Handle date formats
       case len is
-         when 4 =>
-            year  := CAL.Year_Number (Integer'Value (nv (NF .. NF + 3)));
          when 10 | 19 =>
             year  := CAL.Year_Number  (Integer'Value (nv (NF .. NF + 3)));
             month := CAL.Month_Number (Integer'Value (nv (NF + 5 .. NF + 6)));
