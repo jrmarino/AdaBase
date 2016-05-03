@@ -947,10 +947,13 @@ package body AdaBase.Statement.Base.MySQL is
                                        (Natural (cv.buffer_time.second_part)
                                         / 1000000))
                                  );
-                  when ft_enumtype | ft_settype =>
-                     raise STMT_EXECUTION
-                       with "The data is not expected to be labeled as " &
-                       Stmt.column_info.Element (F).field_type'Img & " type";
+                  when ft_enumtype =>
+                     dvariant := (datatype => ft_enumtype,
+                                  v18 => (enumeration => CT.SUS
+                                          (bincopy (cv.buffer_binary,
+                                             datalen, Stmt.con_max_blob)),
+                                          index => 0));
+                  when ft_settype => null;
                   when ft_chain => null;
                end case;
                case Stmt.column_info.Element (Index => F).field_type is
@@ -958,6 +961,10 @@ package body AdaBase.Statement.Base.MySQL is
                      field := ARF.spawn_field
                        (binob => bincopy (cv.buffer_binary, datalen,
                         Stmt.con_max_blob));
+                  when ft_settype =>
+                     field := ARF.spawn_field
+                       (enumset => convert (bincopy (cv.buffer_binary, datalen,
+                        Stmt.con_max_blob)));
                   when others =>
                      field := ARF.spawn_field
                        (data => dvariant,
@@ -1080,10 +1087,15 @@ package body AdaBase.Statement.Base.MySQL is
                      end if;
                      Stmt.crate.Element (F).a17.all :=
                        bincopy (cv.buffer_binary, datalen, Stmt.con_max_blob);
-                  when ft_enumtype | ft_settype =>
-                     raise STMT_EXECUTION
-                       with "The data is not expected to be labeled as " &
-                       Tnative'Img & " type";
+                  when ft_enumtype =>
+                     Stmt.crate.Element (F).a18.all.index := 0;
+                     Stmt.crate.Element (F).a18.all.enumeration :=
+                       CT.SUS (bincopy (cv.buffer_binary, datalen,
+                               Stmt.con_max_blob));
+                  when ft_settype =>
+                     Stmt.crate.Element (F).a19.all := convert
+                       (bincopy (cv.buffer_binary, datalen,
+                        Stmt.con_max_blob));
                end case;
             end;
             <<continue>>
