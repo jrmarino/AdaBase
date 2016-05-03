@@ -82,6 +82,7 @@ The next 20 functions do the same thing except they reference the marker by its 
 The values of the variables involved in these 40 functions are not evaluated until
 the <b>execute</b> command is issues
 </p>
+<p>
 The next 18 functions reference the marker by its numeric index and define its value
 with a constant of the same data type of the marker.  There is no constant variation of
 the function for chain and settype markers; those markers are limited to variables.
@@ -130,7 +131,7 @@ AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.settype_access
 <p>
 Prior to issuing the <b>execute</b> command of the statement object, the values of
 the markers must be defined.  One method is to pass access to a variable of the same
-type as the marker.  The first 20 of the 116 overloaded bind functions accept an index
+type as the marker.  The first 20 of the 76 overloaded bind functions accept an index
 starting with 1 that matches the column number of the result row.  The <i>vaxx</i>
 argument accepts a pointer to one of the 20 native data type.
 </p>
