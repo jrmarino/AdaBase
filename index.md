@@ -75,7 +75,7 @@ title: AdaBase by jrmarino
 <div class="twocol">
 <h3>AdaBase.Statement</h3>
 <ul>
-<li>{{ page.rows_affected }}</li>
+<li>{{ page.f_stmt_affected }}</li>
 <li>{{ page.f_rows_returned }}</li>
 <li>{{ page.f_successful }}</li>
 <li>{{ page.f_data_discarded }}</li>
