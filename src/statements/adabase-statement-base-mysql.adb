@@ -932,11 +932,31 @@ package body AdaBase.Statement.Base.MySQL is
                                   v15 => convert (bincopy (cv.buffer_binary,
                                     datalen, Stmt.con_max_blob)));
                   when ft_timestamp =>
-                     dvariant := (datatype => ft_timestamp,
+                     declare
+                        year  : Natural := Natural (cv.buffer_time.year);
+                        month : Natural := Natural (cv.buffer_time.month);
+                        day   : Natural := Natural (cv.buffer_time.day);
+                     begin
+                        if year < CAL.Year_Number'First or else
+                          year > CAL.Year_Number'Last
+                        then
+                           year := CAL.Year_Number'First;
+                        end if;
+                        if month < CAL.Month_Number'First or else
+                          month > CAL.Month_Number'Last
+                        then
+                           month := CAL.Month_Number'First;
+                        end if;
+                        if day < CAL.Day_Number'First or else
+                          day > CAL.Day_Number'Last
+                        then
+                           day := CAL.Day_Number'First;
+                        end if;
+                        dvariant := (datatype => ft_timestamp,
                                   v16 => CFM.Time_Of
-                                    (Year => Natural (cv.buffer_time.year),
-                                     Month => Natural (cv.buffer_time.month),
-                                     Day => Natural (cv.buffer_time.day),
+                                    (Year => year,
+                                     Month => month,
+                                     Day => day,
                                      Hour => Natural (cv.buffer_time.hour),
                                      Minute => Natural (cv.buffer_time.minute),
                                      Second => Natural (cv.buffer_time.second),
@@ -944,6 +964,7 @@ package body AdaBase.Statement.Base.MySQL is
                                        (Natural (cv.buffer_time.second_part)
                                         / 1000000))
                                  );
+                     end;
                   when ft_enumtype =>
                      dvariant := (datatype => ft_enumtype,
                                   v18 => (enumeration => CT.SUS

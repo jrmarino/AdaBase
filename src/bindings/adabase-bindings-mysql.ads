@@ -254,9 +254,9 @@ package AdaBase.Bindings.MySQL is
    pragma Convention (C, enum_mysql_timestamp_type);
 
    type MYSQL_TIME is record
-      year        : IC.unsigned      := 1901;
-      month       : IC.unsigned      := 1;
-      day         : IC.unsigned      := 1;
+      year        : IC.unsigned      := 0;
+      month       : IC.unsigned      := 0;
+      day         : IC.unsigned      := 0;
       hour        : IC.unsigned      := 0;
       minute      : IC.unsigned      := 0;
       second      : IC.unsigned      := 0;
