@@ -579,38 +579,47 @@ package body AdaBase.Statement.Base.MySQL is
    function convert (nv : String) return CAL.Time
    is
       len    : constant Natural  := nv'Length;
+      NF     : constant Natural  := nv'First;
       year   : CAL.Year_Number   := CAL.Year_Number'First;
       month  : CAL.Month_Number  := CAL.Month_Number'First;
       day    : CAL.Day_Number    := CAL.Day_Number'First;
       hour   : CFM.Hour_Number   := CFM.Hour_Number'First;
       minute : CFM.Minute_Number := CFM.Minute_Number'First;
       second : CFM.Second_Number := CFM.Second_Number'First;
-      cursor : Positive;
+      HHMMSS : String (1 .. 8);
    begin
+      --  Possible formats
+      --  DATE      [10]: YYYY-MM-DD
+      --  DATETIME  [19]: YYYY-MM-DD HH:MM:SS
+      --  TIMESTAMP [19]: YYYY-MM-DD HH:MM:SS
+      --  YEAR      [04]: YYYY
+      --  TIME      [08]: HH:MM:SS
+
+      --  Handle HH:MM:SS formats
       case len is
-         when 8 | 14 => cursor := 5;
-         when others => cursor := 3;
+         when  8 => HHMMSS := nv (NF .. NF + 7);
+         when 19 => HHMMSS := nv (NF + 11 .. NF + 18);
+         when others => null;
       end case;
-      year := Integer'Value (nv (nv'First .. cursor - 1));
-      if len > 2 then
-         month := Integer'Value (nv (cursor .. cursor + 1));
-         cursor := cursor + 2;
-         if len > 4 then
-            day := Integer'Value (nv (cursor .. cursor + 1));
-            cursor := cursor + 2;
-            if len > 6 then
-               hour := Integer'Value (nv (cursor .. cursor + 1));
-               cursor := cursor + 2;
-               if len > 8 then
-                  minute := Integer'Value (nv (cursor .. cursor + 1));
-                  cursor := cursor + 2;
-                  if len > 10 then
-                     second := Integer'Value (nv (cursor .. cursor + 1));
-                  end if;
-               end if;
-            end if;
-         end if;
-      end if;
+      case len is
+         when 8 | 19 =>
+            hour   := CFM.Hour_Number   (Integer'Value (HHMMSS (1 .. 2)));
+            minute := CFM.Minute_Number (Integer'Value (HHMMSS (4 .. 5)));
+            second := CFM.Second_Number (Integer'Value (HHMMSS (7 .. 8)));
+         when others => null;
+      end case;
+
+      --  Handle date formats
+      case len is
+         when 4 =>
+            year  := CAL.Year_Number (Integer'Value (nv (NF .. NF + 3)));
+         when 10 | 19 =>
+            year  := CAL.Year_Number  (Integer'Value (nv (NF .. NF + 3)));
+            month := CAL.Month_Number (Integer'Value (nv (NF + 5 .. NF + 6)));
+            day   := CAL.Day_Number   (Integer'Value (nv (NF + 8 .. NF + 9)));
+         when others => null;
+      end case;
+
       --  If this raises an exception, it probable means the date < 1901 or
       --  greater than 2099.  Turn this into a string time in that case.
       return CFM.Time_Of (Year   => year,
