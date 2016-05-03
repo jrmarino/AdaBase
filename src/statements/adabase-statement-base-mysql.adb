@@ -871,6 +871,7 @@ package body AdaBase.Statement.Base.MySQL is
       begin
          for F in 1 .. maxlen loop
             declare
+               use type ABM.enum_field_types;
                cv       : mysql_canvas renames Stmt.bind_canvas (F);
                dvariant : ARF.variant;
                field    : ARF.field_access;
@@ -878,6 +879,8 @@ package body AdaBase.Statement.Base.MySQL is
                datalen  : constant Natural := Natural (cv.length);
                heading  : constant String := CT.USS
                  (Stmt.column_info.Element (Index => F).field_name);
+               mtype    : ABM.enum_field_types :=
+                 Stmt.column_info.Element (F).mysql_type;
             begin
                case Stmt.column_info.Element (Index => F).field_type is
                   when ft_nbyte0 =>
@@ -914,11 +917,27 @@ package body AdaBase.Statement.Base.MySQL is
                      dvariant := (datatype => ft_byte8,
                                   v10 => AR.byte8 (cv.buffer_int64));
                   when ft_real9  =>
-                     dvariant := (datatype => ft_real9,
-                                  v11 => AR.real9 (cv.buffer_float));
+                     if mtype = ABM.MYSQL_TYPE_NEWDECIMAL or else
+                       mtype = ABM.MYSQL_TYPE_DECIMAL
+                     then
+                        dvariant := (datatype => ft_real9,
+                                     v11 => convert (bincopy (cv.buffer_binary,
+                                    datalen, Stmt.con_max_blob)));
+                     else
+                        dvariant := (datatype => ft_real9,
+                                     v11 => AR.real9 (cv.buffer_float));
+                     end if;
                   when ft_real18 =>
-                     dvariant := (datatype => ft_real18,
-                                  v12 => AR.real18 (cv.buffer_double));
+                     if mtype = ABM.MYSQL_TYPE_NEWDECIMAL or else
+                       mtype = ABM.MYSQL_TYPE_DECIMAL
+                     then
+                        dvariant := (datatype => ft_real18,
+                                     v12 => convert (bincopy (cv.buffer_binary,
+                                       datalen, Stmt.con_max_blob)));
+                     else
+                        dvariant := (datatype => ft_real18,
+                                     v12 => AR.real18 (cv.buffer_double));
+                     end if;
                   when ft_textual =>
                      dvariant := (datatype => ft_textual,
                                   v13 => CT.SUS (bincopy (cv.buffer_binary,
