@@ -559,14 +559,15 @@ package body AdaBase.Connection.Base.MySQL is
                               size     : out Natural)
    is
       type flagtype is mod 2 ** 16;
+      type megasize is mod 2 ** 64;
       flag_unsigned : constant flagtype := 2 ** 5;
       mytype   : constant ABM.enum_field_types := field.field_type;
       flags    : constant flagtype := flagtype (field.flags);
-      unsigned : constant Boolean := (flags and flag_unsigned) > 0;
-      decimals : constant Natural := Natural (field.decimals);
-      fieldlen : constant Natural := Natural (field.length);
-      maxlen   : constant Natural := Natural (field.max_length);
-      bestlen  : Natural := fieldlen;
+      unsigned : constant Boolean  := (flags and flag_unsigned) > 0;
+      decimals : constant Natural  := Natural (field.decimals);
+      fieldlen : constant megasize := megasize (field.length);
+      maxlen   : constant megasize := megasize (field.max_length);
+      bestlen  : Natural;
    begin
       case mytype is
          when ABM.MYSQL_TYPE_FLOAT      => std_type := ft_real9;
@@ -660,8 +661,13 @@ package body AdaBase.Connection.Base.MySQL is
          when ABM.MYSQL_TYPE_NULL     => std_type := ft_textual;
 
       end case;
-      if maxlen /= 0 then
-         bestlen := maxlen;
+      if fieldlen > megasize (BLOB_maximum'Last) then
+         bestlen := Natural (BLOB_maximum'Last);
+      else
+         bestlen := Natural (fieldlen);
+      end if;
+      if maxlen /= 0 and then maxlen < megasize (BLOB_maximum'Last) then
+         bestlen := Natural (maxlen);
       end if;
       case mytype is
          when ABM.MYSQL_TYPE_BIT =>
