@@ -561,14 +561,27 @@ package body AdaBase.Connection.Base.MySQL is
       type flagtype is mod 2 ** 16;
       type megasize is mod 2 ** 64;
       flag_unsigned : constant flagtype := 2 ** 5;
+      flag_enumtype : constant flagtype := 2 ** 8;
+      flag_settype  : constant flagtype := 2 ** 11;
       mytype   : constant ABM.enum_field_types := field.field_type;
       flags    : constant flagtype := flagtype (field.flags);
       unsigned : constant Boolean  := (flags and flag_unsigned) > 0;
+      is_enum  : constant Boolean  := (flags and flag_enumtype) > 0;
+      is_set   : constant Boolean  := (flags and flag_settype)  > 0;
       decimals : constant Natural  := Natural (field.decimals);
       fieldlen : constant megasize := megasize (field.length);
       maxlen   : constant megasize := megasize (field.max_length);
       bestlen  : Natural;
    begin
+      if fieldlen > megasize (BLOB_maximum'Last) then
+         bestlen := Natural (BLOB_maximum'Last);
+      else
+         bestlen := Natural (fieldlen);
+      end if;
+      if maxlen /= 0 and then maxlen < megasize (BLOB_maximum'Last) then
+         bestlen := Natural (maxlen);
+      end if;
+
       case mytype is
          when ABM.MYSQL_TYPE_FLOAT      => std_type := ft_real9;
          when ABM.MYSQL_TYPE_DOUBLE     => std_type := ft_real18;
@@ -619,10 +632,8 @@ package body AdaBase.Connection.Base.MySQL is
               ABM.MYSQL_TYPE_DATETIME    |
               ABM.MYSQL_TYPE_YEAR        |
               ABM.MYSQL_TYPE_NEWDATE     => std_type := ft_timestamp;
-         when ABM.MYSQL_TYPE_ENUM        => std_type := ft_enumtype;
-         when ABM.MYSQL_TYPE_SET         => std_type := ft_settype;
          when ABM.MYSQL_TYPE_BIT =>
-            case maxlen is
+            case bestlen is
                when 0 .. 1               => std_type := ft_nbyte0;
                when others               => std_type := ft_chain;
             end case;
@@ -640,7 +651,11 @@ package body AdaBase.Connection.Base.MySQL is
                binary   : constant Boolean := (chsetnr = bin_set);
                csinfo   : aliased ABM.MY_CHARSET_INFO;
             begin
-               if binary then
+               if is_enum then
+                  std_type := ft_enumtype;
+               elsif is_set then
+                  std_type := ft_settype;
+               elsif binary then
                   std_type := ft_chain;
                else
                   ABM.mysql_get_character_set_info (handle => conn.handle,
@@ -658,20 +673,14 @@ package body AdaBase.Connection.Base.MySQL is
          when ABM.MYSQL_TYPE_GEOMETRY =>
             raise BINDING_FAIL with
               "Geometry type not currently supported";
+         when ABM.MYSQL_TYPE_ENUM | ABM.MYSQL_TYPE_SET =>
+            raise BINDING_FAIL with
+              "Unexpected type: " & mytype'Img & " (should appear as string)";
          when ABM.MYSQL_TYPE_NULL     => std_type := ft_textual;
-
       end case;
-      if fieldlen > megasize (BLOB_maximum'Last) then
-         bestlen := Natural (BLOB_maximum'Last);
-      else
-         bestlen := Natural (fieldlen);
-      end if;
-      if maxlen /= 0 and then maxlen < megasize (BLOB_maximum'Last) then
-         bestlen := Natural (maxlen);
-      end if;
       case mytype is
          when ABM.MYSQL_TYPE_BIT =>
-            case maxlen is
+            case bestlen is
                when 0 .. 1               => size := 0;
                when others               => size := ((bestlen - 1) / 8) + 1;
             end case;
