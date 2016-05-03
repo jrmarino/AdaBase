@@ -503,8 +503,7 @@ package body AdaBase.Statement.Base.MySQL is
       end if;
       case Stmt.type_of_statement is
          when prepared_statement =>
-            raise INVALID_FOR_RESULT_SET with "not yet implemented";
-            return False;
+            return Stmt.internal_ps_fetch_bound;
          when direct_statement =>
             return Stmt.internal_fetch_bound;
       end case;
@@ -966,6 +965,127 @@ package body AdaBase.Statement.Base.MySQL is
 
    end internal_ps_fetch_row;
 
+
+   -------------------------------
+   --  internal_ps_fetch_bound  --
+   -------------------------------
+   function internal_ps_fetch_bound (Stmt : out MySQL_statement)
+                                     return Boolean
+   is
+      use type ABM.ICS.chars_ptr;
+      use type ACM.fetch_status;
+      status : ACM.fetch_status;
+   begin
+      status := Stmt.mysql_conn.prep_fetch_bound (Stmt.stmt_handle);
+      if status = ACM.spent then
+         Stmt.delivery := completed;
+         Stmt.clear_column_information;
+      elsif status = ACM.truncated then
+         Stmt.log_nominal (category => statement_execution,
+                           message  => "data truncated");
+         Stmt.delivery := progressing;
+      elsif status = ACM.error then
+         Stmt.log_problem (category => statement_execution,
+                           message  => "prep statement fetch error",
+                           pull_codes => True);
+         Stmt.delivery := completed;
+      else
+         Stmt.delivery := progressing;
+      end if;
+      if Stmt.delivery = completed then
+         return False;
+      end if;
+
+      declare
+         maxlen : constant Natural := Stmt.num_columns;
+      begin
+         for F in 1 .. maxlen loop
+            if not Stmt.crate.Element (Index => F).bound then
+               goto continue;
+            end if;
+
+            declare
+               cv      : mysql_canvas renames Stmt.bind_canvas (F);
+               datalen : constant Natural := Natural (cv.length);
+               Tout    : constant field_types :=
+                         Stmt.crate.Element (Index => F).output_type;
+               Tnative : constant field_types :=
+                         Stmt.column_info.Element (Index => F).field_type;
+            begin
+               if Tnative /= Tout then
+                  raise BINDING_TYPE_MISMATCH with "native type : " &
+                    field_types'Image (Tnative) & " binding type : " &
+                    field_types'Image (Tout);
+               end if;
+               case Tnative is
+                  when ft_nbyte0 => Stmt.crate.Element (F).a00.all :=
+                       (Natural (cv.buffer_uint8) = 1);
+                  when ft_nbyte1 => Stmt.crate.Element (F).a01.all :=
+                       AR.nbyte1 (cv.buffer_uint8);
+                  when ft_nbyte2 => Stmt.crate.Element (F).a02.all :=
+                       AR.nbyte2 (cv.buffer_uint16);
+                  when ft_nbyte3 => Stmt.crate.Element (F).a03.all :=
+                       AR.nbyte3 (cv.buffer_uint32);
+                  when ft_nbyte4 => Stmt.crate.Element (F).a04.all :=
+                       AR.nbyte4 (cv.buffer_uint32);
+                  when ft_nbyte8 => Stmt.crate.Element (F).a05.all :=
+                       AR.nbyte8 (cv.buffer_uint64);
+                  when ft_byte1 => Stmt.crate.Element (F).a06.all :=
+                       AR.byte1 (cv.buffer_int8);
+                  when ft_byte2 => Stmt.crate.Element (F).a07.all :=
+                       AR.byte2 (cv.buffer_int16);
+                  when ft_byte3 => Stmt.crate.Element (F).a08.all :=
+                       AR.byte3 (cv.buffer_int32);
+                  when ft_byte4 => Stmt.crate.Element (F).a09.all :=
+                       AR.byte4 (cv.buffer_int32);
+                  when ft_byte8 => Stmt.crate.Element (F).a10.all :=
+                       AR.byte8 (cv.buffer_int64);
+                  when ft_real9  => Stmt.crate.Element (F).a11.all :=
+                       AR.real9 (cv.buffer_float);
+                  when ft_real18 => Stmt.crate.Element (F).a12.all :=
+                       AR.real18 (cv.buffer_double);
+                  when ft_textual => Stmt.crate.Element (F).a13.all :=
+                       CT.SUS (bincopy (cv.buffer_binary, datalen,
+                               Stmt.con_max_blob));
+                  when ft_widetext => Stmt.crate.Element (F).a14.all :=
+                       convert (bincopy (cv.buffer_binary, datalen,
+                                Stmt.con_max_blob));
+                  when ft_supertext => Stmt.crate.Element (F).a15.all :=
+                       convert (bincopy (cv.buffer_binary, datalen,
+                                Stmt.con_max_blob));
+                  when ft_timestamp => Stmt.crate.Element (F).a16.all :=
+                       CFM.Time_Of
+                         (Year => Natural (cv.buffer_time.year),
+                          Month => Natural (cv.buffer_time.month),
+                          Day => Natural (cv.buffer_time.day),
+                          Hour => Natural (cv.buffer_time.hour),
+                          Minute => Natural (cv.buffer_time.minute),
+                          Second => Natural (cv.buffer_time.second),
+                          Sub_Second => CFM.Second_Duration
+                            (Natural (cv.buffer_time.second_part) / 1000000));
+                  when ft_chain =>
+                     if Stmt.crate.Element (F).a17.all'Length /= datalen then
+                           raise BINDING_SIZE_MISMATCH with "native size : " &
+                             Stmt.crate.Element (F).a17.all'Length'Img &
+                             " binding size : " & datalen'Img;
+                     end if;
+                     Stmt.crate.Element (F).a17.all :=
+                       bincopy (cv.buffer_binary, datalen, Stmt.con_max_blob);
+                  when ft_enumtype | ft_settype =>
+                     raise STMT_EXECUTION
+                       with "The data is not expected to be labeled as " &
+                       Tnative'Img & " type";
+               end case;
+            end;
+            <<continue>>
+            null;
+         end loop;
+         return True;
+      end;
+
+   end internal_ps_fetch_bound;
+
+
    -----------------------------------
    --  internal_fetch_bound_direct  --
    -----------------------------------
@@ -1001,9 +1121,6 @@ package body AdaBase.Statement.Base.MySQL is
          for F in 1 .. maxlen loop
             if Stmt.crate.Element (Index => F).bound then
                declare
-                  last_one : constant Boolean := (F = maxlen);
-                  heading  : constant String := CT.USS
-                    (Stmt.column_info.Element (Index => F).field_name);
                   sz : constant Natural := field_lengths (F);
                   EN : constant Boolean := row (F) = ABM.ICS.Null_Ptr;
                   ST : constant String  := ABM.ICS.Value

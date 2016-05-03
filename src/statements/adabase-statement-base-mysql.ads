@@ -103,6 +103,9 @@ private
    function internal_ps_fetch_row (Stmt : out MySQL_statement)
                                    return ARS.DataRow_Access;
 
+   function internal_ps_fetch_bound (Stmt : out MySQL_statement)
+                                     return Boolean;
+
    function convert (nv : String) return CAL.Time;
    function convert (nv : String) return AR.settype;
    function bincopy (data : ABM.ICS.char_array_access;
