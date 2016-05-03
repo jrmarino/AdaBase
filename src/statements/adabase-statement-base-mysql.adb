@@ -1314,12 +1314,20 @@ package body AdaBase.Statement.Base.MySQL is
             slots (sx).buffer_type := Stmt.column_info.Element (sx).mysql_type;
             ft := Stmt.column_info.Element (sx).field_type;
             case slots (sx).buffer_type is
-               when ABM.MYSQL_TYPE_DECIMAL | ABM.MYSQL_TYPE_DOUBLE =>
+               when ABM.MYSQL_TYPE_DOUBLE =>
                   slots (sx).buffer :=
                     Stmt.bind_canvas (sx).buffer_double'Address;
                when ABM.MYSQL_TYPE_FLOAT =>
                   slots (sx).buffer :=
                     Stmt.bind_canvas (sx).buffer_float'Address;
+               when ABM.MYSQL_TYPE_DECIMAL | ABM.MYSQL_TYPE_NEWDECIMAL =>
+                  if Stmt.column_info.Element (sx).field_type = ft_real18 then
+                     slots (sx).buffer :=
+                       Stmt.bind_canvas (sx).buffer_double'Address;
+                  else
+                     slots (sx).buffer :=
+                       Stmt.bind_canvas (sx).buffer_float'Address;
+                  end if;
                when ABM.MYSQL_TYPE_TINY =>
                   if ft = ft_nbyte0 or else ft = ft_nbyte1 then
                      slots (sx).is_unsigned := 1;
@@ -1363,7 +1371,7 @@ package body AdaBase.Statement.Base.MySQL is
                when ABM.MYSQL_TYPE_BIT | ABM.MYSQL_TYPE_TINY_BLOB |
                     ABM.MYSQL_TYPE_MEDIUM_BLOB | ABM.MYSQL_TYPE_LONG_BLOB |
                     ABM.MYSQL_TYPE_BLOB | ABM.MYSQL_TYPE_STRING |
-                    ABM.MYSQL_TYPE_VAR_STRING | ABM.MYSQL_TYPE_NEWDECIMAL =>
+                    ABM.MYSQL_TYPE_VAR_STRING =>
                   fsize := Stmt.column_info.Element (sx).field_size;
                   slots (sx).buffer_length := ABM.IC.unsigned_long (fsize);
                   Stmt.bind_canvas (sx).buffer_binary := new ABM.IC.char_array
