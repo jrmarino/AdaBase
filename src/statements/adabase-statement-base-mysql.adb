@@ -631,7 +631,7 @@ package body AdaBase.Statement.Base.MySQL is
    ----------------------------------
    --  convert string to enumtype  --
    ----------------------------------
-   function convert (nv : String) return AR.settype
+   function convert (nv : String; fixed : Natural := 0) return AR.settype
    is
       num_enums : Natural := 1;
       nv_len    : Natural := nv'Length;
@@ -641,8 +641,12 @@ package body AdaBase.Statement.Base.MySQL is
             num_enums := num_enums + 1;
          end if;
       end loop;
+      if fixed > 0 then
+         num_enums := fixed;
+      end if;
       declare
-         result : AR.settype (1 .. num_enums);
+         --  Index not supported on MySQL, set all indices to zero
+         result : AR.settype (1 .. num_enums) := (others => (CT.blank, 0));
          cursor : Natural  := 1;
          curend : Natural  := 0;
          index  : Positive := 1;
@@ -650,14 +654,12 @@ package body AdaBase.Statement.Base.MySQL is
          for x in nv'Range loop
             if nv (x) = ',' then
                result (index).enumeration := CT.SUS (nv (cursor .. curend));
-               result (index).index := 0;  -- not supported on MySQL
                index := index + 1;
                cursor := x + 1;
             end if;
             curend := curend + 1;
          end loop;
          result (index).enumeration := CT.SUS (nv (cursor .. curend));
-         result (index).index := 0;
          return result;
       end;
    end convert;
@@ -1181,9 +1183,15 @@ package body AdaBase.Statement.Base.MySQL is
                        CT.SUS (bincopy (cv.buffer_binary, datalen,
                                Stmt.con_max_blob));
                   when ft_settype =>
+                     if Stmt.crate.Element (F).a19.all'Length < datalen then
+                           raise BINDING_SIZE_MISMATCH with "native size : " &
+                             Stmt.crate.Element (F).a19.all'Length'Img &
+                             " less than binding size : " & datalen'Img;
+                     end if;
                      Stmt.crate.Element (F).a19.all := convert
                        (bincopy (cv.buffer_binary, datalen,
-                        Stmt.con_max_blob));
+                        Stmt.con_max_blob),
+                        Stmt.crate.Element (F).a19.all'Length);
                end case;
             end;
             <<continue>>

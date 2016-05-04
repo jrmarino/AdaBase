@@ -107,7 +107,7 @@ private
                                      return Boolean;
 
    function convert (nv : String) return CAL.Time;
-   function convert (nv : String) return AR.settype;
+   function convert (nv : String; fixed : Natural := 0) return AR.settype;
    function bincopy (data : ABM.ICS.char_array_access;
                      datalen, max_size : Natural)
                      return String;
