@@ -1183,15 +1183,20 @@ package body AdaBase.Statement.Base.MySQL is
                        CT.SUS (bincopy (cv.buffer_binary, datalen,
                                Stmt.con_max_blob));
                   when ft_settype =>
-                     if Stmt.crate.Element (F).a19.all'Length < datalen then
+                     declare
+                        setstr : constant String := bincopy
+                          (cv.buffer_binary, datalen, Stmt.con_max_blob);
+                     begin
+                        if Stmt.crate.Element (F).a19.all'Length <
+                          num_set_items (setstr)
+                        then
                            raise BINDING_SIZE_MISMATCH with "native size : " &
                              Stmt.crate.Element (F).a19.all'Length'Img &
                              " less than binding size : " & datalen'Img;
-                     end if;
-                     Stmt.crate.Element (F).a19.all := convert
-                       (bincopy (cv.buffer_binary, datalen,
-                        Stmt.con_max_blob),
-                        Stmt.crate.Element (F).a19.all'Length);
+                        end if;
+                        Stmt.crate.Element (F).a19.all := convert
+                          (setstr, Stmt.crate.Element (F).a19.all'Length);
+                     end;
                end case;
             end;
             <<continue>>
@@ -1764,6 +1769,25 @@ package body AdaBase.Statement.Base.MySQL is
            sqlstate   => sqlstate,
            break      => break);
    end log_problem;
+
+
+   ---------------------
+   --  num_set_items  --
+   ---------------------
+   function num_set_items (nv : String) return Natural
+   is
+      result : Natural := 0;
+   begin
+      if not CT.IsBlank (nv) then
+         result := 1;
+         for x in nv'Range loop
+            if nv (x) = ',' then
+               result := result + 1;
+            end if;
+         end loop;
+      end if;
+      return result;
+   end num_set_items;
 
 
 --     -------------------
