@@ -113,7 +113,7 @@ private
                      return String;
    function bincopy (data : ABM.ICS.char_array_access;
                      datalen, max_size : Natural;
-                     hard_limit : Boolean := True)
+                     hard_limit : Natural := 0)
                      return AR.chain;
 
    procedure log_problem
