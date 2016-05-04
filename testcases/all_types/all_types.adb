@@ -15,6 +15,7 @@ procedure All_Types is
    package ARS renames AdaBase.Results.Sets;
    package CT  renames CommonText;
    package ALF renames AdaBase.Logger.Facility;
+   package CAL renames Ada.Calendar;
    package CFM renames Ada.Calendar.Formatting;
 
    package Byte_Io is new Ada.Text_Io.Modular_Io (Interfaces.Unsigned_8);
@@ -122,6 +123,15 @@ procedure All_Types is
                              "my_tinyblob, my_mediumblob, " &
                              "my_blob, my_longblob " &
                              "FROM all_types WHERE id_nbyte3 = 1";
+   sql2 : constant String := "INSERT INTO all_types VALUES (:id_nbyte3, " &
+                             ":nbyte0, :nbyte1, :nbyte2, :nbyte4, :nbyte8, " &
+                             ":byte1, :byte2, :byte3, :byte4, :byte8, " &
+                             ":real9, :real18, :exact, :bit, :date, " &
+                             ":datetime, :timestamp, :time, :year, :fixed, " &
+                             ":varstring, :tinytext, :text, :medtext, " &
+                             ":longtext, :binary, :varbin, :tinyblob, " &
+                             ":medblob, :blob, :longblob, :enumtype, " &
+                             ":settype)";
 begin
 
    CON.DR.command_standard_logger (device => ALF.file, action => ALF.attach);
@@ -263,6 +273,106 @@ begin
             TIO.Put_Line ("33. blob            " & convert_chain (v_chain5));
             TIO.Put_Line ("34. long blob       " & convert_chain (v_chain6));
          end loop;
+      end if;
+   end;
+
+   declare
+      numrows : AdaBase.AffectedRows;
+   begin
+      numrows := CON.DR.execute ("DELETE FROM all_types WHERE id_nbyte3 > 8");
+      if Natural (numrows) > 0 then
+         CON.DR.commit;
+      end if;
+   end;
+
+   declare
+      v_nbyte0 : aliased AR.nbyte0  := False;
+      v_nbyte1 : aliased AR.nbyte1  := 22;
+      v_nbyte2 : aliased AR.nbyte2  := 5800;
+      v_nbyte3 : aliased AR.nbyte3  := 9;
+      v_nbyte4 : aliased AR.nbyte4  := AR.nbyte4 (2 ** 20);
+      v_nbyte8 : aliased AR.nbyte8  := AR.nbyte8 (2 ** 24 + 1);
+      v_byte1  : aliased AR.byte1   := AR.byte1 (-2);
+      v_byte2  : aliased AR.byte2   := AR.byte2 (-132);
+      v_byte3  : aliased AR.byte3   := AR.byte3 (-8000000);
+      v_byte4  : aliased AR.byte4   := 24;
+      v_byte8  : aliased AR.byte8   := 128;
+      v_exact  : aliased AR.real9   := 7.32;
+      v_real9  : aliased AR.real9   := 999.01234;
+      v_real18 : aliased AR.real18  := 99999.01234567890123456789;
+      v_text1  : aliased AR.textual := CT.SUS ("Popeye");
+      v_text2  : aliased AR.textual := CT.SUS ("Daredevel");
+      v_text3  : aliased AR.textual := CT.SUS ("The Punisher");
+      v_text4  : aliased AR.textual := CT.SUS ("Electra");
+      v_text5  : aliased AR.textual := CT.SUS ("Iron Man");
+      v_text6  : aliased AR.textual := CT.SUS ("Bruce Banner");
+      v_time1  : aliased AR.AC.Time := CAL.Time_Of (1995, 2, 14);
+      v_time2  : aliased AR.AC.Time := CAL.Time_Of (1998, 3, 17, 7020.0);
+      v_time3  : aliased AR.AC.Time := CAL.Time_Of (2005, 4, 20, 6000.253);
+      v_time4  : aliased AR.AC.Time := CAL.Time_Of (1901, 1, 1, 13000.0);
+      v_year   : aliased AR.nbyte2  := 1992;
+      v_bit    : aliased AR.chain   := (5, 127);
+      v_chain1 : aliased AR.chain   := (12, 44, 65, 240);
+      v_chain2 : aliased AR.chain   := (97, 99, 102);
+      v_chain3 : aliased AR.chain   := (1, 0, 20, 37, 10);
+      v_chain4 : aliased AR.chain   := (200, 232, 98, 100, 77, 82);
+      v_chain5 : aliased AR.chain   := (50, 12, 2, 4, 99, 255, 27);
+      v_chain6 : aliased AR.chain   := (0, 0, 0, 0, 1, 2, 3, 4);
+      v_enum   : aliased AR.enumtype := (CT.SUS ("pink"), 0);
+      v_set    : aliased AR.settype :=
+                 ((CT.SUS ("red"), 0), (CT.SUS ("green"), 0));
+   begin
+      CON.STMT := CON.DR.prepare (sql2);
+      CON.STMT.assign ("nbyte0", v_nbyte0'Unchecked_Access);
+      CON.STMT.assign ("nbyte1", v_nbyte1'Unchecked_Access);
+      CON.STMT.assign ("nbyte2", v_nbyte2'Unchecked_Access);
+      CON.STMT.assign ("id_nbyte3", v_nbyte3'Unchecked_Access);
+      CON.STMT.assign ("nbyte4", v_nbyte4'Unchecked_Access);
+      CON.STMT.assign ("nbyte8", v_nbyte8'Unchecked_Access);
+      CON.STMT.assign ("byte1",  v_byte1'Unchecked_Access);
+      CON.STMT.assign ("byte2",  v_byte2'Unchecked_Access);
+      CON.STMT.assign ("byte3",  v_byte3'Unchecked_Access);
+      CON.STMT.assign ("byte4", v_byte4'Unchecked_Access);
+      CON.STMT.assign ("byte8", v_byte8'Unchecked_Access);
+      CON.STMT.assign ("real9", v_real9'Unchecked_Access);
+      CON.STMT.assign ("real18", v_real18'Unchecked_Access);
+      CON.STMT.assign ("exact", v_exact'Unchecked_Access);
+      CON.STMT.assign ("bit", v_bit'Unchecked_Access);
+      CON.STMT.assign ("date", v_time1'Unchecked_Access);
+      CON.STMT.assign ("datetime", v_time2'Unchecked_Access);
+      CON.STMT.assign ("timestamp", v_time3'Unchecked_Access);
+      CON.STMT.assign ("time", v_time4'Unchecked_Access);
+      CON.STMT.assign ("year", v_year'Unchecked_Access);
+      CON.STMT.assign ("fixed", v_text1'Unchecked_Access);
+      CON.STMT.assign ("varstring", v_text2'Unchecked_Access);
+      CON.STMT.assign ("tinytext", v_text3'Unchecked_Access);
+      CON.STMT.assign ("text", v_text4'Unchecked_Access);
+      CON.STMT.assign ("medtext", v_text5'Unchecked_Access);
+      CON.STMT.assign ("longtext", v_text6'Unchecked_Access);
+      CON.STMT.assign ("enumtype", v_enum'Unchecked_Access);
+      CON.STMT.assign ("settype", v_set'Unchecked_Access);
+      CON.STMT.assign ("binary", v_chain1'Unchecked_Access);
+      CON.STMT.assign ("varbin", v_chain2'Unchecked_Access);
+      CON.STMT.assign ("tinyblob", v_chain3'Unchecked_Access);
+      CON.STMT.assign ("medblob", v_chain4'Unchecked_Access);
+      CON.STMT.assign ("blob", v_chain5'Unchecked_Access);
+      CON.STMT.assign ("longblob", v_chain6'Unchecked_Access);
+      TIO.Put_Line ("");
+      if CON.STMT.execute then
+         TIO.Put_Line ("Inserted" & CON.STMT.rows_affected'Img & " row(s)");
+         v_nbyte3 := 11;
+         v_nbyte0 := True;
+         v_text1 := CT.SUS ("Wolverine");
+         v_enum.enumeration := CT.SUS ("blue");
+         if CON.STMT.execute then
+            TIO.Put_Line ("Inserted" & CON.STMT.rows_affected'Img & " row(s)");
+            CON.DR.commit;
+         else
+            TIO.Put_Line (CON.STMT.last_driver_message);
+            CON.DR.rollback;
+         end if;
+      else
+         TIO.Put_Line (CON.STMT.last_driver_message);
       end if;
    end;
 
