@@ -592,6 +592,7 @@ package body AdaBase.Connection.Base.MySQL is
             else
                std_type := ft_real18;
             end if;
+            size := decimals;
          when ABM.MYSQL_TYPE_TINY =>
             --  Signed is irrelevant when field length is 1
             --  TINY_INT(1) is boolean, both signed and unsigned
