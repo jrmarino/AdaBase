@@ -24,6 +24,62 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/ `adabase_examples` /*!40100 DEFAULT CHA
 USE `adabase_examples`;
 
 --
+-- Table structure for table `all_types`
+--
+
+DROP TABLE IF EXISTS `all_types`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `all_types` (
+  `id_nbyte3` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `nbyte0` tinyint(1) NOT NULL,
+  `nbyte1` tinyint(3) unsigned NOT NULL,
+  `nbyte2` smallint(5) unsigned NOT NULL,
+  `nbyte4` int(10) unsigned NOT NULL,
+  `nbyte8` bigint(20) unsigned NOT NULL,
+  `byte1` tinyint(4) NOT NULL,
+  `byte2` smallint(6) NOT NULL,
+  `byte3` mediumint(9) NOT NULL,
+  `byte4` int(11) NOT NULL,
+  `byte5` bigint(20) NOT NULL,
+  `real9` float NOT NULL,
+  `real18` double NOT NULL,
+  `exact_decimal` decimal(5,2) NOT NULL,
+  `bit_type` bit(12) NOT NULL,
+  `my_date` date NOT NULL,
+  `my_datetime` datetime NOT NULL,
+  `my_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `my_time` time NOT NULL,
+  `my_year` year(4) NOT NULL,
+  `fixed_string` char(16) NOT NULL,
+  `variable_string` varchar(50) NOT NULL,
+  `my_tinytext` tinytext NOT NULL,
+  `my_text` text NOT NULL,
+  `my_mediumtext` mediumtext NOT NULL,
+  `my_longtext` longtext NOT NULL,
+  `my_binary` binary(4) NOT NULL,
+  `my_varbinary` varbinary(6) NOT NULL,
+  `my_tinyblob` tinyblob NOT NULL,
+  `my_mediumblob` mediumblob NOT NULL,
+  `my_blob` blob NOT NULL,
+  `my_longblob` longblob NOT NULL,
+  `enumtype` enum('red','green','blue','pink') NOT NULL,
+  `settype` set('red','green','purple','blue','black','white','yellow') NOT NULL,
+  PRIMARY KEY (`id_nbyte3`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `all_types`
+--
+
+LOCK TABLES `all_types` WRITE;
+/*!40000 ALTER TABLE `all_types` DISABLE KEYS */;
+INSERT INTO `all_types` VALUES (1,1,129,33000,2200000000,6600000000,-120,-30000,8000000,-2000000000,-7700000000,7.984,53.12342343423,123.45,'“','1993-01-15','1972-08-01 08:00:05','2016-05-03 20:17:51','04:30:02',1988,'ABCD1234EFGH5678','The quick brown fox jumped over the lazy dogs','You\'re going to need a bigger boat.','Take your stinkin\' paws off me, you damn dirty ape!','Toto, I\'ve a feeling we\'re not in Kansas anymore.','I ate his liver with some fava beans and a nice chianti.','a$&%','dog','abcdefg','1234(*&^#==','[```;^%^&123@#12','jason.bourne','red','blue,black,white,yellow');
+/*!40000 ALTER TABLE `all_types` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `fruits`
 --
 
@@ -143,4 +199,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-04-27 10:21:34
+-- Dump completed on 2016-05-04 14:34:27
