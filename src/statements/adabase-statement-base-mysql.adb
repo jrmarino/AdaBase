@@ -3,12 +3,14 @@
 
 with Ada.Exceptions;
 with Ada.Characters.Handling;
+with Ada.Calendar.Time_Zones;
 with AdaBase.Results.Field;
 with Ada.Unchecked_Conversion;
 
 package body AdaBase.Statement.Base.MySQL is
 
    package EX  renames Ada.Exceptions;
+   package CTZ renames Ada.Calendar.Time_Zones;
    package ARF renames AdaBase.Results.Field;
    package ACH renames Ada.Characters.Handling;
 
@@ -1698,19 +1700,27 @@ package body AdaBase.Statement.Base.MySQL is
             struct.buffer      := canvas.buffer_time'Address;
             declare
                hack : CAL.Time;
+               zulu : CTZ.Time_Offset;
             begin
                if zone.a16 = null then
                   hack := zone.v16;
                else
                   hack := zone.a16.all;
                end if;
+               zulu := CTZ.UTC_Time_Offset (hack);
                --  Negative time not supported
-               canvas.buffer_time.year   := ABM.IC.unsigned (CFM.Year (hack));
-               canvas.buffer_time.month  := ABM.IC.unsigned (CFM.Month (hack));
-               canvas.buffer_time.day    := ABM.IC.unsigned (CFM.Day (hack));
-               canvas.buffer_time.hour   := ABM.IC.unsigned (CFM.Hour (hack));
-               canvas.buffer_time.minute := ABM.IC.unsigned (CFM.Minute (hack));
-               canvas.buffer_time.second := ABM.IC.unsigned (CFM.Second (hack));
+               canvas.buffer_time.year   := ABM.IC.unsigned
+                                            (CFM.Year (hack, zulu));
+               canvas.buffer_time.month  := ABM.IC.unsigned
+                                            (CFM.Month (hack, zulu));
+               canvas.buffer_time.day    := ABM.IC.unsigned
+                                            (CFM.Day (hack, zulu));
+               canvas.buffer_time.hour   := ABM.IC.unsigned
+                                            (CFM.Hour (hack, zulu));
+               canvas.buffer_time.minute := ABM.IC.unsigned
+                                            (CFM.Minute (hack, zulu));
+               canvas.buffer_time.second := ABM.IC.unsigned
+                                            (CFM.Second (hack));
                canvas.buffer_time.second_part :=
                  ABM.IC.unsigned_long (CFM.Sub_Second (hack) * 1000000);
             end;
