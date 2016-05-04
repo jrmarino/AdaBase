@@ -825,6 +825,8 @@ package body AdaBase.Statement.Base.MySQL is
       end if;
       if hard_limit > 0 then
          chainlen := hard_limit;
+      else
+         chainlen := reslen;
       end if;
       declare
          result : AR.chain (1 .. chainlen) := (others => 0);
