@@ -917,23 +917,11 @@ package body AdaBase.Statement.Base.MySQL is
                      dvariant := (datatype => ft_byte8,
                                   v10 => AR.byte8 (cv.buffer_int64));
                   when ft_real9  =>
-                     if mtype = ABM.MYSQL_TYPE_NEWDECIMAL then
-                        dvariant := (datatype => ft_real9,
-                                     v11 => convert (bincopy (cv.buffer_binary,
-                                    datalen, Stmt.con_max_blob)));
-                     else
                         dvariant := (datatype => ft_real9,
                                      v11 => AR.real9 (cv.buffer_float));
-                     end if;
                   when ft_real18 =>
-                     if mtype = ABM.MYSQL_TYPE_NEWDECIMAL then
-                        dvariant := (datatype => ft_real18,
-                                     v12 => convert (bincopy (cv.buffer_binary,
-                                       datalen, Stmt.con_max_blob)));
-                     else
                         dvariant := (datatype => ft_real18,
                                      v12 => AR.real18 (cv.buffer_double));
-                     end if;
                   when ft_textual =>
                      dvariant := (datatype => ft_textual,
                                   v13 => CT.SUS (bincopy (cv.buffer_binary,
@@ -1353,11 +1341,13 @@ package body AdaBase.Statement.Base.MySQL is
                when ABM.MYSQL_TYPE_FLOAT =>
                   slots (sx).buffer :=
                     Stmt.bind_canvas (sx).buffer_float'Address;
-               when ABM.MYSQL_TYPE_DECIMAL =>
+               when ABM.MYSQL_TYPE_NEWDECIMAL | ABM.MYSQL_TYPE_DECIMAL =>
                   if Stmt.column_info.Element (sx).field_type = ft_real18 then
+                     slots (sx).buffer_type := ABM.MYSQL_TYPE_DOUBLE;
                      slots (sx).buffer :=
                        Stmt.bind_canvas (sx).buffer_double'Address;
                   else
+                     slots (sx).buffer_type := ABM.MYSQL_TYPE_FLOAT;
                      slots (sx).buffer :=
                        Stmt.bind_canvas (sx).buffer_float'Address;
                   end if;
@@ -1404,7 +1394,7 @@ package body AdaBase.Statement.Base.MySQL is
                when ABM.MYSQL_TYPE_BIT | ABM.MYSQL_TYPE_TINY_BLOB |
                     ABM.MYSQL_TYPE_MEDIUM_BLOB | ABM.MYSQL_TYPE_LONG_BLOB |
                     ABM.MYSQL_TYPE_BLOB | ABM.MYSQL_TYPE_STRING |
-                    ABM.MYSQL_TYPE_NEWDECIMAL | ABM.MYSQL_TYPE_VAR_STRING =>
+                    ABM.MYSQL_TYPE_VAR_STRING =>
                   fsize := Stmt.column_info.Element (sx).field_size;
                   slots (sx).buffer_length := ABM.IC.unsigned_long (fsize);
                   Stmt.bind_canvas (sx).buffer_binary := new ABM.IC.char_array
