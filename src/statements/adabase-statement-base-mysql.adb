@@ -816,7 +816,8 @@ package body AdaBase.Statement.Base.MySQL is
    function bincopy (data : ABM.ICS.char_array_access;
                      datalen, max_size : Natural) return AR.chain
    is
-      reslen : Natural := datalen;
+      reslen   : Natural := datalen;
+      chainlen : constant Natural := data.all'Length;
    begin
       if reslen > max_size then
          reslen := max_size;
@@ -828,6 +829,9 @@ package body AdaBase.Statement.Base.MySQL is
          for x in Natural range 1 .. reslen loop
             jimmy := Character (data.all (ABM.IC.size_t (x)));
             result (x) := AR.nbyte1 (Character'Pos (jimmy));
+         end loop;
+         for x in Natural range reslen + 1 .. chainlen loop
+            result (x) := 0;
          end loop;
          return result;
       end;
@@ -1160,11 +1164,6 @@ package body AdaBase.Statement.Base.MySQL is
                                (cv.buffer_time.second_part) / 1000000));
                      end;
                   when ft_chain =>
-                     if Stmt.crate.Element (F).a17.all'Length /= datalen then
-                           raise BINDING_SIZE_MISMATCH with "native size : " &
-                             Stmt.crate.Element (F).a17.all'Length'Img &
-                             " binding size : " & datalen'Img;
-                     end if;
                      Stmt.crate.Element (F).a17.all :=
                        bincopy (cv.buffer_binary, datalen, Stmt.con_max_blob);
                   when ft_enumtype =>
