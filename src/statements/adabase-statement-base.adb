@@ -154,7 +154,7 @@ package body AdaBase.Statement.Base is
                when others =>
                   if scanning then
                      case sql_mask (arrow) is
-                        when 'A' .. 'Z' | 'a' .. 'z' | '0' .. '9' =>
+                        when 'A' .. 'Z' | 'a' .. 'z' | '0' .. '9' | '_' =>
                            final := arrow;
                         when others => replace_alias;
                      end case;
