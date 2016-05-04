@@ -1058,12 +1058,15 @@ package body AdaBase.Statement.Base.MySQL is
             end if;
 
             declare
+               use type ABM.enum_field_types;
                cv      : mysql_canvas renames Stmt.bind_canvas (F);
                datalen : constant Natural := Natural (cv.length);
                Tout    : constant field_types :=
                          Stmt.crate.Element (Index => F).output_type;
                Tnative : constant field_types :=
                          Stmt.column_info.Element (Index => F).field_type;
+               mtype   : ABM.enum_field_types :=
+                          Stmt.column_info.Element (F).mysql_type;
             begin
                if Tnative /= Tout then
                   raise BINDING_TYPE_MISMATCH with "native type : " &
@@ -1093,10 +1096,28 @@ package body AdaBase.Statement.Base.MySQL is
                        AR.byte4 (cv.buffer_int32);
                   when ft_byte8 => Stmt.crate.Element (F).a10.all :=
                        AR.byte8 (cv.buffer_int64);
-                  when ft_real9  => Stmt.crate.Element (F).a11.all :=
-                       AR.real9 (cv.buffer_float);
-                  when ft_real18 => Stmt.crate.Element (F).a12.all :=
-                       AR.real18 (cv.buffer_double);
+                  when ft_real9 =>
+                     if mtype = ABM.MYSQL_TYPE_NEWDECIMAL or else
+                       mtype = ABM.MYSQL_TYPE_DECIMAL
+                     then
+                        Stmt.crate.Element (F).a11.all :=
+                          convert (bincopy (cv.buffer_binary, datalen,
+                                   Stmt.con_max_blob));
+                     else
+                        Stmt.crate.Element (F).a11.all :=
+                          AR.real9 (cv.buffer_float);
+                     end if;
+                  when ft_real18 =>
+                     if mtype = ABM.MYSQL_TYPE_NEWDECIMAL or else
+                       mtype = ABM.MYSQL_TYPE_DECIMAL
+                     then
+                        Stmt.crate.Element (F).a12.all :=
+                          convert (bincopy (cv.buffer_binary, datalen,
+                                   Stmt.con_max_blob));
+                     else
+                        Stmt.crate.Element (F).a12.all :=
+                          AR.real18 (cv.buffer_double);
+                     end if;
                   when ft_textual => Stmt.crate.Element (F).a13.all :=
                        CT.SUS (bincopy (cv.buffer_binary, datalen,
                                Stmt.con_max_blob));
@@ -1106,16 +1127,38 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_supertext => Stmt.crate.Element (F).a15.all :=
                        convert (bincopy (cv.buffer_binary, datalen,
                                 Stmt.con_max_blob));
-                  when ft_timestamp => Stmt.crate.Element (F).a16.all :=
-                       CFM.Time_Of
-                         (Year => Natural (cv.buffer_time.year),
-                          Month => Natural (cv.buffer_time.month),
-                          Day => Natural (cv.buffer_time.day),
-                          Hour => Natural (cv.buffer_time.hour),
-                          Minute => Natural (cv.buffer_time.minute),
-                          Second => Natural (cv.buffer_time.second),
-                          Sub_Second => CFM.Second_Duration
-                            (Natural (cv.buffer_time.second_part) / 1000000));
+                  when ft_timestamp =>
+                     declare
+                        year  : Natural := Natural (cv.buffer_time.year);
+                        month : Natural := Natural (cv.buffer_time.month);
+                        day   : Natural := Natural (cv.buffer_time.day);
+                     begin
+                        if year < CAL.Year_Number'First or else
+                          year > CAL.Year_Number'Last
+                        then
+                           year := CAL.Year_Number'First;
+                        end if;
+                        if month < CAL.Month_Number'First or else
+                          month > CAL.Month_Number'Last
+                        then
+                           month := CAL.Month_Number'First;
+                        end if;
+                        if day < CAL.Day_Number'First or else
+                          day > CAL.Day_Number'Last
+                        then
+                           day := CAL.Day_Number'First;
+                        end if;
+                        Stmt.crate.Element (F).a16.all :=
+                          CFM.Time_Of
+                            (Year => year,
+                             Month => month,
+                             Day => day,
+                             Hour => Natural (cv.buffer_time.hour),
+                             Minute => Natural (cv.buffer_time.minute),
+                             Second => Natural (cv.buffer_time.second),
+                             Sub_Second => CFM.Second_Duration (Natural
+                               (cv.buffer_time.second_part) / 1000000));
+                     end;
                   when ft_chain =>
                      if Stmt.crate.Element (F).a17.all'Length /= datalen then
                            raise BINDING_SIZE_MISMATCH with "native size : " &
