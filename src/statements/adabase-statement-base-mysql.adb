@@ -814,24 +814,25 @@ package body AdaBase.Statement.Base.MySQL is
    --  bincopy #2  --
    ------------------
    function bincopy (data : ABM.ICS.char_array_access;
-                     datalen, max_size : Natural) return AR.chain
+                     datalen, max_size : Natural;
+                     hard_limit : Boolean := True) return AR.chain
    is
       reslen   : Natural := datalen;
-      chainlen : constant Natural := data.all'Length;
+      chainlen : Natural := data.all'Length;
    begin
       if reslen > max_size then
          reslen := max_size;
       end if;
+      if hard_limit then
+         chainlen := reslen;
+      end if;
       declare
-         result : AR.chain (1 .. reslen) := (others => 0);
+         result : AR.chain (1 .. chainlen) := (others => 0);
          jimmy : Character;
       begin
          for x in Natural range 1 .. reslen loop
             jimmy := Character (data.all (ABM.IC.size_t (x)));
             result (x) := AR.nbyte1 (Character'Pos (jimmy));
-         end loop;
-         for x in Natural range reslen + 1 .. chainlen loop
-            result (x) := 0;
          end loop;
          return result;
       end;
@@ -1164,8 +1165,8 @@ package body AdaBase.Statement.Base.MySQL is
                                (cv.buffer_time.second_part) / 1000000));
                      end;
                   when ft_chain =>
-                     Stmt.crate.Element (F).a17.all :=
-                       bincopy (cv.buffer_binary, datalen, Stmt.con_max_blob);
+                     Stmt.crate.Element (F).a17.all := bincopy
+                       (cv.buffer_binary, datalen, Stmt.con_max_blob, False);
                   when ft_enumtype =>
                      Stmt.crate.Element (F).a18.all.index := 0;
                      Stmt.crate.Element (F).a18.all.enumeration :=
