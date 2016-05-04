@@ -1186,13 +1186,13 @@ package body AdaBase.Statement.Base.MySQL is
                      declare
                         setstr : constant String := bincopy
                           (cv.buffer_binary, datalen, Stmt.con_max_blob);
+                        num_items : constant Natural := num_set_items (setstr);
                      begin
-                        if Stmt.crate.Element (F).a19.all'Length <
-                          num_set_items (setstr)
+                        if Stmt.crate.Element (F).a19.all'Length < num_items
                         then
                            raise BINDING_SIZE_MISMATCH with "native size : " &
                              Stmt.crate.Element (F).a19.all'Length'Img &
-                             " less than binding size : " & datalen'Img;
+                             " less than binding size : " & num_items'Img;
                         end if;
                         Stmt.crate.Element (F).a19.all := convert
                           (setstr, Stmt.crate.Element (F).a19.all'Length);
