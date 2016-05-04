@@ -568,7 +568,6 @@ package body AdaBase.Connection.Base.MySQL is
       unsigned : constant Boolean  := (flags and flag_unsigned) > 0;
       is_enum  : constant Boolean  := (flags and flag_enumtype) > 0;
       is_set   : constant Boolean  := (flags and flag_settype)  > 0;
-      decimals : constant Natural  := Natural (field.decimals);
       fieldlen : constant megasize := megasize (field.length);
       maxlen   : constant megasize := megasize (field.max_length);
       bestlen  : Natural;
@@ -587,12 +586,13 @@ package body AdaBase.Connection.Base.MySQL is
          when ABM.MYSQL_TYPE_DOUBLE     => std_type := ft_real18;
          when ABM.MYSQL_TYPE_DECIMAL    |
               ABM.MYSQL_TYPE_NEWDECIMAL =>
-            if decimals <= 9 then
+            --  Fieldlen = Max digits + 2 (decimal point and null char?)
+            --  The decimal fields is not useful here, we want sig. digits
+            if Natural (fieldlen) - 2  <= 9 then
                std_type := ft_real9;
             else
                std_type := ft_real18;
             end if;
-            size := decimals;
          when ABM.MYSQL_TYPE_TINY =>
             --  Signed is irrelevant when field length is 1
             --  TINY_INT(1) is boolean, both signed and unsigned
@@ -690,7 +690,9 @@ package body AdaBase.Connection.Base.MySQL is
               ABM.MYSQL_TYPE_LONG_BLOB   |
               ABM.MYSQL_TYPE_VARCHAR     |
               ABM.MYSQL_TYPE_VAR_STRING  |
-              ABM.MYSQL_TYPE_STRING      => size := bestlen;
+              ABM.MYSQL_TYPE_STRING      |
+              ABM.MYSQL_TYPE_DECIMAL     |
+              ABM.MYSQL_TYPE_NEWDECIMAL  => size := bestlen;
          when others                     => size := 0;
       end case;
    end field_data_type;
