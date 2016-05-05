@@ -667,6 +667,22 @@ package body AdaBase.Statement.Base.MySQL is
    end convert;
 
 
+   -------------------------------
+   --  convert string to chain  --
+   -------------------------------
+   function convert (nv : String; fixed : Natural := 0) return AR.chain
+   is
+      result : AR.chain := (1 .. nv'Length => 0);
+      index  : Natural := 1;
+   begin
+      for x in nv'Range loop
+         result (index) := Character'Pos (nv (x));
+         index := index + 1;
+      end loop;
+      return result;
+   end convert;
+
+
    ----------------------------------
    --  convert string to enumtype  --
    ----------------------------------
@@ -1728,15 +1744,11 @@ package body AdaBase.Statement.Base.MySQL is
             end;
          when ft_chain =>
             struct.buffer_type := ABM.MYSQL_TYPE_BLOB;
-            --  Chains are only available via access
-            declare
-               chainstr : String (1 .. zone.a17.all'Length);
-            begin
-               for x in chainstr'Range loop
-                  chainstr (x) := Character'Val (zone.a17.all (x));
-               end loop;
-               set_binary_buffer (chainstr);
-            end;
+            if zone.a19 = null then
+               set_binary_buffer (CT.USS (zone.v17));
+            else
+               set_binary_buffer (convert (zone.a17.all));
+            end if;
          when ft_enumtype =>
             --  ENUM is essentially a specific string on MySQL
             struct.buffer_type := ABM.MYSQL_TYPE_STRING;
@@ -1824,11 +1836,8 @@ package body AdaBase.Statement.Base.MySQL is
          when ft_supertext =>
             ST  := CT.SUS (value);
             STS := SWW.To_Unbounded_Wide_Wide_String (ARC.convert (ST));
-         when ft_timestamp | ft_enumtype | ft_settype =>
+         when ft_timestamp | ft_enumtype | ft_settype | ft_chain =>
             null;
-         when ft_chain =>
-            raise STMT_EXECUTION
-              with "BLOB parameters can only be bound by reference (Access)";
          when others =>
             ST := CT.SUS (value);
       end case;
@@ -1872,8 +1881,13 @@ package body AdaBase.Statement.Base.MySQL is
          when ft_widetext  => Stmt.assign (index, hold.v14);
          when ft_supertext => Stmt.assign (index, hold.v15);
          when ft_timestamp => Stmt.assign (index, hold.v16);
-         when ft_chain     => null;
          when ft_enumtype  => Stmt.assign (index, hold.v18);
+         when ft_chain     =>
+            declare
+               my_chain : AR.chain := convert (value);
+            begin
+               Stmt.assign (index, my_chain);
+            end;
          when ft_settype   =>
             declare
                set : AR.settype := convert (value);
