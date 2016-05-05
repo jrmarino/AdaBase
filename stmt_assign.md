@@ -70,23 +70,22 @@ package AdaBase.Results is
 end AdaBase.Results;
 </pre>
 <p>
-This page documents 76 similar assign functions, four for each standard data type
-(except for chain and settype which don't have the constant value versions).
-These functions bind to the markers of a previously prepared statement.
+This page documents 80 overloaded assign functions, four for each standard
+data type. These functions bind to the markers of a previously prepared
+statement.
 </p>
 <p>
 The first 20 functions reference the marker by its numeric index starting from 1
 and bind the marker to a variable matching the data type of the marker.
-The next 20 functions do the same thing except they reference the marker by its name
-(which requires the use of named parameters instead of question marks).
+The next 20 functions do the same thing except they reference the marker by its
+name, which requires the use of named parameters instead of question marks.
 The values of the variables involved in these 40 functions are not evaluated until
-the <b>execute</b> command is issues
+the <b>execute</b> command is issued.
 </p>
 <p>
-The next 18 functions reference the marker by its numeric index and define its value
-with a constant of the same data type of the marker.  There is no constant variation of
-the function for chain and settype markers; those markers are limited to variables.
-The final 18 functions are similar, but reference the marker by their names.
+The next 20 functions reference the marker by its numeric index and define its
+value with a constant of the same data type of the marker.  The final 20
+functions are similar, but reference the marker by their names.
 </p>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.nbyte0_access)</h3>
@@ -131,7 +130,7 @@ AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.settype_access
 <p>
 Prior to issuing the <b>execute</b> command of the statement object, the values of
 the markers must be defined.  One method is to pass access to a variable of the same
-type as the marker.  The first 20 of the 76 overloaded bind functions accept an index
+type as the marker.  The first 20 of the 80 overloaded bind functions accept an index
 starting with 1 that matches the column number of the result row.  The <i>vaxx</i>
 argument accepts a pointer to one of the 20 native data type.
 </p>
@@ -223,10 +222,14 @@ AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.str4)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.time)</h3>
 <h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.chain)</h3>
+<h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.enum)</h3>
+<h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.settype)</h3>
 <p>
-These 18 functions assign values immediately to markers referenced by their numeric
-index.  This option is not available for chain and settype markers.
+These 20 functions assign values immediately to markers referenced by their
+numeric index.
 </p>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.nbyte0)</h3>
@@ -263,10 +266,14 @@ AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.str4)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.time)</h3>
 <h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.chain)</h3>
+<h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.enum)</h3>
+<h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.settype)</h3>
 <p>
-These 18 functions assign values immediately to markers referenced by their names.
-This option is not available for chain and settype markers.
+These 20 functions assign values immediately to markers referenced by their
+names.
 </p>
 <br/>
 <p class="caption">See {{ page.prepare_select }} for a usage example.</p>
