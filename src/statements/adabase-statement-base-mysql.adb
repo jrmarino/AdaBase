@@ -630,9 +630,9 @@ package body AdaBase.Statement.Base.MySQL is
    end convert;
 
 
-   ----------------------------------
-   --  convert string to enumtype  --
-   ----------------------------------
+   ---------------------------------
+   --  convert string to Settype  --
+   ---------------------------------
    function convert (nv : String; fixed : Natural := 0) return AR.settype
    is
       num_enums : Natural := 1;
@@ -664,6 +664,19 @@ package body AdaBase.Statement.Base.MySQL is
          result (index).enumeration := CT.SUS (nv (cursor .. curend));
          return result;
       end;
+   end convert;
+
+
+   ----------------------------------
+   --  convert string to enumtype  --
+   ----------------------------------
+   function convert (nv : String) return AR.enumtype
+   is
+      result : AR.enumtype;
+   begin
+      result.index := 0;   --  unused on MySQL
+      result.enumeration := CT.SUS (nv);
+      return result;
    end convert;
 
 
@@ -760,12 +773,8 @@ package body AdaBase.Statement.Base.MySQL is
                                            convert (ST, Stmt.con_max_blob));
                      end;
                   when ft_enumtype =>
-                     --  It seems that mysql doesn't give up the enum index
-                     --  easily.  Set to "0" for all members
                      dvariant := (datatype => ft_enumtype,
-                                  V18 => (enumeration =>
-                                             convert (ST, Stmt.con_max_blob),
-                                            index => 0));
+                                  V18 => convert (ST));
                   when others =>
                      null;
 
@@ -997,10 +1006,8 @@ package body AdaBase.Statement.Base.MySQL is
                      end;
                   when ft_enumtype =>
                      dvariant := (datatype => ft_enumtype,
-                                  v18 => (enumeration => CT.SUS
-                                          (bincopy (cv.buffer_binary,
-                                             datalen, Stmt.con_max_blob)),
-                                          index => 0));
+                                  v18 => convert (bincopy (cv.buffer_binary,
+                                    datalen, Stmt.con_max_blob)));
                   when ft_settype => null;
                   when ft_chain => null;
                end case;
@@ -1180,10 +1187,9 @@ package body AdaBase.Statement.Base.MySQL is
                        (cv.buffer_binary, datalen, Stmt.con_max_blob,
                         Stmt.crate.Element (F).a17.all'Length);
                   when ft_enumtype =>
-                     Stmt.crate.Element (F).a18.all.index := 0;
-                     Stmt.crate.Element (F).a18.all.enumeration :=
-                       CT.SUS (bincopy (cv.buffer_binary, datalen,
-                               Stmt.con_max_blob));
+                     Stmt.crate.Element (F).a18.all :=
+                       convert (bincopy (cv.buffer_binary, datalen,
+                                Stmt.con_max_blob));
                   when ft_settype =>
                      declare
                         setstr : constant String := bincopy
@@ -1315,11 +1321,7 @@ package body AdaBase.Statement.Base.MySQL is
                         Stmt.crate.Element (F).a17.all :=
                           convert (ST, Stmt.con_max_blob);
                      when ft_enumtype =>
-                        --  It seems that mysql doesn't give up the enum index
-                        --  easily.  Set to "0" for all members
-                        Stmt.crate.Element (F).a18.all :=
-                          (enumeration => convert (ST, Stmt.con_max_blob),
-                           index => 0);
+                        Stmt.crate.Element (F).a18.all := convert (ST);
                      when ft_settype =>
                         Stmt.crate.Element (F).a19.all := convert (ST);
                   end case;
