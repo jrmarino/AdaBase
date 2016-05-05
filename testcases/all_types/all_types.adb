@@ -324,6 +324,8 @@ begin
       v_set2   : AR.settype :=
                  ((CT.SUS ("yellow"), 0), (CT.SUS ("white"), 0),
                   (CT.SUS ("red"), 0));
+      v_chain7 : AR.chain := (65, 66, 67, 68);
+      v_chain8 : AR.chain := (97, 98, 99, 100, 101);
 
    begin
       CON.STMT := CON.DR.prepare (sql2);
@@ -372,9 +374,12 @@ begin
             TIO.Put_Line ("Inserted" & CON.STMT.rows_affected'Img & " row(s)");
             v_nbyte3 := 15;
             CON.STMT.assign ("settype", v_set2);
+            CON.STMT.assign ("binary", v_chain7);
+            CON.STMT.assign ("varbin", v_chain8);
             v_exact := 187.93;
             if CON.STMT.execute then
-               TIO.Put_Line ("Inserted" & CON.STMT.rows_affected'Img & " row(s)");
+               TIO.Put_Line ("Inserted" & CON.STMT.rows_affected'Img &
+                             " row(s)");
                CON.DR.commit;
             else
                TIO.Put_Line (CON.STMT.last_driver_message);
