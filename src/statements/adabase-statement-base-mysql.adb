@@ -126,7 +126,7 @@ package body AdaBase.Statement.Base.MySQL is
    begin
       if Stmt.type_of_statement = direct_statement then
          raise INVALID_FOR_DIRECT_QUERY
-           with "execute is for prepared statements";
+           with "The execute command is for prepared statements only";
       end if;
       Stmt.successful_execution := False;
       if num_markers > 0 then
@@ -199,13 +199,13 @@ package body AdaBase.Statement.Base.MySQL is
    --  execute  (version 2)  --
    ----------------------------
    overriding
-   function execute (Stmt : out MySQL_statement; bind_piped : String)
-                     return Boolean
+   function execute (Stmt : out MySQL_statement; parameters : String;
+                     delimiter  : Character := '|') return Boolean
    is
    begin
       if Stmt.type_of_statement = direct_statement then
          raise INVALID_FOR_DIRECT_QUERY
-           with "execute is for prepared statements";
+           with "The execute command is for prepared statements only";
       end if;
       --  TODO : IMPLEMENT
       --  Change, use strings directly (no double conversion)

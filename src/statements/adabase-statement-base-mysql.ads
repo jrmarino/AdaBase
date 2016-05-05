@@ -47,8 +47,8 @@ package AdaBase.Statement.Base.MySQL is
    function execute         (Stmt : out MySQL_statement) return Boolean;
 
    overriding
-   function execute         (Stmt : out MySQL_statement; bind_piped : String)
-                             return Boolean;
+   function execute         (Stmt : out MySQL_statement; parameters : String;
+                             delimiter  : Character := '|') return Boolean;
 
    overriding
    function rows_returned   (Stmt : MySQL_statement) return AffectedRows;

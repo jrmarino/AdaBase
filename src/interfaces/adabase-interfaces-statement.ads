@@ -23,7 +23,8 @@ package AdaBase.Interfaces.Statement is
 
 
    function execute         (Stmt : out iStatement) return Boolean is abstract;
-   function execute         (Stmt : out iStatement; bind_piped : String)
+   function execute         (Stmt : out iStatement; parameters : String;
+                             delimiter  : Character := '|')
                              return Boolean is abstract;
 
    function rows_affected   (Stmt : iStatement)
