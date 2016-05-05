@@ -132,6 +132,13 @@ procedure All_Types is
                              ":longtext, :binary, :varbin, :tinyblob, " &
                              ":medblob, :blob, :longblob, :enumtype, " &
                              ":settype)";
+   sql3 : constant String := "INSERT INTO all_types (id_nbyte3, nbyte0, " &
+                             "nbyte1, byte2, byte4, nbyte8, real9, real18, " &
+                             "exact_decimal, my_date, my_timestamp, " &
+                             "my_time, my_year, my_tinytext, enumtype, " &
+                             "settype, my_varbinary, my_blob) VALUES " &
+                             "(?,?, ?,?,?,?,?,?, ?,?,?, ?,?,?,?, ?,?,?)";
+
 begin
 
    CON.DR.command_standard_logger (device => ALF.file, action => ALF.attach);
@@ -391,6 +398,43 @@ begin
          end if;
       else
          TIO.Put_Line (CON.STMT.last_driver_message);
+      end if;
+   end;
+
+
+   declare
+      values : constant String := "20|1|150|-10|-90000|3200100|87.2341|" &
+        "15555.213792831213|875.44|2014-10-20|2000-03-25 15:15:00|" &
+        "20:18:13|1986|AdaBase is so cool!|green|yellow,black|" &
+        " 0123|456789ABC.,z[]";
+   begin
+      CON.STMT := CON.DR.prepare (sql3);
+      --  This has to be done only once after the prepare command
+      --  Set the type for each parameter (required for at least MySQL)
+      CON.STMT.assign (1,  AR.PARAM_IS_NBYTE_3);
+      CON.STMT.assign (2,  AR.PARAM_IS_BOOLEAN);
+      CON.STMT.assign (3,  AR.PARAM_IS_NBYTE_1);
+      CON.STMT.assign (4,  AR.PARAM_IS_BYTE_2);
+      CON.STMT.assign (5,  AR.PARAM_IS_BYTE_4);
+      CON.STMT.assign (6,  AR.PARAM_IS_NBYTE_8);
+      CON.STMT.assign (7,  AR.PARAM_IS_REAL_9);
+      CON.STMT.assign (8,  AR.PARAM_IS_REAL_18);
+      CON.STMT.assign (9,  AR.PARAM_IS_REAL_9);
+      CON.STMT.assign (10, AR.PARAM_IS_TIMESTAMP);
+      CON.STMT.assign (11, AR.PARAM_IS_TIMESTAMP);
+      CON.STMT.assign (12, AR.PARAM_IS_TIMESTAMP);
+      CON.STMT.assign (13, AR.PARAM_IS_NBYTE_2);
+      CON.STMT.assign (14, AR.PARAM_IS_TEXTUAL);
+      CON.STMT.assign (15, AR.PARAM_IS_ENUM);
+      CON.STMT.assign (16, AR.PARAM_IS_SET);
+      CON.STMT.assign (17, AR.PARAM_IS_CHAIN);
+      CON.STMT.assign (18, AR.PARAM_IS_CHAIN);
+
+      if CON.STMT.execute (values) then
+         TIO.Put_Line ("Inserted" & CON.STMT.rows_affected'Img & " row(s)");
+         CON.DR.commit;
+      else
+         TIO.Put_Line ("statement execution failed");
       end if;
    end;
 
