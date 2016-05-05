@@ -321,6 +321,10 @@ begin
       v_enum   : aliased AR.enumtype := (CT.SUS ("pink"), 0);
       v_set    : aliased AR.settype :=
                  ((CT.SUS ("red"), 0), (CT.SUS ("green"), 0));
+      v_set2   : AR.settype :=
+                 ((CT.SUS ("yellow"), 0), (CT.SUS ("white"), 0),
+                  (CT.SUS ("red"), 0));
+
    begin
       CON.STMT := CON.DR.prepare (sql2);
       CON.STMT.assign ("nbyte0", v_nbyte0'Unchecked_Access);
@@ -366,7 +370,16 @@ begin
          v_enum.enumeration := CT.SUS ("blue");
          if CON.STMT.execute then
             TIO.Put_Line ("Inserted" & CON.STMT.rows_affected'Img & " row(s)");
-            CON.DR.commit;
+            v_nbyte3 := 15;
+            CON.STMT.assign ("settype", v_set2);
+            v_exact := 187.93;
+            if CON.STMT.execute then
+               TIO.Put_Line ("Inserted" & CON.STMT.rows_affected'Img & " row(s)");
+               CON.DR.commit;
+            else
+               TIO.Put_Line (CON.STMT.last_driver_message);
+               CON.DR.rollback;
+            end if;
          else
             TIO.Put_Line (CON.STMT.last_driver_message);
             CON.DR.rollback;
