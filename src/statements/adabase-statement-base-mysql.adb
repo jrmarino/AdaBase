@@ -1744,7 +1744,7 @@ package body AdaBase.Statement.Base.MySQL is
             end;
          when ft_chain =>
             struct.buffer_type := ABM.MYSQL_TYPE_BLOB;
-            if zone.a19 = null then
+            if zone.a17 = null then
                set_binary_buffer (CT.USS (zone.v17));
             else
                set_binary_buffer (convert (zone.a17.all));
