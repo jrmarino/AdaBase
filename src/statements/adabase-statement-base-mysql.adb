@@ -202,14 +202,64 @@ package body AdaBase.Statement.Base.MySQL is
    function execute (Stmt : out MySQL_statement; parameters : String;
                      delimiter  : Character := '|') return Boolean
    is
+      function parameters_given return Natural;
+      num_markers : constant Natural := Natural (Stmt.realmccoy.Length);
+
+      function parameters_given return Natural
+      is
+         result : Natural := 1;
+      begin
+         for x in parameters'Range loop
+            if parameters (x) = delimiter then
+               result := result + 1;
+            end if;
+         end loop;
+         return result;
+      end parameters_given;
    begin
       if Stmt.type_of_statement = direct_statement then
          raise INVALID_FOR_DIRECT_QUERY
            with "The execute command is for prepared statements only";
       end if;
-      --  TODO : IMPLEMENT
-      --  Change, use strings directly (no double conversion)
-      raise ILLEGAL_BIND_SQL with "to be implemented";
+
+      if num_markers /= parameters_given then
+         raise STMT_PREPARATION
+           with "Parameter number mismatch, " & num_markers'Img &
+           " expected, but" & parameters_given'Img & " provided.";
+      end if;
+
+      declare
+         index : Natural := 1;
+         arrow : Natural := parameters'First;
+         scans : Boolean := False;
+         start : Natural := 1;
+         stop  : Natural := 0;
+      begin
+         for x in parameters'Range loop
+            if parameters (x) = delimiter then
+               if not scans then
+                  Stmt.auto_assign (index, "");
+               else
+                  Stmt.auto_assign (index, parameters (start .. stop));
+                  scans := False;
+               end if;
+               index := index + 1;
+            else
+               stop := x;
+               if not scans then
+                  start := x;
+               else
+                  scans := True;
+               end if;
+            end if;
+         end loop;
+         if not scans then
+            Stmt.auto_assign (index, "");
+         else
+            Stmt.auto_assign (index, parameters (start .. stop));
+         end if;
+      end;
+
       return Stmt.execute;
    end execute;
 
