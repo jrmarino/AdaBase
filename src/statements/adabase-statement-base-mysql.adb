@@ -248,7 +248,6 @@ package body AdaBase.Statement.Base.MySQL is
                stop := x;
                if not scans then
                   start := x;
-               else
                   scans := True;
                end if;
             end if;

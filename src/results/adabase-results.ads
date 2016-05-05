@@ -70,4 +70,32 @@ package AdaBase.Results is
    type enum_access    is access all enumtype;
    type settype_access is access all settype;   --  stored as access
 
+
+   ------------------------------------------------
+   --  CONSTANTS FOR PARAMETER TYPE DEFINITIONS  --
+   ------------------------------------------------
+   PARAM_IS_BOOLEAN   : constant nbyte0 := False;
+   PARAM_IS_NBYTE_1   : constant nbyte1 := 0;
+   PARAM_IS_NBYTE_2   : constant nbyte1 := 0;
+   PARAM_IS_NBYTE_3   : constant nbyte1 := 0;
+   PARAM_IS_NBYTE_4   : constant nbyte1 := 0;
+   PARAM_IS_NBYTE_8   : constant nbyte1 := 0;
+   PARAM_IS_BYTE_1    : constant nbyte1 := 0;
+   PARAM_IS_BYTE_2    : constant nbyte1 := 0;
+   PARAM_IS_BYTE_3    : constant nbyte1 := 0;
+   PARAM_IS_BYTE_4    : constant nbyte1 := 0;
+   PARAM_IS_BYTE_8    : constant nbyte1 := 0;
+   PARAM_IS_REAL_9    : constant real9  := 0.0;
+   PARAM_IS_REAL_18   : constant real18 := 0.0;
+   PARAM_IS_CHAIN     : constant chain := (1 .. 1 => 0);
+   PARAM_IS_ENUM      : constant enumtype := (CT.blank, 0);
+   PARAM_IS_SET       : constant settype := (1 .. 1 => (CT.blank, 0));
+   PARAM_IS_TEXTUAL   : constant textual := CT.blank;
+   PARAM_IS_TEXTWIDE  : constant textwide := SUW.Null_Unbounded_Wide_String;
+   PARAM_IS_TEXTSUPER : constant textsuper :=
+                       SUWW.Null_Unbounded_Wide_Wide_String;
+   PARAM_IS_TIMESTAMP : constant AC.Time := AC.Time_Of (AC.Year_Number'First,
+                                                        AC.Month_Number'First,
+                                                        AC.Day_Number'First);
+
 end AdaBase.Results;
