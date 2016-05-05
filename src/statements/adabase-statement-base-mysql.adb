@@ -1804,88 +1804,77 @@ package body AdaBase.Statement.Base.MySQL is
    end num_set_items;
 
 
---     -------------------
---     --  auto_assign  --
---     -------------------
---     procedure auto_assign (Stmt  : out Base_Statement;
---                            index : Positive;
---                            value : String)
---     is
---     begin
---        --  this reads the column metadata, converts the value string to
---        --  native type and calls the correct assign
---
---        null;
---        case Stmt.column_info.Element (index).field_type is
---           when ft_nbyte0 => Stmt.assign (index, (value = "1"));
---           when ft_nbyte1 => Stmt.assign (index, AR.nbyte1 (convert (ST)));
---           when ft_nbyte2 => Stmt.assign (index, AR.nbyte2 (convert (ST)));
---           when ft_nbyte3 => Stmt.assign (index, AR.nbyte3 (convert (ST)));
---           when ft_nbyte4 => Stmt.assign (index, AR.nbyte4 (convert (ST)));
---           when ft_nbyte8 => Stmt.assign (index, AR.nbyte8 (convert (ST)));
---                    when ft_nbyte1 =>
---                       dvariant := (datatype => ft_nbyte1, v01 => convert (ST));
---                    when ft_nbyte2 =>
---                       dvariant := (datatype => ft_nbyte2, v02 => convert (ST));
---                    when ft_nbyte3 =>
---                       dvariant := (datatype => ft_nbyte3, v03 => convert (ST));
---                    when ft_nbyte4 =>
---                       dvariant := (datatype => ft_nbyte4, v04 => convert (ST));
---                    when ft_nbyte8 =>
---                       dvariant := (datatype => ft_nbyte8, v05 => convert (ST));
---                    when ft_byte1  =>
---                       dvariant := (datatype => ft_byte1, v06 => convert (ST));
---                    when ft_byte2  =>
---                       dvariant := (datatype => ft_byte2, v07 => convert (ST));
---                    when ft_byte3  =>
---                       dvariant := (datatype => ft_byte3, v08 => convert (ST));
---                    when ft_byte4  =>
---                       dvariant := (datatype => ft_byte4, v09 => convert (ST));
---                    when ft_byte8  =>
---                       dvariant := (datatype => ft_byte8, v10 => convert (ST));
---                    when ft_real9  =>
---                       dvariant := (datatype => ft_real9, v11 => convert (ST));
---                    when ft_real18 =>
---                       dvariant := (datatype => ft_real18, v12 => convert (ST));
---                    when ft_textual =>
---                       dvariant := (datatype => ft_textual,
---                                    v13 => convert (ST, Stmt.con_max_blob));
---                    when ft_widetext =>
---                       dvariant := (datatype => ft_widetext,
---                                    v14 => convert (ST, Stmt.con_max_blob));
---                    when ft_supertext =>
---                       dvariant := (datatype => ft_supertext,
---                                    v15 => convert (ST, Stmt.con_max_blob));
---                    when ft_timestamp =>
---                       begin
---                          dvariant := (datatype => ft_timestamp,
---                                       v16 => convert (ST));
---                       exception
---                          when CAL.Time_Error =>
---                             dvariant := (datatype => ft_textual, v13 =>
---                                             convert (ST, Stmt.con_max_blob));
---                       end;
---                    when ft_enumtype =>
---                       --  It seems that mysql doesn't give up the enum index
---                       --  easily.  Set to "0" for all members
---                       dvariant := (datatype => ft_enumtype,
---                                    V18 => (enumeration =>
---                                               convert (ST, Stmt.con_max_blob),
---                                              index => 0));
---                    when others =>
---                       null;
---
---                 end case;
---                 case Stmt.column_info.Element (Index => F).field_type is
---                    when ft_chain =>
---                       field := ARF.spawn_field
---                         (binob => convert (ST, Stmt.con_max_blob));
---                    when ft_settype =>
---                       field := ARF.spawn_field (enumset => convert (ST));
---                    when others =>
---                       field := ARF.spawn_field (data => dvariant,
---                                                 null_data => EN);
---                 end case;
---   end auto_assign;
+   -------------------
+   --  auto_assign  --
+   -------------------
+   procedure auto_assign (Stmt  : out MySQL_statement; index : Positive;
+                          value : String)
+   is
+      ST   : AR.textual;
+      STW  : AR.textwide;
+      STS  : AR.textsuper;
+      hold : ARF.variant;
+   begin
+      case Stmt.column_info.Element (index).field_type is
+         when ft_widetext =>
+            ST  := CT.SUS (value);
+            STW := SUW.To_Unbounded_Wide_String (ARC.convert (ST));
+         when ft_supertext =>
+            ST  := CT.SUS (value);
+            STS := SWW.To_Unbounded_Wide_Wide_String (ARC.convert (ST));
+         when ft_timestamp | ft_enumtype =>
+            null;
+         when ft_settype | ft_chain =>
+            raise STMT_EXECUTION
+              with "BLOB and Set type parameters can only by bound " &
+              "by reference (Access)";
+         when others =>
+            ST := CT.SUS (value);
+      end case;
+      case Stmt.column_info.Element (index).field_type is
+         when ft_nbyte0    => hold := (ft_nbyte0, ARC.convert (ST));
+         when ft_nbyte1    => hold := (ft_nbyte1, ARC.convert (ST));
+         when ft_nbyte2    => hold := (ft_nbyte2, ARC.convert (ST));
+         when ft_nbyte3    => hold := (ft_nbyte3, ARC.convert (ST));
+         when ft_nbyte4    => hold := (ft_nbyte4, ARC.convert (ST));
+         when ft_nbyte8    => hold := (ft_nbyte8, ARC.convert (ST));
+         when ft_byte1     => hold := (ft_byte1, ARC.convert (ST));
+         when ft_byte2     => hold := (ft_byte2, ARC.convert (ST));
+         when ft_byte3     => hold := (ft_byte3, ARC.convert (ST));
+         when ft_byte4     => hold := (ft_byte4, ARC.convert (ST));
+         when ft_byte8     => hold := (ft_byte8, ARC.convert (ST));
+         when ft_real9     => hold := (ft_real9, ARC.convert (ST));
+         when ft_real18    => hold := (ft_real9, ARC.convert (ST));
+         when ft_textual   => hold := (ft_textual, ST);
+         when ft_widetext  => hold := (ft_widetext, STW);
+         when ft_supertext => hold := (ft_supertext, STS);
+         when ft_timestamp => hold := (ft_timestamp, (convert (value)));
+         when ft_chain     => null;
+         when ft_enumtype  => hold := (ft_enumtype, (convert (value)));
+         when ft_settype   => null;
+      end case;
+      case Stmt.column_info.Element (index).field_type is
+         when ft_nbyte0 => Stmt.assign (index, hold.v00);
+         when ft_nbyte1    => Stmt.assign (index, hold.v01);
+         when ft_nbyte2    => Stmt.assign (index, hold.v02);
+         when ft_nbyte3    => Stmt.assign (index, hold.v03);
+         when ft_nbyte4    => Stmt.assign (index, hold.v04);
+         when ft_nbyte8    => Stmt.assign (index, hold.v05);
+         when ft_byte1     => Stmt.assign (index, hold.v06);
+         when ft_byte2     => Stmt.assign (index, hold.v07);
+         when ft_byte3     => Stmt.assign (index, hold.v08);
+         when ft_byte4     => Stmt.assign (index, hold.v09);
+         when ft_byte8     => Stmt.assign (index, hold.v10);
+         when ft_real9     => Stmt.assign (index, hold.v11);
+         when ft_real18    => Stmt.assign (index, hold.v12);
+         when ft_textual   => Stmt.assign (index, hold.v13);
+         when ft_widetext  => Stmt.assign (index, hold.v14);
+         when ft_supertext => Stmt.assign (index, hold.v15);
+         when ft_timestamp => Stmt.assign (index, hold.v16);
+         when ft_chain     => null;
+         when ft_enumtype  => Stmt.assign (index, hold.v18);
+         when ft_settype   => null;
+      end case;
+   end auto_assign;
 
 end AdaBase.Statement.Base.MySQL;
