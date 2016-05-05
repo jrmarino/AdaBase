@@ -532,7 +532,8 @@ package body AdaBase.Statement.Base is
    begin
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
-           (index, (output_type => ft_settype, a19 => vaxx, bound => True));
+           (index, (output_type => ft_settype, a19 => vaxx,
+                    v19 => CT.blank, bound => True));
       end if;
    end bind;
 
@@ -844,7 +845,7 @@ package body AdaBase.Statement.Base is
 
 
    ------------------------------------------------------------------
-   --  assign via moniker (Value, 18)                                        --
+   --  assign via moniker (Value, 19)                                        --
    ------------------------------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
@@ -979,9 +980,15 @@ package body AdaBase.Statement.Base is
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.settype) is
+   begin
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
 
    ------------------------------------------------------
-   --  20 + 18 = 38 assign functions                   --
+   --  20 + 19 = 39 assign functions                   --
    ------------------------------------------------------
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
@@ -1330,7 +1337,25 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.settype_access) is
    begin
       Stmt.realmccoy.Replace_Element
-        (index, (output_type => ft_settype, a19 => vaxx, bound => True));
+        (index, (output_type => ft_settype, a19 => vaxx,
+                 v19 => CT.blank, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.settype)
+   is
+      payload : AR.textual := CT.blank;
+   begin
+      for x in vaxx'Range loop
+         if x /= vaxx'First then
+            CT.SU.Append (payload, ",");
+         end if;
+         CT.SU.Append (payload, vaxx (x).enumeration);
+      end loop;
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_settype, a19 => null,
+                 v19 => payload, bound => True));
    end assign;
 
 
