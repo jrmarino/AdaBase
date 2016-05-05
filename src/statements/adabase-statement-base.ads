@@ -396,7 +396,7 @@ package AdaBase.Statement.Base is
 
 
    -------------------------------------------
-   --  19 assign/value using integer index  --
+   --  20 assign/value using integer index  --
    -------------------------------------------
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
@@ -472,6 +472,10 @@ package AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
+                     vaxx  : AR.chain);
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
                      vaxx  : AR.enumtype);
 
    procedure assign (Stmt  : out Base_Statement;
@@ -480,7 +484,7 @@ package AdaBase.Statement.Base is
 
 
    -----------------------------------------------
-   --  19 assign/value using moniker for index  --
+   --  20 assign/value using moniker for index  --
    -----------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
@@ -553,6 +557,10 @@ package AdaBase.Statement.Base is
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : CAL.Time);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.chain);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
@@ -638,6 +646,7 @@ private
          when ft_timestamp => a16 : AR.time_access;
                               v16 : CAL.Time;
          when ft_chain     => a17 : AR.chain_access;
+                              v17 : AR.textual;
          when ft_enumtype  => a18 : AR.enum_access;
                               v18 : AR.enumtype;
          when ft_settype   => a19 : AR.settype_access;

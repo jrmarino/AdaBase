@@ -511,7 +511,8 @@ package body AdaBase.Statement.Base is
    begin
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
-           (index, (output_type => ft_chain, a17 => vaxx, bound => True));
+           (index, (output_type => ft_chain, a17 => vaxx,
+                    v17 => CT.blank, bound => True));
       end if;
    end bind;
 
@@ -845,7 +846,7 @@ package body AdaBase.Statement.Base is
 
 
    ------------------------------------------------------------------
-   --  assign via moniker (Value, 19)                                        --
+   --  assign via moniker (Value, 20)                                        --
    ------------------------------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
@@ -975,6 +976,13 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
+                     vaxx    : AR.chain) is
+   begin
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
                      vaxx    : AR.enumtype) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
@@ -988,7 +996,7 @@ package body AdaBase.Statement.Base is
    end assign;
 
    ------------------------------------------------------
-   --  20 + 19 = 39 assign functions                   --
+   --  20 + 20 = 40 assign functions                   --
    ------------------------------------------------------
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
@@ -1311,7 +1319,22 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.chain_access) is
    begin
       Stmt.realmccoy.Replace_Element
-        (index, (output_type => ft_chain, a17 => vaxx, bound => True));
+        (index, (output_type => ft_chain, a17 => vaxx,
+                 v17 => CT.blank, bound => True));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.chain)
+   is
+      payload : String := (vaxx'Range => '_');
+   begin
+      for x in vaxx'Range loop
+         payload (x) := Character'Val (vaxx (x));
+      end loop;
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_chain, a17 => null,
+                 v17 => CT.SUS (payload), bound => True));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
