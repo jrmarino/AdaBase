@@ -685,10 +685,10 @@ package body AdaBase.Statement.Base.MySQL is
    function convert (nv : String; fixed : Natural := 0) return AR.settype
    is
       num_enums : Natural := 1;
-      nv_len    : Natural := nv'Length;
+      str       : constant String (1 .. nv'Length) := nv;
    begin
-      for x in nv'Range loop
-         if nv (x) = ',' then
+      for x in str'Range loop
+         if str (x) = ',' then
             num_enums := num_enums + 1;
          end if;
       end loop;
@@ -702,15 +702,15 @@ package body AdaBase.Statement.Base.MySQL is
          curend : Natural  := 0;
          index  : Positive := 1;
       begin
-         for x in nv'Range loop
-            if nv (x) = ',' then
-               result (index).enumeration := CT.SUS (nv (cursor .. curend));
+         for x in str'Range loop
+            if str (x) = ',' then
+               result (index).enumeration := CT.SUS (str (cursor .. curend));
                index := index + 1;
                cursor := x + 1;
             end if;
             curend := curend + 1;
          end loop;
-         result (index).enumeration := CT.SUS (nv (cursor .. curend));
+         result (index).enumeration := CT.SUS (str (cursor .. curend));
          return result;
       end;
    end convert;
@@ -1904,7 +1904,7 @@ package body AdaBase.Statement.Base.MySQL is
          when ft_byte4     => hold := (ft_byte4, ARC.convert (ST));
          when ft_byte8     => hold := (ft_byte8, ARC.convert (ST));
          when ft_real9     => hold := (ft_real9, ARC.convert (ST));
-         when ft_real18    => hold := (ft_real9, ARC.convert (ST));
+         when ft_real18    => hold := (ft_real18, ARC.convert (ST));
          when ft_textual   => hold := (ft_textual, ST);
          when ft_widetext  => hold := (ft_widetext, STW);
          when ft_supertext => hold := (ft_supertext, STS);
