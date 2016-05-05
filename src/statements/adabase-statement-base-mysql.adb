@@ -1880,7 +1880,7 @@ package body AdaBase.Statement.Base.MySQL is
       STS  : AR.textsuper;
       hold : ARF.variant;
    begin
-      case Stmt.column_info.Element (index).field_type is
+      case Stmt.realmccoy.Element (index).output_type is
          when ft_widetext =>
             ST  := CT.SUS (value);
             STW := SUW.To_Unbounded_Wide_String (ARC.convert (ST));
@@ -1892,7 +1892,7 @@ package body AdaBase.Statement.Base.MySQL is
          when others =>
             ST := CT.SUS (value);
       end case;
-      case Stmt.column_info.Element (index).field_type is
+      case Stmt.realmccoy.Element (index).output_type is
          when ft_nbyte0    => hold := (ft_nbyte0, ARC.convert (ST));
          when ft_nbyte1    => hold := (ft_nbyte1, ARC.convert (ST));
          when ft_nbyte2    => hold := (ft_nbyte2, ARC.convert (ST));
@@ -1914,7 +1914,7 @@ package body AdaBase.Statement.Base.MySQL is
          when ft_enumtype  => hold := (ft_enumtype, (convert (value)));
          when ft_settype   => null;
       end case;
-      case Stmt.column_info.Element (index).field_type is
+      case Stmt.realmccoy.Element (index).output_type is
          when ft_nbyte0 => Stmt.assign (index, hold.v00);
          when ft_nbyte1    => Stmt.assign (index, hold.v01);
          when ft_nbyte2    => Stmt.assign (index, hold.v02);
