@@ -607,6 +607,7 @@ private
    function convert (nv : String; maxsize : BLOB_maximum) return AR.textsuper;
    function convert (nv : String) return AR.textwide;
    function convert (nv : String) return AR.textsuper;
+   function convert (nv : AR.chain) return String;
 
    type bindrec (output_type : field_types := ft_nbyte0) is record
       bound : Boolean := False;
