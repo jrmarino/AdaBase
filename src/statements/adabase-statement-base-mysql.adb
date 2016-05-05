@@ -1560,6 +1560,7 @@ package body AdaBase.Statement.Base.MySQL is
       use type AR.str4_access;
       use type AR.time_access;
       use type AR.enum_access;
+      use type AR.chain_access;
       use type AR.settype_access;
 
       procedure set_binary_buffer (Str : String)
