@@ -1746,10 +1746,12 @@ package body AdaBase.Statement.Base.MySQL is
                set_binary_buffer (ARC.convert (zone.a18.all.enumeration));
             end if;
          when ft_settype =>
-            --  Set types are imploded strings on MySQL
-            --  Only access is available here
             struct.buffer_type := ABM.MYSQL_TYPE_STRING;
-            set_binary_buffer (ARC.convert (zone.a19));
+            if zone.a19 = null then
+               set_binary_buffer (CT.USS (zone.v19));
+            else
+               set_binary_buffer (ARC.convert (zone.a19));
+            end if;
       end case;
    end construct_bind_slot;
 
@@ -1822,12 +1824,11 @@ package body AdaBase.Statement.Base.MySQL is
          when ft_supertext =>
             ST  := CT.SUS (value);
             STS := SWW.To_Unbounded_Wide_Wide_String (ARC.convert (ST));
-         when ft_timestamp | ft_enumtype =>
+         when ft_timestamp | ft_enumtype | ft_settype =>
             null;
-         when ft_settype | ft_chain =>
+         when ft_chain =>
             raise STMT_EXECUTION
-              with "BLOB and Set type parameters can only by bound " &
-              "by reference (Access)";
+              with "BLOB parameters can only be bound by reference (Access)";
          when others =>
             ST := CT.SUS (value);
       end case;
@@ -1873,7 +1874,12 @@ package body AdaBase.Statement.Base.MySQL is
          when ft_timestamp => Stmt.assign (index, hold.v16);
          when ft_chain     => null;
          when ft_enumtype  => Stmt.assign (index, hold.v18);
-         when ft_settype   => null;
+         when ft_settype   =>
+            declare
+               set : AR.settype := convert (value);
+            begin
+               Stmt.assign (index, set);
+            end;
       end case;
    end auto_assign;
 
