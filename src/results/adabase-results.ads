@@ -76,15 +76,15 @@ package AdaBase.Results is
    ------------------------------------------------
    PARAM_IS_BOOLEAN   : constant nbyte0 := False;
    PARAM_IS_NBYTE_1   : constant nbyte1 := 0;
-   PARAM_IS_NBYTE_2   : constant nbyte1 := 0;
-   PARAM_IS_NBYTE_3   : constant nbyte1 := 0;
-   PARAM_IS_NBYTE_4   : constant nbyte1 := 0;
-   PARAM_IS_NBYTE_8   : constant nbyte1 := 0;
-   PARAM_IS_BYTE_1    : constant nbyte1 := 0;
-   PARAM_IS_BYTE_2    : constant nbyte1 := 0;
-   PARAM_IS_BYTE_3    : constant nbyte1 := 0;
-   PARAM_IS_BYTE_4    : constant nbyte1 := 0;
-   PARAM_IS_BYTE_8    : constant nbyte1 := 0;
+   PARAM_IS_NBYTE_2   : constant nbyte2 := 0;
+   PARAM_IS_NBYTE_3   : constant nbyte3 := 0;
+   PARAM_IS_NBYTE_4   : constant nbyte4 := 0;
+   PARAM_IS_NBYTE_8   : constant nbyte8 := 0;
+   PARAM_IS_BYTE_1    : constant byte1 := 0;
+   PARAM_IS_BYTE_2    : constant byte2 := 0;
+   PARAM_IS_BYTE_3    : constant byte3 := 0;
+   PARAM_IS_BYTE_4    : constant byte4 := 0;
+   PARAM_IS_BYTE_8    : constant byte8 := 0;
    PARAM_IS_REAL_9    : constant real9  := 0.0;
    PARAM_IS_REAL_18   : constant real18 := 0.0;
    PARAM_IS_CHAIN     : constant chain := (1 .. 1 => 0);
