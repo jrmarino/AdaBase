@@ -313,10 +313,10 @@ begin
       v_text4  : aliased AR.textual := CT.SUS ("Electra");
       v_text5  : aliased AR.textual := CT.SUS ("Iron Man");
       v_text6  : aliased AR.textual := CT.SUS ("Bruce Banner");
-      v_time1  : aliased AR.AC.Time := CAL.Time_Of (1995, 2, 14);
-      v_time2  : aliased AR.AC.Time := CAL.Time_Of (1998, 3, 17, 7020.0);
-      v_time3  : aliased AR.AC.Time := CAL.Time_Of (2005, 4, 20, 6000.253);
-      v_time4  : aliased AR.AC.Time := CAL.Time_Of (1901, 1, 1, 13000.0);
+      v_time1  : aliased AR.AC.Time := CFM.Time_Of (1995, 2, 14);
+      v_time2  : aliased AR.AC.Time := CFM.Time_Of (1998, 3, 17, 6, 7, 8);
+      v_time3  : aliased AR.AC.Time := CFM.Time_Of (2005, 4, 20, 1, 32, 0);
+      v_time4  : aliased AR.AC.Time := CFM.Time_Of (1901, 1, 1, 4, 57, 50);
       v_year   : aliased AR.nbyte2  := 1992;
       v_bit    : aliased AR.chain   := (5, 127);
       v_chain1 : aliased AR.chain   := (12, 44, 65, 240);
