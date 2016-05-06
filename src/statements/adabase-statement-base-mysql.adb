@@ -766,7 +766,10 @@ package body AdaBase.Statement.Base.MySQL is
 
       declare
          maxlen : constant Natural := Natural (Stmt.column_info.Length);
-         type rowtype is array (1 .. maxlen) of ABM.ICS.chars_ptr;
+         bufmax : constant ABM.IC.size_t := ABM.IC.size_t (Stmt.con_max_blob);
+         subtype data_buffer is ABM.IC.char_array (1 .. bufmax);
+         type db_access is access all data_buffer;
+         type rowtype is array (1 .. maxlen) of db_access;
          type rowtype_access is access all rowtype;
 
          row    : rowtype_access;
@@ -776,10 +779,28 @@ package body AdaBase.Statement.Base.MySQL is
            (result_handle => Stmt.result_handle,
             num_columns   => maxlen);
 
-         function Convert is new Ada.Unchecked_Conversion
+         function convert is new Ada.Unchecked_Conversion
            (Source => ABM.MYSQL_ROW_access, Target => rowtype_access);
+
+         function convert (dba : db_access; size : Natural) return String;
+         function convert (dba : db_access; size : Natural) return String
+         is
+            max : Natural := size;
+         begin
+            if max > Stmt.con_max_blob then
+               max := Stmt.con_max_blob;
+            end if;
+            declare
+               result : String (1 .. max);
+            begin
+               for x in result'Range loop
+                  result (x) := Character (dba.all (ABM.IC.size_t (x)));
+               end loop;
+               return result;
+            end;
+         end convert;
       begin
-         row := Convert (rptr);
+         row := convert (rptr);
          for F in 1 .. maxlen loop
             declare
                field    : ARF.field_access;
@@ -787,9 +808,8 @@ package body AdaBase.Statement.Base.MySQL is
                heading  : constant String := CT.USS
                  (Stmt.column_info.Element (Index => F).field_name);
                sz : constant Natural := field_lengths (F);
-               EN : constant Boolean := row (F) = ABM.ICS.Null_Ptr;
-               ST : constant String  := ABM.ICS.Value
-                 (Item => row (F), Length => ABM.IC.size_t (sz));
+               EN : constant Boolean := row (F) = null;
+               ST : constant String  := convert (row (F), sz);
                dvariant : ARF.variant;
             begin
                case Stmt.column_info.Element (Index => F).field_type is
