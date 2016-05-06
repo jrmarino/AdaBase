@@ -3,9 +3,7 @@
 
 with AdaBase.Connection.Base.MySQL;
 with AdaBase.Bindings.MySQL;
-with AdaBase.Results.Sets;
 with Ada.Containers.Vectors;
-with Ada.Unchecked_Deallocation;
 
 package AdaBase.Statement.Base.MySQL is
 

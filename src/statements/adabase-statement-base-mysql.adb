@@ -529,7 +529,10 @@ package body AdaBase.Statement.Base.MySQL is
    is
       use type ARS.DataRow_Access;
    begin
-      datarow := null;
+      if datarow /= null then
+         free_datarow (datarow);
+         datarow := null;
+      end if;
       if Stmt.delivery = completed then
          return False;
       end if;

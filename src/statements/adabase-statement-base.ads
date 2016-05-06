@@ -5,6 +5,7 @@ with CommonText;
 with AdaBase.Connection.Base;
 with AdaBase.Interfaces.Statement;
 with AdaBase.Logger.Facility;
+with AdaBase.Results.Sets;
 with AdaBase.Results.Converters;
 with AdaBase.Results.Generic_Converters;
 with Ada.Calendar.Formatting;
@@ -14,6 +15,7 @@ with Ada.Strings.Hash;
 with Ada.Strings.Wide_Unbounded;
 with Ada.Strings.Wide_Wide_Unbounded;
 with Ada.Characters.Conversions;
+with Ada.Unchecked_Deallocation;
 
 package AdaBase.Statement.Base is
 
@@ -582,6 +584,9 @@ private
    procedure log_nominal (statement : Base_Statement;
                           category  : LogCategory;
                           message   : String);
+
+   procedure free_datarow is new Ada.Unchecked_Deallocation
+     (AR.Sets.DataRow, AR.Sets.DataRow_Access);
 
    package Markers is new Ada.Containers.Indefinite_Hashed_Maps
      (Key_Type        => String,
