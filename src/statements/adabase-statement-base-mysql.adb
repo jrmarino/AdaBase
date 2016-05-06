@@ -638,6 +638,7 @@ package body AdaBase.Statement.Base.MySQL is
       minute : CFM.Minute_Number := CFM.Minute_Number'First;
       second : CFM.Second_Number := CFM.Second_Number'First;
       HHMMSS : String (1 .. 8);
+      zulu   : CTZ.Time_Offset;
    begin
       --  Possible formats
       --  DATE      [10]: YYYY-MM-DD
@@ -668,6 +669,8 @@ package body AdaBase.Statement.Base.MySQL is
          when others => null;
       end case;
 
+      zulu := CTZ.UTC_Time_Offset (CFM.Time_Of (year, month, day));
+
       --  If this raises an exception, it probable means the date < 1901 or
       --  greater than 2099.  Turn this into a string time in that case.
       return CFM.Time_Of (Year   => year,
@@ -675,7 +678,8 @@ package body AdaBase.Statement.Base.MySQL is
                           Day    => day,
                           Hour   => hour,
                           Minute => minute,
-                          Second => second);
+                          Second => second,
+                          Time_Zone => zulu);
    end convert;
 
 
