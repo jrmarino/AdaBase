@@ -12,8 +12,8 @@ package AdaBase is
    type LogCategory    is (connecting, disconnecting, transaction, execution,
                            statement_preparation, statement_execution,
                            miscellaneous, note);
-   type TDriver        is (foundation, driver_mysql, driver_firebird,
-                           driver_postgresql);
+   type TDriver        is (foundation, driver_mysql, driver_postgresql,
+                           driver_sqlite, driver_firebird);
    type TIsoKeywords   is array (TransIsolation) of String (1 .. 16);
    type TraxID         is mod 2 ** 64;
 

@@ -40,6 +40,7 @@ package body AdaBase.Logger.Base is
 
       case driver is
          when driver_mysql      => drv := "    mysql :";
+         when driver_sqlite     => drv := "   sqlite :";
          when driver_postgresql => drv := "    pgsql :";
          when driver_firebird   => drv := " firebird :";
          when foundation        => drv := "     none :";
