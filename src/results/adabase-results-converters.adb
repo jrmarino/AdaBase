@@ -1322,14 +1322,18 @@ package body AdaBase.Results.Converters is
       return ACF.Image (Date => nv);
    end convert;
 
-   function convert (nv : AC.Time) return Wide_String is
+   function convert (nv : AC.Time) return Wide_String
+   is
+      timestr : constant String := convert (nv);
    begin
-      return ACC.To_Wide_String (Item => ACF.Image (Date => nv));
+      return ACC.To_Wide_String (Item => timestr);
    end convert;
 
-   function convert (nv : AC.Time) return Wide_Wide_String is
+   function convert (nv : AC.Time) return Wide_Wide_String
+   is
+      timestr : constant String := convert (nv);
    begin
-      return ACC.To_Wide_Wide_String (Item => ACF.Image (Date => nv));
+      return ACC.To_Wide_Wide_String (Item => timestr);
    end convert;
 
 

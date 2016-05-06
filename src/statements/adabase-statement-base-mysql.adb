@@ -638,7 +638,6 @@ package body AdaBase.Statement.Base.MySQL is
       minute : CFM.Minute_Number := CFM.Minute_Number'First;
       second : CFM.Second_Number := CFM.Second_Number'First;
       HHMMSS : String (1 .. 8);
-      zulu   : CTZ.Time_Offset;
    begin
       --  Possible formats
       --  DATE      [10]: YYYY-MM-DD
@@ -669,8 +668,6 @@ package body AdaBase.Statement.Base.MySQL is
          when others => null;
       end case;
 
-      zulu := CTZ.UTC_Time_Offset (CFM.Time_Of (year, month, day));
-
       --  If this raises an exception, it probable means the date < 1901 or
       --  greater than 2099.  Turn this into a string time in that case.
       return CFM.Time_Of (Year   => year,
@@ -678,8 +675,7 @@ package body AdaBase.Statement.Base.MySQL is
                           Day    => day,
                           Hour   => hour,
                           Minute => minute,
-                          Second => second,
-                          Time_Zone => zulu);
+                          Second => second);
    end convert;
 
 
@@ -1080,18 +1076,18 @@ package body AdaBase.Statement.Base.MySQL is
                         then
                            day := CAL.Day_Number'First;
                         end if;
-                        dvariant := (datatype => ft_timestamp,
-                                  v16 => CFM.Time_Of
-                                    (Year => year,
-                                     Month => month,
-                                     Day => day,
-                                     Hour => Natural (cv.buffer_time.hour),
-                                     Minute => Natural (cv.buffer_time.minute),
-                                     Second => Natural (cv.buffer_time.second),
-                                     Sub_Second => CFM.Second_Duration
-                                       (Natural (cv.buffer_time.second_part)
-                                        / 1000000))
-                                 );
+                        dvariant :=
+                          (datatype => ft_timestamp,
+                           v16 => CFM.Time_Of
+                             (Year => year,
+                              Month => month,
+                              Day => day,
+                              Hour => Natural (cv.buffer_time.hour),
+                              Minute => Natural (cv.buffer_time.minute),
+                              Second => Natural (cv.buffer_time.second),
+                              Sub_Second => CFM.Second_Duration (Natural
+                                (cv.buffer_time.second_part) / 1000000))
+                          );
                      end;
                   when ft_enumtype =>
                      dvariant := (datatype => ft_enumtype,
@@ -1792,25 +1788,19 @@ package body AdaBase.Statement.Base.MySQL is
             struct.buffer      := canvas.buffer_time'Address;
             declare
                hack : CAL.Time;
-               zulu : CTZ.Time_Offset;
             begin
                if zone.a16 = null then
                   hack := zone.v16;
                else
                   hack := zone.a16.all;
                end if;
-               zulu := CTZ.UTC_Time_Offset (hack);
                --  Negative time not supported
-               canvas.buffer_time.year   := ABM.IC.unsigned
-                                            (CFM.Year (hack, zulu));
-               canvas.buffer_time.month  := ABM.IC.unsigned
-                                            (CFM.Month (hack, zulu));
-               canvas.buffer_time.day    := ABM.IC.unsigned
-                                            (CFM.Day (hack, zulu));
-               canvas.buffer_time.hour   := ABM.IC.unsigned
-                                            (CFM.Hour (hack, zulu));
+               canvas.buffer_time.year   := ABM.IC.unsigned (CFM.Year (hack));
+               canvas.buffer_time.month  := ABM.IC.unsigned (CFM.Month (hack));
+               canvas.buffer_time.day    := ABM.IC.unsigned (CFM.Day (hack));
+               canvas.buffer_time.hour   := ABM.IC.unsigned (CFM.Hour (hack));
                canvas.buffer_time.minute := ABM.IC.unsigned
-                                            (CFM.Minute (hack, zulu));
+                                            (CFM.Minute (hack));
                canvas.buffer_time.second := ABM.IC.unsigned
                                             (CFM.Second (hack));
                canvas.buffer_time.second_part :=
