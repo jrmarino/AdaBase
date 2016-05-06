@@ -3,6 +3,11 @@ title: Query_select (Abstract SQL)
 ---
 
 <div class="leftside">
+<pre class="code">
+package AdaBase is
+   type NullPriority is (native, nulls_first, nulls_last);
+end AdaBase;
+</pre>
 <h3>AdaBase.Statement.Base.[STMT]_access function<br/>
 AdaBase.Driver.Base.[DB].query_select  (
                           distinct    : Boolean := False;
@@ -12,13 +17,15 @@ AdaBase.Driver.Base.[DB].query_select  (
                           groupby     : String := "";
                           having      : String := "";
                           order       : String := "";
+                          null_sort   : NullPriority := native;
                           limit       : TraxID := 0;
                           offset      : TraxID := 0)</h3>
 
 <p>This function assembles a driver-specific (SQL dialect-specific)
 SELECT query based on which arguments are provided.  Generally the
-<i>limit</i> and <i>offset</i> parameters are the ones that vary the
-most between dialects.  The only required parameters are <i>tables</i>
+<i>limit</i>, <i>offset</i> and <i>null_sort</i> parameters are the ones
+that vary the most between dialects, with the latter not being supported
+by all SQL drivers. The only required parameters are <i>tables</i>
 and <i>columns</i>.  Of course, the <b>query</b> function accepts literal
 SQL commands and can be used alternatively at the risk of portability.</p>
 <p>This command creates direct statements that can retrieve results once,
