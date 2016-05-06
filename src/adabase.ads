@@ -14,6 +14,7 @@ package AdaBase is
                            miscellaneous, note);
    type TDriver        is (foundation, driver_mysql, driver_postgresql,
                            driver_sqlite, driver_firebird);
+   type NullPriority   is (native, nulls_first, nulls_last);
    type TIsoKeywords   is array (TransIsolation) of String (1 .. 16);
    type TraxID         is mod 2 ** 64;
 

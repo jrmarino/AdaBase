@@ -105,6 +105,7 @@ package AdaBase.Interfaces.Driver is
    --                                 groupby     : String := blankstring;
    --                                 having      : String := blankstring;
    --                                 order       : String := blankstring;
+   --                                 null_sort   : NullPriority := native;
    --                                 limit       : TraxID := 0;
    --                                 offset      : TraxID := 0)
    --                                 return ASB.basic_statement is abstract;

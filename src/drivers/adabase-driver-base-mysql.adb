@@ -219,6 +219,7 @@ package body AdaBase.Driver.Base.MySQL is
                           groupby     : String := blankstring;
                           having      : String := blankstring;
                           order       : String := blankstring;
+                          null_sort   : NullPriority := native;
                           limit       : TraxID := 0;
                           offset      : TraxID := 0)
                           return ASM.MySQL_statement_access
@@ -250,6 +251,7 @@ package body AdaBase.Driver.Base.MySQL is
                             groupby     : String := blankstring;
                             having      : String := blankstring;
                             order       : String := blankstring;
+                            null_sort   : NullPriority := native;
                             limit       : TraxID := 0;
                             offset      : TraxID := 0)
                             return ASM.MySQL_statement_access
@@ -257,6 +259,12 @@ package body AdaBase.Driver.Base.MySQL is
       vanilla : String := assembly_common_select
         (distinct, tables, columns, conditions, groupby, having, order);
    begin
+      if null_sort /= native then
+         driver.log_nominal
+           (category => execution,
+            message => CT.SUS ("Note that NULLS FIRST/LAST is not " &
+                "supported by MySQL so the null_sort setting is ignored"));
+      end if;
       if limit > 0 then
          if offset > 0 then
             return driver.private_prepare (vanilla &
