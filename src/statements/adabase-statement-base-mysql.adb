@@ -874,16 +874,24 @@ package body AdaBase.Statement.Base.MySQL is
    function bincopy (data : ABM.ICS.char_array_access;
                      datalen, max_size : Natural) return String
    is
+      use type ABM.ICS.char_array_access;
+      use type ABM.IC.size_t;
       reslen : Natural := datalen;
+      datndx : ABM.IC.size_t;
    begin
+      if data = null or else datalen = 0 then
+         return "";
+      end if;
       if reslen > max_size then
          reslen := max_size;
       end if;
       declare
          result : String (1 .. reslen) := (others => '_');
       begin
+         datndx := data.all'First;
          for x in result'Range loop
-            result (x) := Character (data.all (ABM.IC.size_t (x)));
+            result (x) := Character (data.all (datndx));
+            datndx := datndx + 1;
          end loop;
          return result;
       end;
