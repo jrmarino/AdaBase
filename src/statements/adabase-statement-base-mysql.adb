@@ -766,7 +766,7 @@ package body AdaBase.Statement.Base.MySQL is
 
       declare
          maxlen : constant Natural := Natural (Stmt.column_info.Length);
-         type rowtype is array (1 .. maxlen) of ABM.ICS.char_array_access;
+         type rowtype is array (1 .. maxlen) of ABM.ICS.chars_ptr;
          type rowtype_access is access all rowtype;
 
          row    : rowtype_access;
@@ -787,11 +787,9 @@ package body AdaBase.Statement.Base.MySQL is
                heading  : constant String := CT.USS
                  (Stmt.column_info.Element (Index => F).field_name);
                sz : constant Natural := field_lengths (F);
-               EN : constant Boolean := sz = 0;
-               ST : constant String  :=
-                 bincopy (data     => row (F),
-                          datalen  => sz,
-                          max_size => Stmt.con_max_blob);
+               EN : constant Boolean := row (F) = ABM.ICS.Null_Ptr;
+               ST : constant String  := ABM.ICS.Value
+                 (Item => row (F), Length => ABM.IC.size_t (sz));
                dvariant : ARF.variant;
             begin
                case Stmt.column_info.Element (Index => F).field_type is
