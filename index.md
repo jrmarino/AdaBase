@@ -85,7 +85,7 @@ title: AdaBase by jrmarino
 <li>{{ page.f_stmt_driver_code }}</li>
 <li>{{ page.f_stmt_driver_msg }}</li>
 <li>{{ page.p_discard_rest }}</li>
-<li>proc execute (x2) </li>
+<li>{{ page.f_stmt_execute }}</li>
 <li>{{ page.f_column_table }}</li>
 <li>{{ page.f_column_name }}</li>
 <li>{{ page.f_native_type }}</li>
