@@ -1498,6 +1498,19 @@ package body AdaBase.Results.Converters is
       return payload;
    end convert;
 
+   function convert (nv : chain) return Wide_String
+   is
+      preview : String := convert (nv);
+   begin
+      return ACC.To_Wide_String (preview);
+   end convert;
+
+   function convert (nv : chain) return Wide_Wide_String
+   is
+      preview : String := convert (nv);
+   begin
+      return ACC.To_Wide_Wide_String (preview);
+   end convert;
 
    ---------------------------------------
    -- CONVERT SETS TO STRING (implode)  --

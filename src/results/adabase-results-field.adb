@@ -434,9 +434,9 @@ package body AdaBase.Results.Field is
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_timestamp => return ARC.convert (field.native.v16);
+         when ft_chain     => return ARC.convert (field.native.v17.all);
          when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_settype   => return ARC.convert (field.native.v19);
-         when ft_chain     => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_string;
 
@@ -465,9 +465,9 @@ package body AdaBase.Results.Field is
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_timestamp => return ARC.convert (field.native.v16);
+         when ft_chain     => return ARC.convert (field.native.v17.all);
          when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_settype   => return ARC.convert (field.native.v19);
-         when ft_chain     => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_wstring;
 
@@ -496,9 +496,9 @@ package body AdaBase.Results.Field is
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_timestamp => return ARC.convert (field.native.v16);
+         when ft_chain     => return ARC.convert (field.native.v17.all);
          when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_settype   => return ARC.convert (field.native.v19);
-         when ft_chain     => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_wwstring;
 

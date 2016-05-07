@@ -340,6 +340,8 @@ package AdaBase.Results.Converters is
    function convert (nv : chain) return nbyte4;
    function convert (nv : chain) return nbyte8;
    function convert (nv : chain) return String;
+   function convert (nv : chain) return Wide_String;
+   function convert (nv : chain) return Wide_Wide_String;
 
 
    ---------------
