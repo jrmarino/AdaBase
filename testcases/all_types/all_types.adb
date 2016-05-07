@@ -204,7 +204,7 @@ begin
       v_chain5 : aliased AR.chain := (1 .. 16 => 0);
       v_chain6 : aliased AR.chain := (1 .. 16 => 0);
       v_enum   : aliased AR.enumtype;
-      v_set    : aliased AR.settype := (1 .. 6 => (CT.blank, 0));
+      v_set    : aliased AR.settype := (1 .. 6 => (AR.PARAM_IS_ENUM));
    begin
       CON.STMT := CON.DR.prepare (sql1);
       if CON.STMT.execute then
@@ -325,12 +325,12 @@ begin
       v_chain4 : aliased AR.chain   := (200, 232, 98, 100, 77, 82);
       v_chain5 : aliased AR.chain   := (50, 12, 2, 4, 99, 255, 27);
       v_chain6 : aliased AR.chain   := (0, 0, 0, 0, 1, 2, 3, 4);
-      v_enum   : aliased AR.enumtype := (CT.SUS ("pink"), 0);
-      v_set    : aliased AR.settype :=
-                 ((CT.SUS ("red"), 0), (CT.SUS ("green"), 0));
-      v_set2   : AR.settype :=
-                 ((CT.SUS ("yellow"), 0), (CT.SUS ("white"), 0),
-                  (CT.SUS ("red"), 0));
+      v_enum   : aliased AR.enumtype := (enumeration => CT.SUS ("pink"));
+      v_set    : aliased AR.settype := ((enumeration => CT.SUS ("red")),
+                                        (enumeration => CT.SUS ("green")));
+      v_set2   : AR.settype :=         ((enumeration => CT.SUS ("yellow")),
+                                        (enumeration => CT.SUS ("white")),
+                                        (enumeration => CT.SUS ("red")));
       v_chain7 : AR.chain := (65, 66, 67, 68);
       v_chain8 : AR.chain := (97, 98, 99, 100, 101);
 
