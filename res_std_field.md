@@ -43,7 +43,6 @@ package AdaBase.Results is
    --  #19 enumeration type
    type enumtype is record
       enumeration : Ada.Strings.Unbounded_String;
-      index       : Natural;
    end record;
 
    --  #20 set type (array of enumerations)
@@ -74,8 +73,8 @@ The std_field object holds the result in its format type, and also allows
 conversions to other types.  There are currently 20 data types, and the result
 often can be retrieved as multiple types.  The "is_null" function will
 indicate if the value is marked as "null" in the database and the
-"native_type" function will return a value from the enumerated type
-"field_types" to confirm how the native type was initially converted.
+"native_type" function will return a member of the "field_types" type to
+indicate the data type stored in the database.
 </p>
 <pre class="code">
 package AdaBase.Results.Field is
@@ -129,8 +128,7 @@ integer) or trying to convert a non-numerical string into a number.
 </p>
 <br/>
 <p>
-If an enumerated type is requested as a string, only the string component will
-be returned.  If it's requested as a number, the index will be returned.  The
+An enumerated type can be converted into a string type.  The
 Time type can only be converted to a string, and this has the form of the
 ISO 8601 format (no timezone information).  Similarly, the natural types can
 be converted into a array of bytes (aka "chain") up to 8 bytes.

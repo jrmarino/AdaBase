@@ -42,7 +42,6 @@ package AdaBase.Results is
    type chain is array (Positive range <>) of nbyte1;
    type enumtype is record
       enumeration : textual;
-      index       : Natural;
    end record;
    type settype is array (Positive range <>) of enumtype;
 
@@ -63,9 +62,9 @@ package AdaBase.Results is
    type str2_access    is access all textwide;
    type str4_access    is access all textsuper;
    type time_access    is access all AC.Time;
-   type chain_access   is access all chain;     --  stored as access
+   type chain_access   is access all chain;
    type enum_access    is access all enumtype;
-   type settype_access is access all settype;   --  stored as access
+   type settype_access is access all settype;
 
 end AdaBase.Results;
 </pre>

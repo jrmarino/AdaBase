@@ -20,6 +20,13 @@ version</p>
 
 <pre class="code">
 package AdaBase.Results is
+   subtype textual   is CT.Text;
+   subtype textwide  is SUW.Unbounded_Wide_String;
+   subtype textsuper is SUWW.Unbounded_Wide_Wide_String;
+
+ ------------------------------------------------
+   --  CONSTANTS FOR PARAMETER TYPE DEFINITIONS  --
+   ------------------------------------------------
    PARAM_IS_BOOLEAN   : constant nbyte0 := False;
    PARAM_IS_NBYTE_1   : constant nbyte1 := 0;
    PARAM_IS_NBYTE_2   : constant nbyte2 := 0;
@@ -34,12 +41,11 @@ package AdaBase.Results is
    PARAM_IS_REAL_9    : constant real9  := 0.0;
    PARAM_IS_REAL_18   : constant real18 := 0.0;
    PARAM_IS_CHAIN     : constant chain := (1 .. 1 => 0);
-   PARAM_IS_ENUM      : constant enumtype := (CT.blank, 0);
-   PARAM_IS_SET       : constant settype := (1 .. 1 => (CT.blank, 0));
-   PARAM_IS_TEXTUAL   : constant textual := CT.blank;
-   PARAM_IS_TEXTWIDE  : constant textwide := SUW.Null_Unbounded_Wide_String;
-   PARAM_IS_TEXTSUPER : constant textsuper :=
-                       SUWW.Null_Unbounded_Wide_Wide_String;
+   PARAM_IS_ENUM      : constant enumtype := (enumeration => blank_string);
+   PARAM_IS_SET       : constant settype := (1 .. 1 => (PARAM_IS_ENUM));
+   PARAM_IS_TEXTUAL   : constant textual := blank_string;
+   PARAM_IS_TEXTWIDE  : constant textwide := blank_wstring;
+   PARAM_IS_TEXTSUPER : constant textsuper := blank_wwstring;
    PARAM_IS_TIMESTAMP : constant AC.Time := AC.Time_Of (AC.Year_Number'First,
                                                         AC.Month_Number'First,
                                                         AC.Day_Number'First);
