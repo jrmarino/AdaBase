@@ -42,12 +42,12 @@ package AdaBase.Results is
 
    subtype nbyte0 is Boolean;
 
-   type chain is array (Positive range <>) of nbyte1;
    type enumtype is record
       enumeration : textual;
       index       : Natural;
    end record;
    type settype is array (Positive range <>) of enumtype;
+   type chain is array (Positive range <>) of nbyte1;
 
    type nbyte0_access  is access all nbyte0;
    type nbyte1_access  is access all nbyte1;
@@ -70,6 +70,10 @@ package AdaBase.Results is
    type enum_access    is access all enumtype;
    type settype_access is access all settype;   --  stored as access
 
+   blank_string   : constant textual   := CT.blank;
+   blank_wstring  : constant textwide  := SUW.Null_Unbounded_Wide_String;
+   blank_wwstring : constant textsuper :=
+                       SUWW.Null_Unbounded_Wide_Wide_String;
 
    ------------------------------------------------
    --  CONSTANTS FOR PARAMETER TYPE DEFINITIONS  --
@@ -90,10 +94,9 @@ package AdaBase.Results is
    PARAM_IS_CHAIN     : constant chain := (1 .. 1 => 0);
    PARAM_IS_ENUM      : constant enumtype := (CT.blank, 0);
    PARAM_IS_SET       : constant settype := (1 .. 1 => (CT.blank, 0));
-   PARAM_IS_TEXTUAL   : constant textual := CT.blank;
-   PARAM_IS_TEXTWIDE  : constant textwide := SUW.Null_Unbounded_Wide_String;
-   PARAM_IS_TEXTSUPER : constant textsuper :=
-                       SUWW.Null_Unbounded_Wide_Wide_String;
+   PARAM_IS_TEXTUAL   : constant textual := blank_string;
+   PARAM_IS_TEXTWIDE  : constant textwide := blank_wstring;
+   PARAM_IS_TEXTSUPER : constant textsuper := blank_wwstring;
    PARAM_IS_TIMESTAMP : constant AC.Time := AC.Time_Of (AC.Year_Number'First,
                                                         AC.Month_Number'First,
                                                         AC.Day_Number'First);
