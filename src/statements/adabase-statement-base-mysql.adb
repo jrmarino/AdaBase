@@ -1677,6 +1677,7 @@ package body AdaBase.Statement.Base.MySQL is
       end case;
       if zone.null_data then
          canvas.is_null := 1;
+         struct.buffer_type := ABM.MYSQL_TYPE_NULL;
       else
          case vartype is
          when ft_nbyte0 =>
