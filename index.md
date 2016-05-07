@@ -95,8 +95,7 @@ title: AdaBase by jrmarino
 <li>{{ page.f_bind }}</li>
 <li>{{ page.f_assign }}</li>
 <li>{{ page.f_fetch_next_set }}</li>
-<li>proc iterate</li>
-<li>proc iterate_bound</li>
+<li>{{ page.p_stmt_iterate }}</li>
 </ul>
 
 <h3>AdaBase.Results.Sets</h3>
