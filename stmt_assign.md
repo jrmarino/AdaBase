@@ -69,9 +69,10 @@ package AdaBase.Results is
 end AdaBase.Results;
 </pre>
 <p>
-This page documents 80 overloaded assign functions, four for each standard
-data type. These functions bind to the markers of a previously prepared
-statement.
+This page documents 82 overloaded assign functions, four for each standard
+data type and two additional ones for <i>String</i> variables which are
+automatically converted to <i>textual</i> types.  These functions bind to the
+markers of a previously prepared statement.
 </p>
 <p>
 The first 20 functions reference the marker by its numeric index starting from 1
@@ -82,8 +83,8 @@ The values of the variables involved in these 40 functions are not evaluated unt
 the <b>execute</b> command is issued.
 </p>
 <p>
-The next 20 functions reference the marker by its numeric index and define its
-value with a constant of the same data type of the marker.  The final 20
+The next 21 functions reference the marker by its numeric index and define its
+value with a constant of the same data type of the marker.  The final 21
 functions are similar, but reference the marker by their names.
 </p>
 <h3>Boolean function<br/>
@@ -131,7 +132,9 @@ Prior to issuing the <b>execute</b> command of the statement object, the values 
 the markers must be defined.  One method is to pass access to a variable of the same
 type as the marker.  The first 20 of the 80 overloaded bind functions accept an index
 starting with 1 that matches the column number of the result row.  The <i>vaxx</i>
-argument accepts a pointer to one of the 20 native data type.
+argument accepts a pointer to one of the 20 native data type.  If the access type
+assigned to <i>vaxx</i> is set to null, the driver will attempt to set the parameter
+to NULL, e.g. insert NULL into a record's field rather than a value.
 </p>
 <p>Once a variable is assigned, the user can change the values of the variables before
 each prepared statement execution; no further assignments are necessary past the first
@@ -180,7 +183,7 @@ AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.enum_access)</
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.settype_access)</h3>
 <p>
-The next set of 20 functions are similar, but rather than referring to the marker
+The next set of 21 functions are similar, but rather than referring to the marker
 position with a numeric index, it accepts a String which must match of the name of the
 parameter defined in the original SQL string.  For example, if the SQL given to the
 <b>prepare</b> function is "SELECT ALL * FROM fruits WHERE color = :color", the name
@@ -213,11 +216,13 @@ AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.real9)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.real18)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.str1)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : String)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.str2)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.textual)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.str4)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.textwide)</h3>
+<h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.textsuper)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.time)</h3>
 <h3>Boolean function<br/>
@@ -227,7 +232,7 @@ AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.enum)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.settype)</h3>
 <p>
-These 20 functions assign values immediately to markers referenced by their
+These 21 functions assign values immediately to markers referenced by their
 numeric index.
 </p>
 <h3>Boolean function<br/>
@@ -257,11 +262,13 @@ AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.real9)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.real18)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.str1)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : String)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.str2)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.textual)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.str4)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.textwide)</h3>
+<h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.textsuper)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.time)</h3>
 <h3>Boolean function<br/>

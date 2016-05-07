@@ -185,8 +185,8 @@ defaults:
        stmt_bind: '<a href="stmt_bind.html">stmt bind (x40)</a>'
        f_bind: '<a href="stmt_bind.html">func bind (x40)</a>'
 
-       stmt_assign: '<a href="stmt_assign.html">stmt assign (x80)</a>'
-       f_assign: '<a href="stmt_assign.html">func assign (x80)</a>'
+       stmt_assign: '<a href="stmt_assign.html">stmt assign (x82)</a>'
+       f_assign: '<a href="stmt_assign.html">func assign (x82)</a>'
 
        stmt_last_insert_id: '<a href="stmt_last_insert_id.html">stmt last insert id</a>'
        f_stmt_last_insert_id: '<a href="stmt_last_insert_id.html">func last_insert_id</a>'
