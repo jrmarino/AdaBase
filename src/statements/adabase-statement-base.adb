@@ -170,27 +170,6 @@ package body AdaBase.Statement.Base is
    end transform_sql;
 
 
-   -------------------------------
-   --  convert string to chain  --
-   -------------------------------
-   function convert (nv : String; maxsize : BLOB_maximum) return AR.chain
-   is
-      maxlinks : Natural := nv'Last;
-   begin
-      if maxlinks > maxsize then
-         maxlinks := maxsize;
-      end if;
-      declare
-         result : AR.chain (nv'First .. maxlinks);
-      begin
-         for x in 1 .. maxlinks loop
-            result (x) := AR.nbyte1 (Character'Pos (nv (x)));
-         end loop;
-         return result;
-      end;
-   end convert;
-
-
    ----------------------------------
    --  convert string to textwide  --
    ----------------------------------

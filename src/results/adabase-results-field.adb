@@ -531,6 +531,9 @@ package body AdaBase.Results.Field is
          when ft_nbyte4    => return ARC.convert (field.native.v04);
          when ft_nbyte8    => return ARC.convert (field.native.v05);
          when ft_chain     => return field.native.v17.all;
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
          when others => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_chain;

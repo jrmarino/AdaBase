@@ -1273,6 +1273,23 @@ package body AdaBase.Results.Converters is
       return ACC.To_Wide_Wide_String (Item => nvstr);
    end convert;
 
+   function convert (nv : String) return chain
+   is
+      result : chain (1 .. CT.len (nv));
+      arrow  : Natural := nv'First;
+   begin
+      for x in result'Range loop
+         result (x) := nbyte1 (Character'Pos (nv (arrow)));
+         arrow := arrow + 1;
+      end loop;
+      return result;
+   end convert;
+
+   function convert (nv : textual) return chain is
+   begin
+      return convert (CT.USS (nv));
+   end convert;
+
    function convert (nv : textwide) return String
    is
       nvstr : constant Wide_String := SUW.To_Wide_String (Source => nv);
@@ -1290,6 +1307,13 @@ package body AdaBase.Results.Converters is
       nvstr : constant Wide_String := SUW.To_Wide_String (Source => nv);
    begin
       return ACC.To_Wide_Wide_String (Item => nvstr);
+   end convert;
+
+   function convert (nv : textwide) return chain
+   is
+      nvstr : constant String := convert (nv);
+   begin
+      return convert (nvstr);
    end convert;
 
    function convert (nv : textsuper) return String
@@ -1311,6 +1335,13 @@ package body AdaBase.Results.Converters is
    function convert (nv : textsuper) return Wide_Wide_String is
    begin
       return SUWW.To_Wide_Wide_String (Source => nv);
+   end convert;
+
+   function convert (nv : textsuper) return chain
+   is
+      nvstr : constant String := convert (nv);
+   begin
+      return convert (nvstr);
    end convert;
 
 
@@ -1511,6 +1542,7 @@ package body AdaBase.Results.Converters is
    begin
       return ACC.To_Wide_Wide_String (preview);
    end convert;
+
 
    ---------------------------------------
    -- CONVERT SETS TO STRING (implode)  --

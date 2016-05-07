@@ -608,7 +608,6 @@ private
    function convert is new RGC.convert4str (IntType => AR.byte8);
    function convert is new RGC.convert4st2 (RealType => AR.real9);
    function convert is new RGC.convert4st2 (RealType => AR.real18);
-   function convert (nv : String; maxsize : BLOB_maximum) return AR.chain;
    function convert (nv : String) return AR.textwide;
    function convert (nv : String) return AR.textsuper;
 
