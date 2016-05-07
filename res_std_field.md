@@ -124,7 +124,7 @@ integer) or trying to convert a non-numerical string into a number.
 </p>
 <br/>
 <p style="text-align:center">
-<img src="img/conversions.gif" height="700" width="680"/>
+<img src="img/conversions.png" height="700" width="680"/>
 </p>
 <br/>
 <p>
