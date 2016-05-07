@@ -179,7 +179,8 @@ position with a numeric index, it accepts a String which must match of the colum
 names of the result set.
 </p>
 <br/>
-<p class="caption">See {{ page.query_select }} for a usage example.</p>
+<p class="caption">See {{ page.query_select }} and {{ page.stmt_iterate }}
+for usage examples.</p>
 <br/>
 <p>{{ page.supported_stmts }}</p>
 </div>

@@ -276,7 +276,8 @@ These 20 functions assign values immediately to markers referenced by their
 names.
 </p>
 <br/>
-<p class="caption">See {{ page.prepare_select }} for a usage example.</p>
+<p class="caption">See {{ page.prepare_select }} and {{ page.stmt_iterate }}
+for a usage examples.</p>
 <br/>
 <p>{{ page.supported_stmts }}</p>
 </div>
