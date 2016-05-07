@@ -328,227 +328,318 @@ package body AdaBase.Statement.Base is
    end bind_index;
 
 
+   ---------------------------------
+   --  check_bound_column_access  --
+   ---------------------------------
+   procedure check_bound_column_access (absent : Boolean) is
+   begin
+      if absent then
+         raise ILLEGAL_BIND_SQL with
+           "Binding column with null access is illegal";
+      end if;
+   end check_bound_column_access;
+
+
    ------------------------------------------------------
    --  20 bind functions (impossible to make generic)  --
    ------------------------------------------------------
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.nbyte0_access) is
+                   vaxx  : AR.nbyte0_access)
+   is
+      use type AR.nbyte0_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_nbyte0, a00 => vaxx, v00 => False,
-                    bound => True));
+                    bound => True, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.nbyte1_access) is
+                   vaxx  : AR.nbyte1_access)
+   is
+      use type AR.nbyte1_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_nbyte1, a01 => vaxx, v01 => 0,
-                    bound => True));
+                    bound => True, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.nbyte2_access) is
+                   vaxx  : AR.nbyte2_access)
+   is
+      use type AR.nbyte2_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_nbyte2, a02 => vaxx, v02 => 0,
-                    bound => True));
+                    bound => True, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.nbyte3_access) is
+                   vaxx  : AR.nbyte3_access)
+   is
+      use type AR.nbyte3_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_nbyte3, a03 => vaxx, v03 => 0,
-                    bound => True));
+                    bound => True, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.nbyte4_access) is
+                   vaxx  : AR.nbyte4_access)
+   is
+      use type AR.nbyte4_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_nbyte4, a04 => vaxx, v04 => 0,
-                    bound => True));
+                    bound => True, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.nbyte8_access) is
+                   vaxx  : AR.nbyte8_access)
+   is
+      use type AR.nbyte8_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_nbyte8, a05 => vaxx, v05 => 0,
-                    bound => True));
+                    bound => True, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.byte1_access) is
+                   vaxx  : AR.byte1_access)
+   is
+      use type AR.byte1_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_byte1, a06 => vaxx, v06 => 0,
-                    bound => True));
+                    bound => True, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.byte2_access) is
+                   vaxx  : AR.byte2_access)
+   is
+      use type AR.byte2_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_byte2, a07 => vaxx, v07 => 0,
-                    bound => True));
+                    bound => True, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.byte3_access) is
+                   vaxx  : AR.byte3_access)
+   is
+      use type AR.byte3_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_byte3, a08 => vaxx, v08 => 0,
-                    bound => True));
+                    bound => True, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.byte4_access) is
+                   vaxx  : AR.byte4_access)
+   is
+      use type AR.byte4_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_byte4, a09 => vaxx, v09 => 0,
-                    bound => True));
+                    bound => True, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.byte8_access) is
+                   vaxx  : AR.byte8_access)
+   is
+      use type AR.byte8_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_byte8, a10 => vaxx, v10 => 0,
-                    bound => True));
+                    bound => True, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.real9_access) is
+                   vaxx  : AR.real9_access)
+   is
+      use type AR.real9_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_real9, a11 => vaxx, v11 => 0.0,
-                    bound => True));
+                    bound => True, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.real18_access) is
+                   vaxx  : AR.real18_access)
+   is
+      use type AR.real18_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_real18, a12 => vaxx, v12 => 0.0,
-                    bound => True));
+                    bound => True, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.str1_access) is
+                   vaxx  : AR.str1_access)
+   is
+      use type AR.str1_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_textual, a13 => vaxx, v13 => CT.blank,
-                    bound => True));
+                    bound => True, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.str2_access) is
+                   vaxx  : AR.str2_access)
+   is
+      use type AR.str2_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
-           (index, (output_type => ft_widetext, a14 => vaxx,
-                    v14 => SUW.Null_Unbounded_Wide_String, bound => True));
+           (index, (output_type => ft_widetext, a14 => vaxx, bound => True,
+                    v14 => AR.blank_wstring, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.str4_access) is
+                   vaxx  : AR.str4_access)
+   is
+      use type AR.str4_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
-           (index, (output_type => ft_supertext, a15 => vaxx,
-                    v15 => SWW.Null_Unbounded_Wide_Wide_String,
-                    bound => True));
+           (index, (output_type => ft_supertext, a15 => vaxx, bound => True,
+                    v15 => AR.blank_wwstring, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.time_access) is
+                   vaxx  : AR.time_access)
+   is
+      use type AR.time_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_timestamp, a16 => vaxx,
-                    v16 => CAL.Clock, bound => True));
+                    v16 => CAL.Clock, bound => True, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.chain_access) is
+                   vaxx  : AR.chain_access)
+   is
+      use type AR.chain_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_chain, a17 => vaxx,
-                    v17 => CT.blank, bound => True));
+                    v17 => CT.blank, bound => True, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.enum_access) is
+                   vaxx  : AR.enum_access)
+   is
+      use type AR.enum_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
-           (index, (output_type => ft_enumtype, a18 => vaxx,
-                    v18 => AR.PARAM_IS_ENUM, bound => True));
+           (index, (output_type => ft_enumtype, a18 => vaxx, bound => True,
+                    v18 => AR.PARAM_IS_ENUM, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.settype_access) is
+                   vaxx  : AR.settype_access)
+   is
+      use type AR.settype_access;
+      absent : Boolean := (vaxx = null);
    begin
+      check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_settype, a19 => vaxx,
-                    v19 => CT.blank, bound => True));
+                    v19 => CT.blank, bound => True, null_data => False));
       end if;
    end bind;
 
@@ -1014,11 +1105,14 @@ package body AdaBase.Statement.Base is
    ------------------------------------------------------
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte0_access) is
+                     vaxx  : AR.nbyte0_access)
+   is
+      use type AR.nbyte0_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte0, a00 => vaxx, v00 => False,
-                 bound => True));
+                 bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1027,16 +1121,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte0, a00 => null, v00 => vaxx,
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte1_access) is
+                     vaxx  : AR.nbyte1_access)
+   is
+      use type AR.nbyte1_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte1, a01 => vaxx, v01 => 0,
-                 bound => True));
+                 bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1045,16 +1142,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte1, a01 => null, v01 => vaxx,
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte2_access) is
+                     vaxx  : AR.nbyte2_access)
+   is
+      use type AR.nbyte2_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte2, a02 => vaxx, v02 => 0,
-                 bound => True));
+                 bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1063,16 +1163,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte2, a02 => null, v02 => vaxx,
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte3_access) is
+                     vaxx  : AR.nbyte3_access)
+   is
+      use type AR.nbyte3_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte3, a03 => vaxx, v03 => 0,
-                 bound => True));
+                 bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1081,16 +1184,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte3, a03 => null, v03 => vaxx,
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte4_access) is
+                     vaxx  : AR.nbyte4_access)
+   is
+      use type AR.nbyte4_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte4, a04 => vaxx, v04 => 0,
-                 bound => True));
+                 bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1099,16 +1205,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte4, a04 => null, v04 => vaxx,
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte8_access) is
+                     vaxx  : AR.nbyte8_access)
+   is
+      use type AR.nbyte8_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte8, a05 => vaxx, v05 => 0,
-                 bound => True));
+                 bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1117,16 +1226,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte8, a05 => null, v05 => vaxx,
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte1_access) is
+                     vaxx  : AR.byte1_access)
+   is
+      use type AR.byte1_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte1, a06 => vaxx, v06 => 0,
-                 bound => True));
+                 bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1135,16 +1247,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte1, a06 => null, v06 => vaxx,
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte2_access) is
+                     vaxx  : AR.byte2_access)
+   is
+      use type AR.byte2_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte2, a07 => vaxx, v07 => 0,
-                 bound => True));
+                 bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1153,16 +1268,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte2, a07 => null, v07 => vaxx,
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte3_access) is
+                     vaxx  : AR.byte3_access)
+   is
+      use type AR.byte3_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte3, a08 => vaxx, v08 => 0,
-                 bound => True));
+                 bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1171,16 +1289,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte3, a08 => null, v08 => vaxx,
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte4_access) is
+                     vaxx  : AR.byte4_access)
+   is
+      use type AR.byte4_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte4, a09 => vaxx,  v09 => 0,
-                 bound => True));
+                 bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1189,16 +1310,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte4, a09 => null,  v09 => vaxx,
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte8_access) is
+                     vaxx  : AR.byte8_access)
+   is
+      use type AR.byte8_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte8, a10 => vaxx,  v10 => 0,
-                 bound => True));
+                 bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1207,16 +1331,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte8, a10 => null,  v10 => vaxx,
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.real9_access) is
+                     vaxx  : AR.real9_access)
+   is
+      use type AR.real9_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_real9, a11 => vaxx, v11 => 0.0,
-                 bound => True));
+                 bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1225,16 +1352,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_real9, a11 => null, v11 => vaxx,
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.real18_access) is
+                     vaxx  : AR.real18_access)
+   is
+      use type AR.real18_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_real18, a12 => vaxx, v12 => 0.0,
-                 bound => True));
+                 bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1243,16 +1373,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_real18, a12 => null, v12 => vaxx,
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.str1_access) is
+                     vaxx  : AR.str1_access)
+   is
+      use type AR.str1_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_textual, a13 => vaxx, v13 => CT.blank,
-                 bound => True));
+                 bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1261,7 +1394,7 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_textual, a13 => null, v13 => CT.SUS (vaxx),
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1270,16 +1403,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_textual, a13 => null, v13 => vaxx,
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.str2_access) is
+                     vaxx  : AR.str2_access)
+   is
+      use type AR.str2_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_widetext, a14 => vaxx,
-                 v14 => SUW.Null_Unbounded_Wide_String, bound => True));
+                 v14 => AR.blank_wstring, bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1288,17 +1424,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_widetext, a14 => null, v14 => vaxx,
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.str4_access) is
+                     vaxx  : AR.str4_access)
+   is
+      use type AR.str4_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
-        (index, (output_type => ft_supertext, a15 => vaxx,
-                 v15 => SWW.Null_Unbounded_Wide_Wide_String,
-                 bound => True));
+        (index, (output_type => ft_supertext, a15 => vaxx, bound => True,
+                 v15 => AR.blank_wwstring, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1307,16 +1445,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_supertext, a15 => null, v15 => vaxx,
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.time_access) is
+                     vaxx  : AR.time_access)
+   is
+      use type AR.time_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_timestamp, a16 => vaxx,
-                 v16 => CAL.Clock, bound => True));
+                 v16 => CAL.Clock, bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1325,16 +1466,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_timestamp, a16 => null, v16 => vaxx,
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.chain_access) is
+                     vaxx  : AR.chain_access)
+   is
+      use type AR.chain_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_chain, a17 => vaxx,
-                 v17 => CT.blank, bound => True));
+                 v17 => CT.blank, bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1345,16 +1489,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_chain, a17 => null,
-                 v17 => CT.SUS (payload), bound => True));
+                 v17 => CT.SUS (payload), bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.enum_access) is
+                     vaxx  : AR.enum_access)
+   is
+      use type AR.enum_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_enumtype, a18 => vaxx,
-                 v18 => AR.PARAM_IS_ENUM, bound => True));
+                 v18 => AR.PARAM_IS_ENUM, bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1363,16 +1510,19 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_enumtype, a18 => null, v18 => vaxx,
-                 bound => True));
+                 bound => True, null_data => False));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.settype_access) is
+                     vaxx  : AR.settype_access)
+   is
+      use type AR.settype_access;
+      absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_settype, a19 => vaxx,
-                 v19 => CT.blank, bound => True));
+                 v19 => CT.blank, bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
@@ -1389,7 +1539,7 @@ package body AdaBase.Statement.Base is
       end loop;
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_settype, a19 => null,
-                 v19 => payload, bound => True));
+                 v19 => payload, bound => True, null_data => False));
    end assign;
 
 

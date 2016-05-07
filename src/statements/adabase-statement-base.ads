@@ -398,7 +398,7 @@ package AdaBase.Statement.Base is
 
 
    -------------------------------------------
-   --  20 assign/value using integer index  --
+   --  21 assign/value using integer index  --
    -------------------------------------------
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
@@ -486,7 +486,7 @@ package AdaBase.Statement.Base is
 
 
    -----------------------------------------------
-   --  20 assign/value using moniker for index  --
+   --  21 assign/value using moniker for index  --
    -----------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
@@ -588,6 +588,8 @@ private
    procedure free_datarow is new Ada.Unchecked_Deallocation
      (AR.Sets.DataRow, AR.Sets.DataRow_Access);
 
+   procedure check_bound_column_access (absent : Boolean);
+
    package Markers is new Ada.Containers.Indefinite_Hashed_Maps
      (Key_Type        => String,
       Element_Type    => Positive,
@@ -614,8 +616,10 @@ private
    function convert (nv : String) return AR.textsuper;
    function convert (nv : AR.chain) return String;
 
-   type bindrec (output_type : field_types := ft_nbyte0) is record
-      bound : Boolean := False;
+   type bindrec (output_type : field_types := ft_nbyte0)
+   is record
+      bound     : Boolean := False;
+      null_data : Boolean := False;
       case output_type is
          when ft_nbyte0    => a00 : AR.nbyte0_access;
                               v00 : AR.nbyte0;

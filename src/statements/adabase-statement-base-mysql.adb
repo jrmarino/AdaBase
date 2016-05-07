@@ -1648,6 +1648,9 @@ package body AdaBase.Statement.Base.MySQL is
       end set_binary_buffer;
 
    begin
+      if zone.null_data then
+         canvas.is_null := 1;
+      end if;
       case vartype is
          when ft_nbyte0 | ft_nbyte1 | ft_nbyte2 | ft_nbyte3 | ft_nbyte4 |
               ft_nbyte8 => struct.is_unsigned := 1;
