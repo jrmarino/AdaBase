@@ -1964,4 +1964,37 @@ package body AdaBase.Statement.Base.MySQL is
       end case;
    end auto_assign;
 
+
+   ------------------
+   --  iterate #1  --
+   ------------------
+   overriding
+   procedure iterate (Stmt    : out MySQL_statement;
+                      process : not null access procedure) is
+   begin
+      loop
+         exit when not Stmt.fetch_bound;
+         process.all;
+      end loop;
+   end iterate;
+
+
+   ------------------
+   --  iterate #2  --
+   ------------------
+   overriding
+   procedure iterate (Stmt    : out MySQL_statement;
+                      process : not null access
+                        procedure (row : ARS.DataRow_Access)) is
+   begin
+      loop
+         declare
+            local_row : ARS.DataRow_Access;
+         begin
+            exit when not Stmt.fetch_next (datarow => local_row);
+            process.all (row => local_row);
+         end;
+      end loop;
+   end iterate;
+
 end AdaBase.Statement.Base.MySQL;

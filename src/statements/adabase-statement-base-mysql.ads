@@ -78,6 +78,15 @@ package AdaBase.Statement.Base.MySQL is
                              data_present : out Boolean;
                              data_fetched : out Boolean);
 
+   overriding
+   procedure iterate        (Stmt         : out MySQL_statement;
+                             process      : not null access procedure);
+
+   overriding
+   procedure iterate (Stmt    : out MySQL_statement;
+                      process : not null access
+                        procedure (row : ARS.DataRow_Access));
+
 private
 
    type mysql_canvas;

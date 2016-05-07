@@ -56,6 +56,13 @@ package AdaBase.Interfaces.Statement is
                              data_present : out Boolean;
                              data_fetched : out Boolean) is null;
 
+   procedure iterate (Stmt    : out iStatement;
+                      process : not null access procedure) is null;
+
+   procedure iterate (Stmt    : out iStatement;
+                      process : not null access procedure
+                        (row : AdaBase.Results.Sets.DataRow_Access)) is null;
+
    ------------------------------------------------------------------------
    --  Technically there should be 18-20 of each listed.  They are all
    --  implemented in the base class so they get inherited.  I'm too
