@@ -191,20 +191,6 @@ package body AdaBase.Statement.Base is
    end convert;
 
 
-   -------------------------------
-   --  convert chain to string  --
-   -------------------------------
-   function convert (nv : AR.chain) return String
-   is
-      payload : String := (nv'Range => '_');
-   begin
-      for x in nv'Range loop
-         payload (x) := Character'Val (nv (x));
-      end loop;
-      return payload;
-   end convert;
-
-
    ---------------------------------
    --  convert string to textual  --
    ---------------------------------
@@ -1485,7 +1471,7 @@ package body AdaBase.Statement.Base is
                      index : Positive;
                      vaxx  : AR.chain)
    is
-      payload : constant String := convert (vaxx);
+      payload : constant String := ARC.convert (vaxx);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_chain, a17 => null,

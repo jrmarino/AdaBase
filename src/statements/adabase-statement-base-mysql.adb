@@ -1821,7 +1821,7 @@ package body AdaBase.Statement.Base.MySQL is
             if zone.a17 = null then
                set_binary_buffer (CT.USS (zone.v17));
             else
-               set_binary_buffer (convert (zone.a17.all));
+               set_binary_buffer (ARC.convert (zone.a17.all));
             end if;
          when ft_enumtype =>
             if zone.a18 = null then

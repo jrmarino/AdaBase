@@ -1488,6 +1488,15 @@ package body AdaBase.Results.Converters is
       end if;
    end convert;
 
+   function convert (nv : chain) return String
+   is
+      payload : String (nv'Range);
+   begin
+      for x in nv'Range loop
+         payload (x) := Character'Val (nv (x));
+      end loop;
+      return payload;
+   end convert;
 
 
    ---------------------------------------
