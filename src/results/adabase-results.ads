@@ -42,10 +42,7 @@ package AdaBase.Results is
 
    subtype nbyte0 is Boolean;
 
-   type enumtype is record
-      enumeration : textual;
-      index       : Natural;
-   end record;
+   type enumtype is record enumeration : textual; end record;
    type settype is array (Positive range <>) of enumtype;
    type chain is array (Positive range <>) of nbyte1;
 
@@ -92,8 +89,8 @@ package AdaBase.Results is
    PARAM_IS_REAL_9    : constant real9  := 0.0;
    PARAM_IS_REAL_18   : constant real18 := 0.0;
    PARAM_IS_CHAIN     : constant chain := (1 .. 1 => 0);
-   PARAM_IS_ENUM      : constant enumtype := (CT.blank, 0);
-   PARAM_IS_SET       : constant settype := (1 .. 1 => (CT.blank, 0));
+   PARAM_IS_ENUM      : constant enumtype := (enumeration => blank_string);
+   PARAM_IS_SET       : constant settype := (1 .. 1 => (PARAM_IS_ENUM));
    PARAM_IS_TEXTUAL   : constant textual := blank_string;
    PARAM_IS_TEXTWIDE  : constant textwide := blank_wstring;
    PARAM_IS_TEXTSUPER : constant textsuper := blank_wwstring;

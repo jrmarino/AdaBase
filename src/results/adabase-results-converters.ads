@@ -325,17 +325,6 @@ package AdaBase.Results.Converters is
    -----------------
    -- ENUMERATION --
    -----------------
-   function convert (nv : enumtype) return nbyte0;
-   function convert (nv : enumtype) return nbyte1;
-   function convert (nv : enumtype) return nbyte2;
-   function convert (nv : enumtype) return nbyte3;
-   function convert (nv : enumtype) return nbyte4;
-   function convert (nv : enumtype) return nbyte8;
-   function convert (nv : enumtype) return byte1;
-   function convert (nv : enumtype) return byte2;
-   function convert (nv : enumtype) return byte3;
-   function convert (nv : enumtype) return byte4;
-   function convert (nv : enumtype) return byte8;
    function convert (nv : enumtype) return String;
    function convert (nv : enumtype) return Wide_String;
    function convert (nv : enumtype) return Wide_Wide_String;

@@ -699,8 +699,7 @@ package body AdaBase.Statement.Base.MySQL is
          num_enums := fixed;
       end if;
       declare
-         --  Index not supported on MySQL, set all indices to zero
-         result : AR.settype (1 .. num_enums) := (others => (CT.blank, 0));
+         result : AR.settype (1 .. num_enums) := (others => AR.PARAM_IS_ENUM);
          cursor : Natural  := 1;
          curend : Natural  := 0;
          index  : Positive := 1;
@@ -742,7 +741,6 @@ package body AdaBase.Statement.Base.MySQL is
    is
       result : AR.enumtype;
    begin
-      result.index := 0;   --  unused on MySQL
       result.enumeration := CT.SUS (nv);
       return result;
    end convert;

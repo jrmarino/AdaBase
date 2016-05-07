@@ -30,10 +30,10 @@ package body AdaBase.Results.Field is
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_chain     => return ARC.convert (field.native.v17.all);
-         when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
+              ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_nbyte0;
@@ -60,10 +60,10 @@ package body AdaBase.Results.Field is
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_chain     => return ARC.convert (field.native.v17.all);
-         when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
+              ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_nbyte1;
@@ -91,10 +91,10 @@ package body AdaBase.Results.Field is
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_chain     => return ARC.convert (field.native.v17.all);
-         when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
+              ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_nbyte2;
@@ -122,10 +122,10 @@ package body AdaBase.Results.Field is
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_chain     => return ARC.convert (field.native.v17.all);
-         when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
+              ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_nbyte3;
@@ -153,10 +153,10 @@ package body AdaBase.Results.Field is
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_chain     => return ARC.convert (field.native.v17.all);
-         when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
+              ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_nbyte4;
@@ -184,10 +184,10 @@ package body AdaBase.Results.Field is
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_chain     => return ARC.convert (field.native.v17.all);
-         when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
+              ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_nbyte8;
@@ -214,11 +214,11 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
-         when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
               ft_chain     |
+              ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_byte1;
@@ -245,11 +245,11 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
-         when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
               ft_chain     |
+              ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_byte2;
@@ -276,11 +276,11 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
-         when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
               ft_chain     |
+              ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_byte3;
@@ -307,11 +307,11 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
-         when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
               ft_chain     |
+              ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_byte4;
@@ -338,11 +338,11 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
-         when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
               ft_chain     |
+              ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_byte8;

@@ -537,7 +537,7 @@ package body AdaBase.Statement.Base is
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_enumtype, a18 => vaxx,
-                    v18 => (CT.blank, 0), bound => True));
+                    v18 => AR.PARAM_IS_ENUM, bound => True));
       end if;
    end bind;
 
@@ -1354,7 +1354,7 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_enumtype, a18 => vaxx,
-                 v18 => (CT.blank, 0), bound => True));
+                 v18 => AR.PARAM_IS_ENUM, bound => True));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
