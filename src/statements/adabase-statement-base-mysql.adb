@@ -1648,16 +1648,39 @@ package body AdaBase.Statement.Base.MySQL is
       end set_binary_buffer;
 
    begin
-      if zone.null_data then
-         canvas.is_null := 1;
-      end if;
       case vartype is
          when ft_nbyte0 | ft_nbyte1 | ft_nbyte2 | ft_nbyte3 | ft_nbyte4 |
               ft_nbyte8 => struct.is_unsigned := 1;
          when others => null;
       end case;
       case vartype is
-         when ft_nbyte0 => struct.buffer_type := ABM.MYSQL_TYPE_TINY;
+         when ft_nbyte0 =>     struct.buffer_type := ABM.MYSQL_TYPE_TINY;
+         when ft_nbyte1 =>     struct.buffer_type := ABM.MYSQL_TYPE_TINY;
+         when ft_nbyte2 =>     struct.buffer_type := ABM.MYSQL_TYPE_SHORT;
+         when ft_nbyte3 =>     struct.buffer_type := ABM.MYSQL_TYPE_LONG;
+         when ft_nbyte4 =>     struct.buffer_type := ABM.MYSQL_TYPE_LONG;
+         when ft_nbyte8 =>     struct.buffer_type := ABM.MYSQL_TYPE_LONGLONG;
+         when ft_byte1 =>      struct.buffer_type := ABM.MYSQL_TYPE_TINY;
+         when ft_byte2 =>      struct.buffer_type := ABM.MYSQL_TYPE_SHORT;
+         when ft_byte3 =>      struct.buffer_type := ABM.MYSQL_TYPE_LONG;
+         when ft_byte4 =>      struct.buffer_type := ABM.MYSQL_TYPE_LONG;
+         when ft_byte8 =>      struct.buffer_type := ABM.MYSQL_TYPE_LONGLONG;
+         when ft_real9 =>      struct.buffer_type := ABM.MYSQL_TYPE_FLOAT;
+         when ft_real18 =>     struct.buffer_type := ABM.MYSQL_TYPE_DOUBLE;
+         when ft_textual =>    struct.buffer_type := ABM.MYSQL_TYPE_STRING;
+         when ft_widetext =>   struct.buffer_type := ABM.MYSQL_TYPE_STRING;
+         when ft_supertext =>  struct.buffer_type := ABM.MYSQL_TYPE_STRING;
+         when ft_timestamp =>  struct.buffer_type := ABM.MYSQL_TYPE_DATETIME;
+         when ft_chain =>      struct.buffer_type := ABM.MYSQL_TYPE_BLOB;
+         when ft_enumtype =>   struct.buffer_type := ABM.MYSQL_TYPE_STRING;
+         when ft_settype =>    struct.buffer_type := ABM.MYSQL_TYPE_STRING;
+      end case;
+      if zone.null_data then
+         canvas.is_null := 1;
+      else
+         case vartype is
+         when ft_nbyte0 =>
+            struct.buffer := canvas.buffer_uint8'Address;
             if zone.a00 = null then
                if zone.v00 then
                   canvas.buffer_uint8 := 1;
@@ -1667,26 +1690,22 @@ package body AdaBase.Statement.Base.MySQL is
                   canvas.buffer_uint8 := 1;
                end if;
             end if;
-            struct.buffer := canvas.buffer_uint8'Address;
          when ft_nbyte1 =>
-            struct.buffer_type := ABM.MYSQL_TYPE_TINY;
-            struct.buffer      := canvas.buffer_uint8'Address;
+            struct.buffer := canvas.buffer_uint8'Address;
             if zone.a01 = null then
                canvas.buffer_uint8 := ABM.IC.unsigned_char (zone.v01);
             else
                canvas.buffer_uint8 := ABM.IC.unsigned_char (zone.a01.all);
             end if;
          when ft_nbyte2 =>
-            struct.buffer_type := ABM.MYSQL_TYPE_SHORT;
-            struct.buffer      := canvas.buffer_uint16'Address;
+            struct.buffer := canvas.buffer_uint16'Address;
             if zone.a02 = null then
                canvas.buffer_uint16 := ABM.IC.unsigned_short (zone.v02);
             else
                canvas.buffer_uint16 := ABM.IC.unsigned_short (zone.a02.all);
             end if;
          when ft_nbyte3 =>
-            struct.buffer_type := ABM.MYSQL_TYPE_LONG;
-            struct.buffer      := canvas.buffer_uint32'Address;
+            struct.buffer := canvas.buffer_uint32'Address;
             --  ABM.MYSQL_TYPE_INT24 not for input, use next biggest
             if zone.a03 = null then
                canvas.buffer_uint32 := ABM.IC.unsigned (zone.v03);
@@ -1694,40 +1713,35 @@ package body AdaBase.Statement.Base.MySQL is
                canvas.buffer_uint32 := ABM.IC.unsigned (zone.a03.all);
             end if;
          when ft_nbyte4 =>
-            struct.buffer_type := ABM.MYSQL_TYPE_LONG;
-            struct.buffer      := canvas.buffer_uint32'Address;
+            struct.buffer := canvas.buffer_uint32'Address;
             if zone.a04 = null then
                canvas.buffer_uint32 := ABM.IC.unsigned (zone.v04);
             else
                canvas.buffer_uint32 := ABM.IC.unsigned (zone.a04.all);
             end if;
          when ft_nbyte8 =>
-            struct.buffer_type := ABM.MYSQL_TYPE_LONGLONG;
-            struct.buffer      := canvas.buffer_uint64'Address;
+            struct.buffer := canvas.buffer_uint64'Address;
             if zone.a05 = null then
                canvas.buffer_uint64 := ABM.IC.unsigned_long (zone.v05);
             else
                canvas.buffer_uint64 := ABM.IC.unsigned_long (zone.a05.all);
             end if;
          when ft_byte1 =>
-            struct.buffer_type := ABM.MYSQL_TYPE_TINY;
-            struct.buffer      := canvas.buffer_int8'Address;
+            struct.buffer := canvas.buffer_int8'Address;
             if zone.a06 = null then
                canvas.buffer_int8 := ABM.IC.signed_char (zone.v06);
             else
                canvas.buffer_int8 := ABM.IC.signed_char (zone.a06.all);
             end if;
          when ft_byte2 =>
-            struct.buffer_type := ABM.MYSQL_TYPE_SHORT;
-            struct.buffer      := canvas.buffer_int16'Address;
+            struct.buffer := canvas.buffer_int16'Address;
             if zone.a07 = null then
                canvas.buffer_int16 := ABM.IC.short (zone.v07);
             else
                canvas.buffer_int16 := ABM.IC.short (zone.a07.all);
             end if;
          when ft_byte3 =>
-            struct.buffer_type := ABM.MYSQL_TYPE_LONG;
-            struct.buffer      := canvas.buffer_int32'Address;
+            struct.buffer := canvas.buffer_int32'Address;
             --  ABM.MYSQL_TYPE_INT24 not for input, use next biggest
             if zone.a08 = null then
                canvas.buffer_int32 := ABM.IC.int (zone.v08);
@@ -1735,61 +1749,53 @@ package body AdaBase.Statement.Base.MySQL is
                canvas.buffer_int32 := ABM.IC.int (zone.a08.all);
             end if;
          when ft_byte4 =>
-            struct.buffer_type := ABM.MYSQL_TYPE_LONG;
-            struct.buffer      := canvas.buffer_int32'Address;
+            struct.buffer := canvas.buffer_int32'Address;
             if zone.a09 = null then
                canvas.buffer_int32 := ABM.IC.int (zone.v09);
             else
                canvas.buffer_int32 := ABM.IC.int (zone.a09.all);
             end if;
          when ft_byte8 =>
-            struct.buffer_type := ABM.MYSQL_TYPE_LONGLONG;
-            struct.buffer      := canvas.buffer_int64'Address;
+            struct.buffer := canvas.buffer_int64'Address;
             if zone.a10 = null then
                canvas.buffer_int64 := ABM.IC.long (zone.v10);
             else
                canvas.buffer_int64 := ABM.IC.long (zone.a10.all);
             end if;
          when ft_real9 =>
-            struct.buffer_type := ABM.MYSQL_TYPE_FLOAT;
-            struct.buffer      := canvas.buffer_float'Address;
+            struct.buffer := canvas.buffer_float'Address;
             if zone.a11 = null then
                canvas.buffer_float := ABM.IC.C_float (zone.v11);
             else
                canvas.buffer_float := ABM.IC.C_float (zone.a11.all);
             end if;
          when ft_real18 =>
-            struct.buffer_type := ABM.MYSQL_TYPE_DOUBLE;
-            struct.buffer      := canvas.buffer_double'Address;
+            struct.buffer := canvas.buffer_double'Address;
             if zone.a12 = null then
                canvas.buffer_double := ABM.IC.double (zone.v12);
             else
                canvas.buffer_double := ABM.IC.double (zone.a12.all);
             end if;
          when ft_textual =>
-            struct.buffer_type := ABM.MYSQL_TYPE_STRING;
             if zone.a13 = null then
                set_binary_buffer (ARC.convert (zone.v13));
             else
                set_binary_buffer (ARC.convert (zone.a13.all));
             end if;
          when ft_widetext =>
-            struct.buffer_type := ABM.MYSQL_TYPE_STRING;
             if zone.a14 = null then
                set_binary_buffer (ARC.convert (zone.v14));
             else
                set_binary_buffer (ARC.convert (zone.a14.all));
             end if;
          when ft_supertext =>
-            struct.buffer_type := ABM.MYSQL_TYPE_STRING;
             if zone.a15 = null then
                set_binary_buffer (ARC.convert (zone.v15));
             else
                set_binary_buffer (ARC.convert (zone.a15.all));
             end if;
          when ft_timestamp =>
-            struct.buffer_type := ABM.MYSQL_TYPE_DATETIME;
-            struct.buffer      := canvas.buffer_time'Address;
+            struct.buffer := canvas.buffer_time'Address;
             declare
                hack : CAL.Time;
             begin
@@ -1811,28 +1817,26 @@ package body AdaBase.Statement.Base.MySQL is
                  ABM.IC.unsigned_long (CFM.Sub_Second (hack) * 1000000);
             end;
          when ft_chain =>
-            struct.buffer_type := ABM.MYSQL_TYPE_BLOB;
             if zone.a17 = null then
                set_binary_buffer (CT.USS (zone.v17));
             else
                set_binary_buffer (convert (zone.a17.all));
             end if;
          when ft_enumtype =>
-            --  ENUM is essentially a specific string on MySQL
-            struct.buffer_type := ABM.MYSQL_TYPE_STRING;
             if zone.a18 = null then
                set_binary_buffer (ARC.convert (zone.v18.enumeration));
             else
                set_binary_buffer (ARC.convert (zone.a18.all.enumeration));
             end if;
          when ft_settype =>
-            struct.buffer_type := ABM.MYSQL_TYPE_STRING;
             if zone.a19 = null then
                set_binary_buffer (CT.USS (zone.v19));
             else
                set_binary_buffer (ARC.convert (zone.a19));
             end if;
-      end case;
+         end case;
+      end if;
+
    end construct_bind_slot;
 
 
