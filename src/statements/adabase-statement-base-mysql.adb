@@ -783,8 +783,8 @@ package body AdaBase.Statement.Base.MySQL is
          function convert is new Ada.Unchecked_Conversion
            (Source => ABM.MYSQL_ROW_access, Target => rowtype_access);
 
-         function convert (dba : db_access; size : Natural) return String;
-         function convert (dba : db_access; size : Natural) return String
+         function db_convert (dba : db_access; size : Natural) return String;
+         function db_convert (dba : db_access; size : Natural) return String
          is
             max : Natural := size;
          begin
@@ -799,7 +799,7 @@ package body AdaBase.Statement.Base.MySQL is
                end loop;
                return result;
             end;
-         end convert;
+         end db_convert;
       begin
          row := convert (rptr);
          for F in 1 .. maxlen loop
@@ -810,7 +810,7 @@ package body AdaBase.Statement.Base.MySQL is
                  (Stmt.column_info.Element (Index => F).field_name);
                sz : constant Natural := field_lengths (F);
                EN : constant Boolean := row (F) = null;
-               ST : constant String  := convert (row (F), sz);
+               ST : constant String  := db_convert (row (F), sz);
                dvariant : ARF.variant;
             begin
                case Stmt.column_info.Element (Index => F).field_type is
@@ -841,22 +841,21 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_real18 =>
                      dvariant := (datatype => ft_real18, v12 => convert (ST));
                   when ft_textual =>
-                     dvariant := (datatype => ft_textual,
-                                  v13 => convert (ST, Stmt.con_max_blob));
+                     dvariant := (datatype => ft_textual, v13 => CT.SUS (ST));
                   when ft_widetext =>
                      dvariant := (datatype => ft_widetext,
-                                  v14 => convert (ST, Stmt.con_max_blob));
+                                  v14 => convert (ST));
                   when ft_supertext =>
                      dvariant := (datatype => ft_supertext,
-                                  v15 => convert (ST, Stmt.con_max_blob));
+                                  v15 => convert (ST));
                   when ft_timestamp =>
                      begin
                         dvariant := (datatype => ft_timestamp,
                                      v16 => convert (ST));
                      exception
                         when CAL.Time_Error =>
-                           dvariant := (datatype => ft_textual, v13 =>
-                                           convert (ST, Stmt.con_max_blob));
+                           dvariant := (datatype => ft_textual,
+                                        v13 => CT.SUS (ST));
                      end;
                   when ft_enumtype =>
                      dvariant := (datatype => ft_enumtype,
@@ -1322,7 +1321,10 @@ package body AdaBase.Statement.Base.MySQL is
 
       declare
          maxlen : constant Natural := Natural (Stmt.column_info.Length);
-         type rowtype is array (1 .. maxlen) of ABM.ICS.chars_ptr;
+         bufmax : constant ABM.IC.size_t := ABM.IC.size_t (Stmt.con_max_blob);
+         subtype data_buffer is ABM.IC.char_array (1 .. bufmax);
+         type db_access is access all data_buffer;
+         type rowtype is array (1 .. maxlen) of db_access;
          type rowtype_access is access all rowtype;
 
          row : rowtype_access;
@@ -1332,15 +1334,32 @@ package body AdaBase.Statement.Base.MySQL is
 
          function Convert is new Ada.Unchecked_Conversion
            (Source => ABM.MYSQL_ROW_access, Target => rowtype_access);
+
+         function db_convert (dba : db_access; size : Natural) return String;
+         function db_convert (dba : db_access; size : Natural) return String
+         is
+            max : Natural := size;
+         begin
+            if max > Stmt.con_max_blob then
+               max := Stmt.con_max_blob;
+            end if;
+            declare
+               result : String (1 .. max);
+            begin
+               for x in result'Range loop
+                  result (x) := Character (dba.all (ABM.IC.size_t (x)));
+               end loop;
+               return result;
+            end;
+         end db_convert;
       begin
          row := Convert (rptr);
          for F in 1 .. maxlen loop
             if Stmt.crate.Element (Index => F).bound then
                declare
                   sz : constant Natural := field_lengths (F);
-                  EN : constant Boolean := row (F) = ABM.ICS.Null_Ptr;
-                  ST : constant String  := ABM.ICS.Value
-                    (Item => row (F), Length => ABM.IC.size_t (sz));
+                  EN : constant Boolean := row (F) = null;
+                  ST : constant String  := db_convert (row (F), sz);
 
                   Tout : constant field_types :=
                     Stmt.crate.Element (Index => F) .output_type;
@@ -1380,14 +1399,11 @@ package body AdaBase.Statement.Base.MySQL is
                      when ft_real18 =>
                         Stmt.crate.Element (F).a12.all := convert (ST);
                      when ft_textual =>
-                        Stmt.crate.Element (F).a13.all :=
-                          convert (ST, Stmt.con_max_blob);
+                        Stmt.crate.Element (F).a13.all := CT.SUS (ST);
                      when ft_widetext =>
-                        Stmt.crate.Element (F).a14.all :=
-                          convert (ST, Stmt.con_max_blob);
+                        Stmt.crate.Element (F).a14.all := convert (ST);
                      when ft_supertext =>
-                        Stmt.crate.Element (F).a15.all :=
-                          convert (ST, Stmt.con_max_blob);
+                        Stmt.crate.Element (F).a15.all := convert (ST);
                      when ft_timestamp =>
                         begin
                            Stmt.crate.Element (F).a16.all := convert (ST);

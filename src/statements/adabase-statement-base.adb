@@ -191,62 +191,18 @@ package body AdaBase.Statement.Base is
    end convert;
 
 
-   ---------------------------------
-   --  convert string to textual  --
-   ---------------------------------
-   function convert (nv : String; maxsize : BLOB_maximum) return AR.textual
-   is
-      maxlinks : Natural := nv'Last;
-   begin
-      if maxlinks > maxsize then
-         maxlinks := maxsize;
-      end if;
-      return CT.SUS (nv (nv'First .. maxlinks));
-   end convert;
-
-
-   -------------------------------------
-   --  convert string to textwide #1  --
-   -------------------------------------
-   function convert (nv : String; maxsize : BLOB_maximum) return AR.textwide
-   is
-      maxlinks : Natural := nv'Last;
-   begin
-      if maxlinks > maxsize then
-         maxlinks := maxsize;
-      end if;
-      return SUW.To_Unbounded_Wide_String
-        (ACC.To_Wide_String (nv (nv'First .. maxlinks)));
-   end convert;
-
-
-   -------------------------------------
-   --  convert string to textwide #2  --
-   -------------------------------------
+   ----------------------------------
+   --  convert string to textwide  --
+   ----------------------------------
    function convert (nv : String) return AR.textwide is
    begin
       return SUW.To_Unbounded_Wide_String (ACC.To_Wide_String (nv));
    end convert;
 
 
-   --------------------------------------
-   --  convert string to textsuper #1  --
-   --------------------------------------
-   function convert (nv : String; maxsize : BLOB_maximum) return AR.textsuper
-   is
-      maxlinks : Natural := nv'Last;
-   begin
-      if maxlinks > maxsize then
-         maxlinks := maxsize;
-      end if;
-      return SWW.To_Unbounded_Wide_Wide_String
-        (ACC.To_Wide_Wide_String (nv (nv'First .. maxlinks)));
-   end convert;
-
-
-   --------------------------------------
-   --  convert string to textsuper #2  --
-   --------------------------------------
+   -----------------------------------
+   --  convert string to textsuper  --
+   -----------------------------------
    function convert (nv : String) return AR.textsuper is
    begin
       return SWW.To_Unbounded_Wide_Wide_String (ACC.To_Wide_Wide_String (nv));
