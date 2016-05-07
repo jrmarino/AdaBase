@@ -1,0 +1,11 @@
+with "../common.gpr";
+
+project Iterate is
+
+   for Main use ("iterate");
+   for Object_Dir use "obj";
+
+   package Compiler renames Common.Compiler;
+   package Linker renames Common.Linker;
+
+end Iterate;
