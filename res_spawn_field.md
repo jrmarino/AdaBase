@@ -81,9 +81,9 @@ procedure Spawn_Fields is
               v13 => SU.To_Unbounded_String ("Baltimore Ravens")));
 
    myset : ARC.settype (1 .. 3) :=
-               ((SU.To_Unbounded_String ("hockey"), 0),
-                (SU.To_Unbounded_String ("baseball"), 3),
-                (SU.To_Unbounded_String ("tennis"), 5));
+               ((enumeration => SU.To_Unbounded_String ("hockey")),
+                (enumeration => SU.To_Unbounded_String ("baseball")),
+                (enumeration => SU.To_Unbounded_String ("tennis")));
 
    ST : ARC.Field.field_access := ARC.Field.spawn_field (enumset => myset);
 
