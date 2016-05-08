@@ -17,5 +17,6 @@ fetched DataRow.
   <ul>
     <li>{{ page.res_column }}</li>
     <li>{{ page.fetch_next }}</li>
+    <li>{{ page.fetch_bound }}</li>
   </ul>
 </div>

@@ -24,6 +24,7 @@ error.  The function returns False when no more data is available.
     <li>{{ page.stmt_bind }}</li>
     <li>{{ page.fetch_all }}</li>
     <li>{{ page.fetch_next }}</li>
+    <li>{{ page.stmt_iterate }}</li>
     <li>{{ page.query_select }}</li>
     <li>{{ page.query }}</li>
   </ul>
