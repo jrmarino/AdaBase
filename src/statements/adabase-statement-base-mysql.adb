@@ -338,6 +338,7 @@ package body AdaBase.Statement.Base.MySQL is
                                 pull_codes => True);
          end if;
       end if;
+      free_sql (Object.sql_final);
    end finalize;
 
 

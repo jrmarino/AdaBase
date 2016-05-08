@@ -90,6 +90,7 @@ package AdaBase.Statement.Base.MySQL is
 private
 
    type mysql_canvas;
+   type SQL_access is access String;
 
    procedure initialize (Object : in out MySQL_statement);
    procedure finalize   (Object : in out MySQL_statement);
@@ -173,6 +174,8 @@ private
      (mysql_canvases, mysql_canvases_Access);
    procedure free_binary is new Ada.Unchecked_Deallocation
      (ABM.IC.char_array, ABM.ICS.char_array_access);
+   procedure free_sql is new Ada.Unchecked_Deallocation
+     (String, SQL_access);
 
    type MySQL_statement (type_of_statement : stmt_type;
                          log_handler       : ALF.LogFacility_access;
@@ -191,7 +194,7 @@ private
          num_columns    : Natural               := 0;
          size_of_rowset : TraxID                := 0;
          column_info    : VColumns.Vector;
-         sql_final      : access String;
+         sql_final      : SQL_access;
       end record;
 
 end AdaBase.Statement.Base.MySQL;
