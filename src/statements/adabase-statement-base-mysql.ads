@@ -21,7 +21,7 @@ package AdaBase.Statement.Base.MySQL is
                          con_max_blob      : BLOB_maximum;
                          con_buffered      : Boolean)
    is new Base_Statement and AIS.iStatement with private;
-   type MySQL_statement_access is access MySQL_statement;
+   type MySQL_statement_access is access all MySQL_statement;
 
    overriding
    function column_count (Stmt : MySQL_statement) return Natural;
