@@ -32,6 +32,8 @@ package AdaBase.Statement.Base is
    package ARC renames AdaBase.Results.Converters;
    package RGC renames AdaBase.Results.Generic_Converters;
 
+   type SQL_access is access all String;
+
    type Base_Statement is
      abstract new Base_Pure and AIS.iStatement with private;
    type basic_statement is access all Base_Statement'Class;

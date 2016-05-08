@@ -12,8 +12,6 @@ package AdaBase.Statement.Base.MySQL is
    package ARS renames AdaBase.Results.Sets;
    package AC  renames Ada.Containers;
 
-   type SQL_access is access all String;
-
    type MySQL_statement (type_of_statement : stmt_type;
                          log_handler       : ALF.LogFacility_access;
                          mysql_conn        : ACM.MySQL_Connection_Access;
