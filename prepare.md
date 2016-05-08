@@ -3,10 +3,10 @@ title: Prepare (literal input)
 ---
 
 <div class="leftside">
-<h3>AdaBase.Statement.Base.[STMT]_access function<br/>
+<h3>AdaBase.Statement.Base.[STMT] function<br/>
 AdaBase.Driver.Base.[DB].prepare (sql : String)</h3>
 <p>This function executes the literal SQL string it is given and returns
-access to the statement object that hasn't yet been executed.  The user
+the statement object that hasn't yet been executed.  The user
 has the option to bind values and variables to the templated SQL prior
 to the query execution.  This is allowed when the SQL has one or more
 named (:<i>name</i>) or question mark (?) parameters in the string,

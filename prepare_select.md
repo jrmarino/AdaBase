@@ -8,7 +8,7 @@ package AdaBase is
    type NullPriority is (native, nulls_first, nulls_last);
 end AdaBase;
 </pre>
-<h3>AdaBase.Statement.Base.[STMT]_access function<br/>
+<h3>AdaBase.Statement.Base.[STMT] function<br/>
 AdaBase.Driver.Base.[DB].prepare_select  (
                           distinct    : Boolean := False;
                           tables      : String;
@@ -29,7 +29,7 @@ by all SQL drivers.
 The only required parameters are <i>tables</i> and <i>columns</i>.
 </p>
 <p>Afterwards, the assembled SQL string is prepared and returns
-access to the statement object that hasn't yet been executed.  The user
+the statement object that hasn't yet been executed.  The user
 has the option to bind values and variables to the templated SQL prior
 to the query execution.  This is allowed when the SQL has one or more
 named (:<i>name</i>) or question mark (?) parameters in the string,

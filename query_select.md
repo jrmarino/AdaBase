@@ -8,7 +8,7 @@ package AdaBase is
    type NullPriority is (native, nulls_first, nulls_last);
 end AdaBase;
 </pre>
-<h3>AdaBase.Statement.Base.[STMT]_access function<br/>
+<h3>AdaBase.Statement.Base.[STMT] function<br/>
 AdaBase.Driver.Base.[DB].query_select  (
                           distinct    : Boolean := False;
                           tables      : String;
