@@ -19,6 +19,8 @@ procedure Execute_Dynabound is
 
    type halfbyte is mod 2 ** 4;
 
+   stmt_acc : CON.Stmt_Type_access;
+
    procedure dump_result;
    function halfbyte_to_hex (value : halfbyte) return Character;
    function convert_chain (chain : AR.chain) return String;
@@ -88,17 +90,18 @@ procedure Execute_Dynabound is
 
    procedure dump_result
    is
-      row     : ARS.DataRow_Access;
-      numcols : constant Natural := CON.STMT.column_count;
+      row     : ARS.DataRow;
+      numcols : constant Natural := stmt_acc.column_count;
    begin
       loop
-         exit when not CON.STMT.fetch_next (row);
+         row := stmt_acc.fetch_next;
+         exit when row.data_exhausted;
          TIO.Put_Line ("");
          for c in Natural range 1 .. numcols loop
             TIO.Put (CT.zeropad (c, 2) & ". ");
-            TIO.Put (pad (CON.STMT.column_name (c), 16));
-            TIO.Put (pad (CON.STMT.column_native_type (c)'Img, 15));
-            case CON.STMT.column_native_type (c) is
+            TIO.Put (pad (stmt_acc.column_name (c), 16));
+            TIO.Put (pad (stmt_acc.column_native_type (c)'Img, 15));
+            case stmt_acc.column_native_type (c) is
                when AdaBase.ft_chain =>
                   TIO.Put_Line (convert_chain (row.column (c).as_chain));
                when others =>
@@ -121,7 +124,6 @@ procedure Execute_Dynabound is
 
 begin
 
-   declare
    begin
       CON.connect_database;
    exception
@@ -150,32 +152,32 @@ begin
         "red;blue,white;Q|ER;01234" & Character'Val (0) &
         Character'Val (10) & "789";
       good : Boolean := True;
+      stmt : CON.Stmt_Type := CON.DR.prepare (sql3);
    begin
-      CON.STMT := CON.DR.prepare (sql3);
       --  This has to be done only once after the prepare command
       --  Set the type for each parameter (required for at least MySQL)
-      CON.STMT.assign (1,  AR.PARAM_IS_NBYTE_3);
-      CON.STMT.assign (2,  AR.PARAM_IS_BOOLEAN);
-      CON.STMT.assign (3,  AR.PARAM_IS_NBYTE_1);
-      CON.STMT.assign (4,  AR.PARAM_IS_BYTE_2);
-      CON.STMT.assign (5,  AR.PARAM_IS_BYTE_4);
-      CON.STMT.assign (6,  AR.PARAM_IS_NBYTE_8);
-      CON.STMT.assign (7,  AR.PARAM_IS_REAL_9);
-      CON.STMT.assign (8,  AR.PARAM_IS_REAL_18);
-      CON.STMT.assign (9,  AR.PARAM_IS_REAL_9);
-      CON.STMT.assign (10, AR.PARAM_IS_TIMESTAMP);
-      CON.STMT.assign (11, AR.PARAM_IS_TIMESTAMP);
-      CON.STMT.assign (12, AR.PARAM_IS_TIMESTAMP);
-      CON.STMT.assign (13, AR.PARAM_IS_NBYTE_2);
-      CON.STMT.assign (14, AR.PARAM_IS_TEXTUAL);
-      CON.STMT.assign (15, AR.PARAM_IS_ENUM);
-      CON.STMT.assign (16, AR.PARAM_IS_SET);
-      CON.STMT.assign (17, AR.PARAM_IS_CHAIN);
-      CON.STMT.assign (18, AR.PARAM_IS_CHAIN);
+      stmt.assign (1,  AR.PARAM_IS_NBYTE_3);
+      stmt.assign (2,  AR.PARAM_IS_BOOLEAN);
+      stmt.assign (3,  AR.PARAM_IS_NBYTE_1);
+      stmt.assign (4,  AR.PARAM_IS_BYTE_2);
+      stmt.assign (5,  AR.PARAM_IS_BYTE_4);
+      stmt.assign (6,  AR.PARAM_IS_NBYTE_8);
+      stmt.assign (7,  AR.PARAM_IS_REAL_9);
+      stmt.assign (8,  AR.PARAM_IS_REAL_18);
+      stmt.assign (9,  AR.PARAM_IS_REAL_9);
+      stmt.assign (10, AR.PARAM_IS_TIMESTAMP);
+      stmt.assign (11, AR.PARAM_IS_TIMESTAMP);
+      stmt.assign (12, AR.PARAM_IS_TIMESTAMP);
+      stmt.assign (13, AR.PARAM_IS_NBYTE_2);
+      stmt.assign (14, AR.PARAM_IS_TEXTUAL);
+      stmt.assign (15, AR.PARAM_IS_ENUM);
+      stmt.assign (16, AR.PARAM_IS_SET);
+      stmt.assign (17, AR.PARAM_IS_CHAIN);
+      stmt.assign (18, AR.PARAM_IS_CHAIN);
 
-      good := CON.STMT.execute (vals1);
+      good := stmt.execute (vals1);
       if good then
-         good := CON.STMT.execute (parameters => vals2, delimiter => ';');
+         good := stmt.execute (parameters => vals2, delimiter => ';');
       end if;
       if good then
          CON.DR.commit;
@@ -185,17 +187,21 @@ begin
       end if;
    end;
 
+   declare
+      stmt : aliased CON.Stmt_Type := CON.DR.query (sql1);
    begin
-      CON.STMT := CON.DR.query (sql1);
-      if CON.STMT.successful then
+      if stmt.successful then
+         stmt_acc := stmt'Unchecked_Access;
          TIO.Put_Line ("Dumping Result from direct statement ...");
          dump_result;
       end if;
    end;
 
+   declare
+      stmt : aliased CON.Stmt_Type := CON.DR.prepare (sql1);
    begin
-      CON.STMT := CON.DR.prepare (sql1);
-      if CON.STMT.execute then
+      if stmt.execute then
+         stmt_acc := stmt'Unchecked_Access;
          TIO.Put_Line ("Dumping Result from prepared statement ...");
          dump_result;
       end if;
