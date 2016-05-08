@@ -627,61 +627,6 @@ package body AdaBase.Statement.Base.MySQL is
    end fetch_next_set;
 
 
-   ---------------------------
-   --  convert to Ada Time  --
-   ---------------------------
-   function convert (nv : String) return CAL.Time
-   is
-      len    : constant Natural  := nv'Length;
-      NF     : constant Natural  := nv'First;
-      year   : CAL.Year_Number   := CAL.Year_Number'First;
-      month  : CAL.Month_Number  := CAL.Month_Number'First;
-      day    : CAL.Day_Number    := CAL.Day_Number'First;
-      hour   : CFM.Hour_Number   := CFM.Hour_Number'First;
-      minute : CFM.Minute_Number := CFM.Minute_Number'First;
-      second : CFM.Second_Number := CFM.Second_Number'First;
-      HHMMSS : String (1 .. 8);
-   begin
-      --  Possible formats
-      --  DATE      [10]: YYYY-MM-DD
-      --  DATETIME  [19]: YYYY-MM-DD HH:MM:SS
-      --  TIMESTAMP [19]: YYYY-MM-DD HH:MM:SS
-      --  TIME      [08]: HH:MM:SS
-
-      --  Handle HH:MM:SS formats
-      case len is
-         when  8 => HHMMSS := nv (NF .. NF + 7);
-         when 19 => HHMMSS := nv (NF + 11 .. NF + 18);
-         when others => null;
-      end case;
-      case len is
-         when 8 | 19 =>
-            hour   := CFM.Hour_Number   (Integer'Value (HHMMSS (1 .. 2)));
-            minute := CFM.Minute_Number (Integer'Value (HHMMSS (4 .. 5)));
-            second := CFM.Second_Number (Integer'Value (HHMMSS (7 .. 8)));
-         when others => null;
-      end case;
-
-      --  Handle date formats
-      case len is
-         when 10 | 19 =>
-            year  := CAL.Year_Number  (Integer'Value (nv (NF .. NF + 3)));
-            month := CAL.Month_Number (Integer'Value (nv (NF + 5 .. NF + 6)));
-            day   := CAL.Day_Number   (Integer'Value (nv (NF + 8 .. NF + 9)));
-         when others => null;
-      end case;
-
-      --  If this raises an exception, it probable means the date < 1901 or
-      --  greater than 2099.  Turn this into a string time in that case.
-      return CFM.Time_Of (Year   => year,
-                          Month  => month,
-                          Day    => day,
-                          Hour   => hour,
-                          Minute => minute,
-                          Second => second);
-   end convert;
-
-
    ---------------------------------
    --  convert string to Settype  --
    ---------------------------------
@@ -823,7 +768,7 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_timestamp =>
                      begin
                         dvariant := (datatype => ft_timestamp,
-                                     v16 => convert (ST));
+                                     v16 => ARC.convert (ST));
                      exception
                         when CAL.Time_Error =>
                            dvariant := (datatype => ft_textual,
@@ -1377,7 +1322,7 @@ package body AdaBase.Statement.Base.MySQL is
                         Stmt.crate.Element (F).a15.all := convert (ST);
                      when ft_timestamp =>
                         begin
-                           Stmt.crate.Element (F).a16.all := convert (ST);
+                           Stmt.crate.Element (F).a16.all := ARC.convert (ST);
                         exception
                            when CAL.Time_Error =>
                               Stmt.crate.Element (F).a16.all := CAL.Time_Of
@@ -1918,7 +1863,7 @@ package body AdaBase.Statement.Base.MySQL is
          when ft_textual   => hold := (ft_textual, ST);
          when ft_widetext  => hold := (ft_widetext, STW);
          when ft_supertext => hold := (ft_supertext, STS);
-         when ft_timestamp => hold := (ft_timestamp, (convert (value)));
+         when ft_timestamp => hold := (ft_timestamp, (ARC.convert (value)));
          when ft_chain     => null;
          when ft_enumtype  => hold := (ft_enumtype, (ARC.convert (ST)));
          when ft_settype   => null;

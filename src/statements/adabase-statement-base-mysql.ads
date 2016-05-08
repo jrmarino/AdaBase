@@ -116,7 +116,6 @@ private
    function internal_ps_fetch_bound (Stmt : out MySQL_statement)
                                      return Boolean;
 
-   function convert (nv : String) return CAL.Time;
    function convert (nv : String; fixed : Natural := 0) return AR.settype;
    function num_set_items (nv : String) return Natural;
    function bincopy (data : ABM.ICS.char_array_access;

@@ -1614,4 +1614,63 @@ package body AdaBase.Results.Converters is
    end convert;
 
 
+   ---------------------------
+   --  convert to Ada Time  --
+   ---------------------------
+   function convert (nv : String) return AC.Time
+   is
+      len    : constant Natural  := nv'Length;
+      NF     : constant Natural  := nv'First;
+      year   : AC.Year_Number   := AC.Year_Number'First;
+      month  : AC.Month_Number  := AC.Month_Number'First;
+      day    : AC.Day_Number    := AC.Day_Number'First;
+      hour   : ACF.Hour_Number   := ACF.Hour_Number'First;
+      minute : ACF.Minute_Number := ACF.Minute_Number'First;
+      second : ACF.Second_Number := ACF.Second_Number'First;
+      HHMMSS : String (1 .. 8);
+   begin
+      --  Possible formats
+      --  DATE      [10]: YYYY-MM-DD
+      --  DATETIME  [19]: YYYY-MM-DD HH:MM:SS
+      --  TIMESTAMP [19]: YYYY-MM-DD HH:MM:SS
+      --  TIME      [08]: HH:MM:SS
+
+      --  Handle HH:MM:SS formats
+      case len is
+         when  8 => HHMMSS := nv (NF .. NF + 7);
+         when 19 => HHMMSS := nv (NF + 11 .. NF + 18);
+         when others => null;
+      end case;
+      case len is
+         when 8 | 19 =>
+            hour   := ACF.Hour_Number   (Integer'Value (HHMMSS (1 .. 2)));
+            minute := ACF.Minute_Number (Integer'Value (HHMMSS (4 .. 5)));
+            second := ACF.Second_Number (Integer'Value (HHMMSS (7 .. 8)));
+         when others => null;
+      end case;
+
+      --  Handle date formats
+      case len is
+         when 10 | 19 =>
+            year  := AC.Year_Number  (Integer'Value (nv (NF .. NF + 3)));
+            month := AC.Month_Number (Integer'Value (nv (NF + 5 .. NF + 6)));
+            day   := AC.Day_Number   (Integer'Value (nv (NF + 8 .. NF + 9)));
+         when others => null;
+      end case;
+
+      --  If this raises an exception, it probable means the date < 1901 or
+      --  greater than 2099.  Turn this into a string time in that case.
+      return ACF.Time_Of (Year   => year,
+                          Month  => month,
+                          Day    => day,
+                          Hour   => hour,
+                          Minute => minute,
+                          Second => second);
+   exception
+      when others =>
+         raise CONVERSION_FAILED
+           with "String '" & nv & "' => Ada Time conversion failed";
+   end convert;
+
+
 end AdaBase.Results.Converters;
