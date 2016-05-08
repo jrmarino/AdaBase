@@ -324,12 +324,34 @@ package body AdaBase.Statement.Base.MySQL is
    end initialize;
 
 
+   --------------
+   --  Adjust  --
+   --------------
+   overriding
+   procedure Adjust (Object : in out MySQL_statement) is
+   begin
+      --  The stmt object goes through this evolution:
+      --  A) created in private_prepare()
+      --  B) copied to new object in prepare(), A) destroyed
+      --  C) copied to new object in program, B) destroyed
+      --  We don't want to take any action until C) is destroyed, so add a
+      --  reference counter upon each assignment.  When finalize sees a
+      --  value of "2", it knows it is the program-level statement and then
+      --  it can release memory releases, but not before!
+      Object.assign_counter := Object.assign_counter + 1;
+   end Adjust;
+
+
    ----------------
    --  finalize  --
    ----------------
    overriding
    procedure finalize (Object : in out MySQL_statement) is
    begin
+      if Object.assign_counter /= 2 then
+         return;
+      end if;
+
       if Object.type_of_statement = prepared_statement then
          if not Object.mysql_conn.prep_close_statement (Object.stmt_handle)
          then

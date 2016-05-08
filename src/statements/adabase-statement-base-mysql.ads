@@ -92,6 +92,7 @@ private
    type mysql_canvas;
 
    procedure initialize (Object : in out MySQL_statement);
+   procedure Adjust     (Object : in out MySQL_statement);
    procedure finalize   (Object : in out MySQL_statement);
    procedure internal_post_prep_stmt   (Stmt   : out MySQL_statement);
    procedure internal_direct_post_exec (Stmt   : out MySQL_statement;
@@ -190,6 +191,7 @@ private
          result_handle  : ABM.MYSQL_RES_Access  := null;
          stmt_handle    : ABM.MYSQL_STMT_Access := null;
          bind_canvas    : mysql_canvases_Access := null;
+         assign_counter : Natural               := 0;
          num_columns    : Natural               := 0;
          size_of_rowset : TraxID                := 0;
          column_info    : VColumns.Vector;
