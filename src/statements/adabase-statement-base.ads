@@ -578,8 +578,8 @@ private
 
    function Same_Strings (S, T : String) return Boolean;
 
-   procedure transform_sql (Stmt : out Base_Statement; sql : String;
-                           new_sql : out String);
+   function transform_sql (Stmt : out Base_Statement; sql : String)
+                           return String;
 
    procedure log_nominal (statement : Base_Statement;
                           category  : LogCategory;

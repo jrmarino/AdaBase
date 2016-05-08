@@ -288,8 +288,8 @@ package body AdaBase.Statement.Base.MySQL is
             declare
                use type ABM.MYSQL_RES_Access;
             begin
-               Object.transform_sql (sql => CT.USS (Object.initial_sql.all),
-                                     new_sql => Object.sql_final.all);
+               Object.sql_final.all :=
+                 Object.transform_sql (CT.USS (Object.initial_sql.all));
                Object.mysql_conn.initialize_and_prepare_statement
                  (stmt => Object.stmt_handle, sql => Object.sql_final.all);
                declare

@@ -190,8 +190,7 @@ package body AdaBase.Driver.Base.MySQL is
    --  query  --
    -------------
    function query (driver : MySQL_Driver; sql : String)
-                   return ASM.MySQL_statement_access
-   is
+                   return ASM.MySQL_statement_access is
    begin
       return driver.private_query (sql);
    end query;
@@ -201,8 +200,7 @@ package body AdaBase.Driver.Base.MySQL is
    --  prepare  --
    ---------------
    function prepare (driver : MySQL_Driver; sql : String)
-                     return ASM.MySQL_statement_access
-   is
+                     return ASM.MySQL_statement_access is
    begin
       return driver.private_prepare (sql);
    end prepare;
@@ -453,7 +451,8 @@ package body AdaBase.Driver.Base.MySQL is
          declare
             err2 : constant CT.Text := CT.SUS ("Query failed!");
             duplicate : aliased constant CT.Text := CT.SUS (sql);
-            shadow    : AID.ASB.stmttext_access := duplicate'Unrestricted_Access;
+            shadow    : AID.ASB.stmttext_access :=
+                        duplicate'Unrestricted_Access;
             statement : constant ASM.MySQL_statement_access :=
               new ASM.MySQL_statement
                 (type_of_statement => AID.ASB.direct_statement,
@@ -474,10 +473,19 @@ package body AdaBase.Driver.Base.MySQL is
                driver.log_nominal (category => execution, message => err2);
             end if;
             return statement;
+         exception
+            when RES : others =>
+               --  Fatal attempt to create a direct statement
+               driver.log_problem
+                 (category   => statement_preparation,
+                  message    => CT.SUS (EX.Exception_Message (RES)),
+                  pull_codes => True,
+                  break      => True);
+               return null;
          end;
       else
          --  Fatal attempt to query an unconnected database
-         driver.log_problem (category => execution,
+         driver.log_problem (category => statement_preparation,
                              message  => err1,
                              break    => True);
          return null;  -- never gets here
@@ -497,7 +505,8 @@ package body AdaBase.Driver.Base.MySQL is
       if driver.connection_active then
          declare
             duplicate : aliased constant CT.Text := CT.SUS (sql);
-            shadow    : AID.ASB.stmttext_access := duplicate'Unrestricted_Access;
+            shadow    : AID.ASB.stmttext_access :=
+                        duplicate'Unrestricted_Access;
             statement : constant ASM.MySQL_statement_access :=
               new ASM.MySQL_statement
                 (type_of_statement => AID.ASB.prepared_statement,

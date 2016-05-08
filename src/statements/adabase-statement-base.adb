@@ -48,16 +48,16 @@ package body AdaBase.Statement.Base is
    ---------------------
    --  transform_sql  --
    ---------------------
-   procedure transform_sql (Stmt : out Base_Statement; sql : String;
-                            new_sql : out String)
+   function transform_sql (Stmt : out Base_Statement; sql : String)
+                           return String
    is
+      transformed : String := sql;
       sql_mask : String := sql;
    begin
-      new_sql := sql;
       Stmt.alpha_markers.Clear;
       Stmt.realmccoy.Clear;
       if sql'Length = 0 then
-         return;
+         return sql;
       end if;
       declare
          --  This block will mask anything between quotes (single or double)
@@ -120,7 +120,7 @@ package body AdaBase.Statement.Base is
             Stmt.realmccoy.Append (New_Item => brec);
             Stmt.alpha_markers.Insert (Key => alias,
                                        New_Item => Stmt.realmccoy.Last_Index);
-            new_sql (start .. final) := scab;
+            transformed (start .. final) := scab;
             scanning := False;
          end replace_alias;
 
@@ -141,13 +141,13 @@ package body AdaBase.Statement.Base is
                when ASCII.Query =>
                   if scanning then
                      raise ILLEGAL_BIND_SQL
-                       with adjacent_error & new_sql (start .. arrow);
+                       with adjacent_error & transformed (start .. arrow);
                   end if;
                   save_classic_marker;
                when ASCII.Colon =>
                   if scanning then
                      raise ILLEGAL_BIND_SQL
-                       with adjacent_error & new_sql (start .. arrow);
+                       with adjacent_error & transformed (start .. arrow);
                   end if;
                   scanning := True;
                   start := arrow;
@@ -167,6 +167,7 @@ package body AdaBase.Statement.Base is
             arrow := arrow + 1;
          end loop;
       end;
+      return transformed;
    end transform_sql;
 
 
