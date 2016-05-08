@@ -137,6 +137,9 @@ defaults:
        res_count: '<a href="res_count.html">result column count</a>'
        f_res_count: '<a href="res_count.html">func count</a>'
 
+       res_data_exhausted: '<a href="res_nodata.html">result data exhausted</a>'
+       f_res_data_exhausted: '<a href="res_nodata.html">func data_exhausted</a>'
+
        stmt_driver_msg: '<a href="last_driver_message.html">last driver message (stmt)</a>'
        f_stmt_driver_msg: '<a href="last_driver_message.html">func last_driver_message (stmt)</a>'
 

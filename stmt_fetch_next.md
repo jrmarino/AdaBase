@@ -5,18 +5,18 @@ title: Fetch next row of data
 <div class="leftside">
 <pre class="code">
 package AdaBase.Results.Sets is
-   type DataRow        is tagged limited private;
-   type DataRow_Access is access all DataRow;
+   type DataRow is tagged private;
+   Empty_DataRow : constant DataRow;
 end AdaBase.Results.Sets;
 </pre>
-<h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].fetch_next (datarow : DataRow_Access)</h3>
+<h3>AdaBase.Results.Sets.DataRow function<br/>
+AdaBase.Statement.Base.[STMT].fetch_next ()</h3>
 <p>
-This function attempts to fetch the next row of data that was retrieved
-prior as a result of a query.  If there is not another row of data
-available, False is returned and value of <i>datarow</i> is set to null.
-If more data are available, the function returns True and <i>datarow</i> points
-to the DataRow type fetched while the client library advances the cursor.
+This function attempts to fetch the next row of data from a query's result
+set.  If there is not another row of data available, the Empty_DataRow
+constant is returned, and the row's data_exhausted method returns False.
+If more data are available, the function returns a populated DataRow 
+while the client library advances the cursor.
 </p>
 <pre class="code">
 with AdaBase;
@@ -129,6 +129,9 @@ Column 4:
     <li>{{ page.stmt_column_table }}</li>
     <li>{{ page.stmt_column_name }}</li>
     <li>{{ page.stmt_column_native_type }}</li>
+    <li>{{ page.stmt_iterate }}</li>
+    <li>{{ page.fetch_bound }}</li>
+    <li>{{ page.res_data_exhausted }}</li>
     <li>{{ page.res_column }}</li>
     <li>{{ page.res_std_field }}</li>
     <li>{{ page.connect }}</li>

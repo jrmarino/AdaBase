@@ -102,6 +102,7 @@ title: AdaBase by jrmarino
 <ul>
 <li>{{ page.f_res_count }}</li>
 <li>{{ page.f_column }}</li>
+<li>{{ page.f_res_data_exhausted }}</li>
 </ul>
 
 <h3>AdaBase.Results.Field.std_field</h3>
