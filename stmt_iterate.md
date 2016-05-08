@@ -17,19 +17,18 @@ executed.
 
 <pre class="code">
 package AdaBase.Results.Sets is
-   type DataRow is tagged limited private;
-   type DataRow_Access is access all DataRow;
+   type DataRow is tagged private;
 end AdaBase.Results.Sets;
 </pre>
 
 <h3>procedure<br/>
 AdaBase.Statement.Base.[STMT].iterate (process : not null access
-procedure (row : ARS.DataRow_Access))</h3>
+procedure (row : ARS.DataRow))</h3>
 <p>
 The second version of <b>iterate</b> requires access to a procedure that has a
-single argument, access to a DataRow type.  Internally, the iterate procedure
-calls <b>fetch_next</b> for every row in the result set and passing the result
-DataRow access back to the process procedure.
+single argument, a DataRow type.  Internally, the iterate procedure
+calls <b>fetch_next</b> for every row in the result set and passing the resultant
+DataRow back to the process procedure.
 
 </p>
 <pre class="code">
