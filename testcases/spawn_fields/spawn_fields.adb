@@ -1,4 +1,5 @@
 with AdaBase.Results.Field;
+with AdaBase.Results.Converters;
 with Ada.Strings.Unbounded;
 with Ada.Integer_Text_IO;
 with Ada.Text_IO;
@@ -9,36 +10,38 @@ procedure Spawn_Fields is
    package WIO renames Ada.Wide_Text_IO;
    package IIO renames Ada.Integer_Text_IO;
    package SU  renames Ada.Strings.Unbounded;
-   package ARC renames AdaBase.Results;
+   package AR  renames AdaBase.Results;
+   package ARC renames AdaBase.Results.Converters;
 
-   FA : ARC.Field.field_access :=
-        ARC.Field.spawn_field (binob => (50, 15, 4, 8));
+   SF : AR.Field.std_field :=
+        AR.Field.spawn_field (binob => (50, 15, 4, 8));
 
-   BR : ARC.Field.field_access :=
-        ARC.Field.spawn_field (data =>
+   BR : AR.Field.std_field :=
+        AR.Field.spawn_field (data =>
         (datatype => AdaBase.ft_textual,
               v13 => SU.To_Unbounded_String ("Baltimore Ravens")));
 
-   myset : ARC.settype (1 .. 3) :=
+   myset : AR.settype (1 .. 3) :=
                ((enumeration => SU.To_Unbounded_String ("hockey")),
                 (enumeration => SU.To_Unbounded_String ("baseball")),
                 (enumeration => SU.To_Unbounded_String ("tennis")));
 
-   ST : ARC.Field.field_access := ARC.Field.spawn_field (enumset => myset);
+   ST : AR.Field.std_field :=
+        AR.Field.spawn_field (enumset => ARC.convert (myset));
 
-   chain_len : Natural := FA.as_chain'Length;
+   chain_len : Natural := SF.as_chain'Length;
 
 begin
    TIO.Put_Line ("Chain #1 length:" & chain_len'Img);
-   TIO.Put_Line ("Chain #1   type: " & FA.native_type'Img);
+   TIO.Put_Line ("Chain #1   type: " & SF.native_type'Img);
    for x in 1 .. chain_len loop
-      TIO.Put ("  block" & x'Img & " value:" & FA.as_chain (x)'Img);
-      IIO.Put (Item => Natural (FA.as_chain (x)), Base => 16);
+      TIO.Put ("  block" & x'Img & " value:" & SF.as_chain (x)'Img);
+      IIO.Put (Item => Natural (SF.as_chain (x)), Base => 16);
       TIO.Put_Line ("");
    end loop;
    TIO.Put ("Chain #1 converted to 4-byte unsigned integer:" &
-             FA.as_nbyte4'Img & "  ");
-   IIO.Put (Item => Natural (FA.as_nbyte4), Base => 16);
+             SF.as_nbyte4'Img & "  ");
+   IIO.Put (Item => Natural (SF.as_nbyte4), Base => 16);
    TIO.Put_Line ("");
    TIO.Put_Line ("");
 
