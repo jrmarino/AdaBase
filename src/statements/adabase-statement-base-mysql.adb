@@ -627,42 +627,6 @@ package body AdaBase.Statement.Base.MySQL is
    end fetch_next_set;
 
 
-   ---------------------------------
-   --  convert string to Settype  --
-   ---------------------------------
-   function convert (nv : String; fixed : Natural := 0) return AR.settype
-   is
-      num_enums : Natural := 1;
-      str       : constant String (1 .. nv'Length) := nv;
-   begin
-      for x in str'Range loop
-         if str (x) = ',' then
-            num_enums := num_enums + 1;
-         end if;
-      end loop;
-      if fixed > 0 then
-         num_enums := fixed;
-      end if;
-      declare
-         result : AR.settype (1 .. num_enums) := (others => AR.PARAM_IS_ENUM);
-         cursor : Natural  := 1;
-         curend : Natural  := 0;
-         index  : Positive := 1;
-      begin
-         for x in str'Range loop
-            if str (x) = ',' then
-               result (index).enumeration := CT.SUS (str (cursor .. curend));
-               index := index + 1;
-               cursor := x + 1;
-            end if;
-            curend := curend + 1;
-         end loop;
-         result (index).enumeration := CT.SUS (str (cursor .. curend));
-         return result;
-      end;
-   end convert;
-
-
    --------------------------
    --  internal_fetch_row  --
    --------------------------
@@ -785,7 +749,7 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_chain =>
                      field := ARF.spawn_field (binob => ARC.convert (ST));
                   when ft_settype =>
-                     field := ARF.spawn_field (enumset => convert (ST));
+                     field := ARF.spawn_field (enumset => ARC.convert (ST));
                   when others =>
                      field := ARF.spawn_field (data => dvariant,
                                                null_data => EN);
@@ -1019,8 +983,8 @@ package body AdaBase.Statement.Base.MySQL is
                         Stmt.con_max_blob));
                   when ft_settype =>
                      field := ARF.spawn_field
-                       (enumset => convert (bincopy (cv.buffer_binary, datalen,
-                        Stmt.con_max_blob)));
+                       (enumset => ARC.convert (bincopy (cv.buffer_binary,
+                                                datalen, Stmt.con_max_blob)));
                   when others =>
                      field := ARF.spawn_field
                        (data => dvariant,
@@ -1203,7 +1167,7 @@ package body AdaBase.Statement.Base.MySQL is
                              Stmt.crate.Element (F).a19.all'Length'Img &
                              " less than binding size : " & num_items'Img;
                         end if;
-                        Stmt.crate.Element (F).a19.all := convert
+                        Stmt.crate.Element (F).a19.all := ARC.convert
                           (setstr, Stmt.crate.Element (F).a19.all'Length);
                      end;
                end case;
@@ -1341,7 +1305,7 @@ package body AdaBase.Statement.Base.MySQL is
                         Stmt.crate.Element (F).a18.all :=
                           ARC.convert (CT.SUS (ST));
                      when ft_settype =>
-                        Stmt.crate.Element (F).a19.all := convert (ST);
+                        Stmt.crate.Element (F).a19.all := ARC.convert (ST);
                   end case;
                end;
             end if;
@@ -1895,7 +1859,7 @@ package body AdaBase.Statement.Base.MySQL is
             end;
          when ft_settype   =>
             declare
-               set : AR.settype := convert (value);
+               set : AR.settype := ARC.convert (value);
             begin
                Stmt.assign (index, set);
             end;

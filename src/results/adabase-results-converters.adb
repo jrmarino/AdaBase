@@ -1692,4 +1692,40 @@ package body AdaBase.Results.Converters is
    end convert;
 
 
+   ---------------------------------
+   --  convert string to Settype  --
+   ---------------------------------
+   function convert (nv : String; fixed : Natural := 0) return settype
+   is
+      num_enums : Natural := 1;
+      str       : constant String (1 .. nv'Length) := nv;
+   begin
+      for x in str'Range loop
+         if str (x) = ',' then
+            num_enums := num_enums + 1;
+         end if;
+      end loop;
+      if fixed > 0 then
+         num_enums := fixed;
+      end if;
+      declare
+         result : settype (1 .. num_enums) := (others => PARAM_IS_ENUM);
+         cursor : Natural  := 1;
+         curend : Natural  := 0;
+         index  : Positive := 1;
+      begin
+         for x in str'Range loop
+            if str (x) = ',' then
+               result (index).enumeration := CT.SUS (str (cursor .. curend));
+               index := index + 1;
+               cursor := x + 1;
+            end if;
+            curend := curend + 1;
+         end loop;
+         result (index).enumeration := CT.SUS (str (cursor .. curend));
+         return result;
+      end;
+   end convert;
+
+
 end AdaBase.Results.Converters;
