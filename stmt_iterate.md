@@ -159,6 +159,8 @@ Columbus Blue Jackets (CLM)
     <li>{{ page.stmt_bind }}</li>
     <li>{{ page.stmt_assign }}</li>
     <li>{{ page.stmt_execute }}</li>
+    <li>{{ page.fetch_next }}</li>
+    <li>{{ page.fetch_bound }}</li>
     <li>{{ page.res_column }}</li>
     <li>{{ page.res_std_field }}</li>
     <li>{{ page.connect }}</li>
