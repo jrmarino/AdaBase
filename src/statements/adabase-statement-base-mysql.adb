@@ -361,6 +361,7 @@ package body AdaBase.Statement.Base.MySQL is
          end if;
       end if;
       free_sql (Object.sql_final);
+      Object.reclaim_canvas;
    end finalize;
 
 
@@ -405,6 +406,24 @@ package body AdaBase.Statement.Base.MySQL is
    end rows_returned;
 
 
+   ----------------------
+   --  reclaim_canvas  --
+   ----------------------
+   procedure reclaim_canvas (Stmt : out MySQL_statement)
+   is
+      use type ABM.ICS.char_array_access;
+   begin
+      if Stmt.bind_canvas /= null then
+         for sx in Stmt.bind_canvas.all'Range loop
+            if Stmt.bind_canvas (sx).buffer_binary /= null then
+               free_binary (Stmt.bind_canvas (sx).buffer_binary);
+            end if;
+         end loop;
+         free_canvas (Stmt.bind_canvas);
+      end if;
+   end reclaim_canvas;
+
+
    --------------------------------
    --  clear_column_information  --
    --------------------------------
@@ -414,12 +433,7 @@ package body AdaBase.Statement.Base.MySQL is
       Stmt.column_info.Clear;
       Stmt.crate.Clear;
       Stmt.headings_map.Clear;
-      if Stmt.bind_canvas /= null then
-         for sx in Stmt.bind_canvas.all'Range loop
-            free_binary (Stmt.bind_canvas (sx).buffer_binary);
-         end loop;
-         free_canvas (Stmt.bind_canvas);
-      end if;
+      Stmt.reclaim_canvas;
    end clear_column_information;
 
 

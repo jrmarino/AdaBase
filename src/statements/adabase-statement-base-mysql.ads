@@ -176,6 +176,7 @@ private
      (ABM.IC.char_array, ABM.ICS.char_array_access);
    procedure free_sql is new Ada.Unchecked_Deallocation
      (String, SQL_access);
+   procedure reclaim_canvas (Stmt : out MySQL_statement);
 
    type MySQL_statement (type_of_statement : stmt_type;
                          log_handler       : ALF.LogFacility_access;
