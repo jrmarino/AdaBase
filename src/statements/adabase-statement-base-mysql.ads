@@ -12,15 +12,17 @@ package AdaBase.Statement.Base.MySQL is
    package ARS renames AdaBase.Results.Sets;
    package AC  renames Ada.Containers;
 
+   type SQL_access is access all String;
+
    type MySQL_statement (type_of_statement : stmt_type;
                          log_handler       : ALF.LogFacility_access;
                          mysql_conn        : ACM.MySQL_Connection_Access;
-                         initial_sql       : stmttext_access;
+                         initial_sql       : SQL_access;
                          con_error_mode    : ErrorMode;
                          con_case_mode     : CaseMode;
                          con_max_blob      : BLOB_maximum;
                          con_buffered      : Boolean)
-   is limited new Base_Statement and AIS.iStatement with private;
+   is new Base_Statement and AIS.iStatement with private;
    type MySQL_statement_access is access MySQL_statement;
 
    overriding
@@ -90,7 +92,6 @@ package AdaBase.Statement.Base.MySQL is
 private
 
    type mysql_canvas;
-   type SQL_access is access String;
 
    procedure initialize (Object : in out MySQL_statement);
    procedure finalize   (Object : in out MySQL_statement);
@@ -180,12 +181,12 @@ private
    type MySQL_statement (type_of_statement : stmt_type;
                          log_handler       : ALF.LogFacility_access;
                          mysql_conn        : ACM.MySQL_Connection_Access;
-                         initial_sql       : stmttext_access;
+                         initial_sql       : SQL_access;
                          con_error_mode    : ErrorMode;
                          con_case_mode     : CaseMode;
                          con_max_blob      : BLOB_maximum;
                          con_buffered      : Boolean)
-   is limited new Base_Statement and AIS.iStatement with
+   is new Base_Statement and AIS.iStatement with
       record
          delivery       : fetch_status          := completed;
          result_handle  : ABM.MYSQL_RES_Access  := null;

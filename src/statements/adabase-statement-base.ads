@@ -32,10 +32,8 @@ package AdaBase.Statement.Base is
    package ARC renames AdaBase.Results.Converters;
    package RGC renames AdaBase.Results.Generic_Converters;
 
-   type stmttext_access is access all CT.Text;
-
    type Base_Statement is
-     abstract limited new Base_Pure and AIS.iStatement with private;
+     abstract new Base_Pure and AIS.iStatement with private;
    type basic_statement is access all Base_Statement'Class;
 
    type stmt_type is (direct_statement, prepared_statement);
@@ -676,7 +674,7 @@ private
       Element_Type => bindrec);
 
    type Base_Statement is
-     abstract limited new Base_Pure and AIS.iStatement with record
+     abstract new Base_Pure and AIS.iStatement with record
       successful_execution : Boolean      := False;
       result_present       : Boolean      := False;
       rows_leftover        : Boolean      := False;

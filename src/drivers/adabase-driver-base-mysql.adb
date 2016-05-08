@@ -190,7 +190,7 @@ package body AdaBase.Driver.Base.MySQL is
    --  query  --
    -------------
    function query (driver : MySQL_Driver; sql : String)
-                   return ASM.MySQL_statement_access is
+                   return ASM.MySQL_statement is
    begin
       return driver.private_query (sql);
    end query;
@@ -200,7 +200,7 @@ package body AdaBase.Driver.Base.MySQL is
    --  prepare  --
    ---------------
    function prepare (driver : MySQL_Driver; sql : String)
-                     return ASM.MySQL_statement_access is
+                     return ASM.MySQL_statement is
    begin
       return driver.private_prepare (sql);
    end prepare;
@@ -220,7 +220,7 @@ package body AdaBase.Driver.Base.MySQL is
                           null_sort   : NullPriority := native;
                           limit       : TraxID := 0;
                           offset      : TraxID := 0)
-                          return ASM.MySQL_statement_access
+                          return ASM.MySQL_statement
    is
       vanilla : String := assembly_common_select
         (distinct, tables, columns, conditions, groupby, having, order);
@@ -252,7 +252,7 @@ package body AdaBase.Driver.Base.MySQL is
                             null_sort   : NullPriority := native;
                             limit       : TraxID := 0;
                             offset      : TraxID := 0)
-                            return ASM.MySQL_statement_access
+                            return ASM.MySQL_statement
    is
       vanilla : String := assembly_common_select
         (distinct, tables, columns, conditions, groupby, having, order);
@@ -442,23 +442,20 @@ package body AdaBase.Driver.Base.MySQL is
    --  private_query  --
    ---------------------
    function private_query (driver : MySQL_Driver; sql : String)
-                           return ASM.MySQL_statement_access
+                           return ASM.MySQL_statement
    is
+      duplicate : aliased String := sql;
       err1 : constant CT.Text :=
         CT.SUS ("ACK! Query attempted on inactive connection");
    begin
       if driver.connection_active then
          declare
             err2 : constant CT.Text := CT.SUS ("Query failed!");
-            duplicate : aliased constant CT.Text := CT.SUS (sql);
-            shadow    : AID.ASB.stmttext_access :=
-                        duplicate'Unrestricted_Access;
-            statement : constant ASM.MySQL_statement_access :=
-              new ASM.MySQL_statement
+            statement : ASM.MySQL_statement
                 (type_of_statement => AID.ASB.direct_statement,
                  log_handler       => logger'Access,
                  mysql_conn        => driver.local_connection,
-                 initial_sql       => shadow,
+                 initial_sql       => duplicate'Unchecked_Access,
                  con_error_mode    => driver.trait_error_mode,
                  con_case_mode     => driver.trait_column_case,
                  con_max_blob      => driver.trait_max_blob_size,
@@ -481,15 +478,16 @@ package body AdaBase.Driver.Base.MySQL is
                   message    => CT.SUS (EX.Exception_Message (RES)),
                   pull_codes => True,
                   break      => True);
-               return null;
          end;
       else
          --  Fatal attempt to query an unconnected database
          driver.log_problem (category => statement_preparation,
                              message  => err1,
                              break    => True);
-         return null;  -- never gets here
       end if;
+      --  We never get here, the driver.log_problem throws exception first
+      raise ACM.STMT_NOT_VALID
+        with "failed to return MySQL statement";
    end private_query;
 
 
@@ -497,22 +495,19 @@ package body AdaBase.Driver.Base.MySQL is
    --  private_prepare  --
    -----------------------
    function private_prepare (driver : MySQL_Driver; sql : String)
-                             return ASM.MySQL_statement_access
+                             return ASM.MySQL_statement
    is
+      duplicate : aliased String := sql;
       err1 : constant CT.Text :=
         CT.SUS ("ACK! Query attempted on inactive connection");
    begin
       if driver.connection_active then
          declare
-            duplicate : aliased constant CT.Text := CT.SUS (sql);
-            shadow    : AID.ASB.stmttext_access :=
-                        duplicate'Unrestricted_Access;
-            statement : constant ASM.MySQL_statement_access :=
-              new ASM.MySQL_statement
+            statement : ASM.MySQL_statement
                 (type_of_statement => AID.ASB.prepared_statement,
                  log_handler       => logger'Access,
                  mysql_conn        => driver.local_connection,
-                 initial_sql       => shadow,
+                 initial_sql       => duplicate'Unchecked_Access,
                  con_error_mode    => driver.trait_error_mode,
                  con_case_mode     => driver.trait_column_case,
                  con_max_blob      => driver.trait_max_blob_size,
@@ -527,15 +522,16 @@ package body AdaBase.Driver.Base.MySQL is
                   message    => CT.SUS (EX.Exception_Message (RES)),
                   pull_codes => True,
                   break      => True);
-               return null;
          end;
       else
          --  Fatal attempt to query an unconnected database
          driver.log_problem (category => execution,
                              message  => err1,
                              break    => True);
-         return null;
       end if;
+      --  We never get here, the driver.log_problem throws exception first
+      raise ACM.STMT_NOT_VALID
+        with "failed to return MySQL statement";
    end private_prepare;
 
 

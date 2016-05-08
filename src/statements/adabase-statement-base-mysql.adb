@@ -282,14 +282,14 @@ package body AdaBase.Statement.Base.MySQL is
       Object.connection := ACB.Base_Connection_Access (Object.mysql_conn);
       case Object.type_of_statement is
          when direct_statement =>
-            Object.sql_final.all := CT.USS (Object.initial_sql.all);
+            Object.sql_final.all := Object.initial_sql.all;
             Object.internal_direct_post_exec;
          when prepared_statement =>
             declare
                use type ABM.MYSQL_RES_Access;
             begin
                Object.sql_final.all :=
-                 Object.transform_sql (CT.USS (Object.initial_sql.all));
+                 Object.transform_sql (Object.initial_sql.all);
                Object.mysql_conn.initialize_and_prepare_statement
                  (stmt => Object.stmt_handle, sql => Object.sql_final.all);
                declare

@@ -66,11 +66,11 @@ package AdaBase.Driver.Base.MySQL is
 
    function query          (driver     : MySQL_Driver;
                             sql        : String)
-                            return ASM.MySQL_statement_access;
+                            return ASM.MySQL_statement;
 
    function prepare        (driver     : MySQL_Driver;
                             sql        : String)
-                            return ASM.MySQL_statement_access;
+                            return ASM.MySQL_statement;
 
    function query_select   (driver     : MySQL_Driver;
                             distinct   : Boolean := False;
@@ -83,7 +83,7 @@ package AdaBase.Driver.Base.MySQL is
                             null_sort  : NullPriority := native;
                             limit      : TraxID := 0;
                             offset     : TraxID := 0)
-                            return ASM.MySQL_statement_access;
+                            return ASM.MySQL_statement;
 
    function prepare_select (driver     : MySQL_Driver;
                             distinct   : Boolean := False;
@@ -96,7 +96,7 @@ package AdaBase.Driver.Base.MySQL is
                             null_sort  : NullPriority := native;
                             limit      : TraxID := 0;
                             offset     : TraxID := 0)
-                            return ASM.MySQL_statement_access;
+                            return ASM.MySQL_statement;
 
 private
 
@@ -117,10 +117,10 @@ private
                               port     : PosixPort := portless);
 
    function private_query   (driver : MySQL_Driver; sql : String)
-                             return ASM.MySQL_statement_access;
+                             return ASM.MySQL_statement;
 
    function private_prepare (driver : MySQL_Driver; sql : String)
-                             return ASM.MySQL_statement_access;
+                             return ASM.MySQL_statement;
 
    overriding
    procedure initialize (Object : in out MySQL_Driver);
