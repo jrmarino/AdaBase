@@ -1298,6 +1298,11 @@ package body AdaBase.Results.Converters is
       return convert (CT.USS (nv));
    end convert;
 
+   function convert (nv : textual) return AC.Time is
+   begin
+      return convert (CT.USS (nv));
+   end convert;
+
    function convert (nv : textwide) return String
    is
       nvstr : constant Wide_String := SUW.To_Wide_String (Source => nv);
@@ -1318,6 +1323,13 @@ package body AdaBase.Results.Converters is
    end convert;
 
    function convert (nv : textwide) return chain
+   is
+      nvstr : constant String := convert (nv);
+   begin
+      return convert (nvstr);
+   end convert;
+
+   function convert (nv : textwide) return AC.Time
    is
       nvstr : constant String := convert (nv);
    begin
@@ -1355,6 +1367,13 @@ package body AdaBase.Results.Converters is
    end convert;
 
    function convert (nv : textsuper) return chain
+   is
+      nvstr : constant String := convert (nv);
+   begin
+      return convert (nvstr);
+   end convert;
+
+   function convert (nv : textsuper) return AC.Time
    is
       nvstr : constant String := convert (nv);
    begin

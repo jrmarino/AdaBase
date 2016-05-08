@@ -270,6 +270,7 @@ package AdaBase.Results.Converters is
    function convert (nv : textual) return String;
    function convert (nv : textual) return Wide_String;
    function convert (nv : textual) return Wide_Wide_String;
+   function convert (nv : textual) return AC.Time;
    function convert (nv : textual) return chain;
    function convert (nv : textual) return enumtype;
    function convert (nv : String) return chain;
@@ -295,6 +296,7 @@ package AdaBase.Results.Converters is
    function convert (nv : textwide) return String;
    function convert (nv : textwide) return Wide_String;
    function convert (nv : textwide) return Wide_Wide_String;
+   function convert (nv : textwide) return AC.Time;
    function convert (nv : textwide) return chain;
    function convert (nv : textwide) return enumtype;
 
@@ -318,6 +320,7 @@ package AdaBase.Results.Converters is
    function convert (nv : textsuper) return String;
    function convert (nv : textsuper) return Wide_String;
    function convert (nv : textsuper) return Wide_Wide_String;
+   function convert (nv : textsuper) return AC.Time;
    function convert (nv : textsuper) return chain;
    function convert (nv : textsuper) return enumtype;
 
