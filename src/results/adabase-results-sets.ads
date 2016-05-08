@@ -10,13 +10,16 @@ package AdaBase.Results.Sets is
 
    package ARF renames AdaBase.Results.Field;
 
-   type DataRow is tagged limited private;
-   type DataRow_Access    is access all DataRow;
-   type DataRowSet is array (Positive range <>) of DataRow_Access;
+   type DataRow is tagged private;
+   type DataRow_Access is access all DataRow;
+   type DataRowSet is array (Positive range <>) of DataRow;
+
+   Empty_DataRow : constant DataRow;
 
    function column (row : DataRow; index : Positive) return ARF.std_field;
    function column (row : DataRow; heading : String) return ARF.std_field;
    function count  (row : DataRow) return Natural;
+   function data_exhausted (row : DataRow) return Boolean;
 
    --  Since it doesn't seem to be possible to construct this type with
    --  descriminates, it needs to be created first and populated with data,
@@ -45,12 +48,16 @@ private
       Equivalent_Keys => Same_Strings,
       Hash            => Ada.Strings.Hash);
 
-   type DataRow is tagged limited
+   type DataRow is tagged
       record
          crate  : field_crate.Vector;
          map    : heading_map.Map;
          locked : Boolean := False;
+         done   : Boolean := False;
       end record;
 
+   Empty_DataRow : constant DataRow := (field_crate.Empty_Vector,
+                                        heading_map.Empty_Map,
+                                        True, True);
 
 end AdaBase.Results.Sets;

@@ -64,8 +64,7 @@ package AdaBase.Statement.Base.MySQL is
                                 return field_types;
 
    overriding
-   function fetch_next (Stmt    : out MySQL_statement;
-                        datarow : out ARS.DataRow_Access) return Boolean;
+   function fetch_next (Stmt : out MySQL_statement) return ARS.DataRow;
 
    overriding
    function fetch_all  (Stmt : out MySQL_statement) return ARS.DataRowSet;
@@ -84,8 +83,7 @@ package AdaBase.Statement.Base.MySQL is
 
    overriding
    procedure iterate (Stmt    : out MySQL_statement;
-                      process : not null access
-                        procedure (row : ARS.DataRow_Access));
+                      process : not null access procedure (row : ARS.DataRow));
 
 private
 
@@ -109,10 +107,10 @@ private
                                   value : String);
    function internal_fetch_bound (Stmt : out MySQL_statement) return Boolean;
    function internal_fetch_row   (Stmt : out MySQL_statement)
-                                  return ARS.DataRow_Access;
+                                  return ARS.DataRow;
 
    function internal_ps_fetch_row (Stmt : out MySQL_statement)
-                                   return ARS.DataRow_Access;
+                                   return ARS.DataRow;
 
    function internal_ps_fetch_bound (Stmt : out MySQL_statement)
                                      return Boolean;

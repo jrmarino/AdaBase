@@ -49,6 +49,15 @@ package body AdaBase.Results.Sets is
    end count;
 
 
+   ----------------------
+   --  data_exhausted  --
+   ----------------------
+   function data_exhausted (row : DataRow) return Boolean is
+   begin
+      return row.done;
+   end data_exhausted;
+
+
    --------------------
    --  Same_Strings  --
    --------------------

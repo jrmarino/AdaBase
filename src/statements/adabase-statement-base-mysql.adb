@@ -569,25 +569,17 @@ package body AdaBase.Statement.Base.MySQL is
    --  fetch_next  --
    ------------------
    overriding
-   function fetch_next (Stmt    : out MySQL_statement;
-                        datarow : out ARS.DataRow_Access) return Boolean
-   is
-      use type ARS.DataRow_Access;
+   function fetch_next (Stmt : out MySQL_statement) return ARS.DataRow is
    begin
-      if datarow /= null then
-         free_datarow (datarow);
-         datarow := null;
-      end if;
       if Stmt.delivery = completed then
-         return False;
+         return ARS.Empty_DataRow;
       end if;
       case Stmt.type_of_statement is
          when prepared_statement =>
-            datarow := Stmt.internal_ps_fetch_row;
+            return Stmt.internal_ps_fetch_row;
          when direct_statement =>
-            datarow := Stmt.internal_fetch_row;
+            return Stmt.internal_fetch_row;
       end case;
-      return (datarow /= null);
    end fetch_next;
 
 
@@ -616,9 +608,10 @@ package body AdaBase.Statement.Base.MySQL is
    function fetch_all (Stmt : out MySQL_statement) return ARS.DataRowSet
    is
       maxrows : Natural := Natural (Stmt.rows_returned);
-      tmpset  : ARS.DataRowSet (1 .. maxrows + 1) := (others => null);
+      tmpset  : ARS.DataRowSet (1 .. maxrows + 1);
       nullset : ARS.DataRowSet (1 .. 0);
       index   : Natural := 1;
+      row     : ARS.DataRow;
    begin
       if (Stmt.delivery = completed) or else (maxrows = 0) then
          return nullset;
@@ -628,7 +621,8 @@ package body AdaBase.Statement.Base.MySQL is
       --  use a repeat loop to check each row and return a partial set
       --  if necessary.
       loop
-         exit when not Stmt.fetch_next (tmpset (index));
+         tmpset (index) := Stmt.fetch_next;
+         exit when tmpset (index).data_exhausted;
          index := index + 1;
          exit when index > maxrows + 1;  --  should never happen
       end loop;
@@ -676,7 +670,7 @@ package body AdaBase.Statement.Base.MySQL is
    --  internal_fetch_row  --
    --------------------------
    function internal_fetch_row (Stmt : out MySQL_statement)
-                                return ARS.DataRow_Access
+                                return ARS.DataRow
    is
       use type ABM.ICS.chars_ptr;
       use type ABM.MYSQL_ROW_access;
@@ -687,7 +681,7 @@ package body AdaBase.Statement.Base.MySQL is
          Stmt.delivery := completed;
          Stmt.mysql_conn.free_result (Stmt.result_handle);
          Stmt.clear_column_information;
-         return null;
+         return ARS.Empty_DataRow;
       end if;
       Stmt.delivery := progressing;
 
@@ -700,7 +694,7 @@ package body AdaBase.Statement.Base.MySQL is
          type rowtype_access is access all rowtype;
 
          row    : rowtype_access;
-         result : ARS.DataRow_Access := new ARS.DataRow;
+         result : ARS.DataRow;
 
          field_lengths : constant ACM.fldlen := Stmt.mysql_conn.fetch_lengths
            (result_handle => Stmt.result_handle,
@@ -868,7 +862,7 @@ package body AdaBase.Statement.Base.MySQL is
    --  internal_ps_fetch_row  --
    -----------------------------
    function internal_ps_fetch_row (Stmt : out MySQL_statement)
-                                   return ARS.DataRow_Access
+                                   return ARS.DataRow
    is
       use type ABM.ICS.chars_ptr;
       use type ABM.MYSQL_ROW_access;
@@ -892,12 +886,12 @@ package body AdaBase.Statement.Base.MySQL is
          Stmt.delivery := progressing;
       end if;
       if Stmt.delivery = completed then
-         return null;
+         return ARS.Empty_DataRow;
       end if;
 
       declare
          maxlen : constant Natural := Stmt.num_columns;
-         result : ARS.DataRow_Access := new ARS.DataRow;
+         result : ARS.DataRow;
       begin
          for F in 1 .. maxlen loop
             declare
@@ -1931,14 +1925,14 @@ package body AdaBase.Statement.Base.MySQL is
    ------------------
    overriding
    procedure iterate (Stmt    : out MySQL_statement;
-                      process : not null access
-                        procedure (row : ARS.DataRow_Access)) is
+                      process : not null access procedure (row : ARS.DataRow))
+   is
    begin
       loop
          declare
-            local_row : ARS.DataRow_Access;
+            local_row : ARS.DataRow := Stmt.fetch_next;
          begin
-            exit when not Stmt.fetch_next (datarow => local_row);
+            exit when local_row.data_exhausted;
             process.all (row => local_row);
          end;
       end loop;
