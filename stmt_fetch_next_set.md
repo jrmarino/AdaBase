@@ -35,6 +35,8 @@ procedure Stored_Procs is
    package TIO renames Ada.Text_IO;
    package ARS renames AdaBase.Results.Sets;
 
+   stmt_acc : CON.Stmt_Type_access;
+
    procedure dump_result;
    procedure dump_result
    is
@@ -48,11 +50,11 @@ procedure Stored_Procs is
          return field;
       end pad;
 
-      row     : ARS.DataRow_Access;
-      numcols : constant Natural := CON.STMT.column_count;
+      row     : ARS.DataRow;
+      numcols : constant Natural := stmt_acc.column_count;
    begin
       for c in Natural range 1 .. numcols loop
-         TIO.Put (pad (CON.STMT.column_name (c)));
+         TIO.Put (pad (stmt_acc.column_name (c)));
       end loop;
       TIO.Put_Line ("");
       for c in Natural range 1 .. numcols loop
@@ -60,7 +62,8 @@ procedure Stored_Procs is
       end loop;
       TIO.Put_Line ("");
       loop
-         exit when not CON.STMT.fetch_next (row);
+         row := stmt_acc.fetch_next;
+         exit when row.data_exhausted;
          for c in Natural range 1 .. numcols loop
             TIO.Put (pad (row.column (c).as_string));
          end loop;
@@ -75,7 +78,6 @@ procedure Stored_Procs is
 
 begin
 
-   declare
    begin
       CON.connect_database;
    exception
@@ -84,14 +86,18 @@ begin
          return;
    end;
 
-   CON.STMT := CON.DR.query (sql);
-   loop
-      if set_fetched then
-         dump_result;
-      end if;
-      CON.STMT.fetch_next_set (set_present, set_fetched);
-      exit when not set_present;
-   end loop;
+   declare
+      stmt : aliased CON.Stmt_Type := CON.DR.query (sql);
+   begin
+      stmt_acc := stmt'Unchecked_Access;
+      loop
+         if set_fetched then
+            dump_result;
+         end if;
+         stmt.fetch_next_set (set_present, set_fetched);
+         exit when not set_present;
+      end loop;
+   end;
 
    CON.DR.disconnect;
 
