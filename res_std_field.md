@@ -131,7 +131,9 @@ integer) or trying to convert a non-numerical string into a number.
 An enumerated type can be converted into a string type.  The
 Time type can only be converted to a string, and this has the form of the
 ISO 8601 format (no timezone information).  Similarly, the natural types can
-be converted into a array of bytes (aka "chain") up to 8 bytes.
+be converted into a array of bytes (aka "chain") up to 8 bytes.  A string
+type can be converted into any other type, although attempting to convert
+a one into a Time type may result in an FAILED_CONVERSION exception.
 </p>
 <p class="caption">See {{ page.fetch_next }} and {{ page.res_spawn_field }}
 for usage examples.</p>
