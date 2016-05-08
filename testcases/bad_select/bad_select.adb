@@ -11,13 +11,12 @@ procedure Bad_Select is
    package ARS renames AdaBase.Results.Sets;
    package CT  renames CommonText;
 
-   row : ARS.DataRow_Access;
+   row : ARS.DataRow;
    sql : String := "SELECT fruit, calories FROM froits " &
                    "WHERE color = 'red'";
 
 begin
 
-   declare
    begin
       CON.connect_database;
    exception
@@ -26,28 +25,31 @@ begin
          return;
    end;
 
-   CON.STMT := CON.DR.query (sql);
+   declare
+      stmt : CON.Stmt_Type := CON.DR.query (sql);
+   begin
+      TIO.Put_Line ("Query successful: " & stmt.successful'Img);
 
-   TIO.Put_Line ("Query successful: " & CON.STMT.successful'Img);
+      if not stmt.successful then
+         TIO.Put_Line ("  Driver message: " & stmt.last_driver_message);
+         TIO.Put_Line ("     Driver code: " & stmt.last_driver_code'Img);
+         TIO.Put_Line ("       SQL State: " & stmt.last_sql_state);
+         --  Fix SQL typo
+         sql (31) := 'u';
+         TIO.Put_Line ("");
+         TIO.Put_Line ("SQL now: " & sql);
+         stmt := CON.DR.query (sql);
+         TIO.Put_Line ("Query successful: " & stmt.successful'Img);
 
-   if not CON.STMT.successful then
-      TIO.Put_Line ("  Driver message: " & CON.STMT.last_driver_message);
-      TIO.Put_Line ("     Driver code: " & CON.STMT.last_driver_code'Img);
-      TIO.Put_Line ("       SQL State: " & CON.STMT.last_sql_state);
-      --  Fix SQL typo
-      sql (31) := 'u';
-      TIO.Put_Line ("");
-      TIO.Put_Line ("SQL now: " & sql);
-      CON.STMT := CON.DR.query (sql);
-      TIO.Put_Line ("Query successful: " & CON.STMT.successful'Img);
+         row := stmt.fetch_next;
+         if not row.data_exhausted then
+            TIO.Put_Line ("   Number fields:" & row.count'Img);
 
-      if CON.STMT.fetch_next (row) then
-         TIO.Put_Line ("   Number fields:" & row.count'Img);
-
-         CON.STMT.discard_rest;
-         TIO.Put_Line ("  Data discarded: " & CON.STMT.data_discarded'Img);
+            stmt.discard_rest;
+            TIO.Put_Line ("  Data discarded: " & stmt.data_discarded'Img);
+         end if;
       end if;
-   end if;
+   end;
    CON.DR.disconnect;
 
 end Bad_Select;
