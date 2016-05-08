@@ -1251,9 +1251,9 @@ package body AdaBase.Results.Converters is
    end convert;
 
 
-   ---------------------------------
-   --  CONVERT *STRING TO *STRING --
-   ---------------------------------
+   -------------------------------
+   --  CONVERT FROM *STRING TO  --
+   -------------------------------
    function convert (nv : textual) return String is
    begin
       return CT.USS (nv);
@@ -1282,6 +1282,14 @@ package body AdaBase.Results.Converters is
          result (x) := nbyte1 (Character'Pos (nv (arrow)));
          arrow := arrow + 1;
       end loop;
+      return result;
+   end convert;
+
+   function convert (nv : textual) return enumtype
+   is
+      result : enumtype;
+   begin
+      result.enumeration := nv;
       return result;
    end convert;
 
@@ -1389,6 +1397,7 @@ package body AdaBase.Results.Converters is
    begin
       return ACC.To_Wide_Wide_String (Item => str);
    end convert;
+
 
    ------------------------
    --  CHAIN (OF BYTES)  --

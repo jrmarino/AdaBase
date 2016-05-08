@@ -117,7 +117,6 @@ private
                                      return Boolean;
 
    function convert (nv : String) return CAL.Time;
-   function convert (nv : String) return AR.enumtype;
    function convert (nv : String; fixed : Natural := 0) return AR.settype;
    function convert (nv : String; fixed : Natural := 0) return AR.chain;
    function num_set_items (nv : String) return Natural;

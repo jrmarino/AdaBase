@@ -734,18 +734,6 @@ package body AdaBase.Statement.Base.MySQL is
    end convert;
 
 
-   ----------------------------------
-   --  convert string to enumtype  --
-   ----------------------------------
-   function convert (nv : String) return AR.enumtype
-   is
-      result : AR.enumtype;
-   begin
-      result.enumeration := CT.SUS (nv);
-      return result;
-   end convert;
-
-
    --------------------------
    --  internal_fetch_row  --
    --------------------------
@@ -859,7 +847,7 @@ package body AdaBase.Statement.Base.MySQL is
                      end;
                   when ft_enumtype =>
                      dvariant := (datatype => ft_enumtype,
-                                  V18 => convert (ST));
+                                  V18 => ARC.convert (CT.SUS (ST)));
                   when others =>
                      null;
 
@@ -1090,9 +1078,9 @@ package body AdaBase.Statement.Base.MySQL is
                           );
                      end;
                   when ft_enumtype =>
-                     dvariant := (datatype => ft_enumtype,
-                                  v18 => convert (bincopy (cv.buffer_binary,
-                                    datalen, Stmt.con_max_blob)));
+                     dvariant := (datatype => ft_enumtype, v18 => ARC.convert
+                                  (CT.SUS (bincopy (cv.buffer_binary, datalen,
+                                     Stmt.con_max_blob))));
                   when ft_settype => null;
                   when ft_chain => null;
                end case;
@@ -1273,8 +1261,8 @@ package body AdaBase.Statement.Base.MySQL is
                         Stmt.crate.Element (F).a17.all'Length);
                   when ft_enumtype =>
                      Stmt.crate.Element (F).a18.all :=
-                       convert (bincopy (cv.buffer_binary, datalen,
-                                Stmt.con_max_blob));
+                       ARC.convert (CT.SUS (bincopy (cv.buffer_binary, datalen,
+                                Stmt.con_max_blob)));
                   when ft_settype =>
                      declare
                         setstr : constant String := bincopy
@@ -1423,7 +1411,8 @@ package body AdaBase.Statement.Base.MySQL is
                         Stmt.crate.Element (F).a17.all :=
                           convert (ST, Stmt.con_max_blob);
                      when ft_enumtype =>
-                        Stmt.crate.Element (F).a18.all := convert (ST);
+                        Stmt.crate.Element (F).a18.all :=
+                          ARC.convert (CT.SUS (ST));
                      when ft_settype =>
                         Stmt.crate.Element (F).a19.all := convert (ST);
                   end case;
@@ -1925,7 +1914,7 @@ package body AdaBase.Statement.Base.MySQL is
          when ft_supertext =>
             ST  := CT.SUS (value);
             STS := SWW.To_Unbounded_Wide_Wide_String (ARC.convert (ST));
-         when ft_timestamp | ft_enumtype | ft_settype | ft_chain =>
+         when ft_timestamp | ft_settype | ft_chain =>
             null;
          when others =>
             ST := CT.SUS (value);
@@ -1949,7 +1938,7 @@ package body AdaBase.Statement.Base.MySQL is
          when ft_supertext => hold := (ft_supertext, STS);
          when ft_timestamp => hold := (ft_timestamp, (convert (value)));
          when ft_chain     => null;
-         when ft_enumtype  => hold := (ft_enumtype, (convert (value)));
+         when ft_enumtype  => hold := (ft_enumtype, (ARC.convert (ST)));
          when ft_settype   => null;
       end case;
       case Stmt.realmccoy.Element (index).output_type is

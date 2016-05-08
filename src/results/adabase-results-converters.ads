@@ -271,6 +271,7 @@ package AdaBase.Results.Converters is
    function convert (nv : textual) return Wide_String;
    function convert (nv : textual) return Wide_Wide_String;
    function convert (nv : textual) return chain;
+   function convert (nv : textual) return enumtype;
    function convert (nv : String) return chain;
 
 
