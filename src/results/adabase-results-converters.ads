@@ -362,9 +362,9 @@ package AdaBase.Results.Converters is
    ---------------
    -- SET TYPE  --
    ---------------
-   function convert (nv : settype_access) return String;
-   function convert (nv : settype_access) return Wide_String;
-   function convert (nv : settype_access) return Wide_Wide_String;
+   function convert (nv : settype) return String;
+   function convert (nv : settype) return Wide_String;
+   function convert (nv : settype) return Wide_Wide_String;
 
 
 end AdaBase.Results.Converters;

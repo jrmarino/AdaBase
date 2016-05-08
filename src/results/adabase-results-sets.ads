@@ -26,18 +26,18 @@ package AdaBase.Results.Sets is
 
    procedure push (row        : out DataRow;
                    heading    : String;
-                   field      : ARF.field_access;
+                   field      : ARF.std_field;
                    last_field : Boolean := False);
 
 private
 
-   use type ARF.field_access;
+   use type ARF.std_field;
 
    function Same_Strings (S, T : String) return Boolean;
 
    package field_crate is new Ada.Containers.Vectors
      (Index_Type   => Positive,
-      Element_Type => ARF.field_access);
+      Element_Type => ARF.std_field);
 
    package heading_map is new Ada.Containers.Indefinite_Hashed_Maps
      (Key_Type        => String,

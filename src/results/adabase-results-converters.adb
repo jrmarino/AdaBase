@@ -1612,16 +1612,16 @@ package body AdaBase.Results.Converters is
    ---------------------------------------
    -- CONVERT SETS TO STRING (implode)  --
    ---------------------------------------
-   function convert (nv : settype_access) return String
+   function convert (nv : settype) return String
    is
       len    : Natural := 0;
-      nvlen  : Natural := nv.all'Length;
+      nvlen  : Natural := nv'Length;
    begin
       if nvlen = 0 then
          return blankstring;
       end if;
       for x in 1 .. nvlen loop
-         len := len + CT.len (nv.all (x).enumeration) + 1;
+         len := len + CT.len (nv (x).enumeration) + 1;
       end loop;
       declare
          cursor : Natural := 1;
@@ -1629,22 +1629,22 @@ package body AdaBase.Results.Converters is
          result : String (1 .. len - 1) := (others => ',');
       begin
          for x in 1 .. nvlen loop
-            curend := cursor - 1 + CT.len (nv.all (x).enumeration);
-            result (cursor .. curend) := CT.USS (nv.all (x).enumeration);
+            curend := cursor - 1 + CT.len (nv (x).enumeration);
+            result (cursor .. curend) := CT.USS (nv (x).enumeration);
             cursor := curend + 2;
          end loop;
          return result;
       end;
    end convert;
 
-   function convert (nv : settype_access) return Wide_String
+   function convert (nv : settype) return Wide_String
    is
       preview : String := convert (nv);
    begin
       return ACC.To_Wide_String (preview);
    end convert;
 
-   function convert (nv : settype_access) return Wide_Wide_String
+   function convert (nv : settype) return Wide_Wide_String
    is
       preview : String := convert (nv);
    begin

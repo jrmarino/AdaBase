@@ -685,7 +685,7 @@ package body AdaBase.Statement.Base.MySQL is
          row := convert (rptr);
          for F in 1 .. maxlen loop
             declare
-               field    : ARF.field_access;
+               field    : ARF.std_field;
                last_one : constant Boolean := (F = maxlen);
                heading  : constant String := CT.USS
                  (Stmt.column_info.Element (Index => F).field_name);
@@ -749,7 +749,7 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_chain =>
                      field := ARF.spawn_field (binob => ARC.convert (ST));
                   when ft_settype =>
-                     field := ARF.spawn_field (enumset => ARC.convert (ST));
+                     field := ARF.spawn_field (enumset => ST);
                   when others =>
                      field := ARF.spawn_field (data => dvariant,
                                                null_data => EN);
@@ -859,7 +859,7 @@ package body AdaBase.Statement.Base.MySQL is
                use type ABM.enum_field_types;
                cv       : mysql_canvas renames Stmt.bind_canvas (F);
                dvariant : ARF.variant;
-               field    : ARF.field_access;
+               field    : ARF.std_field;
                last_one : constant Boolean := (F = maxlen);
                datalen  : constant Natural := Natural (cv.length);
                heading  : constant String := CT.USS
@@ -983,8 +983,8 @@ package body AdaBase.Statement.Base.MySQL is
                         Stmt.con_max_blob));
                   when ft_settype =>
                      field := ARF.spawn_field
-                       (enumset => ARC.convert (bincopy (cv.buffer_binary,
-                                                datalen, Stmt.con_max_blob)));
+                       (enumset => bincopy (cv.buffer_binary, datalen,
+                        Stmt.con_max_blob));
                   when others =>
                      field := ARF.spawn_field
                        (data => dvariant,
@@ -1729,7 +1729,7 @@ package body AdaBase.Statement.Base.MySQL is
             if zone.a19 = null then
                set_binary_buffer (CT.USS (zone.v19));
             else
-               set_binary_buffer (ARC.convert (zone.a19));
+               set_binary_buffer (ARC.convert (zone.a19.all));
             end if;
          end case;
       end if;

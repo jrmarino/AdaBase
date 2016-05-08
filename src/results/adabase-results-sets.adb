@@ -16,7 +16,7 @@ package body AdaBase.Results.Sets is
          raise COLUMN_DOES_NOT_EXIST with "Column" & index'Img &
            " requested, but only" & row.crate.Length'Img & " columns present.";
       end if;
-      return row.crate.Element (Index => index).all;
+      return row.crate.Element (Index => index);
    end column;
 
 
@@ -36,7 +36,7 @@ package body AdaBase.Results.Sets is
            "There is no column named '" & headup & "'.";
       end if;
       index := heading_map.Element (Position => cursor);
-      return row.crate.Element (Index => index).all;
+      return row.crate.Element (Index => index);
    end column;
 
 
@@ -63,7 +63,7 @@ package body AdaBase.Results.Sets is
    ------------
    procedure push (row        : out DataRow;
                    heading    : String;
-                   field      : ARF.field_access;
+                   field      : ARF.std_field;
                    last_field : Boolean := False)
    is
    begin

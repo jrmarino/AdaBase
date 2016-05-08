@@ -29,7 +29,12 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
-         when ft_chain     => return ARC.convert (field.native.v17.all);
+         when ft_chain     =>
+            declare
+               cadena : chain := ARC.convert (field.native.v17);
+            begin
+               return ARC.convert (cadena);
+            end;
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
@@ -59,7 +64,12 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
-         when ft_chain     => return ARC.convert (field.native.v17.all);
+         when ft_chain     =>
+            declare
+               cadena : chain := ARC.convert (field.native.v17);
+            begin
+               return ARC.convert (cadena);
+            end;
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
@@ -90,7 +100,12 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
-         when ft_chain     => return ARC.convert (field.native.v17.all);
+         when ft_chain     =>
+            declare
+               cadena : chain := ARC.convert (field.native.v17);
+            begin
+               return ARC.convert (cadena);
+            end;
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
@@ -121,7 +136,12 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
-         when ft_chain     => return ARC.convert (field.native.v17.all);
+         when ft_chain     =>
+            declare
+               cadena : chain := ARC.convert (field.native.v17);
+            begin
+               return ARC.convert (cadena);
+            end;
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
@@ -152,7 +172,12 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
-         when ft_chain     => return ARC.convert (field.native.v17.all);
+         when ft_chain     =>
+            declare
+               cadena : chain := ARC.convert (field.native.v17);
+            begin
+               return ARC.convert (cadena);
+            end;
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
@@ -183,7 +208,12 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
-         when ft_chain     => return ARC.convert (field.native.v17.all);
+         when ft_chain     =>
+            declare
+               cadena : chain := ARC.convert (field.native.v17);
+            begin
+               return ARC.convert (cadena);
+            end;
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
@@ -434,7 +464,7 @@ package body AdaBase.Results.Field is
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_timestamp => return ARC.convert (field.native.v16);
-         when ft_chain     => return ARC.convert (field.native.v17.all);
+         when ft_chain     => return ARC.convert (field.native.v17);
          when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_settype   => return ARC.convert (field.native.v19);
       end case;
@@ -465,7 +495,7 @@ package body AdaBase.Results.Field is
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_timestamp => return ARC.convert (field.native.v16);
-         when ft_chain     => return ARC.convert (field.native.v17.all);
+         when ft_chain     => return ARC.convert (field.native.v17);
          when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_settype   => return ARC.convert (field.native.v19);
       end case;
@@ -496,7 +526,7 @@ package body AdaBase.Results.Field is
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_timestamp => return ARC.convert (field.native.v16);
-         when ft_chain     => return ARC.convert (field.native.v17.all);
+         when ft_chain     => return ARC.convert (field.native.v17);
          when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_settype   => return ARC.convert (field.native.v19);
       end case;
@@ -530,10 +560,10 @@ package body AdaBase.Results.Field is
          when ft_nbyte3    => return ARC.convert (field.native.v03);
          when ft_nbyte4    => return ARC.convert (field.native.v04);
          when ft_nbyte8    => return ARC.convert (field.native.v05);
-         when ft_chain     => return field.native.v17.all;
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_chain     => return ARC.convert (field.native.v17);
          when others => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_chain;
@@ -562,7 +592,7 @@ package body AdaBase.Results.Field is
    is
    begin
       case field.native.datatype is
-         when ft_settype   => return field.native.v19.all;
+         when ft_settype   => return ARC.convert (field.native.v19);
          when others => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_settype;
@@ -586,38 +616,33 @@ package body AdaBase.Results.Field is
    end native_type;
 
 
-   ---------------------------------------
-   --  ALLOCATE NEW FIELDS ON THE HEAP  --
-   ---------------------------------------
+   ------------------------------
+   --  CREATE STANDARD FIELDS  --
+   ------------------------------
    function spawn_field (data : variant; null_data : Boolean := False)
-                         return field_access
+                         return std_field
    is
-      FA : constant field_access := new std_field;
+      result : std_field;
    begin
-      FA.set (data => data, exnull => null_data);
-      return FA;
+      result.set (data => data, exnull => null_data);
+      return result;
    end spawn_field;
 
-   function spawn_field (binob : chain) return field_access
+   function spawn_field (binob : chain) return std_field
    is
-      len : constant Natural := binob'Length;
-      FA  : constant field_access := new std_field;
-      CA  : constant chain_access := new chain (1 .. len);
+      result  : std_field;
+      chainstr : constant String := ARC.convert (binob);
    begin
-      CA.all := binob;
-      FA.set (data => (ft_chain, CA), exnull => False);
-      return FA;
+      result.set (data => (ft_chain, CT.SUS (chainstr)), exnull => False);
+      return result;
    end spawn_field;
 
-   function spawn_field (enumset : settype) return field_access
+   function spawn_field (enumset : String) return std_field
    is
-      len : constant Natural := enumset'Length;
-      FA  : constant field_access := new std_field;
-      SA  : constant settype_access := new settype (1 .. len);
+      result  : std_field;
    begin
-      SA.all := enumset;
-      FA.set (data => (ft_settype, SA), exnull => False);
-      return FA;
+      result.set (data => (ft_settype, CT.SUS (enumset)), exnull => False);
+      return result;
    end spawn_field;
 
 

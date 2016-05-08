@@ -26,9 +26,9 @@ package AdaBase.Results.Field is
             when ft_widetext  => v14 : textwide;
             when ft_supertext => v15 : textsuper;
             when ft_timestamp => v16 : AC.Time;
-            when ft_chain     => v17 : chain_access;
+            when ft_chain     => v17 : textual;
             when ft_enumtype  => v18 : enumtype;
-            when ft_settype   => v19 : settype_access;
+            when ft_settype   => v19 : textual;
          end case;
       end record;
 
@@ -61,9 +61,9 @@ package AdaBase.Results.Field is
    function native_type (field : std_field) return field_types;
 
    function spawn_field (data : variant; null_data : Boolean := False)
-                         return field_access;
-   function spawn_field (binob : chain) return field_access;
-   function spawn_field (enumset : settype) return field_access;
+                         return std_field;
+   function spawn_field (binob : chain) return std_field;
+   function spawn_field (enumset : String) return std_field;
 
 private
 
