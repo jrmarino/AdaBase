@@ -16,7 +16,7 @@ Dumping Result from direct statement ...
 15. bit_type        FT_CHAIN       0C 93
 16. my_date         FT_TIMESTAMP   1993-01-15 00:00:00
 17. my_datetime     FT_TIMESTAMP   1972-08-01 08:00:05
-18. my_timestamp    FT_TIMESTAMP   2016-05-03 22:17:51
+18. my_timestamp    FT_TIMESTAMP   2016-05-03 20:17:51
 19. my_time         FT_TIMESTAMP   1901-01-01 04:30:02
 20. my_year         FT_NBYTE2      1988
 21. fixed_string    FT_TEXTUAL     ABCD1234EFGH5678
@@ -52,7 +52,7 @@ Dumping Result from prepared statement ...
 15. bit_type        FT_CHAIN       0C 93
 16. my_date         FT_TIMESTAMP   1993-01-15 00:00:00
 17. my_datetime     FT_TIMESTAMP   1972-08-01 08:00:05
-18. my_timestamp    FT_TIMESTAMP   2016-05-03 22:17:51
+18. my_timestamp    FT_TIMESTAMP   2016-05-03 20:17:51
 19. my_time         FT_TIMESTAMP   1901-01-01 04:30:02
 20. my_year         FT_NBYTE2      1988
 21. fixed_string    FT_TEXTUAL     ABCD1234EFGH5678
@@ -88,7 +88,7 @@ Dumping Result from PS/Bound fetch ...
 15. bits            0C 93
 16. date            1993-01-15 00:00:00
 17. datetime        1972-08-01 08:00:05
-18. timestamp       2016-05-03 22:17:51
+18. timestamp       2016-05-03 20:17:51
 19. time            1901-01-01 04:30:02
 20. year             1988
 21. fixed string    ABCD1234EFGH5678
@@ -105,3 +105,8 @@ Dumping Result from PS/Bound fetch ...
 32. medium blob     31 32 33 34 28 2A 26 5E 23 3D 3D 00 00 00 00 00
 33. blob            5B 60 60 60 3B 5E 25 5E 26 31 32 33 40 23 31 32
 34. long blob       6A 61 73 6F 6E 2E 62 6F 75 72 6E 65 00 00 00 00
+
+Inserted 1 row(s)
+Inserted 1 row(s)
+Inserted 1 row(s)
+Inserted 1 row(s)

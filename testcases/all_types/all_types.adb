@@ -22,6 +22,8 @@ procedure All_Types is
 
    type halfbyte is mod 2 ** 4;
 
+   stmt_acc : CON.Stmt_Type_access;
+
    procedure dump_result;
    function halfbyte_to_hex (value : halfbyte) return Character;
    function convert_chain (chain : AR.chain) return String;
@@ -91,16 +93,17 @@ procedure All_Types is
 
    procedure dump_result
    is
-      row     : ARS.DataRow_Access;
-      numcols : constant Natural := CON.STMT.column_count;
+      row     : ARS.DataRow;
+      numcols : constant Natural := stmt_acc.column_count;
    begin
       loop
-         exit when not CON.STMT.fetch_next (row);
+         row := stmt_acc.fetch_next;
+         exit when row.data_exhausted;
          for c in Natural range 1 .. numcols loop
             TIO.Put (CT.zeropad (c, 2) & ". ");
-            TIO.Put (pad (CON.STMT.column_name (c), 16));
-            TIO.Put (pad (CON.STMT.column_native_type (c)'Img, 15));
-            case CON.STMT.column_native_type (c) is
+            TIO.Put (pad (stmt_acc.column_name (c), 16));
+            TIO.Put (pad (stmt_acc.column_native_type (c)'Img, 15));
+            case stmt_acc.column_native_type (c) is
                when AdaBase.ft_chain =>
                   TIO.Put_Line (convert_chain (row.column (c).as_chain));
                when others =>
@@ -143,7 +146,6 @@ begin
 
    CON.DR.command_standard_logger (device => ALF.file, action => ALF.attach);
 
-   declare
    begin
       CON.connect_database;
    exception
@@ -152,17 +154,21 @@ begin
          return;
    end;
 
+   declare
+      stmt : aliased CON.Stmt_Type := CON.DR.query (sql1);
    begin
-      CON.STMT := CON.DR.query (sql1);
-      if CON.STMT.successful then
+      if stmt.successful then
+         stmt_acc := stmt'Unchecked_Access;
          TIO.Put_Line ("Dumping Result from direct statement ...");
          dump_result;
       end if;
    end;
 
+   declare
+      stmt : aliased CON.Stmt_Type := CON.DR.prepare (sql1);
    begin
-      CON.STMT := CON.DR.prepare (sql1);
-      if CON.STMT.execute then
+      if stmt.execute then
+         stmt_acc := stmt'Unchecked_Access;
          TIO.Put_Line ("Dumping Result from prepared statement ...");
          dump_result;
       else
@@ -205,46 +211,46 @@ begin
       v_chain6 : aliased AR.chain := (1 .. 16 => 0);
       v_enum   : aliased AR.enumtype;
       v_set    : aliased AR.settype := (1 .. 6 => (AR.PARAM_IS_ENUM));
+      stmt : CON.Stmt_Type := CON.DR.prepare (sql1);
    begin
-      CON.STMT := CON.DR.prepare (sql1);
-      if CON.STMT.execute then
-         CON.STMT.bind (1, v_nbyte0'Unchecked_Access);
-         CON.STMT.bind (2, v_nbyte1'Unchecked_Access);
-         CON.STMT.bind (3, v_nbyte2'Unchecked_Access);
-         CON.STMT.bind (4, v_nbyte3'Unchecked_Access);
-         CON.STMT.bind (5, v_nbyte4'Unchecked_Access);
-         CON.STMT.bind (6, v_nbyte8'Unchecked_Access);
-         CON.STMT.bind (7,  v_byte1'Unchecked_Access);
-         CON.STMT.bind (8,  v_byte2'Unchecked_Access);
-         CON.STMT.bind (9,  v_byte3'Unchecked_Access);
-         CON.STMT.bind (10, v_byte4'Unchecked_Access);
-         CON.STMT.bind (11, v_byte8'Unchecked_Access);
-         CON.STMT.bind (12, v_real9'Unchecked_Access);
-         CON.STMT.bind (13, v_real18'Unchecked_Access);
-         CON.STMT.bind (14, v_exact'Unchecked_Access);
-         CON.STMT.bind (15, v_bit'Unchecked_Access);
-         CON.STMT.bind (16, v_time1'Unchecked_Access);
-         CON.STMT.bind (17, v_time2'Unchecked_Access);
-         CON.STMT.bind (18, v_time3'Unchecked_Access);
-         CON.STMT.bind (19, v_time4'Unchecked_Access);
-         CON.STMT.bind (20, v_year'Unchecked_Access);
-         CON.STMT.bind (21, v_text1'Unchecked_Access);
-         CON.STMT.bind (22, v_text2'Unchecked_Access);
-         CON.STMT.bind (23, v_text3'Unchecked_Access);
-         CON.STMT.bind (24, v_text4'Unchecked_Access);
-         CON.STMT.bind (25, v_text5'Unchecked_Access);
-         CON.STMT.bind (26, v_text6'Unchecked_Access);
-         CON.STMT.bind (27, v_enum'Unchecked_Access);
-         CON.STMT.bind (28, v_set'Unchecked_Access);
-         CON.STMT.bind (29, v_chain1'Unchecked_Access);
-         CON.STMT.bind (30, v_chain2'Unchecked_Access);
-         CON.STMT.bind (31, v_chain3'Unchecked_Access);
-         CON.STMT.bind (32, v_chain4'Unchecked_Access);
-         CON.STMT.bind (33, v_chain5'Unchecked_Access);
-         CON.STMT.bind (34, v_chain6'Unchecked_Access);
+      if stmt.execute then
+         stmt.bind (1, v_nbyte0'Unchecked_Access);
+         stmt.bind (2, v_nbyte1'Unchecked_Access);
+         stmt.bind (3, v_nbyte2'Unchecked_Access);
+         stmt.bind (4, v_nbyte3'Unchecked_Access);
+         stmt.bind (5, v_nbyte4'Unchecked_Access);
+         stmt.bind (6, v_nbyte8'Unchecked_Access);
+         stmt.bind (7,  v_byte1'Unchecked_Access);
+         stmt.bind (8,  v_byte2'Unchecked_Access);
+         stmt.bind (9,  v_byte3'Unchecked_Access);
+         stmt.bind (10, v_byte4'Unchecked_Access);
+         stmt.bind (11, v_byte8'Unchecked_Access);
+         stmt.bind (12, v_real9'Unchecked_Access);
+         stmt.bind (13, v_real18'Unchecked_Access);
+         stmt.bind (14, v_exact'Unchecked_Access);
+         stmt.bind (15, v_bit'Unchecked_Access);
+         stmt.bind (16, v_time1'Unchecked_Access);
+         stmt.bind (17, v_time2'Unchecked_Access);
+         stmt.bind (18, v_time3'Unchecked_Access);
+         stmt.bind (19, v_time4'Unchecked_Access);
+         stmt.bind (20, v_year'Unchecked_Access);
+         stmt.bind (21, v_text1'Unchecked_Access);
+         stmt.bind (22, v_text2'Unchecked_Access);
+         stmt.bind (23, v_text3'Unchecked_Access);
+         stmt.bind (24, v_text4'Unchecked_Access);
+         stmt.bind (25, v_text5'Unchecked_Access);
+         stmt.bind (26, v_text6'Unchecked_Access);
+         stmt.bind (27, v_enum'Unchecked_Access);
+         stmt.bind (28, v_set'Unchecked_Access);
+         stmt.bind (29, v_chain1'Unchecked_Access);
+         stmt.bind (30, v_chain2'Unchecked_Access);
+         stmt.bind (31, v_chain3'Unchecked_Access);
+         stmt.bind (32, v_chain4'Unchecked_Access);
+         stmt.bind (33, v_chain5'Unchecked_Access);
+         stmt.bind (34, v_chain6'Unchecked_Access);
          TIO.Put_Line ("Dumping Result from PS/Bound fetch ...");
          loop
-            exit when not CON.STMT.fetch_bound;
+            exit when not stmt.fetch_bound;
             TIO.Put_Line (" 1. nbyte0          " & v_nbyte0'Img);
             TIO.Put_Line (" 2. nbyte1          " & v_nbyte1'Img);
             TIO.Put_Line (" 3. nbyte2          " & v_nbyte2'Img);
@@ -334,70 +340,70 @@ begin
       v_chain7 : AR.chain := (65, 66, 67, 68);
       v_chain8 : AR.chain := (97, 98, 99, 100, 101);
 
+      stmt : CON.Stmt_Type := CON.DR.prepare (sql2);
    begin
-      CON.STMT := CON.DR.prepare (sql2);
-      CON.STMT.assign ("nbyte0", v_nbyte0'Unchecked_Access);
-      CON.STMT.assign ("nbyte1", v_nbyte1'Unchecked_Access);
-      CON.STMT.assign ("nbyte2", v_nbyte2'Unchecked_Access);
-      CON.STMT.assign ("id_nbyte3", v_nbyte3'Unchecked_Access);
-      CON.STMT.assign ("nbyte4", v_nbyte4'Unchecked_Access);
-      CON.STMT.assign ("nbyte8", v_nbyte8'Unchecked_Access);
-      CON.STMT.assign ("byte1",  v_byte1'Unchecked_Access);
-      CON.STMT.assign ("byte2",  v_byte2'Unchecked_Access);
-      CON.STMT.assign ("byte3",  v_byte3'Unchecked_Access);
-      CON.STMT.assign ("byte4", v_byte4'Unchecked_Access);
-      CON.STMT.assign ("byte8", v_byte8'Unchecked_Access);
-      CON.STMT.assign ("real9", v_real9'Unchecked_Access);
-      CON.STMT.assign ("real18", v_real18'Unchecked_Access);
-      CON.STMT.assign ("exact", v_exact'Unchecked_Access);
-      CON.STMT.assign ("bit", v_bit'Unchecked_Access);
-      CON.STMT.assign ("date", v_time1'Unchecked_Access);
-      CON.STMT.assign ("datetime", v_time2'Unchecked_Access);
-      CON.STMT.assign ("timestamp", v_time3'Unchecked_Access);
-      CON.STMT.assign ("time", v_time4'Unchecked_Access);
-      CON.STMT.assign ("year", v_year'Unchecked_Access);
-      CON.STMT.assign ("fixed", v_text1'Unchecked_Access);
-      CON.STMT.assign ("varstring", v_text2'Unchecked_Access);
-      CON.STMT.assign ("tinytext", v_text3'Unchecked_Access);
-      CON.STMT.assign ("text", v_text4'Unchecked_Access);
-      CON.STMT.assign ("medtext", v_text5'Unchecked_Access);
-      CON.STMT.assign ("longtext", v_text6'Unchecked_Access);
-      CON.STMT.assign ("enumtype", v_enum'Unchecked_Access);
-      CON.STMT.assign ("settype", v_set'Unchecked_Access);
-      CON.STMT.assign ("binary", v_chain1'Unchecked_Access);
-      CON.STMT.assign ("varbin", v_chain2'Unchecked_Access);
-      CON.STMT.assign ("tinyblob", v_chain3'Unchecked_Access);
-      CON.STMT.assign ("medblob", v_chain4'Unchecked_Access);
-      CON.STMT.assign ("blob", v_chain5'Unchecked_Access);
-      CON.STMT.assign ("longblob", v_chain6'Unchecked_Access);
+      stmt.assign ("nbyte0", v_nbyte0'Unchecked_Access);
+      stmt.assign ("nbyte1", v_nbyte1'Unchecked_Access);
+      stmt.assign ("nbyte2", v_nbyte2'Unchecked_Access);
+      stmt.assign ("id_nbyte3", v_nbyte3'Unchecked_Access);
+      stmt.assign ("nbyte4", v_nbyte4'Unchecked_Access);
+      stmt.assign ("nbyte8", v_nbyte8'Unchecked_Access);
+      stmt.assign ("byte1",  v_byte1'Unchecked_Access);
+      stmt.assign ("byte2",  v_byte2'Unchecked_Access);
+      stmt.assign ("byte3",  v_byte3'Unchecked_Access);
+      stmt.assign ("byte4", v_byte4'Unchecked_Access);
+      stmt.assign ("byte8", v_byte8'Unchecked_Access);
+      stmt.assign ("real9", v_real9'Unchecked_Access);
+      stmt.assign ("real18", v_real18'Unchecked_Access);
+      stmt.assign ("exact", v_exact'Unchecked_Access);
+      stmt.assign ("bit", v_bit'Unchecked_Access);
+      stmt.assign ("date", v_time1'Unchecked_Access);
+      stmt.assign ("datetime", v_time2'Unchecked_Access);
+      stmt.assign ("timestamp", v_time3'Unchecked_Access);
+      stmt.assign ("time", v_time4'Unchecked_Access);
+      stmt.assign ("year", v_year'Unchecked_Access);
+      stmt.assign ("fixed", v_text1'Unchecked_Access);
+      stmt.assign ("varstring", v_text2'Unchecked_Access);
+      stmt.assign ("tinytext", v_text3'Unchecked_Access);
+      stmt.assign ("text", v_text4'Unchecked_Access);
+      stmt.assign ("medtext", v_text5'Unchecked_Access);
+      stmt.assign ("longtext", v_text6'Unchecked_Access);
+      stmt.assign ("enumtype", v_enum'Unchecked_Access);
+      stmt.assign ("settype", v_set'Unchecked_Access);
+      stmt.assign ("binary", v_chain1'Unchecked_Access);
+      stmt.assign ("varbin", v_chain2'Unchecked_Access);
+      stmt.assign ("tinyblob", v_chain3'Unchecked_Access);
+      stmt.assign ("medblob", v_chain4'Unchecked_Access);
+      stmt.assign ("blob", v_chain5'Unchecked_Access);
+      stmt.assign ("longblob", v_chain6'Unchecked_Access);
       TIO.Put_Line ("");
-      if CON.STMT.execute then
-         TIO.Put_Line ("Inserted" & CON.STMT.rows_affected'Img & " row(s)");
+      if stmt.execute then
+         TIO.Put_Line ("Inserted" & stmt.rows_affected'Img & " row(s)");
          v_nbyte3 := 11;
          v_nbyte0 := True;
          v_text1 := CT.SUS ("Wolverine");
          v_enum.enumeration := CT.SUS ("blue");
-         if CON.STMT.execute then
-            TIO.Put_Line ("Inserted" & CON.STMT.rows_affected'Img & " row(s)");
+         if stmt.execute then
+            TIO.Put_Line ("Inserted" & stmt.rows_affected'Img & " row(s)");
             v_nbyte3 := 15;
-            CON.STMT.assign ("settype", v_set2);
-            CON.STMT.assign ("binary", v_chain7);
-            CON.STMT.assign ("varbin", v_chain8);
+            stmt.assign ("settype", v_set2);
+            stmt.assign ("binary", v_chain7);
+            stmt.assign ("varbin", v_chain8);
             v_exact := 187.93;
-            if CON.STMT.execute then
-               TIO.Put_Line ("Inserted" & CON.STMT.rows_affected'Img &
+            if stmt.execute then
+               TIO.Put_Line ("Inserted" & stmt.rows_affected'Img &
                              " row(s)");
                CON.DR.commit;
             else
-               TIO.Put_Line (CON.STMT.last_driver_message);
+               TIO.Put_Line (stmt.last_driver_message);
                CON.DR.rollback;
             end if;
          else
-            TIO.Put_Line (CON.STMT.last_driver_message);
+            TIO.Put_Line (stmt.last_driver_message);
             CON.DR.rollback;
          end if;
       else
-         TIO.Put_Line (CON.STMT.last_driver_message);
+         TIO.Put_Line (stmt.last_driver_message);
       end if;
    end;
 
@@ -407,31 +413,31 @@ begin
         "15555.213792831213|875.44|2014-10-20|2000-03-25 15:15:00|" &
         "20:18:13|1986|AdaBase is so cool!|green|yellow,black|" &
         " 0123|456789ABC.,z[]";
+      stmt : CON.Stmt_Type := CON.DR.prepare (sql3);
    begin
-      CON.STMT := CON.DR.prepare (sql3);
       --  This has to be done only once after the prepare command
       --  Set the type for each parameter (required for at least MySQL)
-      CON.STMT.assign (1,  AR.PARAM_IS_NBYTE_3);
-      CON.STMT.assign (2,  AR.PARAM_IS_BOOLEAN);
-      CON.STMT.assign (3,  AR.PARAM_IS_NBYTE_1);
-      CON.STMT.assign (4,  AR.PARAM_IS_BYTE_2);
-      CON.STMT.assign (5,  AR.PARAM_IS_BYTE_4);
-      CON.STMT.assign (6,  AR.PARAM_IS_NBYTE_8);
-      CON.STMT.assign (7,  AR.PARAM_IS_REAL_9);
-      CON.STMT.assign (8,  AR.PARAM_IS_REAL_18);
-      CON.STMT.assign (9,  AR.PARAM_IS_REAL_9);
-      CON.STMT.assign (10, AR.PARAM_IS_TIMESTAMP);
-      CON.STMT.assign (11, AR.PARAM_IS_TIMESTAMP);
-      CON.STMT.assign (12, AR.PARAM_IS_TIMESTAMP);
-      CON.STMT.assign (13, AR.PARAM_IS_NBYTE_2);
-      CON.STMT.assign (14, AR.PARAM_IS_TEXTUAL);
-      CON.STMT.assign (15, AR.PARAM_IS_ENUM);
-      CON.STMT.assign (16, AR.PARAM_IS_SET);
-      CON.STMT.assign (17, AR.PARAM_IS_CHAIN);
-      CON.STMT.assign (18, AR.PARAM_IS_CHAIN);
+      stmt.assign (1,  AR.PARAM_IS_NBYTE_3);
+      stmt.assign (2,  AR.PARAM_IS_BOOLEAN);
+      stmt.assign (3,  AR.PARAM_IS_NBYTE_1);
+      stmt.assign (4,  AR.PARAM_IS_BYTE_2);
+      stmt.assign (5,  AR.PARAM_IS_BYTE_4);
+      stmt.assign (6,  AR.PARAM_IS_NBYTE_8);
+      stmt.assign (7,  AR.PARAM_IS_REAL_9);
+      stmt.assign (8,  AR.PARAM_IS_REAL_18);
+      stmt.assign (9,  AR.PARAM_IS_REAL_9);
+      stmt.assign (10, AR.PARAM_IS_TIMESTAMP);
+      stmt.assign (11, AR.PARAM_IS_TIMESTAMP);
+      stmt.assign (12, AR.PARAM_IS_TIMESTAMP);
+      stmt.assign (13, AR.PARAM_IS_NBYTE_2);
+      stmt.assign (14, AR.PARAM_IS_TEXTUAL);
+      stmt.assign (15, AR.PARAM_IS_ENUM);
+      stmt.assign (16, AR.PARAM_IS_SET);
+      stmt.assign (17, AR.PARAM_IS_CHAIN);
+      stmt.assign (18, AR.PARAM_IS_CHAIN);
 
-      if CON.STMT.execute (values) then
-         TIO.Put_Line ("Inserted" & CON.STMT.rows_affected'Img & " row(s)");
+      if stmt.execute (values) then
+         TIO.Put_Line ("Inserted" & stmt.rows_affected'Img & " row(s)");
          CON.DR.commit;
       else
          TIO.Put_Line ("statement execution failed");

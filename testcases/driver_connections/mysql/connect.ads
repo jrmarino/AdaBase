@@ -8,6 +8,8 @@ package Connect is
    --  All specific drivers renamed to "Database_Driver"
    subtype Database_Driver is AdaBase.Driver.Base.MySQL.MySQL_Driver;
    subtype Stmt_Type is AdaBase.Statement.Base.MySQL.MySQL_statement;
+   subtype Stmt_Type_access is
+      AdaBase.Statement.Base.MySQL.MySQL_statement_access;
 
    DR : Database_Driver;
 
