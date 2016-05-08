@@ -1324,6 +1324,15 @@ package body AdaBase.Results.Converters is
       return convert (nvstr);
    end convert;
 
+   function convert (nv : textwide) return enumtype
+   is
+      result : enumtype;
+      enum : String := convert (nv);
+   begin
+      result.enumeration := CT.SUS (enum);
+      return result;
+   end convert;
+
    function convert (nv : textsuper) return String
    is
       nvstr : constant Wide_Wide_String :=
@@ -1350,6 +1359,15 @@ package body AdaBase.Results.Converters is
       nvstr : constant String := convert (nv);
    begin
       return convert (nvstr);
+   end convert;
+
+   function convert (nv : textsuper) return enumtype
+   is
+      result : enumtype;
+      enum : String := convert (nv);
+   begin
+      result.enumeration := CT.SUS (enum);
+      return result;
    end convert;
 
 

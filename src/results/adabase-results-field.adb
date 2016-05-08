@@ -547,6 +547,9 @@ package body AdaBase.Results.Field is
    begin
       case field.native.datatype is
          when ft_enumtype  => return field.native.v18;
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
          when others => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_enumtype;

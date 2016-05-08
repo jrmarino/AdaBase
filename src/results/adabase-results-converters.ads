@@ -295,6 +295,7 @@ package AdaBase.Results.Converters is
    function convert (nv : textwide) return Wide_String;
    function convert (nv : textwide) return Wide_Wide_String;
    function convert (nv : textwide) return chain;
+   function convert (nv : textwide) return enumtype;
 
 
    ----------------------
@@ -317,6 +318,7 @@ package AdaBase.Results.Converters is
    function convert (nv : textsuper) return Wide_String;
    function convert (nv : textsuper) return Wide_Wide_String;
    function convert (nv : textsuper) return chain;
+   function convert (nv : textsuper) return enumtype;
 
 
    ----------
