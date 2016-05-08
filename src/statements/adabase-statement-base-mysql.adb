@@ -339,6 +339,14 @@ package body AdaBase.Statement.Base.MySQL is
       --  value of "2", it knows it is the program-level statement and then
       --  it can release memory releases, but not before!
       Object.assign_counter := Object.assign_counter + 1;
+
+      --  Since the finalization is looking for a specific reference
+      --  counter, any further assignments would fail finalization, so
+      --  just prohibit them outright.
+      if Object.assign_counter > 2 then
+         raise STMT_PREPARATION
+           with "Statement objects cannot be re-assigned.";
+      end if;
    end Adjust;
 
 
