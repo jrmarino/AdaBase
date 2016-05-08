@@ -718,22 +718,6 @@ package body AdaBase.Statement.Base.MySQL is
    end convert;
 
 
-   -------------------------------
-   --  convert string to chain  --
-   -------------------------------
-   function convert (nv : String; fixed : Natural := 0) return AR.chain
-   is
-      result : AR.chain := (1 .. nv'Length => 0);
-      index  : Natural := 1;
-   begin
-      for x in nv'Range loop
-         result (index) := Character'Pos (nv (x));
-         index := index + 1;
-      end loop;
-      return result;
-   end convert;
-
-
    --------------------------
    --  internal_fetch_row  --
    --------------------------
@@ -854,8 +838,7 @@ package body AdaBase.Statement.Base.MySQL is
                end case;
                case Stmt.column_info.Element (Index => F).field_type is
                   when ft_chain =>
-                     field := ARF.spawn_field
-                       (binob => convert (ST, Stmt.con_max_blob));
+                     field := ARF.spawn_field (binob => ARC.convert (ST));
                   when ft_settype =>
                      field := ARF.spawn_field (enumset => convert (ST));
                   when others =>
@@ -1408,8 +1391,7 @@ package body AdaBase.Statement.Base.MySQL is
                              Stmt.crate.Element (F).a17.all'Length'Img &
                              " binding size : " & sz'Img;
                         end if;
-                        Stmt.crate.Element (F).a17.all :=
-                          convert (ST, Stmt.con_max_blob);
+                        Stmt.crate.Element (F).a17.all := ARC.convert (ST);
                      when ft_enumtype =>
                         Stmt.crate.Element (F).a18.all :=
                           ARC.convert (CT.SUS (ST));
@@ -1962,7 +1944,7 @@ package body AdaBase.Statement.Base.MySQL is
          when ft_enumtype  => Stmt.assign (index, hold.v18);
          when ft_chain     =>
             declare
-               my_chain : AR.chain := convert (value);
+               my_chain : AR.chain := ARC.convert (value);
             begin
                Stmt.assign (index, my_chain);
             end;
