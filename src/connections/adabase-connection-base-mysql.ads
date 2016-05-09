@@ -60,16 +60,16 @@ package AdaBase.Connection.Base.MySQL is
    function lastInsertID  (conn : MySQL_Connection) return TraxID;
 
    overriding
-   procedure commit       (conn : MySQL_Connection);
+   procedure commit       (conn : out MySQL_Connection);
 
    overriding
-   procedure rollback     (conn : MySQL_Connection);
+   procedure rollback     (conn : out MySQL_Connection);
 
    overriding
    procedure disconnect   (conn : out MySQL_Connection);
 
    overriding
-   procedure execute      (conn : MySQL_Connection; sql : String);
+   procedure execute      (conn : out MySQL_Connection; sql : String);
 
    overriding
    procedure connect      (conn     : out MySQL_Connection;
@@ -235,7 +235,7 @@ private
    function S2P (S : CT.Text) return ABM.ICS.chars_ptr;
    function S2P (S : String)  return ABM.ICS.chars_ptr;
 
-   procedure set_character_set (conn : MySQL_Connection);
+   procedure set_character_set (conn : out MySQL_Connection);
 
    overriding
    procedure finalize (conn : in out MySQL_Connection);

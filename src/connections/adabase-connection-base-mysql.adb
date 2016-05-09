@@ -190,7 +190,7 @@ package body AdaBase.Connection.Base.MySQL is
    --  commit  --
    --------------
    overriding
-   procedure commit (conn : MySQL_Connection)
+   procedure commit (conn : out MySQL_Connection)
    is
       use type ABM.my_bool;
       result : ABM.my_bool;
@@ -207,7 +207,7 @@ package body AdaBase.Connection.Base.MySQL is
    --  rollback  --
    ----------------
    overriding
-   procedure rollback (conn : MySQL_Connection)
+   procedure rollback (conn : out MySQL_Connection)
    is
       use type ABM.my_bool;
       result : ABM.my_bool;
@@ -367,7 +367,7 @@ package body AdaBase.Connection.Base.MySQL is
    --  execute  --
    ---------------
    overriding
-   procedure execute (conn : MySQL_Connection; sql : String)
+   procedure execute (conn : out MySQL_Connection; sql : String)
    is
       use type ABM.my_int;
       result : ABM.my_int;
@@ -1101,7 +1101,7 @@ package body AdaBase.Connection.Base.MySQL is
    -------------------------
    --  set_character_set  --
    -------------------------
-   procedure set_character_set (conn : MySQL_Connection)
+   procedure set_character_set (conn : out MySQL_Connection)
    is
       sql : constant String := "SET CHARACTER SET " &
                                CT.USS (conn.character_set);

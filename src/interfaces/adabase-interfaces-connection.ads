@@ -79,10 +79,10 @@ package AdaBase.Interfaces.Connection is
                                         return AffectedRows is abstract;
 
    --  Commands
-   procedure commit       (conn : iConnection) is null;
-   procedure rollback     (conn : iConnection) is null;
+   procedure commit       (conn : out iConnection) is null;
+   procedure rollback     (conn : out iConnection) is null;
    procedure disconnect   (conn : out iConnection) is null;
-   procedure execute      (conn : iConnection; sql : String) is null;
+   procedure execute      (conn : out iConnection; sql : String) is null;
 
    procedure connect (conn     : out iConnection;
                       database : String;
