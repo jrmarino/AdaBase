@@ -52,12 +52,12 @@ project AdaBase is
    case Driver_SQLite is
       when "no"  => null;
       when "yes" => SQLite_List := ("adabase-bindings-sqlite.ads",
-                                   "adabase-connection-base-sqlite.ads",
-                                   "adabase-connection-base-sqlite.adb",
-                                   "adabase-driver-base-sqlite.ads",
-                                   "adabase-driver-base-sqlite.adb",
-                                   "adabase-statement-base-sqlite.ads",
-                                   "adabase-statement-base-sqlite.adb");
+                                    "adabase-connection-base-sqlite.ads",
+                                    "adabase-connection-base-sqlite.adb",
+                                    "adabase-driver-base-sqlite.ads",
+                                    "adabase-driver-base-sqlite.adb",
+                                    "adabase-statement-base-sqlite.ads",
+                                    "adabase-statement-base-sqlite.adb");
    end case;
 
    Base_List := ("adabase.ads",
