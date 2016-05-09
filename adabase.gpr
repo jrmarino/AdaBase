@@ -1,21 +1,108 @@
 project AdaBase is
 
-   type Os_Type is
-      ("unix", "windows");
-   Os_Version : Os_Type := external ("OS_VERSION", "windows");
+   type Os_Type is ("unix", "windows");
+   type Driver_Included is ("yes", "no");
+
+   Os_Version    : Os_Type         := external ("OS_VERSION", "unix");
+   Driver_MySQL  : Driver_Included := external ("MYSQL", "yes");
+   Driver_PgSQL  : Driver_Included := external ("POSTGRESQL", "no");
+   Driver_FBird  : Driver_Included := external ("FIREBIRD", "no");
+   Driver_SQLite : Driver_Included := external ("SQLITE", "no");
+
    for Source_Dirs use ("src/**");
    for Object_Dir use "obj";
    for Library_Name use "adabase";
    for Library_Kind use "static";
 
-   for Source_Files use ("adabase-bindings-mysql.ads", "adabase-bindings.ads", "adabase-connection-base-mysql.adb", "adabase-connection-base-mysql.ads", "adabase-connection-base.adb", "adabase-connection-base.ads",
-            "adabase-connection.ads", "adabase-driver-base-mysql.adb", "adabase-driver-base-mysql.ads", "adabase-driver-base.adb", "adabase-driver-base.ads", "adabase-driver.ads", "adabase-interfaces-connection.ads",
-            "adabase-interfaces-driver.ads", "adabase-interfaces-logger.ads", "adabase-interfaces-statement.ads", "adabase-interfaces.ads", "adabase-logger-base-file.adb", "adabase-logger-base-file.ads",
-            "adabase-logger-base-screen.adb", "adabase-logger-base-screen.ads", "adabase-logger-base.adb", "adabase-logger-base.ads", "adabase-logger-facility.adb", "adabase-logger-facility.ads", "adabase-logger.ads",
-            "adabase-results-converters.adb", "adabase-results-converters.ads", "adabase-results-field.adb", "adabase-results-field.ads", "adabase-results-generic_converters.adb",
-            "adabase-results-generic_converters.ads", "adabase-results-sets.adb", "adabase-results-sets.ads", "adabase-results.ads", "adabase-statement-base-mysql.adb", "adabase-statement-base-mysql.ads",
-            "commontext.ads", "commontext.adb",
-            "adabase-statement-base.adb", "adabase-statement-base.ads", "adabase-statement.ads", "adabase.ads");
+   MySQL_List  := ();
+   PgSQL_List  := ();
+   FBird_List  := ();
+   SQLite_List := ();
+
+   case Driver_MySQL is
+      when "no"  => null;
+      when "yes" => MySQL_List := ("adabase-bindings-mysql.ads",
+                                   "adabase-connection-base-mysql.ads",
+                                   "adabase-connection-base-mysql.adb",
+                                   "adabase-driver-base-mysql.ads",
+                                   "adabase-driver-base-mysql.adb",
+                                   "adabase-statement-base-mysql.ads",
+                                   "adabase-statement-base-mysql.adb");
+   end case;
+   case Driver_PgSQL is
+      when "no"  => null;
+      when "yes" => PgSQL_List := ("adabase-bindings-pgsql.ads",
+                                   "adabase-connection-base-pgsql.ads",
+                                   "adabase-connection-base-pgsql.adb",
+                                   "adabase-driver-base-pgsql.ads",
+                                   "adabase-driver-base-pgsql.adb",
+                                   "adabase-statement-base-pgsql.ads",
+                                   "adabase-statement-base-pgsql.adb");
+   end case;
+   case Driver_FBird is
+      when "no"  => null;
+      when "yes" => FBird_List := ("adabase-bindings-firebird.ads",
+                                   "adabase-connection-base-firebird.ads",
+                                   "adabase-connection-base-firebird.adb",
+                                   "adabase-driver-base-firebird.ads",
+                                   "adabase-driver-base-firebird.adb",
+                                   "adabase-statement-base-firebird.ads",
+                                   "adabase-statement-base-firebird.adb");
+   end case;
+   case Driver_SQLite is
+      when "no"  => null;
+      when "yes" => SQLite_List := ("adabase-bindings-sqlite.ads",
+                                   "adabase-connection-base-sqlite.ads",
+                                   "adabase-connection-base-sqlite.adb",
+                                   "adabase-driver-base-sqlite.ads",
+                                   "adabase-driver-base-sqlite.adb",
+                                   "adabase-statement-base-sqlite.ads",
+                                   "adabase-statement-base-sqlite.adb");
+   end case;
+
+   Base_List := ("adabase.ads",
+                 "adabase-bindings.ads",
+                 "adabase-connection.ads",
+                 "adabase-connection-base.ads",
+                 "adabase-connection-base.adb",
+                 "adabase-driver.ads",
+                 "adabase-driver-base.ads",
+                 "adabase-driver-base.adb",
+                 "adabase-interfaces.ads",
+                 "adabase-interfaces-connection.ads",
+                 "adabase-interfaces-driver.ads",
+                 "adabase-interfaces-logger.ads",
+                 "adabase-interfaces-statement.ads",
+                 "adabase-logger.ads",
+                 "adabase-logger-base-file.ads",
+                 "adabase-logger-base-file.adb",
+                 "adabase-logger-base-screen.ads",
+                 "adabase-logger-base-screen.adb",
+                 "adabase-logger-base.ads",
+                 "adabase-logger-base.adb",
+                 "adabase-logger-facility.ads",
+                 "adabase-logger-facility.adb",
+                 "adabase-results.ads",
+                 "adabase-results-converters.ads",
+                 "adabase-results-converters.adb",
+                 "adabase-results-field.ads",
+                 "adabase-results-field.adb",
+                 "adabase-results-generic_converters.ads",
+                 "adabase-results-generic_converters.adb",
+                 "adabase-results-sets.ads",
+                 "adabase-results-sets.adb",
+                 "adabase-statement.ads",
+                 "adabase-statement-base.ads",
+                 "adabase-statement-base.adb",
+                 "commontext.ads",
+                 "commontext.adb");
+
+   for Source_Files use Base_list &
+                        MySQL_list &
+                        PgSQL_List &
+                        FBird_List &
+                        SQLite_List;
+
    for Library_Dir use "lib";
    for Library_Ali_Dir use "lib";
    for Library_Version use "1.0";
