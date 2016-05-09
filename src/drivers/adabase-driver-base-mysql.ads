@@ -52,16 +52,16 @@ package AdaBase.Driver.Base.MySQL is
    overriding
    procedure basic_connect (driver   : out MySQL_Driver;
                             database : String;
-                            username : String;
-                            password : String;
-                            socket   : String);
+                            username : String := blankstring;
+                            password : String := blankstring;
+                            socket   : String := blankstring);
 
    overriding
    procedure basic_connect (driver   : out MySQL_Driver;
                             database : String;
-                            username : String;
-                            password : String;
-                            hostname : String;
+                            username : String := blankstring;
+                            password : String := blankstring;
+                            hostname : String := blankstring;
                             port     : PosixPort);
 
    function query          (driver     : MySQL_Driver;

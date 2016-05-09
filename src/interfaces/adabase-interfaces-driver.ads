@@ -123,15 +123,15 @@ package AdaBase.Interfaces.Driver is
 
    procedure basic_connect (driver   : out iDriver;
                             database : String;
-                            username : String;
-                            password : String;
-                            socket   : String) is null;
+                            username : String := blankstring;
+                            password : String := blankstring;
+                            socket   : String := blankstring) is null;
 
    procedure basic_connect (driver   : out iDriver;
                             database : String;
-                            username : String;
-                            password : String;
-                            hostname : String;
+                            username : String := blankstring;
+                            password : String := blankstring;
+                            hostname : String := blankstring;
                             port     : PosixPort) is null;
 
 end AdaBase.Interfaces.Driver;

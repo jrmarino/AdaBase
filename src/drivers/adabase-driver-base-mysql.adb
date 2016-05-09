@@ -349,9 +349,9 @@ package body AdaBase.Driver.Base.MySQL is
    overriding
    procedure basic_connect (driver   : out MySQL_Driver;
                             database : String;
-                            username : String;
-                            password : String;
-                            socket   : String)
+                            username : String := blankstring;
+                            password : String := blankstring;
+                            socket   : String := blankstring)
    is
    begin
       driver.private_connect (database => database,
@@ -367,9 +367,9 @@ package body AdaBase.Driver.Base.MySQL is
    overriding
    procedure basic_connect (driver   : out MySQL_Driver;
                             database : String;
-                            username : String;
-                            password : String;
-                            hostname : String;
+                            username : String := blankstring;
+                            password : String := blankstring;
+                            hostname : String := blankstring;
                             port     : PosixPort)
    is
    begin
