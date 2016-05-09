@@ -2,8 +2,12 @@
 --  Reference: ../License.txt
 
 with Ada.Strings.Fixed;
+with Ada.Strings.UTF_Encoding.Strings;
 
 package body CommonText is
+
+   package AS  renames Ada.Strings;
+   package UES renames Ada.Strings.UTF_Encoding.Strings;
 
    -----------
    --  USS  --
@@ -22,6 +26,23 @@ package body CommonText is
       return SU.To_Unbounded_String (S);
    end SUS;
 
+
+   -------------
+   --  UTF8S  --
+   -------------
+   function UTF8S (S8 : UTF8) return String is
+   begin
+      return UES.Decode (S8);
+   end UTF8S;
+
+
+   -------------
+   --  SUTF8  --
+   -------------
+   function SUTF8 (S : String) return UTF8 is
+   begin
+      return UES.Encode (S);
+   end SUTF8;
 
    -----------------
    --  IsBlank #1 --
@@ -120,25 +141,6 @@ package body CommonText is
    begin
       return SUS (bool2str (A));
    end bool2text;
-
-
-   ----------------
-   --  nextline  --
-   ----------------
-   procedure nextline (lineblock, firstline : out Text)
-   is
-      CR_loc : Natural;
-      CR : constant String (1 .. 1) := (1 => Character'Val (10));
-   begin
-      CR_loc := SU.Index (Source => lineblock, Pattern => CR);
-      if CR_loc = 0 then
-         firstline := lineblock;
-         return;
-      end if;
-      firstline := SUS (SU.Slice
-                        (Source => lineblock, Low => 1, High => CR_loc - 1));
-      SU.Delete (Source => lineblock, From => 1, Through => CR_loc);
-   end nextline;
 
 
    --------------------
