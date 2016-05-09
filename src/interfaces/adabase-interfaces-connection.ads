@@ -86,8 +86,8 @@ package AdaBase.Interfaces.Connection is
 
    procedure connect (conn     : out iConnection;
                       database : String;
-                      username : String;
-                      password : String;
+                      username : String := blankstring;
+                      password : String := blankstring;
                       hostname : String := blankstring;
                       socket   : String := blankstring;
                       port     : PosixPort := portless) is null;

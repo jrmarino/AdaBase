@@ -5,3 +5,4 @@ gnatinspect.db
 src/killme.adb
 docs/dont-sync
 Makefile
+private_adabase.gpr

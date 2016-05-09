@@ -74,8 +74,8 @@ package AdaBase.Connection.Base.MySQL is
    overriding
    procedure connect      (conn     : out MySQL_Connection;
                            database : String;
-                           username : String;
-                           password : String;
+                           username : String := blankstring;
+                           password : String := blankstring;
                            hostname : String := blankstring;
                            socket   : String := blankstring;
                            port     : PosixPort := portless);
