@@ -26,7 +26,7 @@ by an exception which cannot be ignored.</p>
 if you set one, it's not necessary to set the other (the socket takes
 priority if both are set).  The only required entry is the database name
 (which is a file location for SQLite), although most entries are required
-for drivers that interact with true servers.
+for drivers that interact with true servers.</p>
 <pre class="code">
 --  Used for all testcases for MySQL driver
 --  DR is a variable of type AdaBase.Driver.Base.MySQL.MySQL_Driver
