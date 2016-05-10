@@ -165,6 +165,12 @@ package AdaBase.Bindings.SQLite is
                               return IC.int;
    pragma Import (C, sqlite3_finalize);
 
+   function sqlite3_libversion return ICS.chars_ptr;
+   pragma Import (C, sqlite3_libversion);
+
+   function sqlite3_sourceid return ICS.chars_ptr;
+   pragma Import (C, sqlite3_sourceid);
+
 private
 
    type sqlite3      is limited null record;

@@ -80,6 +80,10 @@ package AdaBase.Connection.Base.SQLite is
    function rows_affected_by_execution (conn : SQLite_Connection)
                                         return AffectedRows;
 
+   overriding
+   procedure setTransactionIsolation (conn : out SQLite_Connection;
+                                      isolation : TransIsolation);
+
    ------------------------------------------------
    --  SUBROUTINES PARTICULARE TO SQLITE DRIVER  --
    ------------------------------------------------
@@ -94,6 +98,7 @@ package AdaBase.Connection.Base.SQLite is
    DISCONNECT_FAILED     : exception;
    CONNECT_FAILED        : exception;
    AUTOCOMMIT_FAIL       : exception;
+   TRAXISOL_FAIL         : exception;
    QUERY_FAIL            : exception;
 
 private

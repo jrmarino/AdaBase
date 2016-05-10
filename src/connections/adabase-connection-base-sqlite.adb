@@ -322,7 +322,70 @@ package body AdaBase.Connection.Base.SQLite is
       if result /= BND.SQLITE_OK then
          raise CONNECT_FAILED;
       end if;
+
+      conn.prop_active := True;
+      conn.info_server := CT.SUS ("Not applicable");
+      conn.info_server_version := conn.info_server;
+
+      declare
+         result : BND.ICS.chars_ptr := BND.sqlite3_sourceid;
+      begin
+         conn.info_client := CT.SUS (BND.ICS.Value (Item => result));
+      end;
+
+      declare
+         result : BND.ICS.chars_ptr := BND.sqlite3_libversion;
+      begin
+         conn.info_client := CT.SUS (BND.ICS.Value (Item => result));
+      end;
+
+      conn.setTransactionIsolation (conn.prop_trax_isolation);
+
+   exception
+      when NOT_WHILE_CONNECTED =>
+         raise NOT_WHILE_CONNECTED with
+           "Reconnection attempted during an active connection";
+      when CONNECT_FAILED =>
+         conn.disconnect;
+         raise CONNECT_FAILED with "Failed to connect to " & database;
+      when rest : others =>
+         conn.disconnect;
+         EX.Reraise_Occurrence (rest);
    end connect;
 
+
+   -------------------------------
+   --  setTransactionIsolation  --
+   -------------------------------
+   overriding
+   procedure setTransactionIsolation (conn : out SQLite_Connection;
+                                      isolation : TransIsolation)
+   is
+      sql : constant String := "PRAGMA read_uncommitted = ";
+      TL  : constant String := "Transaction Level ";
+   begin
+      if not conn.prop_active then
+         raise TRAXISOL_FAIL with "database not connected";
+      end if;
+
+      case isolation is
+         when read_committed | repeatable_read =>
+            raise UNSUPPORTED_BY_SQLITE with TL & isolation'Img;
+         when serializable =>
+            begin
+               conn.execute (sql & "False");
+            exception
+               when others =>
+                  raise TRAXISOL_FAIL with TL & isolation'Img;
+            end;
+         when read_uncommitted =>
+            begin
+               conn.execute (sql & "True");
+            exception
+               when others =>
+                  raise TRAXISOL_FAIL with TL & isolation'Img;
+            end;
+      end case;
+   end setTransactionIsolation;
 
 end AdaBase.Connection.Base.SQLite;
