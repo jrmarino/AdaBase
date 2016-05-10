@@ -116,6 +116,8 @@ private
 
    procedure begin_transaction (conn : out SQLite_Connection);
 
+   procedure Initialize (conn : in out SQLite_Connection);
+
    overriding
    procedure finalize (conn : in out SQLite_Connection);
 

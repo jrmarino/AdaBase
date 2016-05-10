@@ -231,6 +231,16 @@ package body AdaBase.Connection.Base.SQLite is
    end commit;
 
 
+   ------------------
+   --  Initialize  --
+   ------------------
+   overriding
+   procedure Initialize (conn : in out SQLite_Connection) is
+   begin
+      conn.prop_trax_isolation := serializable;
+   end Initialize;
+
+
    ----------------
    --  finalize  --
    ----------------
