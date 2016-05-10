@@ -6,3 +6,4 @@ attic/
 src/
 testcases/
 Makefile
+private_adabase.gpr

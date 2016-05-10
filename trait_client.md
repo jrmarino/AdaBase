@@ -91,6 +91,25 @@ server version: 5.06.27
 </pre>
 <p class="caption">Output using MySQL Driver</p>
 <br/>
+<pre class="output">
+   client info: 2016-04-08 15:09:49 fe7d3b75fe1bde41511b323925af8ae1b910bc4d
+client version: 3.12.1
+   server info: Not applicable
+server version: Not applicable
+        driver: SQLite3 native driver
+
+    autocommit: FALSE
+   column case: NATURAL_CASE
+    error_mode: WARNING
+     blob_size:  4096
+
+    autocommit: TRUE
+   column case: UPPER_CASE
+    error_mode: SILENT
+     blob_size:  65536
+</pre>
+<p class="caption">Output using SQlite Driver</p>
+<br/>
 <p>{{ page.supported_drivers }}</p>
 </div>
 <div class="sidenav">
