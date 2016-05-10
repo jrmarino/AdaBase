@@ -225,6 +225,12 @@ package body AdaBase.Driver.Base.MySQL is
       vanilla : String := assembly_common_select
         (distinct, tables, columns, conditions, groupby, having, order);
    begin
+      if null_sort /= native then
+         driver.log_nominal
+           (category => execution,
+            message => CT.SUS ("Note that NULLS FIRST/LAST is not " &
+                "supported by MySQL so the null_sort setting is ignored"));
+      end if;
       if limit > 0 then
          if offset > 0 then
             return driver.private_query (vanilla &
@@ -474,14 +480,14 @@ package body AdaBase.Driver.Base.MySQL is
             when RES : others =>
                --  Fatal attempt to create a direct statement
                driver.log_problem
-                 (category   => statement_preparation,
+                 (category   => execution,
                   message    => CT.SUS (EX.Exception_Message (RES)),
                   pull_codes => True,
                   break      => True);
          end;
       else
          --  Fatal attempt to query an unconnected database
-         driver.log_problem (category => statement_preparation,
+         driver.log_problem (category => execution,
                              message  => err1,
                              break    => True);
       end if;
@@ -525,7 +531,7 @@ package body AdaBase.Driver.Base.MySQL is
          end;
       else
          --  Fatal attempt to query an unconnected database
-         driver.log_problem (category => execution,
+         driver.log_problem (category => statement_preparation,
                              message  => err1,
                              break    => True);
       end if;

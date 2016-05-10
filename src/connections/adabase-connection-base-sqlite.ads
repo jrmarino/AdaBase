@@ -102,6 +102,7 @@ package AdaBase.Connection.Base.SQLite is
    ROLLBACK_FAIL         : exception;
    COMMIT_FAIL           : exception;
    QUERY_FAIL            : exception;
+   STMT_NOT_VALID        : exception;
 
 private
 

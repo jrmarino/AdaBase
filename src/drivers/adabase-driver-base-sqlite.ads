@@ -53,40 +53,39 @@ package AdaBase.Driver.Base.SQLite is
                             hostname : String := blankstring;
                             port     : PosixPort);
 
---     function query          (driver     : SQLite_Driver;
---                              sql        : String)
---                              return ASM.MySQL_statement;
---
---     function prepare        (driver     : SQLite_Driver;
---                              sql        : String)
---                              return ASM.MySQL_statement;
+   function query          (driver     : SQLite_Driver;
+                            sql        : String)
+                            return ASS.SQLite_statement;
 
---     function query_select   (driver     : SQLite_Driver;
---                              distinct   : Boolean := False;
---                              tables     : String;
---                              columns    : String;
---                              conditions : String := blankstring;
---                              groupby    : String := blankstring;
---                              having     : String := blankstring;
---                              order      : String := blankstring;
---                              null_sort  : NullPriority := native;
---                              limit      : TraxID := 0;
---                              offset     : TraxID := 0)
---                              return ASM.MySQL_statement;
---
---     function prepare_select (driver     : SQLite_Driver;
---                              distinct   : Boolean := False;
---                              tables     : String;
---                              columns    : String;
---                              conditions : String := blankstring;
---                              groupby    : String := blankstring;
---                              having     : String := blankstring;
---                              order      : String := blankstring;
---                              null_sort  : NullPriority := native;
---                              limit      : TraxID := 0;
---                              offset     : TraxID := 0)
---                              return ASM.MySQL_statement;
+   function prepare        (driver     : SQLite_Driver;
+                            sql        : String)
+                            return ASS.SQLite_statement;
 
+   function query_select   (driver     : SQLite_Driver;
+                            distinct   : Boolean := False;
+                            tables     : String;
+                            columns    : String;
+                            conditions : String := blankstring;
+                            groupby    : String := blankstring;
+                            having     : String := blankstring;
+                            order      : String := blankstring;
+                            null_sort  : NullPriority := native;
+                            limit      : TraxID := 0;
+                            offset     : TraxID := 0)
+                            return ASS.SQLite_statement;
+
+   function prepare_select (driver     : SQLite_Driver;
+                            distinct   : Boolean := False;
+                            tables     : String;
+                            columns    : String;
+                            conditions : String := blankstring;
+                            groupby    : String := blankstring;
+                            having     : String := blankstring;
+                            order      : String := blankstring;
+                            null_sort  : NullPriority := native;
+                            limit      : TraxID := 0;
+                            offset     : TraxID := 0)
+                            return ASS.SQLite_statement;
 private
 
    backend : aliased ACS.SQLite_Connection;
@@ -105,11 +104,10 @@ private
                               socket   : String    := blankstring;
                               port     : PosixPort := portless);
 
---     function private_query   (driver : SQLite_Driver; sql : String)
---                               return ASM.MySQL_statement;
---
---     function private_prepare (driver : SQLite_Driver; sql : String)
---                               return ASM.MySQL_statement;
+   function private_statement (driver   : SQLite_Driver;
+                               sql      : String;
+                               prepared : Boolean)
+                               return ASS.SQLite_statement;
 
    overriding
    procedure initialize (Object : in out SQLite_Driver);

@@ -26,31 +26,65 @@ package body AdaBase.Statement.Base.SQLite is
    -------------------
    --  log_problem  --
    -------------------
---     procedure log_problem
---       (statement  : SQLite_statement;
---        category   : LogCategory;
---        message    : String;
---        pull_codes : Boolean := False;
---        break      : Boolean := False)
---     is
---        error_msg  : CT.Text     := CT.blank;
---        error_code : DriverCodes := 0;
---        sqlstate   : TSqlState   := stateless;
---     begin
---        if pull_codes then
---           error_msg  := CT.SUS (statement.last_driver_message);
---           error_code := statement.last_driver_code;
---           sqlstate   := statement.last_sql_state;
---        end if;
---
---        logger_access.all.log_problem
---            (driver     => statement.dialect,
---             category   => category,
---             message    => CT.SUS (message),
---             error_msg  => error_msg,
---             error_code => error_code,
---             sqlstate   => sqlstate,
---             break      => break);
---     end log_problem;
+   procedure log_problem
+     (statement  : SQLite_statement;
+      category   : LogCategory;
+      message    : String;
+      pull_codes : Boolean := False;
+      break      : Boolean := False)
+   is
+      error_msg  : CT.Text     := CT.blank;
+      error_code : DriverCodes := 0;
+      sqlstate   : TSqlState   := stateless;
+   begin
+      if pull_codes then
+         error_msg  := CT.SUS (statement.last_driver_message);
+         error_code := statement.last_driver_code;
+         sqlstate   := statement.last_sql_state;
+      end if;
+
+      logger_access.all.log_problem
+          (driver     => statement.dialect,
+           category   => category,
+           message    => CT.SUS (message),
+           error_msg  => error_msg,
+           error_code => error_code,
+           sqlstate   => sqlstate,
+           break      => break);
+   end log_problem;
+
+
+   -------------------
+   --  column_name  --
+   -------------------
+   overriding
+   function column_name (Stmt : SQLite_statement; index : Positive)
+                         return String
+   is
+      maxlen : constant Natural := Natural (Stmt.column_info.Length);
+   begin
+      if index > maxlen then
+         raise INVALID_COLUMN_INDEX with "Max index is" & maxlen'Img &
+           " but" & index'Img & " attempted";
+      end if;
+      return CT.USS (Stmt.column_info.Element (Index => index).field_name);
+   end column_name;
+
+
+   --------------------
+   --  column_table  --
+   --------------------
+   overriding
+   function column_table (Stmt : SQLite_statement; index : Positive)
+                          return String
+   is
+      maxlen : constant Natural := Natural (Stmt.column_info.Length);
+   begin
+      if index > maxlen then
+         raise INVALID_COLUMN_INDEX with "Max index is" & maxlen'Img &
+           " but" & index'Img & " attempted";
+      end if;
+      return CT.USS (Stmt.column_info.Element (Index => index).table);
+   end column_table;
 
 end AdaBase.Statement.Base.SQLite;

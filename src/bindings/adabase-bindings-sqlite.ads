@@ -145,15 +145,13 @@ package AdaBase.Bindings.SQLite is
                           return IC.int;
    pragma Import (C, sqlite3_open);
 
---     function sqlite3_prepare16_v2
---      (db     : sqlite3_Access;
---       zSql   : Matreshka.Internals.Utf16.Utf16_String;
---       nByte  : IC.int;
---       ppStmt : not null access sqlite3_stmt_Access;
---       pzTail :
---         not null access Matreshka.Internals.Strings.C.Utf16_Code_Unit_Access)
---         return IC.int;
---     pragma Import (C, sqlite3_prepare16_v2);
+   function sqlite3_prepare_v2 (db     : not null sqlite3_Access;
+                                zSql   : ICS.chars_ptr;
+                                nByte  : IC.int;
+                                ppStmt : not null access sqlite3_stmt_Access;
+                                pzTail : not null access ICS.chars_ptr)
+                                return IC.int;
+   pragma Import (C, sqlite3_prepare_v2);
 
    function sqlite3_reset (pStmt : not null sqlite3_stmt_Access) return IC.int;
    pragma Import (C, sqlite3_reset);

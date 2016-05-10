@@ -171,6 +171,110 @@ package body AdaBase.Driver.Base.SQLite is
 
 
    ------------------------------------------------------------------------
+   --  ROUTINES OF ALL DRIVERS NOT COVERED BY INTERFACES (TECH REASON)   --
+   ------------------------------------------------------------------------
+
+
+   -------------
+   --  query  --
+   -------------
+   function query (driver : SQLite_Driver; sql : String)
+                   return ASS.SQLite_statement is
+   begin
+      return driver.private_statement (sql => sql, prepared => False);
+   end query;
+
+
+   ---------------
+   --  prepare  --
+   ---------------
+   function prepare (driver : SQLite_Driver; sql : String)
+                     return ASS.SQLite_statement is
+   begin
+      return driver.private_statement (sql => sql, prepared => True);
+   end prepare;
+
+
+   --------------------
+   --  query_select  --
+   --------------------
+   function query_select (driver      : SQLite_Driver;
+                          distinct    : Boolean := False;
+                          tables      : String;
+                          columns     : String;
+                          conditions  : String := blankstring;
+                          groupby     : String := blankstring;
+                          having      : String := blankstring;
+                          order       : String := blankstring;
+                          null_sort   : NullPriority := native;
+                          limit       : TraxID := 0;
+                          offset      : TraxID := 0)
+                          return ASS.SQLite_statement
+   is
+      vanilla : String := assembly_common_select
+        (distinct, tables, columns, conditions, groupby, having, order);
+   begin
+      if null_sort /= native then
+         driver.log_nominal
+           (category => execution,
+            message => CT.SUS ("Note that NULLS FIRST/LAST is not " &
+                "supported by MySQL so the null_sort setting is ignored"));
+      end if;
+      if limit > 0 then
+         if offset > 0 then
+            return driver.private_statement (vanilla &
+                                               " LIMIT" & limit'Img &
+                                               " OFFSET" & offset'Img,
+                                             False);
+         else
+            return driver.private_statement (vanilla & " LIMIT" & limit'Img,
+                                         False);
+         end if;
+      end if;
+      return driver.private_statement (vanilla, False);
+   end query_select;
+
+
+   ----------------------
+   --  prepare_select  --
+   ----------------------
+   function prepare_select (driver      : SQLite_Driver;
+                            distinct    : Boolean := False;
+                            tables      : String;
+                            columns     : String;
+                            conditions  : String := blankstring;
+                            groupby     : String := blankstring;
+                            having      : String := blankstring;
+                            order       : String := blankstring;
+                            null_sort   : NullPriority := native;
+                            limit       : TraxID := 0;
+                            offset      : TraxID := 0)
+                            return ASS.SQLite_statement
+   is
+      vanilla : String := assembly_common_select
+        (distinct, tables, columns, conditions, groupby, having, order);
+   begin
+      if null_sort /= native then
+         driver.log_nominal
+           (category => execution,
+            message => CT.SUS ("Note that NULLS FIRST/LAST is not " &
+                "supported by MySQL so the null_sort setting is ignored"));
+      end if;
+      if limit > 0 then
+         if offset > 0 then
+            return driver.private_statement (vanilla &
+                                               " LIMIT" & limit'Img &
+                                               " OFFSET" & offset'Img,
+                                             True);
+         else
+            return driver.private_statement (vanilla & " LIMIT" & limit'Img,
+                                             True);
+         end if;
+      end if;
+      return driver.private_statement (vanilla, True);
+   end prepare_select;
+
+   ------------------------------------------------------------------------
    --  PUBLIC ROUTINES NOT COVERED BY INTERFACES                         --
    ------------------------------------------------------------------------
 
@@ -267,5 +371,68 @@ package body AdaBase.Driver.Base.SQLite is
             break    => True,
             message  => CT.SUS (ACS.EX.Exception_Message (X => Error)));
    end private_connect;
+
+
+   -------------------------
+   --  private_statement  --
+   -------------------------
+   function private_statement (driver   : SQLite_Driver;
+                               sql      : String;
+                               prepared : Boolean)
+                               return ASS.SQLite_statement
+   is
+      stype  : AID.ASB.stmt_type := AID.ASB.direct_statement;
+      logcat : LogCategory       := execution;
+      err1   : constant CT.Text  :=
+               CT.SUS ("ACK! Query attempted on inactive connection");
+      duplicate : aliased String := sql;
+   begin
+      if prepared then
+         stype  := AID.ASB.prepared_statement;
+         logcat := statement_preparation;
+      end if;
+      if driver.connection_active then
+         declare
+            statement : ASS.SQLite_statement
+              (type_of_statement => stype,
+               log_handler       => logger'Access,
+               mysql_conn        => driver.local_connection,
+               initial_sql       => duplicate'Unchecked_Access,
+               con_error_mode    => driver.trait_error_mode,
+               con_case_mode     => driver.trait_column_case,
+               con_max_blob      => driver.trait_max_blob_size);
+         begin
+            if not prepared then
+               if statement.successful then
+                  driver.log_nominal
+                    (category => logcat,
+                     message => CT.SUS ("query succeeded," &
+                         statement.rows_returned'Img & " rows returned"));
+               else
+                  driver.log_nominal (category => execution,
+                                      message => CT.SUS ("Query failed!"));
+               end if;
+            end if;
+            return statement;
+         exception
+            when RES : others =>
+               --  Fatal attempt to prepare a statement
+               driver.log_problem
+                 (category   => logcat,
+                  message    => CT.SUS (ACS.EX.Exception_Message (RES)),
+                  pull_codes => True,
+                  break      => True);
+         end;
+      else
+         --  Fatal attempt to query an unconnected database
+         driver.log_problem (category => logcat,
+                             message  => err1,
+                             break    => True);
+      end if;
+      --  We never get here, the driver.log_problem throws exception first
+      raise ACS.STMT_NOT_VALID
+        with "failed to return MySQL statement";
+   end private_statement;
+
 
 end AdaBase.Driver.Base.SQLite;
