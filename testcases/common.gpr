@@ -33,7 +33,8 @@ project Common is
                when "postgresql" =>
                    null;
                when "sqlite" =>
-                   null;
+                  for Default_Switches ("ada") use ("-L/usr/local/lib",
+                     "-lsqlite3");
                when "firebird" =>
                    null;
             end case;
