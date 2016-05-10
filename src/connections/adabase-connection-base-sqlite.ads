@@ -99,6 +99,8 @@ package AdaBase.Connection.Base.SQLite is
    CONNECT_FAILED        : exception;
    AUTOCOMMIT_FAIL       : exception;
    TRAXISOL_FAIL         : exception;
+   ROLLBACK_FAIL         : exception;
+   COMMIT_FAIL           : exception;
    QUERY_FAIL            : exception;
 
 private
