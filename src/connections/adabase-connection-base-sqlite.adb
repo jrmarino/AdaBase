@@ -204,7 +204,7 @@ package body AdaBase.Connection.Base.SQLite is
    -------------------------
    procedure begin_transaction (conn : out SQLite_Connection) is
    begin
-      execute (conn, "BEGIN TRANSACTION");
+      conn.private_execute ("BEGIN TRANSACTION");
       conn.in_transaction := True;
    end begin_transaction;
 
@@ -215,7 +215,7 @@ package body AdaBase.Connection.Base.SQLite is
    overriding
    procedure rollback (conn : out SQLite_Connection) is
    begin
-      execute (conn, "ROLLBACK");
+      conn.private_execute ("ROLLBACK");
       conn.in_transaction := False;
    end rollback;
 
@@ -226,7 +226,7 @@ package body AdaBase.Connection.Base.SQLite is
    overriding
    procedure commit (conn : out SQLite_Connection) is
    begin
-      execute (conn, "COMMIT");
+      conn.private_execute ("COMMIT");
       conn.in_transaction := False;
    end commit;
 
