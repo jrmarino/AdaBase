@@ -77,6 +77,15 @@ Driver message: Unknown column 'caloriesx' in 'field list'
 </pre>
 <p class="caption">Output using MySQL Driver</p>
 <br/>
+<pre class="output">
+SQL: UPDATE fruits set caloriesx = 14 WHERE fruit = 'strawberry'
+Error!
+Driver message: no such column: caloriesx
+   Driver code:  1
+     SQL State: HY000
+</pre>
+<p class="caption">Output using SQLite Driver</p>
+<br/>
 <p class="caption">See {{ page.stmt_discard_rest }}
 for another usage example.</p>
 <br/>
