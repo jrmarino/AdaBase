@@ -90,8 +90,11 @@ package AdaBase.Connection.Base.SQLite is
    ------------------
 
    UNSUPPORTED_BY_SQLITE : exception;
+   NOT_WHILE_CONNECTED   : exception;
    DISCONNECT_FAILED     : exception;
+   CONNECT_FAILED        : exception;
    AUTOCOMMIT_FAIL       : exception;
+   QUERY_FAIL            : exception;
 
 private
 
@@ -99,7 +102,7 @@ private
      with record
       info_description : String (1 .. 20) := "SQLite native driver";
       in_transaction   : Boolean := False;
-      handle           : BND.sqlite3_Access := null;
+      handle           : aliased BND.sqlite3_Access := null;
    end record;
 
    function PUTF82S (cstr : BND.ICS.chars_ptr) return String;
@@ -116,11 +119,6 @@ private
 --
 --     type fetch_status is (success, truncated, spent, error);
 --
-
---
-
---
-
 --
 --     overriding
 --     procedure setTransactionIsolation (conn      : out SQLite_Connection;

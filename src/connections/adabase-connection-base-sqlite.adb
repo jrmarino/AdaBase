@@ -121,7 +121,7 @@ package body AdaBase.Connection.Base.SQLite is
    ---------------
    function PUTF82S (cstr : BND.ICS.chars_ptr) return String
    is
-      rawstr  : String := BND.ICS.Value (cstr);
+      rawstr : String := BND.ICS.Value (cstr);
    begin
       return CT.UTF8S (CT.UTF8 (rawstr));
    end PUTF82S;
@@ -133,7 +133,7 @@ package body AdaBase.Connection.Base.SQLite is
    overriding
    function driverMessage (conn : SQLite_Connection) return String
    is
-      result  : BND.ICS.chars_ptr := BND.sqlite3_errmsg (db => conn.handle);
+      result : BND.ICS.chars_ptr := BND.sqlite3_errmsg (db => conn.handle);
    begin
       return PUTF82S (result);
    end driverMessage;
@@ -279,8 +279,19 @@ package body AdaBase.Connection.Base.SQLite is
    -----------------------
    procedure private_execute (conn : SQLite_Connection; sql : String)
    is
+      use type BND.IC.int;
+      result : BND.IC.int;
+      query  : BND.ICS.chars_ptr := BND.ICS.New_String (Str => sql);
    begin
-      null;
+      result := BND.sqlite3_exec (db       => conn.handle,
+                                  sql      => query,
+                                  callback => BND.SYS.Null_Address,
+                                  firstarg => BND.SYS.Null_Address,
+                                  errmsg   => BND.SYS.Null_Address);
+      BND.ICS.Free (query);
+      if result /= BND.SQLITE_OK then
+         raise QUERY_FAIL;
+      end if;
    end private_execute;
 
 
@@ -296,8 +307,21 @@ package body AdaBase.Connection.Base.SQLite is
                            socket   : String := blankstring;
                            port     : PosixPort := portless)
    is
+      pragma Unreferenced (username, password, hostname, socket, port);
+      use type BND.IC.int;
+
+      dbname   : CT.UTF8 := CT.SUTF8 (database);
+      filename : BND.ICS.chars_ptr := BND.ICS.New_String (dbname);
+      result   : BND.IC.int;
    begin
-      null;
+      if conn.prop_active then
+         raise NOT_WHILE_CONNECTED;
+      end if;
+      result := BND.sqlite3_open (File_Name => filename,
+                                  Handle    => conn.handle'Access);
+      if result /= BND.SQLITE_OK then
+         raise CONNECT_FAILED;
+      end if;
    end connect;
 
 
