@@ -346,7 +346,7 @@ package body AdaBase.Connection.Base.SQLite is
       declare
          result : BND.ICS.chars_ptr := BND.sqlite3_libversion;
       begin
-         conn.info_client := CT.SUS (BND.ICS.Value (Item => result));
+         conn.info_client_version := CT.SUS (BND.ICS.Value (Item => result));
       end;
 
       conn.setTransactionIsolation (conn.prop_trax_isolation);
