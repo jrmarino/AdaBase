@@ -82,7 +82,7 @@ private
       sqlite_type   : BND.enum_field_types;
    end record;
 
-   type fetch_status is (pending, progressing, completed);
+   type step_result_type is (unset, data_pulled, progam_complete, error_seen);
 
    package VColumns is new AC.Vectors (Index_Type   => Positive,
                                        Element_Type => column_info);
@@ -97,7 +97,7 @@ private
    is new Base_Statement and AIS.iStatement with
       record
          stmt_handle    : aliased BND.sqlite3_stmt_Access := null;
-         delivery       : fetch_status     := completed;
+         step_result    : step_result_type := unset;
          virgin         : Boolean          := True;
          assign_counter : Natural          := 0;
          num_columns    : Natural          := 0;

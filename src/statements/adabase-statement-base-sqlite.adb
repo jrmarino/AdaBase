@@ -160,7 +160,6 @@ package body AdaBase.Statement.Base.SQLite is
       end if;
 
       Object.scan_column_information;
-      Object.delivery := progressing;
 
    exception
       when HELL : others =>
@@ -337,9 +336,9 @@ package body AdaBase.Statement.Base.SQLite is
    is
       conn : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
    begin
-      Stmt.rows_leftover := (Stmt.delivery /= completed);
+      Stmt.rows_leftover := (Stmt.step_result = data_pulled);
       conn.reset_prep_stmt (stmt => Stmt.stmt_handle);
-      Stmt.delivery := completed;
+      Stmt.step_result := unset;
    end discard_rest;
 
 
@@ -362,7 +361,8 @@ package body AdaBase.Statement.Base.SQLite is
 
       if not Stmt.virgin then
          conn.reset_prep_stmt (Stmt.stmt_handle);
-         Stmt.delivery := progressing;
+         Stmt.step_result := unset;
+         Stmt.virgin := False;
       end if;
 
       if num_markers > 0 then
@@ -372,9 +372,21 @@ package body AdaBase.Statement.Base.SQLite is
          --  No binding required, just execute the prepared statement
          Stmt.log_nominal (category => statement_execution,
                            message => "Exec without bound parameters");
-
-         Stmt.successful_execution := True;
       end if;
+
+      begin
+         if conn.prep_fetch_next (Stmt.stmt_handle) then
+            Stmt.step_result := data_pulled;
+         else
+            Stmt.step_result := progam_complete;
+            Stmt.size_of_rowset := conn.rows_affected_by_execution;
+         end if;
+         Stmt.successful_execution := True;
+      exception
+         when ACS.STMT_FETCH_FAIL =>
+            Stmt.step_result := error_seen;
+            status_successful := False;
+      end;
 
       return status_successful;
 
@@ -403,18 +415,14 @@ package body AdaBase.Statement.Base.SQLite is
    is
       conn   : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
    begin
-      if Stmt.delivery = completed then
+      if Stmt.step_result /= data_pulled then
          return ARS.Empty_DataRow;
       end if;
       declare
          maxlen : constant Natural := Natural (Stmt.column_info.Length);
          result : ARS.DataRow;
       begin
-         Stmt.virgin := False;
-         if not conn.prep_fetch_next (Stmt.stmt_handle) then
-            Stmt.delivery := completed;
-            return ARS.Empty_DataRow;
-         end if;
+
          for F in 1 .. maxlen loop
             declare
                field    : ARF.std_field;
@@ -464,6 +472,16 @@ package body AdaBase.Statement.Base.SQLite is
                             last_field => last_one);
             end;
          end loop;
+         begin
+            if conn.prep_fetch_next (Stmt.stmt_handle) then
+               Stmt.step_result := data_pulled;
+            else
+               Stmt.step_result := progam_complete;
+            end if;
+         exception
+            when ACS.STMT_FETCH_FAIL =>
+               Stmt.step_result := error_seen;
+         end;
          return result;
       end;
    end fetch_next;
@@ -492,7 +510,7 @@ package body AdaBase.Statement.Base.SQLite is
       type TRack is array (rack_range) of ARS.DataRow_Access;
       nullset      : ARS.DataRowSet (1 .. 0);
    begin
-      if Stmt.delivery = completed then
+      if Stmt.step_result /= data_pulled then
          return nullset;
       end if;
       --  With SQLite, we don't know many rows of data are fetched, ever.
