@@ -90,6 +90,19 @@ Query successful: TRUE
 </pre>
 <p class="caption">Output using MySQL Driver</p>
 <br/>
+<pre class="output">
+Query successful: FALSE
+  Driver message: no such table: froits
+     Driver code:  1
+       SQL State: HY000
+
+SQL now: SELECT fruit, calories FROM fruits WHERE color = 'red'
+Query successful: TRUE
+   Number fields: 2
+  Data discarded: TRUE
+</pre>
+<p class="caption">Output using SQLite Driver</p>
+<br/>
 <p>{{ page.supported_statements }}</p>
 </div>
 <div class="sidenav">
