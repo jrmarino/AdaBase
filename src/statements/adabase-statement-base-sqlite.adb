@@ -420,11 +420,12 @@ package body AdaBase.Statement.Base.SQLite is
             declare
                field    : ARF.std_field;
                dvariant : ARF.variant;
+               scol     : constant Natural := F - 1;
                last_one : constant Boolean := (F = maxlen);
                heading  : constant String := CT.USS
                           (Stmt.column_info.Element (Index => F).field_name);
                EN       : constant Boolean :=
-                          conn.field_is_null (Stmt.stmt_handle, F);
+                          conn.field_is_null (Stmt.stmt_handle, scol);
             begin
                case Stmt.column_info.Element (Index => F).field_type is
                   when ft_nbyte0  =>
@@ -433,15 +434,15 @@ package body AdaBase.Statement.Base.SQLite is
                   when ft_byte8   =>
                      dvariant :=
                        (datatype => ft_byte8,
-                        v10 => conn.retrieve_integer (Stmt.stmt_handle, F));
+                        v10 => conn.retrieve_integer (Stmt.stmt_handle, scol));
                   when ft_real18  =>
                      dvariant :=
                        (datatype => ft_real18,
-                        v12 => conn.retrieve_double (Stmt.stmt_handle, F));
+                        v12 => conn.retrieve_double (Stmt.stmt_handle, scol));
                   when ft_textual =>
                      dvariant :=
                        (datatype => ft_textual,
-                        v13 => conn.retrieve_text (Stmt.stmt_handle, F));
+                        v13 => conn.retrieve_text (Stmt.stmt_handle, scol));
                   when ft_chain   => null;
                   when others => raise INVALID_FOR_RESULT_SET
                        with "Impossible field type (internal bug??)";
@@ -452,7 +453,7 @@ package body AdaBase.Statement.Base.SQLite is
                        (binob => ARC.convert
                           (conn.retrieve_blob
                                (stmt  => Stmt.stmt_handle,
-                                index => F,
+                                index => scol,
                                 maxsz => Stmt.con_max_blob)));
                   when ft_nbyte0 | ft_byte8 | ft_real18 | ft_textual =>
                      field := ARF.spawn_field (data => dvariant,
