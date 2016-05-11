@@ -136,6 +136,7 @@ package body AdaBase.Statement.Base.SQLite is
       if Object.sqlite_conn.prepare_statement (stmt => Object.stmt_handle,
                                                sql  => Object.sql_final.all)
       then
+         Object.successful_execution := True;
          Object.log_nominal (category => logcat,
                              message  => Object.sql_final.all);
       else

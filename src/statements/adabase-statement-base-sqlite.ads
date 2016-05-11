@@ -99,7 +99,6 @@ private
          stmt_handle    : aliased BND.sqlite3_stmt_Access := null;
          delivery       : fetch_status     := completed;
          virgin         : Boolean          := True;
-         --  bind_canvas    : mysql_canvases_Access := null;
          assign_counter : Natural          := 0;
          num_columns    : Natural          := 0;
          size_of_rowset : TraxID           := 0;

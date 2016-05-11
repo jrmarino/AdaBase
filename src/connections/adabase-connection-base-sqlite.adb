@@ -2,11 +2,13 @@
 --  Reference: ../../License.txt
 
 with CommonText;
+with Ada.Characters.Handling;
 with Ada.Unchecked_Conversion;
 
 package body AdaBase.Connection.Base.SQLite is
 
-   package CT renames CommonText;
+   package CT  renames CommonText;
+   package ACH renames Ada.Characters.Handling;
 
    ---------------------
    --  setCompressed  --
@@ -536,15 +538,39 @@ package body AdaBase.Connection.Base.SQLite is
 
       nullable := (c_notnull = 0);
 
+      --  We have to mimic "affinity" handling. SQLite is dynamically typed
+      --  and AdaBase doesn't have this "numeric" concept.  Below is basically
+      --  the same logic as sqlite3AffinityType() in sqlite3.c with some
+      --  tweaks and additional types.
+
       declare
-         dtype : String := BND.ICS.Value (c_dtype);
+         raw : String := ACH.To_Upper (BND.ICS.Value (c_dtype));
+         pt1 : String := CT.part_1 (raw, "(");
+         typelen : constant Natural := pt1'Length;
+         dtype : String (1 .. typelen) := pt1;
       begin
-         if dtype = "INTEGER" then
+         if CT.contains (dtype, "INT") or else
+           dtype = "YEAR" or else
+           dtype = "BOOLEAN"
+         then
             data_type := BND.SQLITE_INTEGER;
-         elsif dtype = "FLOAT" then
-            data_type := BND.SQLITE_FLOAT;
-         elsif dtype = "BLOB" then
+         elsif
+           CT.contains (dtype, "BLOB") or else
+           CT.contains (dtype, "BINARY") or else
+           CT.contains (dtype, "BIT") or else
+           dtype = "IMAGE"
+         then
             data_type := BND.SQLITE_BLOB;
+         elsif
+           CT.contains (dtype, "REAL") or else
+           CT.contains (dtype, "FLOA") or else
+           CT.contains (dtype, "DOUB") or else
+           CT.contains (dtype, "MONEY") or else
+           dtype = "NUMBER" or else
+           dtype = "DECIMAL" or else
+           dtype = "NUMERIC"
+         then
+            data_type := BND.SQLITE_FLOAT;
          elsif dtype = "NULL" then
             data_type := BND.SQLITE_NULL;
          else
