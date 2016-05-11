@@ -167,7 +167,6 @@ package body AdaBase.Statement.Base.SQLite is
          Object.log_problem
            (category => statement_preparation,
             message  => ACS.EX.Exception_Message (HELL));
-         raise;
    end initialize;
 
 

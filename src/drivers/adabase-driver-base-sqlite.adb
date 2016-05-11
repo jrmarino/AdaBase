@@ -417,11 +417,9 @@ package body AdaBase.Driver.Base.SQLite is
          exception
             when RES : others =>
                --  Fatal attempt to prepare a statement
-               driver.log_problem
-                 (category   => logcat,
-                  message    => CT.SUS (ACS.EX.Exception_Message (RES)),
-                  pull_codes => True,
-                  break      => True);
+               --  Logged already by stmt initialization
+               --  Should be internally marked as unsuccessful
+               return statement;
          end;
       else
          --  Fatal attempt to query an unconnected database
