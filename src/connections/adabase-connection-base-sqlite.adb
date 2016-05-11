@@ -291,7 +291,8 @@ package body AdaBase.Connection.Base.SQLite is
    is
       use type BND.IC.int;
       result : BND.IC.int;
-      query  : BND.ICS.chars_ptr := BND.ICS.New_String (Str => sql);
+      sql8   : CT.UTF8 := CT.SUTF8 (sql);
+      query  : BND.ICS.chars_ptr := BND.ICS.New_String (Str => sql8);
    begin
       result := BND.sqlite3_exec (db       => conn.handle,
                                   sql      => query,
@@ -303,6 +304,30 @@ package body AdaBase.Connection.Base.SQLite is
          raise QUERY_FAIL;
       end if;
    end private_execute;
+
+
+   -------------------------
+   --  prepare_statement  --
+   -------------------------
+   function prepare_statement (conn : SQLite_Connection;
+                               stmt : aliased out BND.sqlite3_stmt_Access;
+                               sql  : String) return Boolean
+   is
+      use type BND.IC.int;
+      sql8   : CT.UTF8 := CT.SUTF8 (sql);
+      query  : BND.ICS.chars_ptr := BND.ICS.New_String (Str => sql8);
+      nbyte  : BND.IC.int := BND.IC.int (sql8'Length + 1);
+      result : BND.IC.int;
+      dummy  : aliased BND.ICS.chars_ptr;
+   begin
+      result := BND.sqlite3_prepare_v2 (db     => conn.handle,
+                                        zSql   => query,
+                                        nByte  => nbyte,
+                                        ppStmt => stmt'Access,
+                                        pzTail => dummy'Access);
+      BND.ICS.Free (query);
+      return (result = BND.SQLITE_OK);
+   end prepare_statement;
 
 
    ---------------
@@ -329,6 +354,7 @@ package body AdaBase.Connection.Base.SQLite is
       end if;
       result := BND.sqlite3_open (File_Name => filename,
                                   Handle    => conn.handle'Access);
+      BND.ICS.Free (filename);
       if result /= BND.SQLITE_OK then
          raise CONNECT_FAILED;
       end if;
@@ -397,5 +423,153 @@ package body AdaBase.Connection.Base.SQLite is
             end;
       end case;
    end setTransactionIsolation;
+
+
+   --------------------------
+   --  prep_markers_found  --
+   --------------------------
+   function prep_markers_found (conn : SQLite_Connection;
+                                stmt : BND.sqlite3_stmt_Access) return Natural
+   is
+      result : BND.IC.int := BND.sqlite3_bind_parameter_count (stmt);
+   begin
+      return Natural (result);
+   end prep_markers_found;
+
+
+   ------------------------
+   --  fields_in_result  --
+   ------------------------
+   function fields_in_result (conn : SQLite_Connection;
+                              stmt : BND.sqlite3_stmt_Access) return Natural
+   is
+      result : BND.IC.int := BND.sqlite3_column_count (stmt);
+   begin
+      return Natural (result);
+   end fields_in_result;
+
+
+   -------------------
+   --  field_table  --
+   -------------------
+   function field_table (conn  : SQLite_Connection;
+                              stmt  : BND.sqlite3_stmt_Access;
+                              index : Natural) return String
+   is
+      col : BND.IC.int := BND.IC.int (index);
+      res : BND.ICS.chars_ptr := BND.sqlite3_column_table_name (stmt, col);
+      str : constant String := CT.UTF8S (BND.ICS.Value (res));
+   begin
+      return str;
+   end field_table;
+
+
+   ------------------
+   --  field_name  --
+   ------------------
+   function field_name (conn  : SQLite_Connection;
+                        stmt  : BND.sqlite3_stmt_Access;
+                        index : Natural) return String
+   is
+      col : BND.IC.int := BND.IC.int (index);
+      res : BND.ICS.chars_ptr := BND.sqlite3_column_origin_name (stmt, col);
+      str : constant String := CT.UTF8S (BND.ICS.Value (res));
+   begin
+      return str;
+   end field_name;
+
+
+   ----------------------
+   --  field_database  --
+   ----------------------
+   function field_database (conn  : SQLite_Connection;
+                            stmt  : BND.sqlite3_stmt_Access;
+                            index : Natural) return String
+   is
+      col : BND.IC.int := BND.IC.int (index);
+      res : BND.ICS.chars_ptr := BND.sqlite3_column_database_name (stmt, col);
+      str : constant String := CT.UTF8S (BND.ICS.Value (res));
+   begin
+      return str;
+   end field_database;
+
+
+   ---------------------------
+   --  get_field_meta_data  --
+   ---------------------------
+   procedure get_field_meta_data (conn  : SQLite_Connection;
+                                  stmt  : BND.sqlite3_stmt_Access;
+                                  database  : String;
+                                  table     : String;
+                                  column    : String;
+                                  data_type : out BND.enum_field_types;
+                                  nullable  : out Boolean)
+   is
+      c_database : BND.ICS.chars_ptr := BND.ICS.New_String (database);
+      c_table    : BND.ICS.chars_ptr := BND.ICS.New_String (table);
+      c_column   : BND.ICS.chars_ptr := BND.ICS.New_String (column);
+      c_dtype    : aliased BND.ICS.chars_ptr;
+      c_collset  : aliased BND.ICS.chars_ptr;
+      c_notnull  : aliased BND.IC.int;
+      c_primekey : aliased BND.IC.int;
+      c_autoinc  : aliased BND.IC.int;
+      result     : BND.IC.int;
+
+      use type BND.IC.int;
+   begin
+
+      result := BND.sqlite3_table_column_metadata
+        (Handle   => conn.handle,
+         dbname   => c_database,
+         table    => c_table,
+         column   => c_column,
+         datatype => c_dtype'Access,
+         collseq  => c_collset'Access,
+         notnull  => c_notnull'Access,
+         primekey => c_primekey'Access,
+         autoinc  => c_autoinc'Access);
+
+      if result /= BND.SQLITE_OK then
+         raise METADATA_FAIL;
+      end if;
+
+      nullable := (c_notnull = 0);
+
+      declare
+         dtype : String := BND.ICS.Value (c_dtype);
+      begin
+         if dtype = "INTEGER" then
+            data_type := BND.SQLITE_INTEGER;
+         elsif dtype = "FLOAT" then
+            data_type := BND.SQLITE_FLOAT;
+         elsif dtype = "BLOB" then
+            data_type := BND.SQLITE_BLOB;
+         elsif dtype = "NULL" then
+            data_type := BND.SQLITE_NULL;
+         else
+            data_type := BND.SQLITE_TEXT;
+         end if;
+      end;
+      BND.ICS.Free (c_database);
+      BND.ICS.Free (c_table);
+      BND.ICS.Free (c_column);
+
+   end get_field_meta_data;
+
+
+   -----------------------
+   --  reset_prep_stmt  --
+   -----------------------
+   procedure reset_prep_stmt (conn  : SQLite_Connection;
+                              stmt  : BND.sqlite3_stmt_Access)
+   is
+      use type BND.IC.int;
+      result : BND.IC.int := BND.sqlite3_reset (stmt);
+   begin
+      if result /= BND.SQLITE_OK then
+         raise STMT_RESET_FAIL with "SQLite3 Reset error code" & result'Img;
+      end if;
+   end reset_prep_stmt;
+
 
 end AdaBase.Connection.Base.SQLite;

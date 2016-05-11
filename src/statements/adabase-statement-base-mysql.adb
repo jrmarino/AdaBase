@@ -28,6 +28,7 @@ package body AdaBase.Statement.Base.MySQL is
          if Stmt.result_handle /= null then
             Stmt.rows_leftover := True;
             Stmt.mysql_conn.free_result (Stmt.result_handle);
+            Stmt.clear_column_information;
          end if;
       when prepared_statement =>
          if Stmt.stmt_handle /= null then
@@ -35,7 +36,6 @@ package body AdaBase.Statement.Base.MySQL is
             Stmt.mysql_conn.prep_free_result (Stmt.stmt_handle);
          end if;
       end case;
-      Stmt.clear_column_information;
       Stmt.delivery := completed;
    end discard_rest;
 

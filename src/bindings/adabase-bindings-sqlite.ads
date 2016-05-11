@@ -42,11 +42,19 @@ package AdaBase.Bindings.SQLite is
    -- Constants --
    ---------------
 
-   SQLITE_INTEGER : constant := 1;
-   SQLITE_FLOAT   : constant := 2;
-   SQLITE_TEXT    : constant := 3;
-   SQLITE_BLOB    : constant := 4;
-   SQLITE_NULL    : constant := 5;
+   type enum_field_types is
+     (SQLITE_INTEGER,
+      SQLITE_FLOAT,
+      SQLITE_TEXT,
+      SQLITE_BLOB,
+      SQLITE_NULL);
+   pragma Convention (C, enum_field_types);
+   for enum_field_types use
+     (SQLITE_INTEGER => 1,
+      SQLITE_FLOAT   => 2,
+      SQLITE_TEXT    => 3,
+      SQLITE_BLOB    => 4,
+      SQLITE_NULL    => 5);
 
    SQLITE_OK      : constant :=   0;  --  Successful result
    SQLITE_ROW     : constant := 100;  --  sqlite3_step() has another row ready
@@ -79,10 +87,39 @@ package AdaBase.Bindings.SQLite is
      (Handle : not null sqlite3_stmt_Access) return IC.int;
    pragma Import (C, sqlite3_bind_parameter_count);
 
-   function sqlite3_bind_parameter_index
+   function sqlite3_column_count (Handle : not null sqlite3_stmt_Access)
+                                  return IC.int;
+   pragma Import (C, sqlite3_column_count);
+
+   function sqlite3_column_table_name (Handle : not null sqlite3_stmt_Access;
+                                       index  : IC.int) return ICS.chars_ptr;
+   pragma Import (C, sqlite3_column_table_name);
+
+   function sqlite3_column_origin_name (Handle : not null sqlite3_stmt_Access;
+                                        index  : IC.int) return ICS.chars_ptr;
+   pragma Import (C, sqlite3_column_origin_name);
+
+   function sqlite3_column_database_name
      (Handle : not null sqlite3_stmt_Access;
-      Name   : IC.char_array) return IC.int;
-   pragma Import (C, sqlite3_bind_parameter_index);
+      index  : IC.int) return ICS.chars_ptr;
+   pragma Import (C, sqlite3_column_database_name);
+
+   function sqlite3_table_column_metadata
+     (Handle : not null sqlite3_Access;
+      dbname : ICS.chars_ptr;
+      table  : ICS.chars_ptr;
+      column : ICS.chars_ptr;
+      datatype : access ICS.chars_ptr;
+      collseq  : access ICS.chars_ptr;
+      notnull  : access IC.int;
+      primekey : access IC.int;
+      autoinc  : access IC.int) return IC.int;
+   pragma Import (C, sqlite3_table_column_metadata);
+
+--     function sqlite3_bind_parameter_index
+--       (Handle : not null sqlite3_stmt_Access;
+--        Name   : IC.char_array) return IC.int;
+--     pragma Import (C, sqlite3_bind_parameter_index);
 
 --     function sqlite3_bind_text16
 --      (Handle     : sqlite3_stmt_Access;

@@ -84,9 +84,42 @@ package AdaBase.Connection.Base.SQLite is
    procedure setTransactionIsolation (conn : out SQLite_Connection;
                                       isolation : TransIsolation);
 
-   ------------------------------------------------
-   --  SUBROUTINES PARTICULARE TO SQLITE DRIVER  --
-   ------------------------------------------------
+   -----------------------------------------------
+   --  SUBROUTINES PARTICULAR TO SQLITE DRIVER  --
+   -----------------------------------------------
+
+   function prepare_statement (conn : SQLite_Connection;
+                               stmt : aliased out BND.sqlite3_stmt_Access;
+                               sql  : String) return Boolean;
+
+   function prep_markers_found (conn : SQLite_Connection;
+                                stmt : BND.sqlite3_stmt_Access) return Natural;
+
+   function fields_in_result (conn : SQLite_Connection;
+                              stmt : BND.sqlite3_stmt_Access) return Natural;
+
+   function field_database (conn  : SQLite_Connection;
+                            stmt  : BND.sqlite3_stmt_Access;
+                            index : Natural) return String;
+
+   function field_table    (conn  : SQLite_Connection;
+                            stmt  : BND.sqlite3_stmt_Access;
+                            index : Natural) return String;
+
+   function field_name     (conn  : SQLite_Connection;
+                            stmt  : BND.sqlite3_stmt_Access;
+                            index : Natural) return String;
+
+   procedure get_field_meta_data (conn  : SQLite_Connection;
+                                  stmt  : BND.sqlite3_stmt_Access;
+                                  database  : String;
+                                  table     : String;
+                                  column    : String;
+                                  data_type : out BND.enum_field_types;
+                                  nullable  : out Boolean);
+
+   procedure reset_prep_stmt (conn  : SQLite_Connection;
+                              stmt  : BND.sqlite3_stmt_Access);
 
 
    ------------------
@@ -102,7 +135,9 @@ package AdaBase.Connection.Base.SQLite is
    ROLLBACK_FAIL         : exception;
    COMMIT_FAIL           : exception;
    QUERY_FAIL            : exception;
+   METADATA_FAIL         : exception;
    STMT_NOT_VALID        : exception;
+   STMT_RESET_FAIL       : exception;
 
 private
 
@@ -126,9 +161,7 @@ private
 
 
 --     type fldlen is array (Positive range <>) of Natural;
---
 --     type fetch_status is (success, truncated, spent, error);
---
 --
 --     overriding
 --     procedure setTransactionIsolation (conn      : out SQLite_Connection;
@@ -142,12 +175,6 @@ private
 --
 --     procedure store_result (conn : SQLite_Connection;
 --                             result_handle : out ABM.SQLite_RES_Access);
---
---     function field_count   (conn : SQLite_Connection) return Natural;
---
---     function fields_in_result (conn : SQLite_Connection;
---                                result_handle : ABM.SQLite_RES_Access)
---                                return Natural;
 --
 --     function rows_in_result (conn : SQLite_Connection;
 --                              result_handle : ABM.SQLite_RES_Access)
@@ -167,60 +194,11 @@ private
 --                              result_handle : ABM.SQLite_RES_Access;
 --                              num_columns   : Positive) return fldlen;
 --
---     function field_name_field (conn : SQLite_Connection;
---                                field : ABM.SQLite_FIELD_Access) return String;
---
---     function field_name_table (conn : SQLite_Connection;
---                                field : ABM.SQLite_FIELD_Access) return String;
---
---     function field_name_database (conn : SQLite_Connection;
---                                   field : ABM.SQLite_FIELD_Access)
---                                   return String;
---
---     procedure field_data_type (conn : SQLite_Connection;
---                                field : ABM.SQLite_FIELD_Access;
---                                std_type : out field_types;
---                                size     : out Natural);
---
---     function field_allows_null (conn : SQLite_Connection;
---                                 field : ABM.SQLite_FIELD_Access)
---                                 return Boolean;
 --
 --
 --     -----------------------------------------------------------------------
 --     --  PREPARED STATEMENT FUNCTIONS                                     --
 --     -----------------------------------------------------------------------
---
---     function prep_LastInsertID  (conn : SQLite_Connection;
---                                  stmt : ABM.SQLite_STMT_Access) return TraxID;
---
---     function prep_SqlState      (conn : SQLite_Connection;
---                                  stmt : ABM.SQLite_STMT_Access) return TSqlState;
---
---     function prep_DriverCode    (conn : SQLite_Connection;
---                                  stmt : ABM.SQLite_STMT_Access)
---                                  return DriverCodes;
---
---     function prep_DriverMessage (conn : SQLite_Connection;
---                                  stmt : ABM.SQLite_STMT_Access) return String;
---
---     procedure prep_free_result  (conn : SQLite_Connection;
---                                  stmt : out ABM.SQLite_STMT_Access);
---
---     procedure prep_store_result (conn : SQLite_Connection;
---                                  stmt : ABM.SQLite_STMT_Access);
---
---     procedure initialize_and_prepare_statement
---                                 (conn : SQLite_Connection;
---                                  stmt : out ABM.SQLite_STMT_Access;
---                                  sql  : String);
---
---     function prep_markers_found (conn : SQLite_Connection;
---                                  stmt : ABM.SQLite_STMT_Access) return Natural;
---
---     function prep_result_metadata (conn : SQLite_Connection;
---                                    stmt : ABM.SQLite_STMT_Access)
---                                    return ABM.SQLite_RES_Access;
 --
 --     function prep_bind_parameters (conn : SQLite_Connection;
 --                                    stmt : ABM.SQLite_STMT_Access;
@@ -252,26 +230,7 @@ private
 --                                               stmt : ABM.SQLite_STMT_Access)
 --                                               return AffectedRows;
 --
---     NOT_WHILE_CONNECTED : exception;
---     AUTOCOMMIT_FAIL     : exception;
---     COMMIT_FAIL         : exception;
---     ROLLBACK_FAIL       : exception;
---     QUERY_FAIL          : exception;
---     CONNECT_FAIL        : exception;
---     TRAXISOL_FAIL       : exception;
---     CHARSET_FAIL        : exception;
---     INITIALIZE_FAIL     : exception;
---     STMT_NOT_VALID      : exception;
---     RESULT_FAIL         : exception;
---     BINDING_FAIL        : exception;
---     SET_OPTION_FAIL     : exception;
---
 --  private
---
-
---
---     function convert_version (mysql_version : Natural)
---                               return CT.Text;
 --
 --     function S2P (S : CT.Text) return ABM.ICS.chars_ptr;
 --     function S2P (S : String)  return ABM.ICS.chars_ptr;

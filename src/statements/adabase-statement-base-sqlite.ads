@@ -14,7 +14,7 @@ package AdaBase.Statement.Base.SQLite is
 
    type SQLite_statement (type_of_statement : stmt_type;
                           log_handler       : ALF.LogFacility_access;
-                          mysql_conn        : ACS.SQLite_Connection_Access;
+                          sqlite_conn       : ACS.SQLite_Connection_Access;
                           initial_sql       : SQL_access;
                           con_error_mode    : ErrorMode;
                           con_case_mode     : CaseMode;
@@ -71,17 +71,14 @@ package AdaBase.Statement.Base.SQLite is
    overriding
    function fetch_bound (Stmt : out SQLite_statement) return Boolean;
 
-private
 
-   function num_set_items (nv : String) return Natural;
+private
 
    type column_info is record
       table         : CT.Text;
       field_name    : CT.Text;
-      field_type    : field_types;
-      field_size    : Natural;
       null_possible : Boolean;
-      --  mysql_type    : ABM.enum_field_types;
+      sqlite_type   : BND.enum_field_types;
    end record;
 
    type fetch_status is (pending, progressing, completed);
@@ -91,20 +88,20 @@ private
 
    type SQLite_statement (type_of_statement : stmt_type;
                           log_handler       : ALF.LogFacility_access;
-                          mysql_conn        : ACS.SQLite_Connection_Access;
+                          sqlite_conn       : ACS.SQLite_Connection_Access;
                           initial_sql       : SQL_access;
                           con_error_mode    : ErrorMode;
                           con_case_mode     : CaseMode;
                           con_max_blob      : BLOB_maximum)
    is new Base_Statement and AIS.iStatement with
       record
-         delivery       : fetch_status          := completed;
-         --  result_handle  : ABM.MYSQL_RES_Access  := null;
-         stmt_handle    : BND.sqlite3_stmt_Access := null;
+         stmt_handle    : aliased BND.sqlite3_stmt_Access := null;
+         delivery       : fetch_status     := completed;
+         virgin         : Boolean          := True;
          --  bind_canvas    : mysql_canvases_Access := null;
-         assign_counter : Natural               := 0;
-         num_columns    : Natural               := 0;
-         size_of_rowset : TraxID                := 0;
+         assign_counter : Natural          := 0;
+         num_columns    : Natural          := 0;
+         size_of_rowset : TraxID           := 0;
          column_info    : VColumns.Vector;
          sql_final      : SQL_access;
       end record;
@@ -115,5 +112,11 @@ private
       message    : String;
       pull_codes : Boolean := False;
       break      : Boolean := False);
+
+   procedure initialize (Object : in out SQLite_statement);
+   procedure scan_column_information (Stmt : out SQLite_statement);
+   procedure clear_column_information  (Stmt : out SQLite_statement);
+   function num_set_items (nv : String) return Natural;
+
 
 end AdaBase.Statement.Base.SQLite;
