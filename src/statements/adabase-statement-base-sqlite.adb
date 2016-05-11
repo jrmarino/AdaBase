@@ -348,19 +348,34 @@ package body AdaBase.Statement.Base.SQLite is
    overriding
    function execute (Stmt : out SQLite_statement) return Boolean
    is
-      pragma Unreferenced (Stmt);
-      --  conn : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
+      conn : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
+
+      num_markers : constant Natural := Natural (Stmt.realmccoy.Length);
+      status_successful : Boolean := True;
    begin
---        if Stmt.virgin then
---           --  The statement has never been stepped and it's ready now
---           return;
---        end if;
---        conn.reset_prep_stmt;
+      if Stmt.type_of_statement = direct_statement then
+         raise INVALID_FOR_DIRECT_QUERY
+           with "The execute command is for prepared statements only";
+      end if;
+      Stmt.successful_execution := False;
 
-            --  TO BE IMPLEMENTED
+      if not Stmt.virgin then
+         conn.reset_prep_stmt (Stmt.stmt_handle);
+      end if;
 
+      if num_markers > 0 then
+         --  TO BE IMPLEMENTED
+         null;
+      else
+         --  No binding required, just execute the prepared statement
+         Stmt.log_nominal (category => statement_execution,
+                           message => "Exec without bound parameters");
 
-      return True;
+         Stmt.successful_execution := True;
+      end if;
+
+      return status_successful;
+
    end execute;
 
 
@@ -394,6 +409,7 @@ package body AdaBase.Statement.Base.SQLite is
          conn   : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
          result : ARS.DataRow;
       begin
+         Stmt.virgin := False;
          if step_result = BND.SQLITE_DONE then
             Stmt.delivery := completed;
             return ARS.Empty_DataRow;
