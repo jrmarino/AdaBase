@@ -160,6 +160,7 @@ package body AdaBase.Statement.Base.SQLite is
       end if;
 
       Object.scan_column_information;
+      Object.delivery := progressing;
 
    exception
       when HELL : others =>
@@ -362,6 +363,7 @@ package body AdaBase.Statement.Base.SQLite is
 
       if not Stmt.virgin then
          conn.reset_prep_stmt (Stmt.stmt_handle);
+         Stmt.delivery := progressing;
       end if;
 
       if num_markers > 0 then
@@ -375,7 +377,6 @@ package body AdaBase.Statement.Base.SQLite is
          Stmt.successful_execution := True;
       end if;
 
-      Stmt.delivery := progressing;
       return status_successful;
 
    end execute;
@@ -569,9 +570,6 @@ package body AdaBase.Statement.Base.SQLite is
    overriding
    procedure finalize (Object : in out SQLite_statement) is
    begin
-                  Object.log_nominal (category   => statement_preparation,
-                                message    => "Hello jack frost!");
-
       if Object.assign_counter /= 2 then
          return;
       end if;
