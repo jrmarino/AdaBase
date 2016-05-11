@@ -116,11 +116,6 @@ package AdaBase.Bindings.SQLite is
       autoinc  : access IC.int) return IC.int;
    pragma Import (C, sqlite3_table_column_metadata);
 
---     function sqlite3_bind_parameter_index
---       (Handle : not null sqlite3_stmt_Access;
---        Name   : IC.char_array) return IC.int;
---     pragma Import (C, sqlite3_bind_parameter_index);
-
 --     function sqlite3_bind_text16
 --      (Handle     : sqlite3_stmt_Access;
 --       Index      : IC.int;

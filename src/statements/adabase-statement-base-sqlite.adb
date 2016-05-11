@@ -342,13 +342,14 @@ package body AdaBase.Statement.Base.SQLite is
    end discard_rest;
 
 
-   ---------------
-   --  execute  --
-   ---------------
+   ------------------
+   --  execute #1  --
+   ------------------
    overriding
    function execute (Stmt : out SQLite_statement) return Boolean
    is
-      conn : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
+      pragma Unreferenced (Stmt);
+      --  conn : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
    begin
 --        if Stmt.virgin then
 --           --  The statement has never been stepped and it's ready now
@@ -356,9 +357,26 @@ package body AdaBase.Statement.Base.SQLite is
 --        end if;
 --        conn.reset_prep_stmt;
 
+            --  TO BE IMPLEMENTED
+
+
       return True;
    end execute;
 
+
+   ------------------
+   --  execute #2  --
+   ------------------
+   overriding
+   function execute (Stmt : out SQLite_statement; parameters : String;
+                     delimiter  : Character := '|') return Boolean
+   is
+      pragma Unreferenced (Stmt);
+      --  conn : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
+   begin
+      --  TO BE IMPLEMENTED
+      return True;
+   end execute;
 
    ------------------
    --  fetch_next  --
@@ -435,5 +453,73 @@ package body AdaBase.Statement.Base.SQLite is
       end;
    end fetch_next;
 
+
+   ------------------
+   --  fetch_bound --
+   ------------------
+   overriding
+   function fetch_bound (Stmt : out SQLite_statement) return Boolean
+   is
+      pragma Unreferenced (Stmt);
+   begin
+      --  TO BE IMPLEMENTED
+      return False;
+   end fetch_bound;
+
+
+   -----------------
+   --  fetch_all  --
+   -----------------
+   overriding
+   function fetch_all (Stmt : out SQLite_statement) return ARS.DataRowSet
+   is
+      subtype rack_range is Positive range 1 .. 1000000;
+      type TRack is array (rack_range) of ARS.DataRow_Access;
+      nullset      : ARS.DataRowSet (1 .. 0);
+   begin
+      if Stmt.delivery = completed then
+         return nullset;
+      end if;
+      --  With SQLite, we don't know many rows of data are fetched, ever.
+      --  For practical purposes, let's limit a result set to 1 million rows
+      --  We'll create an access array and dynamically allocate memory for
+      --  each row.  At the end, we'll copy the data to a properly sized
+      --  array, free the memory and return the result.
+
+      declare
+         rack         : TRack;
+         dataset_size : Natural    := 0;
+         arrow        : rack_range := rack_range'First;
+      begin
+         loop
+            rack (arrow) := new ARS.DataRow;
+            rack (arrow).all := Stmt.fetch_next;
+            exit when rack (arrow).data_exhausted;
+            dataset_size := dataset_size + 1;
+            if arrow = rack_range'Last then
+               Stmt.discard_rest;
+               exit;
+            end if;
+            arrow := arrow + 1;
+         end loop;
+         if dataset_size = 0 then
+            --  nothing was fetched
+            free_datarow (rack (arrow));
+            return nullset;
+         end if;
+
+         declare
+            returnset : ARS.DataRowSet (1 .. dataset_size);
+         begin
+            for x in returnset'Range loop
+               returnset (x) := rack (x).all;
+            end loop;
+            for x in rack_range range rack_range'First .. arrow loop
+               free_datarow (rack (x));
+            end loop;
+            return returnset;
+         end;
+      end;
+   end fetch_all;
 
 end AdaBase.Statement.Base.SQLite;
