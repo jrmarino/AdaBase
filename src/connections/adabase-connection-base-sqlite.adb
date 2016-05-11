@@ -712,4 +712,39 @@ package body AdaBase.Connection.Base.SQLite is
    end retrieve_blob;
 
 
+   -----------------------
+   --  prep_fetch_next  --
+   -----------------------
+   function prep_fetch_next (conn : SQLite_Connection;
+                             stmt : BND.sqlite3_stmt_Access) return Boolean
+   is
+      use type BND.IC.int;
+      step_result : BND.IC.int := BND.sqlite3_step (stmt);
+   begin
+      if step_result = BND.SQLITE_DONE then
+         return False;
+      end if;
+      if step_result = BND.SQLITE_ROW then
+         return True;
+      end if;
+      raise STMT_FETCH_FAIL with "Step() error " & step_result'Img;
+   end prep_fetch_next;
+
+
+   ---------------------
+   --  prep_finalize  --
+   ---------------------
+   procedure prep_finalize (conn : SQLite_Connection;
+                            stmt : BND.sqlite3_stmt_Access)
+   is
+      use type BND.IC.int;
+      result : BND.IC.int := BND.sqlite3_finalize (stmt);
+   begin
+      if result /= BND.SQLITE_OK then
+         raise STMT_NOT_VALID with "Failed to close stmt, error " & result'Img;
+      end if;
+   end prep_finalize;
+
+
+
 end AdaBase.Connection.Base.SQLite;

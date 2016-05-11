@@ -375,6 +375,7 @@ package body AdaBase.Statement.Base.SQLite is
          Stmt.successful_execution := True;
       end if;
 
+      Stmt.delivery := progressing;
       return status_successful;
 
    end execute;
@@ -398,25 +399,21 @@ package body AdaBase.Statement.Base.SQLite is
    --  fetch_next  --
    ------------------
    overriding
-   function fetch_next (Stmt : out SQLite_statement) return ARS.DataRow is
+   function fetch_next (Stmt : out SQLite_statement) return ARS.DataRow
+   is
+      conn   : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
    begin
       if Stmt.delivery = completed then
          return ARS.Empty_DataRow;
       end if;
       declare
-         use type BND.IC.int;
-         step_result : BND.IC.int := BND.sqlite3_step (Stmt.stmt_handle);
          maxlen : constant Natural := Natural (Stmt.column_info.Length);
-         conn   : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
          result : ARS.DataRow;
       begin
          Stmt.virgin := False;
-         if step_result = BND.SQLITE_DONE then
+         if not conn.prep_fetch_next (Stmt.stmt_handle) then
             Stmt.delivery := completed;
             return ARS.Empty_DataRow;
-         end if;
-         if step_result /= BND.SQLITE_ROW then
-            raise STMT_EXECUTION with "Step() error " & step_result'Img;
          end if;
          for F in 1 .. maxlen loop
             declare
@@ -538,5 +535,58 @@ package body AdaBase.Statement.Base.SQLite is
          end;
       end;
    end fetch_all;
+
+
+   --------------
+   --  Adjust  --
+   --------------
+   overriding
+   procedure Adjust (Object : in out SQLite_statement) is
+   begin
+      --  The stmt object goes through this evolution:
+      --  A) created in private_prepare()
+      --  B) copied to new object in prepare(), A) destroyed
+      --  C) copied to new object in program, B) destroyed
+      --  We don't want to take any action until C) is destroyed, so add a
+      --  reference counter upon each assignment.  When finalize sees a
+      --  value of "2", it knows it is the program-level statement and then
+      --  it can release memory releases, but not before!
+      Object.assign_counter := Object.assign_counter + 1;
+
+      --  Since the finalization is looking for a specific reference
+      --  counter, any further assignments would fail finalization, so
+      --  just prohibit them outright.
+      if Object.assign_counter > 2 then
+         raise STMT_PREPARATION
+           with "Statement objects cannot be re-assigned.";
+      end if;
+   end Adjust;
+
+
+   ----------------
+   --  finalize  --
+   ----------------
+   overriding
+   procedure finalize (Object : in out SQLite_statement) is
+   begin
+                  Object.log_nominal (category   => statement_preparation,
+                                message    => "Hello jack frost!");
+
+      if Object.assign_counter /= 2 then
+         return;
+      end if;
+
+      begin
+         Object.sqlite_conn.prep_finalize (Object.stmt_handle);
+      exception
+         when others =>
+            Object.log_problem
+              (category   => statement_preparation,
+               message    => "Deallocating statement resources",
+               pull_codes => True);
+      end;
+
+      free_sql (Object.sql_final);
+   end finalize;
 
 end AdaBase.Statement.Base.SQLite;

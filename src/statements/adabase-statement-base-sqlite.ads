@@ -114,9 +114,13 @@ private
       break      : Boolean := False);
 
    procedure initialize (Object : in out SQLite_statement);
+   procedure Adjust     (Object : in out SQLite_statement);
+   procedure finalize   (Object : in out SQLite_statement);
    procedure scan_column_information (Stmt : out SQLite_statement);
    procedure clear_column_information  (Stmt : out SQLite_statement);
    function num_set_items (nv : String) return Natural;
 
+   procedure free_sql is new Ada.Unchecked_Deallocation
+     (String, SQL_access);
 
 end AdaBase.Statement.Base.SQLite;

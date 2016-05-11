@@ -144,6 +144,11 @@ package AdaBase.Connection.Base.SQLite is
    procedure reset_prep_stmt (conn  : SQLite_Connection;
                               stmt  : BND.sqlite3_stmt_Access);
 
+   procedure prep_finalize   (conn  : SQLite_Connection;
+                              stmt  : BND.sqlite3_stmt_Access);
+
+   function prep_fetch_next  (conn  : SQLite_Connection;
+                              stmt  : BND.sqlite3_stmt_Access) return Boolean;
 
    ------------------
    --  EXCEPTIONS  --
@@ -161,6 +166,7 @@ package AdaBase.Connection.Base.SQLite is
    METADATA_FAIL         : exception;
    STMT_NOT_VALID        : exception;
    STMT_RESET_FAIL       : exception;
+   STMT_FETCH_FAIL       : exception;
 
 private
 
