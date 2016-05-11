@@ -132,9 +132,13 @@ package AdaBase.Bindings.SQLite is
    function sqlite3_close (db : not null sqlite3_Access) return IC.int;
    pragma Import (C, sqlite3_close);
 
-   function sqlite3_column_bytes16 (Handle : not null sqlite3_stmt_Access;
+   function sqlite3_column_type    (Handle : not null sqlite3_stmt_Access;
                                     iCol   : IC.int) return IC.int;
-   pragma Import (C, sqlite3_column_bytes16);
+   pragma Import (C, sqlite3_column_type);
+
+   function sqlite3_column_bytes   (Handle : not null sqlite3_stmt_Access;
+                                    iCol   : IC.int) return IC.int;
+   pragma Import (C, sqlite3_column_bytes);
 
    function sqlite3_column_double  (Handle : not null sqlite3_stmt_Access;
                                     iCol   : IC.int) return IC.double;
@@ -144,15 +148,13 @@ package AdaBase.Bindings.SQLite is
                                     iCol   : IC.int) return sql64;
    pragma Import (C, sqlite3_column_int64);
 
---     function sqlite3_column_text16
---      (Handle : sqlite3_stmt_Access;
---       iCol   : IC.int)
---         return Matreshka.Internals.Strings.C.Utf16_Code_Unit_Access;
---     pragma Import (C, sqlite3_column_text16);
+   function sqlite3_column_text    (Handle : not null sqlite3_stmt_Access;
+                                    iCol   : IC.int) return ICS.chars_ptr;
+   pragma Import (C, sqlite3_column_text);
 
-   function sqlite3_column_type (Handle : not null sqlite3_stmt_Access;
-                                 iCol   : IC.int) return IC.int;
-   pragma Import (C, sqlite3_column_type);
+   function sqlite3_column_blob    (Handle : not null sqlite3_stmt_Access;
+                                    iCol   : IC.int) return ICS.chars_ptr;
+   pragma Import (C, sqlite3_column_blob);
 
    function sqlite3_config (Option : IC.int) return IC.int;
    pragma Import (C, sqlite3_config);

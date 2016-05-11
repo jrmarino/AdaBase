@@ -1,10 +1,12 @@
 --  This file is covered by the Internet Software Consortium (ISC) License
 --  Reference: ../../License.txt
 
+with AdaBase.Results.Field;
 with Ada.Characters.Handling;
 
 package body AdaBase.Statement.Base.SQLite is
 
+   package ARF renames AdaBase.Results.Field;
    package ACH renames Ada.Characters.Handling;
 
    ---------------------
@@ -232,6 +234,14 @@ package body AdaBase.Statement.Base.SQLite is
                                       data_type => info.sqlite_type,
                                       nullable  => info.null_possible);
 
+            case info.sqlite_type is
+               when BND.SQLITE_INTEGER => info.field_type := ft_byte8;
+               when BND.SQLITE_TEXT    => info.field_type := ft_textual;
+               when BND.SQLITE_BLOB    => info.field_type := ft_chain;
+               when BND.SQLITE_FLOAT   => info.field_type := ft_real18;
+               when BND.SQLITE_NULL    => info.field_type := ft_nbyte0;
+            end case;
+
             Stmt.column_info.Append (New_Item => info);
             --  The following pre-populates for bind support
             Stmt.crate.Append (New_Item => brec);
@@ -255,20 +265,7 @@ package body AdaBase.Statement.Base.SQLite is
          raise INVALID_COLUMN_INDEX with "Max index is" & maxlen'Img &
            " but" & index'Img & " attempted";
       end if;
-      --  SQLite is a special implementation where the data size is dynamic
-      --  and not constrained to a column definition.  Thus, this function
-      --  makes little sense for SQLite.  However, return something, the
-      --  biggest possible type.
-
-      case Stmt.column_info.Element (Index => index).sqlite_type is
-         when BND.SQLITE_INTEGER => return ft_byte8;
-         when BND.SQLITE_TEXT    => return ft_textual;
-         when BND.SQLITE_BLOB    => return ft_chain;
-         when BND.SQLITE_FLOAT   => return ft_real18;
-         when BND.SQLITE_NULL    =>
-            raise BINDING_TYPE_MISMATCH
-              with "column type advertised as SQLITE_NULL";
-      end case;
+      return Stmt.column_info.Element (Index => index).field_type;
    end column_native_type;
 
 
@@ -361,6 +358,82 @@ package body AdaBase.Statement.Base.SQLite is
 
       return True;
    end execute;
+
+
+   ------------------
+   --  fetch_next  --
+   ------------------
+   overriding
+   function fetch_next (Stmt : out SQLite_statement) return ARS.DataRow is
+   begin
+      if Stmt.delivery = completed then
+         return ARS.Empty_DataRow;
+      end if;
+      declare
+         use type BND.IC.int;
+         step_result : BND.IC.int := BND.sqlite3_step (Stmt.stmt_handle);
+         maxlen : constant Natural := Natural (Stmt.column_info.Length);
+         conn   : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
+         result : ARS.DataRow;
+      begin
+         if step_result = BND.SQLITE_DONE then
+            Stmt.delivery := completed;
+            return ARS.Empty_DataRow;
+         end if;
+         if step_result /= BND.SQLITE_ROW then
+            raise STMT_EXECUTION with "Step() error " & step_result'Img;
+         end if;
+         for F in 1 .. maxlen loop
+            declare
+               field    : ARF.std_field;
+               dvariant : ARF.variant;
+               last_one : constant Boolean := (F = maxlen);
+               heading  : constant String := CT.USS
+                          (Stmt.column_info.Element (Index => F).field_name);
+               EN       : constant Boolean :=
+                          conn.field_is_null (Stmt.stmt_handle, F);
+            begin
+               case Stmt.column_info.Element (Index => F).field_type is
+                  when ft_nbyte0  =>
+                     --  This should never occur though
+                     dvariant := (datatype => ft_nbyte0, v00 => False);
+                  when ft_byte8   =>
+                     dvariant :=
+                       (datatype => ft_byte8,
+                        v10 => conn.retrieve_integer (Stmt.stmt_handle, F));
+                  when ft_real18  =>
+                     dvariant :=
+                       (datatype => ft_real18,
+                        v12 => conn.retrieve_double (Stmt.stmt_handle, F));
+                  when ft_textual =>
+                     dvariant :=
+                       (datatype => ft_textual,
+                        v13 => conn.retrieve_text (Stmt.stmt_handle, F));
+                  when ft_chain   => null;
+                  when others => raise INVALID_FOR_RESULT_SET
+                       with "Impossible field type (internal bug??)";
+               end case;
+               case Stmt.column_info.Element (Index => F).field_type is
+                  when ft_chain =>
+                     field := ARF.spawn_field
+                       (binob => ARC.convert
+                          (conn.retrieve_blob
+                               (stmt  => Stmt.stmt_handle,
+                                index => F,
+                                maxsz => Stmt.con_max_blob)));
+                  when ft_nbyte0 | ft_byte8 | ft_real18 | ft_textual =>
+                     field := ARF.spawn_field (data => dvariant,
+                                               null_data => EN);
+                  when others => null;
+               end case;
+               result.push (heading    => heading,
+                            field      => field,
+                            last_field => last_one);
+            end;
+         end loop;
+         return result;
+      end;
+   end fetch_next;
 
 
 end AdaBase.Statement.Base.SQLite;

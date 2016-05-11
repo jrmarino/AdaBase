@@ -2,6 +2,7 @@
 --  Reference: ../../License.txt
 
 with CommonText;
+with Ada.Unchecked_Conversion;
 
 package body AdaBase.Connection.Base.SQLite is
 
@@ -570,6 +571,119 @@ package body AdaBase.Connection.Base.SQLite is
          raise STMT_RESET_FAIL with "SQLite3 Reset error code" & result'Img;
       end if;
    end reset_prep_stmt;
+
+
+   ------------------------
+   --  retrieve_integer  --
+   ------------------------
+   function retrieve_integer (conn  : SQLite_Connection;
+                              stmt  : BND.sqlite3_stmt_Access;
+                              index : Natural) return AR.byte8
+   is
+      result : BND.sql64;
+      col_index : constant BND.IC.int := BND.IC.int (index);
+   begin
+      result := BND.sqlite3_column_int64 (stmt, col_index);
+      return AR.byte8 (result);
+   end retrieve_integer;
+
+
+   -----------------------
+   --  retrieve_double  --
+   -----------------------
+   function retrieve_double (conn  : SQLite_Connection;
+                             stmt  : BND.sqlite3_stmt_Access;
+                             index : Natural) return AR.real18
+   is
+      result : BND.IC.double;
+      col_index : constant BND.IC.int := BND.IC.int (index);
+   begin
+      result := BND.sqlite3_column_double (stmt, col_index);
+      return AR.real18 (result);
+   end retrieve_double;
+
+
+   ---------------------
+   --  field_is_null  --
+   ---------------------
+   function field_is_null (conn  : SQLite_Connection;
+                           stmt  : BND.sqlite3_stmt_Access;
+                           index : Natural) return Boolean
+   is
+      --  use type BND.enum_field_types;
+      result    : BND.IC.int;
+      col_index : constant BND.IC.int := BND.IC.int (index);
+      null_type : constant Natural :=
+                  BND.enum_field_types'Pos (BND.SQLITE_NULL);
+   begin
+      result := BND.sqlite3_column_type (stmt, col_index);
+      return (Natural (result) = null_type);
+   end field_is_null;
+
+
+   ---------------------
+   --  retrieve_text  --
+   ---------------------
+   function retrieve_text (conn  : SQLite_Connection;
+                           stmt  : BND.sqlite3_stmt_Access;
+                           index : Natural) return AR.textual
+   is
+      result : BND.ICS.chars_ptr;
+      col_index : constant BND.IC.int := BND.IC.int (index);
+   begin
+      result := BND.sqlite3_column_text (stmt, col_index);
+      declare
+         asString : String := BND.ICS.Value (result);
+      begin
+         return CT.SUS (CT.SUTF8 (asString));
+      end;
+   end retrieve_text;
+
+
+   ---------------------
+   --  retrieve_blob  --
+   ---------------------
+   function retrieve_blob (conn  : SQLite_Connection;
+                           stmt  : BND.sqlite3_stmt_Access;
+                           index : Natural;
+                           maxsz : Natural) return String
+   is
+      col_index : constant BND.IC.int := BND.IC.int (index);
+      data_size : BND.IC.int := BND.sqlite3_column_bytes (stmt, col_index);
+      str_size  : Natural := Natural (data_size);
+   begin
+      if maxsz < str_size then
+         str_size := maxsz;
+      end if;
+      declare
+         result : BND.ICS.chars_ptr;
+         buflen : constant BND.IC.size_t := BND.IC.size_t (str_size);
+         subtype data_buffer is BND.IC.char_array (1 .. buflen);
+         type db_access is access all data_buffer;
+
+         dba : db_access;
+
+         function convert is new Ada.Unchecked_Conversion
+           (Source => BND.ICS.chars_ptr, Target => db_access);
+
+         function db_convert (dba : db_access) return String;
+         function db_convert (dba : db_access) return String is
+         begin
+            declare
+               result : String (1 .. str_size);
+            begin
+               for x in result'Range loop
+                  result (x) := Character (dba.all (BND.IC.size_t (x)));
+               end loop;
+               return result;
+            end;
+         end db_convert;
+      begin
+         result := BND.sqlite3_column_blob (stmt, col_index);
+         dba := convert (result);
+         return db_convert (dba);
+      end;
+   end retrieve_blob;
 
 
 end AdaBase.Connection.Base.SQLite;

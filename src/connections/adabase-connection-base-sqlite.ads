@@ -3,12 +3,14 @@
 
 with AdaBase.Interfaces.Connection;
 with AdaBase.Bindings.SQLite;
+with AdaBase.Results;
 with Ada.Exceptions;
 
 package AdaBase.Connection.Base.SQLite is
 
    package AIC renames AdaBase.Interfaces.Connection;
    package BND renames AdaBase.Bindings.SQLite;
+   package AR  renames AdaBase.Results;
    package EX  renames Ada.Exceptions;
 
    type SQLite_Connection is new Base_Connection and AIC.iConnection
@@ -98,6 +100,27 @@ package AdaBase.Connection.Base.SQLite is
    function fields_in_result (conn : SQLite_Connection;
                               stmt : BND.sqlite3_stmt_Access) return Natural;
 
+   function retrieve_integer (conn  : SQLite_Connection;
+                              stmt  : BND.sqlite3_stmt_Access;
+                              index : Natural) return AR.byte8;
+
+   function retrieve_double  (conn  : SQLite_Connection;
+                              stmt  : BND.sqlite3_stmt_Access;
+                              index : Natural) return AR.real18;
+
+   function retrieve_text    (conn  : SQLite_Connection;
+                              stmt  : BND.sqlite3_stmt_Access;
+                              index : Natural) return AR.textual;
+
+   function retrieve_blob    (conn  : SQLite_Connection;
+                              stmt  : BND.sqlite3_stmt_Access;
+                              index : Natural;
+                              maxsz : Natural) return String;
+
+   function field_is_null    (conn  : SQLite_Connection;
+                              stmt  : BND.sqlite3_stmt_Access;
+                              index : Natural) return Boolean;
+
    function field_database (conn  : SQLite_Connection;
                             stmt  : BND.sqlite3_stmt_Access;
                             index : Natural) return String;
@@ -158,85 +181,5 @@ private
    procedure finalize (conn : in out SQLite_Connection);
 
    procedure private_execute (conn : SQLite_Connection; sql : String);
-
-
---     type fldlen is array (Positive range <>) of Natural;
---     type fetch_status is (success, truncated, spent, error);
---
---     overriding
---     procedure setTransactionIsolation (conn      : out SQLite_Connection;
---                                        isolation :     TransIsolation);
---
---     procedure use_result   (conn : SQLite_Connection;
---                             result_handle : out ABM.SQLite_RES_Access);
---
---     procedure free_result  (conn : SQLite_Connection;
---                             result_handle : out ABM.SQLite_RES_Access);
---
---     procedure store_result (conn : SQLite_Connection;
---                             result_handle : out ABM.SQLite_RES_Access);
---
---     function rows_in_result (conn : SQLite_Connection;
---                              result_handle : ABM.SQLite_RES_Access)
---                              return AffectedRows;
---
---     function fetch_field    (conn : SQLite_Connection;
---                              result_handle : ABM.SQLite_RES_Access)
---                              return ABM.SQLite_FIELD_Access;
---
---     function fetch_row      (conn : SQLite_Connection;
---                              result_handle : ABM.SQLite_RES_Access)
---                              return ABM.SQLite_ROW_access;
---
---     function fetch_next_set (conn : SQLite_Connection) return Boolean;
---
---     function fetch_lengths  (conn : SQLite_Connection;
---                              result_handle : ABM.SQLite_RES_Access;
---                              num_columns   : Positive) return fldlen;
---
---
---
---     -----------------------------------------------------------------------
---     --  PREPARED STATEMENT FUNCTIONS                                     --
---     -----------------------------------------------------------------------
---
---     function prep_bind_parameters (conn : SQLite_Connection;
---                                    stmt : ABM.SQLite_STMT_Access;
---                                    bind : out ABM.SQLite_BIND_Array)
---                                    return Boolean;
---
---     function prep_bind_result     (conn : SQLite_Connection;
---                                    stmt : ABM.SQLite_STMT_Access;
---                                    bind : out ABM.SQLite_BIND_Array)
---                                    return Boolean;
---
---     function prep_execute         (conn : SQLite_Connection;
---                                    stmt : ABM.SQLite_STMT_Access)
---                                    return Boolean;
---
---     function prep_rows_in_result  (conn : SQLite_Connection;
---                                    stmt : ABM.SQLite_STMT_Access)
---                                    return AffectedRows;
---
---     function prep_fetch_bound     (conn : SQLite_Connection;
---                                    stmt : ABM.SQLite_STMT_Access)
---                                    return fetch_status;
---
---     function prep_close_statement (conn : SQLite_Connection;
---                                    stmt : ABM.SQLite_STMT_Access)
---                                    return Boolean;
---
---     function prep_rows_affected_by_execution (conn : SQLite_Connection;
---                                               stmt : ABM.SQLite_STMT_Access)
---                                               return AffectedRows;
---
---  private
---
---     function S2P (S : CT.Text) return ABM.ICS.chars_ptr;
---     function S2P (S : String)  return ABM.ICS.chars_ptr;
---
---     procedure set_character_set (conn : MySQL_Connection);
---
-
 
 end AdaBase.Connection.Base.SQLite;

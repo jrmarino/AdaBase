@@ -77,6 +77,7 @@ private
    type column_info is record
       table         : CT.Text;
       field_name    : CT.Text;
+      field_type    : field_types;
       null_possible : Boolean;
       sqlite_type   : BND.enum_field_types;
    end record;
