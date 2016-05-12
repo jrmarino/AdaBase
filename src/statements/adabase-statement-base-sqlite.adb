@@ -638,10 +638,26 @@ package body AdaBase.Statement.Base.SQLite is
       vartype : constant field_types := zone.output_type;
       okay    : Boolean := True;
 
+      use type AR.nbyte0_access;
+      use type AR.nbyte1_access;
+      use type AR.nbyte2_access;
+      use type AR.nbyte3_access;
+      use type AR.nbyte4_access;
+      use type AR.nbyte8_access;
+      use type AR.byte1_access;
+      use type AR.byte2_access;
+      use type AR.byte3_access;
+      use type AR.byte4_access;
       use type AR.byte8_access;
+      use type AR.real9_access;
       use type AR.real18_access;
       use type AR.str1_access;
+      use type AR.str2_access;
+      use type AR.str4_access;
+      use type AR.time_access;
+      use type AR.enum_access;
       use type AR.chain_access;
+      use type AR.settype_access;
    begin
       if zone.null_data then
          if not conn.marker_is_null (Stmt.stmt_handle, marker) then
@@ -650,41 +666,160 @@ package body AdaBase.Statement.Base.SQLite is
          end if;
       else
          case vartype is
-            when ft_byte8 =>
-               if zone.a10 = null then
-                  okay := conn.marker_is_integer
-                    (Stmt.stmt_handle, marker, zone.v10);
-               else
-                  okay := conn.marker_is_integer
-                    (Stmt.stmt_handle, marker, zone.a10.all);
-               end if;
-            when ft_real18 =>
-               if zone.a12 = null then
-                  okay := conn.marker_is_double
-                    (Stmt.stmt_handle, marker, zone.v12);
-               else
-                  okay := conn.marker_is_double
-                    (Stmt.stmt_handle, marker, zone.a12.all);
-               end if;
+            when ft_nbyte0 | ft_nbyte1 | ft_nbyte2 | ft_nbyte3 | ft_nbyte4 |
+                 ft_nbyte8 | ft_byte1  | ft_byte2  | ft_byte3  | ft_byte4  |
+                 ft_byte8 =>
+               declare
+                  hold : AR.byte8;
+               begin
+                  case vartype is
+                     when ft_nbyte0 =>
+                        if zone.a00 = null then
+                           hold := ARC.convert (zone.v00);
+                        else
+                           hold := ARC.convert (zone.a00.all);
+                        end if;
+                     when ft_nbyte1 =>
+                        if zone.a01 = null then
+                           hold := ARC.convert (zone.v01);
+                        else
+                           hold := ARC.convert (zone.a01.all);
+                        end if;
+                     when ft_nbyte2 =>
+                        if zone.a02 = null then
+                           hold := ARC.convert (zone.v02);
+                        else
+                           hold := ARC.convert (zone.a02.all);
+                        end if;
+                     when ft_nbyte3 =>
+                        if zone.a03 = null then
+                           hold := ARC.convert (zone.v03);
+                        else
+                           hold := ARC.convert (zone.a03.all);
+                        end if;
+                     when ft_nbyte4 =>
+                        if zone.a04 = null then
+                           hold := ARC.convert (zone.v04);
+                        else
+                           hold := ARC.convert (zone.a04.all);
+                        end if;
+                     when ft_nbyte8 =>
+                        if zone.a05 = null then
+                           hold := ARC.convert (zone.v05);
+                        else
+                           hold := ARC.convert (zone.a05.all);
+                        end if;
+                     when ft_byte1 =>
+                        if zone.a06 = null then
+                           hold := ARC.convert (zone.v06);
+                        else
+                           hold := ARC.convert (zone.a06.all);
+                        end if;
+                     when ft_byte2 =>
+                        if zone.a07 = null then
+                           hold := ARC.convert (zone.v07);
+                        else
+                           hold := ARC.convert (zone.a07.all);
+                        end if;
+                     when ft_byte3 =>
+                        if zone.a08 = null then
+                           hold := ARC.convert (zone.v08);
+                        else
+                           hold := ARC.convert (zone.a08.all);
+                        end if;
+                     when ft_byte4 =>
+                        if zone.a09 = null then
+                           hold := ARC.convert (zone.v09);
+                        else
+                           hold := ARC.convert (zone.a09.all);
+                        end if;
+                     when ft_byte8 =>
+                        if zone.a10 = null then
+                           hold := zone.v10;
+                        else
+                           hold := zone.a10.all;
+                        end if;
+                     when others => hold := 0;
+                  end case;
+                  okay := conn.marker_is_integer (Stmt.stmt_handle,
+                                                  marker, hold);
+               end;
+            when ft_real9 | ft_real18 =>
+               declare
+                  hold : AR.real18;
+               begin
+                  if vartype = ft_real18 then
+                     if zone.a10 = null then
+                        hold := zone.v12;
+                     else
+                        hold := zone.a12.all;
+                     end if;
+                  else
+                     if zone.a11 = null then
+                        hold := ARC.convert (zone.v11);
+                     else
+                        hold := ARC.convert (zone.a11.all);
+                     end if;
+                  end if;
+                  okay := conn.marker_is_double (Stmt.stmt_handle,
+                                                 marker, hold);
+               end;
             when ft_textual =>
                if zone.a13 = null then
-                  okay := conn.marker_is_text
-                    (Stmt.stmt_handle, marker, zone.v13);
+                  okay := conn.marker_is_text (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.v13));
                else
-                  okay := conn.marker_is_text
-                    (Stmt.stmt_handle, marker, zone.a13.all);
+                  okay := conn.marker_is_text (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.a13.all));
+               end if;
+            when ft_widetext =>
+               if zone.a14 = null then
+                  okay := conn.marker_is_text (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.v14));
+               else
+                  okay := conn.marker_is_text (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.a14.all));
+               end if;
+           when ft_supertext =>
+               if zone.a15 = null then
+                  okay := conn.marker_is_text (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.v15));
+               else
+                  okay := conn.marker_is_text (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.a15.all));
+               end if;
+            when ft_timestamp =>
+               if zone.a16 = null then
+                  okay := conn.marker_is_text (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.v16));
+               else
+                  okay := conn.marker_is_text (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.a16.all));
+               end if;
+            when ft_enumtype =>
+               if zone.a18 = null then
+                  okay := conn.marker_is_text (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.v18));
+               else
+                  okay := conn.marker_is_text (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.a18.all));
+               end if;
+            when ft_settype =>
+               if zone.a19 = null then
+                  okay := conn.marker_is_text (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.v19));
+               else
+                  okay := conn.marker_is_text (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.a19.all));
                end if;
             when ft_chain =>
                if zone.a17 = null then
-                  okay := conn.marker_is_blob
-                    (Stmt.stmt_handle, marker, CT.USS (zone.v17));
+                  okay := conn.marker_is_blob (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.v17));
                else
-                  okay := conn.marker_is_blob
-                    (Stmt.stmt_handle, marker, ARC.convert (zone.a17.all));
+                  okay := conn.marker_is_blob (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.a17.all));
                end if;
-            when others =>
-               raise BINDING_TYPE_MISMATCH
-                 with "unexpected type " & vartype'Img;
          end case;
          if not okay then
             raise STMT_EXECUTION with "failed to bind " & vartype'Img &

@@ -168,7 +168,7 @@ package AdaBase.Connection.Base.SQLite is
    function marker_is_text    (conn  : SQLite_Connection;
                                stmt  : BND.sqlite3_stmt_Access;
                                index : Natural;
-                               value : AR.textual) return Boolean;
+                               value : String) return Boolean;
 
    function marker_is_blob    (conn  : SQLite_Connection;
                                stmt  : BND.sqlite3_stmt_Access;

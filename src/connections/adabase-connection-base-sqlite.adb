@@ -804,12 +804,12 @@ package body AdaBase.Connection.Base.SQLite is
    function marker_is_text (conn  : SQLite_Connection;
                             stmt  : BND.sqlite3_stmt_Access;
                             index : Natural;
-                            value : AR.textual) return Boolean
+                            value : String) return Boolean
    is
       use type BND.IC.int;
       result    : BND.IC.int;
       col_index : constant BND.IC.int := BND.IC.int (index);
-      SL_value  : BND.ICS.chars_ptr := BND.ICS.New_String (CT.USS (value));
+      SL_value  : BND.ICS.chars_ptr := BND.ICS.New_String (value);
       SL_length : BND.IC.int := BND.IC.int (BND.ICS.Strlen (SL_value));
    begin
       result := BND.sqlite3_bind_text (Handle     => stmt,
