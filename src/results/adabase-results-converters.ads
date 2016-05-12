@@ -274,8 +274,8 @@ package AdaBase.Results.Converters is
    function convert (nv : textual) return chain;
    function convert (nv : textual) return enumtype;
    function convert (nv : textual) return settype;
-   function convert (nv : String) return chain;
    function convert (nv : String) return AC.Time;
+   function convert (nv : String; fixed : Natural := 0) return chain;
    function convert (nv : String; fixed : Natural := 0) return settype;
 
 

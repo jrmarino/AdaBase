@@ -530,10 +530,170 @@ package body AdaBase.Statement.Base.SQLite is
    overriding
    function fetch_bound (Stmt : out SQLite_statement) return Boolean
    is
-      pragma Unreferenced (Stmt);
+      conn   : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
    begin
-      --  TO BE IMPLEMENTED
-      return False;
+      if Stmt.step_result /= data_pulled then
+         return False;
+      end if;
+
+      declare
+         maxlen : constant Natural := Stmt.num_columns;
+      begin
+         for F in 1 .. maxlen loop
+            declare
+               dossier  : bindrec renames Stmt.crate.Element (F);
+               colinfo  : column_info renames Stmt.column_info.Element (F);
+               Tout     : constant field_types := dossier.output_type;
+               Tnative  : constant field_types := colinfo.field_type;
+               dvariant : ARF.variant;
+               scol     : constant Natural := F - 1;
+            begin
+               if not dossier.bound then
+                  goto continue;
+               end if;
+
+               case Tnative is
+                  when ft_byte8   =>
+                     dvariant :=
+                       (datatype => ft_byte8,
+                        v10 => conn.retrieve_integer (Stmt.stmt_handle, scol));
+                  when ft_real18  =>
+                     dvariant :=
+                       (datatype => ft_real18,
+                        v12 => conn.retrieve_double (Stmt.stmt_handle, scol));
+                  when ft_textual =>
+                     dvariant :=
+                       (datatype => ft_textual,
+                        v13 => conn.retrieve_text (Stmt.stmt_handle, scol));
+                  when ft_chain =>
+                     declare
+                        bin : String :=
+                          conn.retrieve_blob
+                            (stmt  => Stmt.stmt_handle,
+                             index => scol,
+                             maxsz => Stmt.con_max_blob);
+                     begin
+                        dvariant := (datatype => ft_chain,
+                                     v17 => CT.SUS (bin));
+                     end;
+                  when others => raise INVALID_FOR_RESULT_SET
+                       with "Impossible field type (internal bug??)";
+               end case;
+
+               if Tnative = ft_byte8 and then
+                 (Tout = ft_nbyte0 or else
+                  Tout = ft_nbyte1 or else
+                  Tout = ft_nbyte2 or else
+                  Tout = ft_nbyte3 or else
+                  Tout = ft_nbyte4 or else
+                  Tout = ft_nbyte8 or else
+                  Tout = ft_byte1 or else
+                  Tout = ft_byte2 or else
+                  Tout = ft_byte3 or else
+                  Tout = ft_byte4 or else
+                  Tout = ft_byte8)
+               then
+                  case Tout is
+                     when ft_nbyte0 =>
+                        dossier.a00.all := ARC.convert (dvariant.v10);
+                     when ft_nbyte1 =>
+                        dossier.a01.all := ARC.convert (dvariant.v10);
+                     when ft_nbyte2 =>
+                        dossier.a02.all := ARC.convert (dvariant.v10);
+                     when ft_nbyte3 =>
+                        dossier.a03.all := ARC.convert (dvariant.v10);
+                     when ft_nbyte4 =>
+                        dossier.a04.all := ARC.convert (dvariant.v10);
+                     when ft_nbyte8 =>
+                        dossier.a05.all := ARC.convert (dvariant.v10);
+                     when ft_byte1 =>
+                        dossier.a06.all := ARC.convert (dvariant.v10);
+                     when ft_byte2 =>
+                        dossier.a07.all := ARC.convert (dvariant.v10);
+                     when ft_byte3 =>
+                        dossier.a08.all := ARC.convert (dvariant.v10);
+                     when ft_byte4 =>
+                        dossier.a09.all := ARC.convert (dvariant.v10);
+                     when ft_byte8 =>
+                        dossier.a10.all := dvariant.v10;
+                     when others => null;
+                  end case;
+               elsif Tnative = ft_real18 and then
+                 (Tout = ft_real9 or else
+                  Tout = ft_real18)
+               then
+                  if Tout = ft_real18 then
+                     dossier.a12.all := dvariant.v12;
+                  else
+                     dossier.a11.all := ARC.convert (dvariant.v12);
+                  end if;
+               elsif Tnative = ft_textual and then
+                 (Tout = ft_textual or else
+                  Tout = ft_widetext or else
+                  Tout = ft_supertext or else
+                  Tout = ft_timestamp or else
+                  Tout = ft_enumtype or else
+                  Tout = ft_settype)
+               then
+                  declare
+                     ST : String := ARC.convert (dvariant.v13);
+                  begin
+                     case Tout is
+                     when ft_textual   => dossier.a13.all := dvariant.v13;
+                     when ft_widetext  => dossier.a14.all := convert (ST);
+                     when ft_supertext => dossier.a15.all := convert (ST);
+                     when ft_timestamp => dossier.a16.all := ARC.convert (ST);
+                     when ft_enumtype  => dossier.a18.all := ARC.convert (dvariant.v13);
+                     when ft_settype =>
+                        declare
+                           FL    : Natural := dossier.a19.all'Length;
+                           DVLEN : Natural := ST'Length;
+                        begin
+                           if DVLEN < FL then
+                              raise BINDING_SIZE_MISMATCH with
+                                "native size : " & DVLEN'Img &
+                                " less than binding size : " & FL'Img;
+                           end if;
+                           dossier.a19.all := ARC.convert (ST, FL);
+                        end;
+                     when others => null;
+                     end case;
+                  end;
+               elsif Tnative = ft_chain and then Tout = ft_chain then
+                  declare
+                     ST    : String := ARC.convert (dvariant.v17);
+                     FL    : Natural := dossier.a17.all'Length;
+                     DVLEN : Natural := ST'Length;
+                  begin
+                     if DVLEN < FL then
+                        raise BINDING_SIZE_MISMATCH with "native size : " &
+                          DVLEN'Img & " less than binding size : " & FL'Img;
+                     end if;
+                     dossier.a17.all := ARC.convert (ST, FL);
+                  end;
+               else
+                  raise BINDING_TYPE_MISMATCH with "native type " &
+                    field_types'Image (Tnative) &
+                    "is incompatible with binding type " &
+                    field_types'Image (Tout);
+               end if;
+            end;
+            <<continue>>
+         end loop;
+      end;
+
+      begin
+         if conn.prep_fetch_next (Stmt.stmt_handle) then
+            Stmt.step_result := data_pulled;
+         else
+            Stmt.step_result := progam_complete;
+         end if;
+      exception
+         when ACS.STMT_FETCH_FAIL =>
+            Stmt.step_result := error_seen;
+      end;
+
+      return True;
    end fetch_bound;
 
 

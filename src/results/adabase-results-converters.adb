@@ -1273,16 +1273,23 @@ package body AdaBase.Results.Converters is
       return ACC.To_Wide_Wide_String (Item => nvstr);
    end convert;
 
-   function convert (nv : String) return chain
+   function convert (nv : String; fixed : Natural := 0) return chain
    is
-      result : chain (1 .. CT.len (nv));
-      arrow  : Natural := nv'First;
+      chainlen : Natural := CT.len (nv);
    begin
-      for x in result'Range loop
-         result (x) := nbyte1 (Character'Pos (nv (arrow)));
-         arrow := arrow + 1;
-      end loop;
-      return result;
+      if fixed > chainlen then
+         chainlen := fixed;
+      end if;
+      declare
+         result : chain (1 .. chainlen) := (others => 0);
+         arrow  : Natural := result'First;
+      begin
+         for x in nv'Range loop
+            result (arrow) := nbyte1 (Character'Pos (nv (x)));
+            arrow := arrow + 1;
+         end loop;
+         return result;
+      end;
    end convert;
 
    function convert (nv : textual) return enumtype
