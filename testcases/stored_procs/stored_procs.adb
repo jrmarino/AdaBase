@@ -47,7 +47,7 @@ procedure Stored_Procs is
    end dump_result;
 
    sql         : constant String := "CALL multiple_rowsets";
-   set_fetched : Boolean := True;
+   set_fetched : Boolean;
    set_present : Boolean;
 
 begin
@@ -63,6 +63,13 @@ begin
    declare
       stmt : aliased CON.Stmt_Type := CON.DR.query (sql);
    begin
+      if stmt.successful then
+         set_fetched := True;
+      else
+         TIO.Put_Line ("Stored procedures not supported on " &
+            CON.DR.trait_driver);
+      end if;
+      set_fetched := stmt.successful;
       stmt_acc := stmt'Unchecked_Access;
       loop
          if set_fetched then
