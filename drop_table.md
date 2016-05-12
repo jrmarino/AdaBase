@@ -78,6 +78,17 @@ end Wipe_Out;
 </pre>
 <p class="caption">Output using MySQL Driver</p>
 <br/>
+<pre class="output">
+2016-05-12 21:13:19   sqlite :       Connect : Connection to file:///home/marino/adabase.sqlite database succeeded.
+2016-05-12 21:13:19   sqlite :       Execute : Note that requested CASCADE has no effect on SQLite
+2016-05-12 21:13:19   sqlite :       Execute : DROP TABLE IF EXISTS breakfast
+2016-05-12 21:13:19   sqlite :       Execute : CREATE TABLE breakfast AS SELECT id, fruit FROM fruits
+2016-05-12 21:13:19   sqlite :       Execute : DELETE FROM breakfast
+2016-05-12 21:13:19   sqlite :       Execute : DROP TABLE breakfast
+2016-05-12 21:13:19   sqlite :    Disconnect : Disconnect From database
+</pre>
+<p class="caption">Output using SQlite Driver</p>
+<br/>
 <p>{{ page.supported_drivers }}</p>
 </div>
 <div class="sidenav">
