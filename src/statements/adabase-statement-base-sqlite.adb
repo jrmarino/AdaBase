@@ -156,10 +156,12 @@ package body AdaBase.Statement.Base.SQLite is
               Object.realmccoy.Length'Img & " expected but" &
               params'Img & " found by SQLite";
          begin
-            Object.log_problem
-              (category => statement_preparation,
-               message  => errmsg);
-            return;
+            if params /= Natural (Object.realmccoy.Length) then
+               Object.log_problem
+                 (category => statement_preparation,
+                  message  => errmsg);
+               return;
+            end if;
          end;
       else
          if not Object.private_execute then
