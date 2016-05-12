@@ -80,7 +80,7 @@ end Wipe_Out;
 <br/>
 <pre class="output">
 2016-05-12 21:13:19   sqlite :       Connect : Connection to file:///home/marino/adabase.sqlite database succeeded.
-2016-05-12 21:13:19   sqlite :       Execute : Note that requested CASCADE has no effect on SQLite
+2016-05-12 21:13:19   sqlite :          Note : Requested CASCADE has no effect on SQLite
 2016-05-12 21:13:19   sqlite :       Execute : DROP TABLE IF EXISTS breakfast
 2016-05-12 21:13:19   sqlite :       Execute : CREATE TABLE breakfast AS SELECT id, fruit FROM fruits
 2016-05-12 21:13:19   sqlite :       Execute : DELETE FROM breakfast
