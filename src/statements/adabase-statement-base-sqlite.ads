@@ -71,6 +71,10 @@ package AdaBase.Statement.Base.SQLite is
    overriding
    function fetch_bound (Stmt : out SQLite_statement) return Boolean;
 
+   overriding
+   procedure fetch_next_set (Stmt         : out SQLite_statement;
+                             data_present : out Boolean;
+                             data_fetched : out Boolean);
 
 private
 

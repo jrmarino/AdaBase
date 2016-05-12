@@ -1028,4 +1028,22 @@ package body AdaBase.Statement.Base.SQLite is
    end reclaim_canvas;
 
 
+   ----------------------
+   --  fetch_next_set  --
+   ----------------------
+   overriding
+   procedure fetch_next_set (Stmt         : out SQLite_statement;
+                             data_present : out Boolean;
+                             data_fetched : out Boolean)
+   is
+      pragma Unreferenced (Stmt);
+
+      --  Stored precedures are not supported on SQLite
+      --  There's nothting that would generate multiple result sets
+      --  with a single query.
+   begin
+      data_fetched := False;
+      data_present := False;
+   end fetch_next_set;
+
 end AdaBase.Statement.Base.SQLite;
