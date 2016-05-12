@@ -746,5 +746,108 @@ package body AdaBase.Connection.Base.SQLite is
    end prep_finalize;
 
 
+   ----------------------
+   --  marker_is_null  --
+   ----------------------
+   function marker_is_null (conn  : SQLite_Connection;
+                            stmt  : BND.sqlite3_stmt_Access;
+                            index : Natural) return Boolean
+   is
+      use type BND.IC.int;
+      result    : BND.IC.int;
+      col_index : constant BND.IC.int := BND.IC.int (index);
+   begin
+      result := BND.sqlite3_bind_null (stmt, col_index);
+      return (result = BND.SQLITE_OK);
+   end marker_is_null;
+
+
+   -------------------------
+   --  marker_is_integer  --
+   -------------------------
+   function marker_is_integer (conn  : SQLite_Connection;
+                               stmt  : BND.sqlite3_stmt_Access;
+                               index : Natural;
+                               value : AR.byte8) return Boolean
+   is
+      use type BND.IC.int;
+      result    : BND.IC.int;
+      col_index : constant BND.IC.int := BND.IC.int (index);
+      SL_value  : BND.sql64 := BND.sql64 (value);
+   begin
+      result := BND.sqlite3_bind_int64 (stmt, col_index, SL_value);
+      return (result = BND.SQLITE_OK);
+   end marker_is_integer;
+
+
+   ------------------------
+   --  marker_is_double  --
+   ------------------------
+   function marker_is_double (conn  : SQLite_Connection;
+                              stmt  : BND.sqlite3_stmt_Access;
+                              index : Natural;
+                              value : AR.real18) return Boolean
+   is
+      use type BND.IC.int;
+      result    : BND.IC.int;
+      col_index : constant BND.IC.int := BND.IC.int (index);
+      SL_value  : BND.IC.double := BND.IC.double (value);
+   begin
+      result := BND.sqlite3_bind_double (stmt, col_index, SL_value);
+      return (result = BND.SQLITE_OK);
+   end marker_is_double;
+
+
+   ----------------------
+   --  marker_is_text  --
+   ----------------------
+   function marker_is_text (conn  : SQLite_Connection;
+                            stmt  : BND.sqlite3_stmt_Access;
+                            index : Natural;
+                            value : AR.textual) return Boolean
+   is
+      use type BND.IC.int;
+      result    : BND.IC.int;
+      col_index : constant BND.IC.int := BND.IC.int (index);
+      SL_value  : BND.ICS.chars_ptr := BND.ICS.New_String (CT.USS (value));
+      SL_length : BND.IC.int := BND.IC.int (BND.ICS.Strlen (SL_value));
+   begin
+      result := BND.sqlite3_bind_text (Handle     => stmt,
+                                       Index      => col_index,
+                                       Text       => SL_value,
+                                       nBytes     => SL_length,
+                                       destructor => BND.SQLITE_TRANSIENT);
+      BND.ICS.Free (SL_value);
+      return (result = BND.SQLITE_OK);
+   end marker_is_text;
+
+
+   ----------------------
+   --  marker_is_blob  --
+   ----------------------
+   function marker_is_blob (conn  : SQLite_Connection;
+                            stmt  : BND.sqlite3_stmt_Access;
+                            index : Natural;
+                            value : String) return Boolean
+   is
+      use type BND.IC.int;
+      result    : BND.IC.int;
+      col_index : constant BND.IC.int := BND.IC.int (index);
+      len       : constant BND.IC.size_t := BND.IC.size_t (value'Length);
+      SL_length : BND.IC.int := BND.IC.int (len);
+      SL_value  : BND.ICS.char_array_access :=
+                  new BND.IC.char_array (1 .. len);
+   begin
+      SL_value.all := BND.IC.To_C (value, False);
+
+      result := BND.sqlite3_bind_blob (Handle     => stmt,
+                                       Index      => col_index,
+                                       binary     => SL_value,
+                                       nBytes     => SL_length,
+                                       destructor => BND.SQLITE_TRANSIENT);
+
+      free_binary (SL_value);
+      return (result = BND.SQLITE_OK);
+   end marker_is_blob;
 
 end AdaBase.Connection.Base.SQLite;

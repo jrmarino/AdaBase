@@ -5,6 +5,7 @@ with AdaBase.Interfaces.Connection;
 with AdaBase.Bindings.SQLite;
 with AdaBase.Results;
 with Ada.Exceptions;
+with Ada.Unchecked_Deallocation;
 
 package AdaBase.Connection.Base.SQLite is
 
@@ -150,6 +151,30 @@ package AdaBase.Connection.Base.SQLite is
    function prep_fetch_next  (conn  : SQLite_Connection;
                               stmt  : BND.sqlite3_stmt_Access) return Boolean;
 
+   function marker_is_null    (conn  : SQLite_Connection;
+                               stmt  : BND.sqlite3_stmt_Access;
+                               index : Natural) return Boolean;
+
+   function marker_is_integer (conn  : SQLite_Connection;
+                               stmt  : BND.sqlite3_stmt_Access;
+                               index : Natural;
+                               value : AR.byte8) return Boolean;
+
+   function marker_is_double  (conn  : SQLite_Connection;
+                               stmt  : BND.sqlite3_stmt_Access;
+                               index : Natural;
+                               value : AR.real18) return Boolean;
+
+   function marker_is_text    (conn  : SQLite_Connection;
+                               stmt  : BND.sqlite3_stmt_Access;
+                               index : Natural;
+                               value : AR.textual) return Boolean;
+
+   function marker_is_blob    (conn  : SQLite_Connection;
+                               stmt  : BND.sqlite3_stmt_Access;
+                               index : Natural;
+                               value : String) return Boolean;
+
    ------------------
    --  EXCEPTIONS  --
    ------------------
@@ -187,5 +212,8 @@ private
    procedure finalize (conn : in out SQLite_Connection);
 
    procedure private_execute (conn : SQLite_Connection; sql : String);
+
+   procedure free_binary is new Ada.Unchecked_Deallocation
+     (BND.IC.char_array, BND.ICS.char_array_access);
 
 end AdaBase.Connection.Base.SQLite;

@@ -32,11 +32,8 @@ package AdaBase.Bindings.SQLite is
    type sqlite3_stmt_Access is access all sqlite3_stmt;
    pragma Convention (C, sqlite3_stmt_Access);
 
---     type Utf16_Code_Unit_Access_Destructor is
---       access procedure
---        (Text : Matreshka.Internals.Strings.C.Utf16_Code_Unit_Access);
---     pragma Convention (C, Utf16_Code_Unit_Access_Destructor);
-
+   type sqlite3_destructor is access procedure (text : ICS.char_array_access);
+   pragma Convention (C, sqlite3_destructor);
 
    ---------------
    -- Constants --
@@ -64,10 +61,29 @@ package AdaBase.Bindings.SQLite is
    SQLITE_CONFIG_MULTITHREAD  : constant := 2;  --  nil
    SQLITE_CONFIG_SERIALIZED   : constant := 3;  --  nil
 
+   SQLITE_STATIC    : constant IC.int := IC.int (0);
+   SQLITE_TRANSIENT : constant IC.int := IC.int (-1);
 
    ---------------------
    --  Library Calls  --
    ----------------------
+
+   --  For now, only support SQLITE_STATIC and SQLITE_TRANSIENT at the
+   --  cost of sqlite3_destructor.  Shame on them mixing pointers and integers
+   --  Applies to bind_text and bind_blob
+   function sqlite3_bind_text (Handle     : sqlite3_stmt_Access;
+                               Index      : IC.int;
+                               Text       : ICS.chars_ptr;
+                               nBytes     : IC.int;
+                               destructor : IC.int) return IC.int;
+   pragma Import (C, sqlite3_bind_text);
+
+   function sqlite3_bind_blob (Handle     : sqlite3_stmt_Access;
+                               Index      : IC.int;
+                               binary     : ICS.char_array_access;
+                               nBytes     : IC.int;
+                               destructor : IC.int) return IC.int;
+   pragma Import (C, sqlite3_bind_blob);
 
    function sqlite3_bind_double (Handle : not null sqlite3_stmt_Access;
                                  Index  : IC.int;
@@ -115,14 +131,6 @@ package AdaBase.Bindings.SQLite is
       primekey : access IC.int;
       autoinc  : access IC.int) return IC.int;
    pragma Import (C, sqlite3_table_column_metadata);
-
---     function sqlite3_bind_text16
---      (Handle     : sqlite3_stmt_Access;
---       Index      : IC.int;
---       Text       : Matreshka.Internals.Strings.C.Utf16_Code_Unit_Access;
---       nBytes     : IC.int;
---       Destructor : Utf16_Code_Unit_Access_Destructor) return IC.int;
---     pragma Import (C, sqlite3_bind_text16);
 
    function sqlite3_close (db : not null sqlite3_Access) return IC.int;
    pragma Import (C, sqlite3_close);
