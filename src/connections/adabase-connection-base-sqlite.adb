@@ -845,7 +845,7 @@ package body AdaBase.Connection.Base.SQLite is
                                        Index      => col_index,
                                        binary     => SL_value,
                                        nBytes     => SL_length,
-                                       destructor => BND.SQLITE_TRANSIENT);
+                                       destructor => BND.SQLITE_STATIC);
       chary := SL_value;
       return (result = BND.SQLITE_OK);
    end marker_is_blob;
