@@ -475,7 +475,7 @@ package body AdaBase.Connection.Base.SQLite is
                         index : Natural) return String
    is
       col : BND.IC.int := BND.IC.int (index);
-      res : BND.ICS.chars_ptr := BND.sqlite3_column_origin_name (stmt, col);
+      res : BND.ICS.chars_ptr := BND.sqlite3_column_name (stmt, col);
       str : constant String := CT.UTF8S (BND.ICS.Value (res));
    begin
       return str;
