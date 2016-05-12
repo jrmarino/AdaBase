@@ -145,8 +145,8 @@ package AdaBase.Connection.Base.SQLite is
    procedure reset_prep_stmt (conn  : SQLite_Connection;
                               stmt  : BND.sqlite3_stmt_Access);
 
-   procedure prep_finalize   (conn  : SQLite_Connection;
-                              stmt  : BND.sqlite3_stmt_Access);
+   function prep_finalize    (conn  : SQLite_Connection;
+                              stmt  : BND.sqlite3_stmt_Access) return Boolean;
 
    function prep_fetch_next  (conn  : SQLite_Connection;
                               stmt  : BND.sqlite3_stmt_Access) return Boolean;

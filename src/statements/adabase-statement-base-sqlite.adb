@@ -613,15 +613,12 @@ package body AdaBase.Statement.Base.SQLite is
          return;
       end if;
 
-      begin
-         Object.sqlite_conn.prep_finalize (Object.stmt_handle);
-      exception
-         when others =>
-            Object.log_problem
-              (category   => statement_preparation,
-               message    => "Deallocating statement resources",
-               pull_codes => True);
-      end;
+      if not Object.sqlite_conn.prep_finalize (Object.stmt_handle) then
+         Object.log_problem
+           (category   => statement_preparation,
+            message    => "Deallocating statement resources",
+            pull_codes => True);
+      end if;
 
       free_sql (Object.sql_final);
    end finalize;

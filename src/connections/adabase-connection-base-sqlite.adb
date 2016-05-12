@@ -734,15 +734,13 @@ package body AdaBase.Connection.Base.SQLite is
    ---------------------
    --  prep_finalize  --
    ---------------------
-   procedure prep_finalize (conn : SQLite_Connection;
-                            stmt : BND.sqlite3_stmt_Access)
+   function prep_finalize (conn : SQLite_Connection;
+                           stmt : BND.sqlite3_stmt_Access) return Boolean
    is
       use type BND.IC.int;
       result : BND.IC.int := BND.sqlite3_finalize (stmt);
    begin
-      if result /= BND.SQLITE_OK then
-         raise STMT_NOT_VALID with "Failed to close stmt, error " & result'Img;
-      end if;
+      return (result = BND.SQLITE_OK);
    end prep_finalize;
 
 
