@@ -125,7 +125,6 @@ private
    procedure Adjust     (Object : in out SQLite_statement);
    procedure finalize   (Object : in out SQLite_statement);
    procedure scan_column_information (Stmt : out SQLite_statement);
-   --  procedure clear_column_information  (Stmt : out SQLite_statement);
    procedure reclaim_canvas (Stmt : out SQLite_statement);
    function num_set_items (nv : String) return Natural;
    function private_execute (Stmt : out SQLite_statement) return Boolean;

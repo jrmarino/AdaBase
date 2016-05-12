@@ -173,7 +173,9 @@ package AdaBase.Connection.Base.SQLite is
    function marker_is_blob    (conn  : SQLite_Connection;
                                stmt  : BND.sqlite3_stmt_Access;
                                index : Natural;
-                               value : String) return Boolean;
+                               value : String;
+                               chary : out BND.ICS.char_array_access)
+                               return Boolean;
 
    ------------------
    --  EXCEPTIONS  --

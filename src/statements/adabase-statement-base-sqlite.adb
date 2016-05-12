@@ -175,18 +175,6 @@ package body AdaBase.Statement.Base.SQLite is
    end initialize;
 
 
-   --------------------------------
-   --  clear_column_information  --
-   --------------------------------
---     procedure clear_column_information  (Stmt : out SQLite_statement) is
---     begin
---        Stmt.num_columns := 0;
---        Stmt.column_info.Clear;
---        Stmt.crate.Clear;
---        Stmt.headings_map.Clear;
---     end clear_column_information;
-
-
    -------------------------------
    --  scan_column_information  --
    -------------------------------
@@ -666,7 +654,8 @@ package body AdaBase.Statement.Base.SQLite is
       okay    : Boolean := True;
       product : sqlite_canvas;
 
-      BT      : BND.ICS.chars_ptr renames product.buffer_text;
+      BT      : BND.ICS.chars_ptr         renames product.buffer_text;
+      BB      : BND.ICS.char_array_access renames product.buffer_binary;
 
       use type AR.nbyte0_access;
       use type AR.nbyte1_access;
@@ -845,10 +834,10 @@ package body AdaBase.Statement.Base.SQLite is
             when ft_chain =>
                if zone.a17 = null then
                   okay := conn.marker_is_blob (Stmt.stmt_handle, marker,
-                                               ARC.convert (zone.v17));
+                                               ARC.convert (zone.v17), BB);
                else
                   okay := conn.marker_is_blob (Stmt.stmt_handle, marker,
-                                               ARC.convert (zone.a17.all));
+                                               ARC.convert (zone.a17.all), BB);
                end if;
          end case;
          if not okay then
