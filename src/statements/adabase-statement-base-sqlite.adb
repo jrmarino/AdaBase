@@ -379,7 +379,7 @@ package body AdaBase.Statement.Base.SQLite is
             Stmt.step_result := data_pulled;
          else
             Stmt.step_result := progam_complete;
-            Stmt.size_of_rowset := conn.rows_affected_by_execution;
+            Stmt.impacted := conn.rows_affected_by_execution;
          end if;
          Stmt.successful_execution := True;
       exception

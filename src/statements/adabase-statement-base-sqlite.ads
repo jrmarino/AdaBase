@@ -101,7 +101,6 @@ private
          virgin         : Boolean          := True;
          assign_counter : Natural          := 0;
          num_columns    : Natural          := 0;
-         size_of_rowset : TraxID           := 0;
          column_info    : VColumns.Vector;
          sql_final      : SQL_access;
       end record;
