@@ -459,9 +459,8 @@ package body AdaBase.Driver.Base.SQLite is
       end case;
       if cascade then
          driver.log_nominal
-           (category => execution,
-            message => CT.SUS ("Note that requested CASCADE has no effect " &
-                "on SQLite"));
+           (category => note,
+            message => CT.SUS ("Requested CASCADE has no effect on SQLite"));
       end if;
       AR := driver.execute (sql => CT.USS (sql));
    end query_drop_table;
