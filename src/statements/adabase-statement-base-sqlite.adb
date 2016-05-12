@@ -144,7 +144,9 @@ package body AdaBase.Statement.Base.SQLite is
       else
          Object.log_problem
               (category => statement_preparation,
-               message  => "Failed to parse a direct SQL query");
+               message  => "Failed to parse a direct SQL query: " &
+                            Object.sql_final.all,
+               pull_codes => True);
          return;
       end if;
 
