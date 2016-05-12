@@ -429,7 +429,7 @@ package body AdaBase.Driver.Base.SQLite is
       end if;
       --  We never get here, the driver.log_problem throws exception first
       raise ACS.STMT_NOT_VALID
-        with "failed to return MySQL statement";
+        with "failed to return SQLite statement";
    end private_statement;
 
 

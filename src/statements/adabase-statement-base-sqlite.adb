@@ -142,8 +142,10 @@ package body AdaBase.Statement.Base.SQLite is
          Object.log_nominal (category => logcat,
                              message  => Object.sql_final.all);
       else
-         raise STMT_PREPARATION
-           with "Failed to parse a direct SQL query";
+         Object.log_problem
+              (category => statement_preparation,
+               message  => "Failed to parse a direct SQL query");
+         return;
       end if;
 
       if Object.type_of_statement = prepared_statement then
@@ -154,14 +156,17 @@ package body AdaBase.Statement.Base.SQLite is
               Object.realmccoy.Length'Img & " expected but" &
               params'Img & " found by SQLite";
          begin
-            if params /= Natural (Object.realmccoy.Length) then
-               raise ILLEGAL_BIND_SQL with errmsg;
-            end if;
+            Object.log_problem
+              (category => statement_preparation,
+               message  => errmsg);
+            return;
          end;
       else
          if not Object.private_execute then
-            raise STMT_EXECUTION
-              with "Failed to execute a direct SQL query";
+            Object.log_problem
+              (category => statement_preparation,
+               message  => "Failed to execute a direct SQL query");
+            return;
          end if;
       end if;
 
@@ -775,21 +780,26 @@ package body AdaBase.Statement.Base.SQLite is
    --  finalize  --
    ----------------
    overriding
-   procedure finalize (Object : in out SQLite_statement) is
+   procedure finalize (Object : in out SQLite_statement)
+   is
+      use type BND.sqlite3_stmt_Access;
    begin
       if Object.assign_counter /= 2 then
          return;
       end if;
 
-      if not Object.sqlite_conn.prep_finalize (Object.stmt_handle) then
-         Object.log_problem
-           (category   => statement_preparation,
-            message    => "Deallocating statement resources",
-            pull_codes => True);
+      if Object.stmt_handle /= null then
+         if not Object.sqlite_conn.prep_finalize (Object.stmt_handle) then
+            Object.log_problem
+              (category   => statement_preparation,
+               message    => "Deallocating statement resources",
+               pull_codes => True);
+         end if;
       end if;
 
-      free_sql (Object.sql_final);
-      --  Object.clear_column_information;
+      if Object.sql_final /= null then
+         free_sql (Object.sql_final);
+      end if;
       Object.reclaim_canvas;
    end finalize;
 
