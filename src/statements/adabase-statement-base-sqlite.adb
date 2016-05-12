@@ -178,14 +178,13 @@ package body AdaBase.Statement.Base.SQLite is
    --------------------------------
    --  clear_column_information  --
    --------------------------------
-   procedure clear_column_information  (Stmt : out SQLite_statement) is
-   begin
-      Stmt.num_columns := 0;
-      Stmt.column_info.Clear;
-      Stmt.crate.Clear;
-      Stmt.headings_map.Clear;
-      --  Stmt.reclaim_canvas;
-   end clear_column_information;
+--     procedure clear_column_information  (Stmt : out SQLite_statement) is
+--     begin
+--        Stmt.num_columns := 0;
+--        Stmt.column_info.Clear;
+--        Stmt.crate.Clear;
+--        Stmt.headings_map.Clear;
+--     end clear_column_information;
 
 
    -------------------------------
@@ -388,6 +387,7 @@ package body AdaBase.Statement.Base.SQLite is
 
       if not Stmt.virgin then
          conn.reset_prep_stmt (Stmt.stmt_handle);
+         Stmt.reclaim_canvas;
          Stmt.step_result := unset;
          Stmt.virgin := False;
       end if;
@@ -404,7 +404,7 @@ package body AdaBase.Statement.Base.SQLite is
          --  Now bind the actual values to the markers
          begin
             for sx in Natural range 1 .. num_markers loop
-               Stmt.construct_bind_slot (sx);
+               Stmt.bind_canvas.Append (Stmt.construct_bind_slot (sx));
             end loop;
             Stmt.log_nominal (category => statement_execution,
                               message => "Exec with" & num_markers'Img &
@@ -648,19 +648,25 @@ package body AdaBase.Statement.Base.SQLite is
       end if;
 
       free_sql (Object.sql_final);
+      --  Object.clear_column_information;
+      Object.reclaim_canvas;
    end finalize;
 
 
    ---------------------------
    --  construct_bind_slot  --
    ---------------------------
-   procedure construct_bind_slot (Stmt : SQLite_statement; marker : Positive)
+   function construct_bind_slot (Stmt : SQLite_statement; marker : Positive)
+                                 return sqlite_canvas
    is
       zone    : bindrec renames Stmt.realmccoy.Element (marker);
       conn    : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
 
       vartype : constant field_types := zone.output_type;
       okay    : Boolean := True;
+      product : sqlite_canvas;
+
+      BT      : BND.ICS.chars_ptr renames product.buffer_text;
 
       use type AR.nbyte0_access;
       use type AR.nbyte1_access;
@@ -791,50 +797,50 @@ package body AdaBase.Statement.Base.SQLite is
             when ft_textual =>
                if zone.a13 = null then
                   okay := conn.marker_is_text (Stmt.stmt_handle, marker,
-                                               ARC.convert (zone.v13));
+                                               ARC.convert (zone.v13), BT);
                else
                   okay := conn.marker_is_text (Stmt.stmt_handle, marker,
-                                               ARC.convert (zone.a13.all));
+                                               ARC.convert (zone.a13.all), BT);
                end if;
             when ft_widetext =>
                if zone.a14 = null then
                   okay := conn.marker_is_text (Stmt.stmt_handle, marker,
-                                               ARC.convert (zone.v14));
+                                               ARC.convert (zone.v14), BT);
                else
                   okay := conn.marker_is_text (Stmt.stmt_handle, marker,
-                                               ARC.convert (zone.a14.all));
+                                               ARC.convert (zone.a14.all), BT);
                end if;
            when ft_supertext =>
                if zone.a15 = null then
                   okay := conn.marker_is_text (Stmt.stmt_handle, marker,
-                                               ARC.convert (zone.v15));
+                                               ARC.convert (zone.v15), BT);
                else
                   okay := conn.marker_is_text (Stmt.stmt_handle, marker,
-                                               ARC.convert (zone.a15.all));
+                                               ARC.convert (zone.a15.all), BT);
                end if;
             when ft_timestamp =>
                if zone.a16 = null then
                   okay := conn.marker_is_text (Stmt.stmt_handle, marker,
-                                               ARC.convert (zone.v16));
+                                               ARC.convert (zone.v16), BT);
                else
                   okay := conn.marker_is_text (Stmt.stmt_handle, marker,
-                                               ARC.convert (zone.a16.all));
+                                               ARC.convert (zone.a16.all), BT);
                end if;
             when ft_enumtype =>
                if zone.a18 = null then
                   okay := conn.marker_is_text (Stmt.stmt_handle, marker,
-                                               ARC.convert (zone.v18));
+                                               ARC.convert (zone.v18), BT);
                else
                   okay := conn.marker_is_text (Stmt.stmt_handle, marker,
-                                               ARC.convert (zone.a18.all));
+                                               ARC.convert (zone.a18.all), BT);
                end if;
             when ft_settype =>
                if zone.a19 = null then
                   okay := conn.marker_is_text (Stmt.stmt_handle, marker,
-                                               ARC.convert (zone.v19));
+                                               ARC.convert (zone.v19), BT);
                else
                   okay := conn.marker_is_text (Stmt.stmt_handle, marker,
-                                               ARC.convert (zone.a19.all));
+                                               ARC.convert (zone.a19.all), BT);
                end if;
             when ft_chain =>
                if zone.a17 = null then
@@ -850,7 +856,34 @@ package body AdaBase.Statement.Base.SQLite is
               " type to marker " & marker'Img;
          end if;
       end if;
+      return product;
    end construct_bind_slot;
+
+
+   ----------------------
+   --  reclaim_canvas  --
+   ----------------------
+   procedure reclaim_canvas (Stmt : out SQLite_statement)
+   is
+      use type BND.ICS.char_array_access;
+      use type BND.ICS.chars_ptr;
+   begin
+      for x in Positive range 1 .. Natural (Stmt.bind_canvas.Length) loop
+         declare
+            SC : sqlite_canvas renames Stmt.bind_canvas.Element (x);
+            BT : BND.ICS.chars_ptr         := SC.buffer_text;
+            BB : BND.ICS.char_array_access := SC.buffer_binary;
+         begin
+            if BT /= BND.ICS.Null_Ptr then
+               BND.ICS.Free (BT);
+            end if;
+            if BB /= null then
+               free_binary (BB);
+            end if;
+         end;
+      end loop;
+      Stmt.bind_canvas.Clear;
+   end reclaim_canvas;
 
 
 end AdaBase.Statement.Base.SQLite;

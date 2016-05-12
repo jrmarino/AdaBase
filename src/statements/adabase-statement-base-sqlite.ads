@@ -82,10 +82,18 @@ private
       sqlite_type   : BND.enum_field_types;
    end record;
 
+   type sqlite_canvas is record
+      buffer_binary : BND.ICS.char_array_access := null;
+      buffer_text   : BND.ICS.chars_ptr         := BND.ICS.Null_Ptr;
+   end record;
+
    type step_result_type is (unset, data_pulled, progam_complete, error_seen);
 
    package VColumns is new AC.Vectors (Index_Type   => Positive,
                                        Element_Type => column_info);
+
+   package VCanvas  is new AC.Vectors (Index_Type   => Positive,
+                                       Element_Type => sqlite_canvas);
 
    type SQLite_statement (type_of_statement : stmt_type;
                           log_handler       : ALF.LogFacility_access;
@@ -102,6 +110,7 @@ private
          assign_counter : Natural          := 0;
          num_columns    : Natural          := 0;
          column_info    : VColumns.Vector;
+         bind_canvas    : VCanvas.Vector;
          sql_final      : SQL_access;
       end record;
 
@@ -116,12 +125,17 @@ private
    procedure Adjust     (Object : in out SQLite_statement);
    procedure finalize   (Object : in out SQLite_statement);
    procedure scan_column_information (Stmt : out SQLite_statement);
-   procedure clear_column_information  (Stmt : out SQLite_statement);
-   procedure construct_bind_slot (Stmt : SQLite_statement; marker : Positive);
+   --  procedure clear_column_information  (Stmt : out SQLite_statement);
+   procedure reclaim_canvas (Stmt : out SQLite_statement);
    function num_set_items (nv : String) return Natural;
    function private_execute (Stmt : out SQLite_statement) return Boolean;
+   function construct_bind_slot (Stmt : SQLite_statement; marker : Positive)
+                                 return sqlite_canvas;
 
    procedure free_sql is new Ada.Unchecked_Deallocation
      (String, SQL_access);
+
+   procedure free_binary is new Ada.Unchecked_Deallocation
+     (BND.IC.char_array, BND.ICS.char_array_access);
 
 end AdaBase.Statement.Base.SQLite;

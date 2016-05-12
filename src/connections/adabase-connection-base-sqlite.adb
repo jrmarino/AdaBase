@@ -802,7 +802,8 @@ package body AdaBase.Connection.Base.SQLite is
    function marker_is_text (conn  : SQLite_Connection;
                             stmt  : BND.sqlite3_stmt_Access;
                             index : Natural;
-                            value : String) return Boolean
+                            value : String;
+                            cstr  : out BND.ICS.chars_ptr) return Boolean
    is
       use type BND.IC.int;
       result    : BND.IC.int;
@@ -814,8 +815,8 @@ package body AdaBase.Connection.Base.SQLite is
                                        Index      => col_index,
                                        Text       => SL_value,
                                        nBytes     => SL_length,
-                                       destructor => BND.SQLITE_TRANSIENT);
-      BND.ICS.Free (SL_value);
+                                       destructor => BND.SQLITE_STATIC);
+      cstr := SL_value;
       return (result = BND.SQLITE_OK);
    end marker_is_text;
 
@@ -844,7 +845,7 @@ package body AdaBase.Connection.Base.SQLite is
                                        nBytes     => SL_length,
                                        destructor => BND.SQLITE_TRANSIENT);
 
-      free_binary (SL_value);
+--      free_binary (SL_value);
       return (result = BND.SQLITE_OK);
    end marker_is_blob;
 
