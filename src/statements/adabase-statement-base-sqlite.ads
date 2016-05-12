@@ -76,6 +76,14 @@ package AdaBase.Statement.Base.SQLite is
                              data_present : out Boolean;
                              data_fetched : out Boolean);
 
+   overriding
+   procedure iterate (Stmt    : out SQLite_statement;
+                      process : not null access procedure);
+
+   overriding
+   procedure iterate (Stmt    : out SQLite_statement;
+                      process : not null access procedure (row : ARS.DataRow));
+
 private
 
    type column_info is record
