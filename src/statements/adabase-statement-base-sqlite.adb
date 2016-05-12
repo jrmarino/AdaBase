@@ -543,53 +543,45 @@ package body AdaBase.Statement.Base.SQLite is
    overriding
    function fetch_all (Stmt : out SQLite_statement) return ARS.DataRowSet
    is
-      subtype rack_range is Positive range 1 .. 1000000;
-      type TRack is array (rack_range) of ARS.DataRow_Access;
-      nullset      : ARS.DataRowSet (1 .. 0);
+      subtype rack_range is Positive range 1 .. 20000;
+      dataset_size : Natural    := 0;
+      arrow        : rack_range := rack_range'First;
+      rack         : ARS.DataRowSet (rack_range);
+      nullset      : constant ARS.DataRowSet (1 .. 0) :=
+                     (others => ARS.Empty_DataRow);
    begin
       if Stmt.step_result /= data_pulled then
          return nullset;
       end if;
       --  With SQLite, we don't know many rows of data are fetched, ever.
-      --  For practical purposes, let's limit a result set to 1 million rows
-      --  We'll create an access array and dynamically allocate memory for
-      --  each row.  At the end, we'll copy the data to a properly sized
-      --  array, free the memory and return the result.
+      --  For practical purposes, let's limit a result set to 20k rows
+      --  Rather than dynamically allocating rows and having to worry about
+      --  copying them to a fixed array, let's just allocate a 20k set and
+      --  return the part we need.  That should be more efficient considering
+      --  trade-offs.
+      --
+      --  Note that this was originally intended to be a 100k row result set.
+      --  but gcc 5.3 is core dumping with "illegal" instruction if the
+      --  rack_range is >= 25000.  Maybe a problem with containers?  But it
+      --  happened with a 100k array of access to datarows too!
 
-      declare
-         rack         : TRack;
-         dataset_size : Natural    := 0;
-         arrow        : rack_range := rack_range'First;
-      begin
-         loop
-            rack (arrow) := new ARS.DataRow;
-            rack (arrow).all := Stmt.fetch_next;
-            exit when rack (arrow).data_exhausted;
-            dataset_size := dataset_size + 1;
-            if arrow = rack_range'Last then
-               Stmt.discard_rest;
-               exit;
-            end if;
-            arrow := arrow + 1;
-         end loop;
-         if dataset_size = 0 then
-            --  nothing was fetched
-            free_datarow (rack (arrow));
-            return nullset;
+      loop
+         rack (arrow) := Stmt.fetch_next;
+         exit when rack (arrow).data_exhausted;
+         dataset_size := dataset_size + 1;
+         if arrow = rack_range'Last then
+            Stmt.discard_rest;
+            exit;
          end if;
+         arrow := arrow + 1;
+      end loop;
 
-         declare
-            returnset : ARS.DataRowSet (1 .. dataset_size);
-         begin
-            for x in returnset'Range loop
-               returnset (x) := rack (x).all;
-            end loop;
-            for x in rack_range range rack_range'First .. arrow loop
-               free_datarow (rack (x));
-            end loop;
-            return returnset;
-         end;
-      end;
+      if dataset_size = 0 then
+         --  nothing was fetched
+         return nullset;
+      end if;
+
+      return rack (1 .. dataset_size);
    end fetch_all;
 
 
