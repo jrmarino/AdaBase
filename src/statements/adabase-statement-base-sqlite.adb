@@ -366,8 +366,29 @@ package body AdaBase.Statement.Base.SQLite is
       end if;
 
       if num_markers > 0 then
-         --  TO BE IMPLEMENTED
-         null;
+         --  Check to make sure all prepared markers are bound
+         for sx in Natural range 1 .. num_markers loop
+            if not Stmt.realmccoy.Element (sx).bound then
+               raise STMT_PREPARATION
+                 with "Prep Stmt column" & sx'Img & " unbound";
+            end if;
+         end loop;
+
+         --  Now bind the actual values to the markers
+         begin
+            for sx in Natural range 1 .. num_markers loop
+               Stmt.construct_bind_slot (sx);
+            end loop;
+            Stmt.log_nominal (category => statement_execution,
+                              message => "Exec with" & num_markers'Img &
+                                " bound parameters");
+         exception
+            when CBS : others =>
+               Stmt.log_problem (category => statement_execution,
+                                 message  => ACS.EX.Exception_Message (CBS));
+               return False;
+         end;
+
       else
          --  No binding required, just execute the prepared statement
          Stmt.log_nominal (category => statement_execution,
@@ -604,5 +625,73 @@ package body AdaBase.Statement.Base.SQLite is
 
       free_sql (Object.sql_final);
    end finalize;
+
+
+   ---------------------------
+   --  construct_bind_slot  --
+   ---------------------------
+   procedure construct_bind_slot (Stmt : SQLite_statement; marker : Positive)
+   is
+      zone    : bindrec renames Stmt.realmccoy.Element (marker);
+      conn    : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
+
+      vartype : constant field_types := zone.output_type;
+      okay    : Boolean := True;
+
+      use type AR.byte8_access;
+      use type AR.real18_access;
+      use type AR.str1_access;
+      use type AR.chain_access;
+   begin
+      if zone.null_data then
+         if not conn.marker_is_null (Stmt.stmt_handle, marker) then
+            raise STMT_EXECUTION
+              with "failed to bind NULL marker" & marker'Img;
+         end if;
+      else
+         case vartype is
+            when ft_byte8 =>
+               if zone.a10 = null then
+                  okay := conn.marker_is_integer
+                    (Stmt.stmt_handle, marker, zone.v10);
+               else
+                  okay := conn.marker_is_integer
+                    (Stmt.stmt_handle, marker, zone.a10.all);
+               end if;
+            when ft_real18 =>
+               if zone.a12 = null then
+                  okay := conn.marker_is_double
+                    (Stmt.stmt_handle, marker, zone.v12);
+               else
+                  okay := conn.marker_is_double
+                    (Stmt.stmt_handle, marker, zone.a12.all);
+               end if;
+            when ft_textual =>
+               if zone.a13 = null then
+                  okay := conn.marker_is_text
+                    (Stmt.stmt_handle, marker, zone.v13);
+               else
+                  okay := conn.marker_is_text
+                    (Stmt.stmt_handle, marker, zone.a13.all);
+               end if;
+            when ft_chain =>
+               if zone.a17 = null then
+                  okay := conn.marker_is_blob
+                    (Stmt.stmt_handle, marker, CT.USS (zone.v17));
+               else
+                  okay := conn.marker_is_blob
+                    (Stmt.stmt_handle, marker, ARC.convert (zone.a17.all));
+               end if;
+            when others =>
+               raise BINDING_TYPE_MISMATCH
+                 with "unexpected type " & vartype'Img;
+         end case;
+         if not okay then
+            raise STMT_EXECUTION with "failed to bind " & vartype'Img &
+              " type to marker " & marker'Img;
+         end if;
+      end if;
+   end construct_bind_slot;
+
 
 end AdaBase.Statement.Base.SQLite;

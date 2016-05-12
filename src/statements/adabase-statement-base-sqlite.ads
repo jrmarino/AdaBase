@@ -117,6 +117,7 @@ private
    procedure finalize   (Object : in out SQLite_statement);
    procedure scan_column_information (Stmt : out SQLite_statement);
    procedure clear_column_information  (Stmt : out SQLite_statement);
+   procedure construct_bind_slot (Stmt : SQLite_statement; marker : Positive);
    function num_set_items (nv : String) return Natural;
 
    procedure free_sql is new Ada.Unchecked_Deallocation
