@@ -433,4 +433,52 @@ package body AdaBase.Driver.Base.SQLite is
    end private_statement;
 
 
+   ------------------------
+   --  query_drop_table  --
+   ------------------------
+   overriding
+   procedure query_drop_table (driver      : SQLite_Driver;
+                               tables      : String;
+                               when_exists : Boolean := False;
+                               cascade     : Boolean := False)
+
+   is
+      sql : CT.Text;
+      AR  : AffectedRows;
+   begin
+      if CT.contains (tables, ",") then
+         driver.log_problem
+           (category => execution,
+            message => CT.SUS ("Multiple tables detected -- SQLite" &
+                " can only drop one table at a time : " & tables));
+         return;
+      end if;
+      case when_exists is
+         when True  => sql := CT.SUS ("DROP TABLE IF EXISTS " & tables);
+         when False => sql := CT.SUS ("DROP TABLE " & tables);
+      end case;
+      if cascade then
+         driver.log_nominal
+           (category => execution,
+            message => CT.SUS ("Note that requested CASCADE has no effect " &
+                "on SQLite"));
+      end if;
+      AR := driver.execute (sql => CT.USS (sql));
+   end query_drop_table;
+
+
+   -------------------------
+   --  query_clear_table  --
+   -------------------------
+   overriding
+   procedure query_clear_table (driver : SQLite_Driver;
+                                table  : String)
+   is
+      --  SQLite has no "truncate" commands
+      sql : constant String := "DELETE FROM " & table;
+      AR  : AffectedRows;
+   begin
+      AR := driver.execute (sql => sql);
+   end query_clear_table;
+
 end AdaBase.Driver.Base.SQLite;

@@ -53,6 +53,17 @@ package AdaBase.Driver.Base.SQLite is
                             hostname : String := blankstring;
                             port     : PosixPort);
 
+   overriding
+   procedure query_drop_table  (driver      : SQLite_Driver;
+                                tables      : String;
+                                when_exists : Boolean := False;
+                                cascade     : Boolean := False);
+
+   overriding
+   procedure query_clear_table (driver : SQLite_Driver;
+                                table  : String);
+
+
    function query          (driver     : SQLite_Driver;
                             sql        : String)
                             return ASS.SQLite_statement;
@@ -86,6 +97,7 @@ package AdaBase.Driver.Base.SQLite is
                             limit      : TraxID := 0;
                             offset     : TraxID := 0)
                             return ASS.SQLite_statement;
+
 private
 
    backend : aliased ACS.SQLite_Connection;

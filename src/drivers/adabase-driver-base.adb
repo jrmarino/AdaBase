@@ -239,7 +239,7 @@ package body AdaBase.Driver.Base is
 
    is
       use type TDriver;
-      --  MySQL acceptions CASCADE but ignores it
+      --  MySQL accepts CASCADE but ignores it
       --  MySQL and PostgreSQL can use this versions, but Firebird
       --  needs if_exists implementation and doesn't know CASCADE, so it
       --  needs an overriding implementation.
