@@ -144,6 +144,26 @@ Affected rows:  1
 </pre>
 <p class="caption">Output using MySQL Driver</p>
 <br/>
+<pre class="output">
+2016-05-12 14:27:02   sqlite :       Connect : Connection to file:///home/marino/adabase.sqlite database succeeded.
+2016-05-12 14:27:02   sqlite :  Prepare Stmt : SELECT ALL * FROM fruits WHERE color = ? and calories > ?       and calories < ?
+2016-05-12 14:27:02   sqlite :  Execute Stmt : Exec with 3 bound parameters
+execute succeeded
+Column 1 heading: id
+Column 2 heading: fruit
+Column 3 heading: color
+Column 4 heading: calories
+returned rows:  0
+apple (red) 95 calories
+tomato (red) 9 calories
+2016-05-12 14:27:02   sqlite :  Prepare Stmt : INSERT INTO fruits (fruit, color, calories) VALUES ('potato','tan', 77)
+2016-05-12 14:27:02   sqlite :  Execute Stmt : Exec without bound parameters
+Inserted row  38
+Affected rows:  1
+2016-05-12 14:27:02   sqlite :    Disconnect : Disconnect From database
+</pre>
+<p class="caption">Output using SQLite Driver</p>
+<br/>
 <p>{{ page.supported_drivers }}</p>
 <p>{{ page.supported_stmts }}</p>
 </div>
