@@ -92,9 +92,9 @@ title: AdaBase by jrmarino
 <li>{{ page.f_fetch_next }}</li>
 <li>{{ page.f_fetch_all }}</li>
 <li>{{ page.f_fetch_bound }}</li>
+<li>{{ page.f_fetch_next_set }}</li>
 <li>{{ page.f_bind }}</li>
 <li>{{ page.f_assign }}</li>
-<li>{{ page.f_fetch_next_set }}</li>
 <li>{{ page.p_stmt_iterate }}</li>
 </ul>
 
