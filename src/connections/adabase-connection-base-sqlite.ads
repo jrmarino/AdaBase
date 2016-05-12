@@ -133,6 +133,10 @@ package AdaBase.Connection.Base.SQLite is
                             stmt  : BND.sqlite3_stmt_Access;
                             index : Natural) return String;
 
+   function field_true_name      (conn  : SQLite_Connection;
+                                  stmt  : BND.sqlite3_stmt_Access;
+                                  index : Natural) return String;
+
    procedure get_field_meta_data (conn  : SQLite_Connection;
                                   stmt  : BND.sqlite3_stmt_Access;
                                   database  : String;

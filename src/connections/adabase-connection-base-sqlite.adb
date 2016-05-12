@@ -482,6 +482,21 @@ package body AdaBase.Connection.Base.SQLite is
    end field_name;
 
 
+   -----------------------
+   --  field_true_name  --
+   -----------------------
+   function field_true_name (conn  : SQLite_Connection;
+                        stmt  : BND.sqlite3_stmt_Access;
+                        index : Natural) return String
+   is
+      col : BND.IC.int := BND.IC.int (index);
+      res : BND.ICS.chars_ptr := BND.sqlite3_column_origin_name (stmt, col);
+      str : constant String := CT.UTF8S (BND.ICS.Value (res));
+   begin
+      return str;
+   end field_true_name;
+
+
    ----------------------
    --  field_database  --
    ----------------------

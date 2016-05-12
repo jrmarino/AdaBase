@@ -115,6 +115,10 @@ package AdaBase.Bindings.SQLite is
                                         index  : IC.int) return ICS.chars_ptr;
    pragma Import (C, sqlite3_column_name);
 
+   function sqlite3_column_origin_name (Handle : not null sqlite3_stmt_Access;
+                                        index  : IC.int) return ICS.chars_ptr;
+   pragma Import (C, sqlite3_column_origin_name);
+
    function sqlite3_column_database_name
      (Handle : not null sqlite3_stmt_Access;
       index  : IC.int) return ICS.chars_ptr;

@@ -213,6 +213,7 @@ package body AdaBase.Statement.Base.SQLite is
             info  : column_info;
             brec  : bindrec;
             name  : String := conn.field_name (Stmt.stmt_handle, index);
+            tname : String := conn.field_true_name (Stmt.stmt_handle, index);
             table : String := conn.field_table (Stmt.stmt_handle, index);
             dbase : String := conn.field_database (Stmt.stmt_handle, index);
          begin
@@ -223,7 +224,7 @@ package body AdaBase.Statement.Base.SQLite is
             conn.get_field_meta_data (stmt      => Stmt.stmt_handle,
                                       database  => dbase,
                                       table     => table,
-                                      column    => name,
+                                      column    => tname,
                                       data_type => info.sqlite_type,
                                       nullable  => info.null_possible);
 
