@@ -110,18 +110,20 @@ package body AdaBase.Statement.Base.SQLite is
    procedure initialize (Object : in out SQLite_statement)
    is
       use type ACS.SQLite_Connection_Access;
+      conn : ACS.SQLite_Connection_Access renames Object.sqlite_conn;
+
       len : Natural := CT.len (Object.initial_sql.all);
       logcat : LogCategory;
    begin
 
-      if Object.sqlite_conn = null then
+      if conn = null then
          return;
       end if;
 
       logger_access     := Object.log_handler;
       Object.dialect    := driver_sqlite;
       Object.sql_final  := new String (1 .. len);
-      Object.connection := ACB.Base_Connection_Access (Object.sqlite_conn);
+      Object.connection := ACB.Base_Connection_Access (conn);
 
       case Object.type_of_statement is
          when direct_statement =>
@@ -133,8 +135,8 @@ package body AdaBase.Statement.Base.SQLite is
             logcat := statement_preparation;
       end case;
 
-      if Object.sqlite_conn.prepare_statement (stmt => Object.stmt_handle,
-                                               sql  => Object.sql_final.all)
+      if conn.prepare_statement (stmt => Object.stmt_handle,
+                                 sql  => Object.sql_final.all)
       then
          Object.successful_execution := True;
          Object.log_nominal (category => logcat,
@@ -147,8 +149,7 @@ package body AdaBase.Statement.Base.SQLite is
       if Object.type_of_statement = prepared_statement then
          --  Check that we have as many markers as expected
          declare
-            params : Natural :=
-              Object.sqlite_conn.prep_markers_found (Object.stmt_handle);
+            params : Natural := conn.prep_markers_found (Object.stmt_handle);
             errmsg : String := "marker mismatch," &
               Object.realmccoy.Length'Img & " expected but" &
               params'Img & " found by SQLite";
@@ -157,6 +158,11 @@ package body AdaBase.Statement.Base.SQLite is
                raise ILLEGAL_BIND_SQL with errmsg;
             end if;
          end;
+      else
+         if not Object.private_execute then
+            raise STMT_EXECUTION
+              with "Failed to execute a direct SQL query";
+         end if;
       end if;
 
       Object.scan_column_information;
@@ -340,6 +346,27 @@ package body AdaBase.Statement.Base.SQLite is
       conn.reset_prep_stmt (stmt => Stmt.stmt_handle);
       Stmt.step_result := unset;
    end discard_rest;
+
+
+   -----------------------
+   --  private_execute  --
+   -----------------------
+   function private_execute (Stmt : out SQLite_statement) return Boolean
+   is
+      conn : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
+   begin
+      if conn.prep_fetch_next (Stmt.stmt_handle) then
+         Stmt.step_result := data_pulled;
+      else
+         Stmt.step_result := progam_complete;
+         Stmt.impacted := conn.rows_affected_by_execution;
+      end if;
+      return True;
+   exception
+      when ACS.STMT_FETCH_FAIL =>
+         Stmt.step_result := error_seen;
+         return False;
+   end private_execute;
 
 
    ------------------
