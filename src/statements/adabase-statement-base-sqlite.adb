@@ -988,7 +988,7 @@ package body AdaBase.Statement.Base.SQLite is
                   hold : AR.real18;
                begin
                   if vartype = ft_real18 then
-                     if zone.a10 = null then
+                     if zone.a12 = null then
                         hold := zone.v12;
                      else
                         hold := zone.a12.all;
