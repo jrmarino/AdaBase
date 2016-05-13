@@ -152,7 +152,7 @@ package body AdaBase.Driver.Base.SQLite is
         CT.SUS ("ACK! Execution attempted on inactive connection");
    begin
       if driver.connection_active then
-         driver.connection.all.execute (sql => sql);
+         driver.connection.execute (sql => sql);
          result := driver.connection.all.rows_affected_by_execution;
          driver.log_nominal (category => execution, message => CT.SUS (sql));
       else
@@ -463,6 +463,11 @@ package body AdaBase.Driver.Base.SQLite is
             message => CT.SUS ("Requested CASCADE has no effect on SQLite"));
       end if;
       AR := driver.execute (sql => CT.USS (sql));
+   exception
+      when ACS.QUERY_FAIL =>
+         driver.log_problem (category   => execution,
+                             message    => sql,
+                             pull_codes => True);
    end query_drop_table;
 
 
@@ -478,6 +483,11 @@ package body AdaBase.Driver.Base.SQLite is
       AR  : AffectedRows;
    begin
       AR := driver.execute (sql => sql);
+   exception
+      when ACS.QUERY_FAIL =>
+         driver.log_problem (category   => execution,
+                             message    => CT.SUS (sql),
+                             pull_codes => True);
    end query_clear_table;
 
 end AdaBase.Driver.Base.SQLite;
