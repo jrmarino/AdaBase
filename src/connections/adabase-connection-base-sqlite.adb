@@ -209,8 +209,6 @@ package body AdaBase.Connection.Base.SQLite is
    begin
       conn.private_execute ("BEGIN TRANSACTION");
       conn.in_transaction := True;
-   exception
-      when QUERY_FAIL => raise;
    end begin_transaction;
 
 
@@ -223,7 +221,7 @@ package body AdaBase.Connection.Base.SQLite is
       conn.private_execute ("ROLLBACK");
       conn.in_transaction := False;
    exception
-      when QUERY_FAIL => raise;
+      when QUERY_FAIL => raise ROLLBACK_FAIL;
    end rollback;
 
 
@@ -236,7 +234,7 @@ package body AdaBase.Connection.Base.SQLite is
       conn.private_execute ("COMMIT");
       conn.in_transaction := False;
    exception
-      when QUERY_FAIL => raise;
+      when QUERY_FAIL => raise COMMIT_FAIL;
    end commit;
 
 
@@ -290,8 +288,6 @@ package body AdaBase.Connection.Base.SQLite is
             conn.private_execute (sql);
          end if;
       end if;
-   exception
-      when QUERY_FAIL => raise;
    end execute;
 
 

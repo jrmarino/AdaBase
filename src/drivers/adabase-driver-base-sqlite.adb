@@ -87,7 +87,7 @@ package body AdaBase.Driver.Base.SQLite is
          driver.log_problem (category => transaction, message  => err2);
          return;
       end if;
-      driver.connection.all.commit;
+      driver.connection.commit;
    exception
       when ACS.COMMIT_FAIL =>
          driver.log_problem (category   => transaction,
