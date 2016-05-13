@@ -98,6 +98,11 @@ package AdaBase.Driver.Base.SQLite is
                             offset     : TraxID := 0)
                             return ASS.SQLite_statement;
 
+   function trait_multiquery_enabled       (driver : SQLite_Driver)
+                                            return Boolean;
+   procedure set_trait_multiquery_enabled  (driver : SQLite_Driver;
+                                            trait  : Boolean);
+
 private
 
    backend : aliased ACS.SQLite_Connection;
