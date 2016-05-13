@@ -293,9 +293,7 @@ begin
       numrows : AdaBase.AffectedRows;
    begin
       numrows := CON.DR.execute ("DELETE FROM all_types WHERE id_nbyte3 > 8");
-      if Natural (numrows) > 0 then
-         CON.DR.commit;
-      end if;
+      CON.DR.commit;
    end;
 
    declare
