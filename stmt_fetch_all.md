@@ -18,6 +18,9 @@ remaining rows of data if some data has already been fetched).  The DataRowSet
 is an array of rows that is indexed started from 1, and the number of rows is
 easily determined by the standard Length attribute of Ada arrays.
 </p>
+<p>
+With the SQLite driver, the result set is limited to the first 20,000 rows.
+</p>
 <br/>
 <p class="caption">See {{ page.query_select }} for a usage example.</p>
 <br/>
