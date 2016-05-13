@@ -20,7 +20,7 @@ package AdaBase is
 
    subtype BLOB_maximum  is Positive range 2 ** 12 .. 2 ** 30;
    subtype TSqlState     is String (1 .. 5);
-   subtype DriverCodes   is Integer range -999 .. 1999;
+   subtype DriverCodes   is Integer range -999 .. 4999;
    subtype PosixPort     is Natural range 0 .. 65535;
    subtype AffectedRows  is TraxID;
 
