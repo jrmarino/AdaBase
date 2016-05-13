@@ -1,0 +1,33 @@
+library project AdaBase is
+
+   for Library_Name     use "adabase";
+   for Library_Kind     use "static";
+   for Source_Dirs      use ("../../include/adabase");
+   for Library_Dir      use "../../lib/adabase";
+   for Externally_Built use "true";
+
+   type Driver_Included is ("yes", "no");
+   Driver_MySQL  : Driver_Included := "@MYSQL@";
+   Driver_SQLite : Driver_Included := "@SQLITE@";
+
+   Linker_MySQL  := ();
+   Linker_SQLite := ();
+
+   case Driver_MySQL is
+      when "no"  => null;
+      when "yes" => Linker_MySQL  := ("-L@PREFIX@/lib/mysql",
+                                      "-Wl,-R,@PREFIX@/lib/mysql",
+                                      "-lmysqlclient");
+   end case;
+   case Driver Driver_SQLite is
+      when "no"  => null;
+      when "yes" =>  Linker_SQLite := ("-L@PREFIX@/lib",
+                                       "-Wl,-R,@PREFIX@/lib",
+                                       "-lsqlite3");
+   end case;
+
+   package Linker is
+      for Linker_Options use Linker_MySQL & Linker_MySQL;
+   end Linker;
+
+end AdaBase;
