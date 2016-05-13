@@ -1824,37 +1824,4 @@ package body AdaBase.Statement.Base.MySQL is
    end num_set_items;
 
 
-   ------------------
-   --  iterate #1  --
-   ------------------
-   overriding
-   procedure iterate (Stmt    : out MySQL_statement;
-                      process : not null access procedure) is
-   begin
-      loop
-         exit when not Stmt.fetch_bound;
-         process.all;
-      end loop;
-   end iterate;
-
-
-   ------------------
-   --  iterate #2  --
-   ------------------
-   overriding
-   procedure iterate (Stmt    : out MySQL_statement;
-                      process : not null access procedure (row : ARS.DataRow))
-   is
-   begin
-      loop
-         declare
-            local_row : ARS.DataRow := Stmt.fetch_next;
-         begin
-            exit when local_row.data_exhausted;
-            process.all (row => local_row);
-         end;
-      end loop;
-   end iterate;
-
-
 end AdaBase.Statement.Base.MySQL;
