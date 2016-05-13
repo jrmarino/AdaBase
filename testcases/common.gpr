@@ -6,17 +6,20 @@ project Common is
    type Drivers  is ("mysql", "postgresql", "sqlite", "firebird");
    Driver : Drivers := external ("driver", "mysql");
    Opsys  : Os_Type := external ("opsys", "unix");
-   for Object_Dir use "obj";
 
    case Driver is
       when "mysql" =>
          for Source_Dirs use ("driver_connections/mysql");
+         for Object_Dir use "obj/mysql";
       when "postgresql" =>
          for Source_Dirs use ("driver_connections/pgsql");
+         for Object_Dir use "obj/pgsql";
       when "sqlite" =>
          for Source_Dirs use ("driver_connections/sqlite");
+         for Object_Dir use "obj/sqlite";
       when "firebird" =>
          for Source_Dirs use ("driver_connections/firebird");
+         for Object_Dir use "obj/firebird";
    end case;
 
    package Compiler is
