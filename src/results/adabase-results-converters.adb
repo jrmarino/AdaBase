@@ -1139,40 +1139,44 @@ package body AdaBase.Results.Converters is
 
    function convert (nv : byte8) return byte1
    is
+      min : constant byte8 := byte8 (byte1'First);
       max : constant byte8 := byte8 (byte1'Last);
    begin
       case nv is
-         when 0 .. max => return byte1 (nv);
+         when min .. max => return byte1 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
    function convert (nv : byte8) return byte2
    is
+      min : constant byte8 := byte8 (byte2'First);
       max : constant byte8 := byte8 (byte2'Last);
    begin
       case nv is
-         when 0 .. max => return byte2 (nv);
+         when min .. max => return byte2 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
    function convert (nv : byte8) return byte3
    is
+      min : constant byte8 := byte8 (byte3'First);
       max : constant byte8 := byte8 (byte3'Last);
    begin
       case nv is
-         when 0 .. max => return byte3 (nv);
+         when min .. max => return byte3 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
 
    function convert (nv : byte8) return byte4
    is
+      min : constant byte8 := byte8 (byte4'First);
       max : constant byte8 := byte8 (byte4'Last);
    begin
       case nv is
-         when 0 .. max => return byte4 (nv);
+         when min .. max => return byte4 (nv);
          when others => raise TARGET_TYPE_TOO_NARROW;
       end case;
    end convert;
