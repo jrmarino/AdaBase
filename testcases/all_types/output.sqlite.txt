@@ -1,0 +1,112 @@
+Dumping Result from direct statement ...
+01. nbyte0          FT_BYTE8       1
+02. nbyte1          FT_BYTE8       129
+03. nbyte2          FT_BYTE8       33000
+04. id_nbyte3       FT_BYTE8       1
+05. nbyte4          FT_BYTE8       2200000000
+06. nbyte8          FT_BYTE8       6600000000
+07. byte1           FT_BYTE8       -120
+08. byte2           FT_BYTE8       -30000
+09. byte3           FT_BYTE8       8000000
+10. byte4           FT_BYTE8       -2000000000
+11. byte5           FT_BYTE8       -7700000000
+12. real9           FT_REAL18      7.98399999999999999E+00
+13. real18          FT_REAL18      5.31234234342299985E+01
+14. exact_decimal   FT_REAL18      1.23450000000000003E+02
+15. bit_type        FT_CHAIN       0C 93
+16. my_date         FT_TEXTUAL     1993-01-15
+17. my_datetime     FT_TEXTUAL     1972-08-01 08:00:05
+18. my_timestamp    FT_TEXTUAL     2016-05-03 20:17:51
+19. my_time         FT_TEXTUAL     04:30:02
+20. my_year         FT_BYTE8       1988
+21. fixed_string    FT_TEXTUAL     ABCD1234EFGH5678
+22. variable_string FT_TEXTUAL     The quick brown fox jumped over the lazy dogs
+23. my_tinytext     FT_TEXTUAL     You're going to need a bigger boat.
+24. my_text         FT_TEXTUAL     Take your stinkin' paws off me, you damn dirty ape!
+25. my_mediumtext   FT_TEXTUAL     Toto, I've a feeling we're not in Kansas anymore.
+26. my_longtext     FT_TEXTUAL     I ate his liver with some fava beans and a nice chianti.
+27. enumtype        FT_TEXTUAL     red
+28. settype         FT_TEXTUAL     blue,black,white,yellow
+29. my_binary       FT_CHAIN       61 24 26 25
+30. my_varbinary    FT_CHAIN       64 6F 67
+31. my_tinyblob     FT_CHAIN       61 62 63 64 65 66 67
+32. my_mediumblob   FT_CHAIN       31 32 33 34 28 2A 26 5E 23 3D 3D
+33. my_blob         FT_CHAIN       5B 60 60 60 3B 5E 25 5E 26 31 32 33 40 23 31 32
+34. my_longblob     FT_CHAIN       6A 61 73 6F 6E 2E 62 6F 75 72 6E 65
+
+Dumping Result from prepared statement ...
+01. nbyte0          FT_BYTE8       1
+02. nbyte1          FT_BYTE8       129
+03. nbyte2          FT_BYTE8       33000
+04. id_nbyte3       FT_BYTE8       1
+05. nbyte4          FT_BYTE8       2200000000
+06. nbyte8          FT_BYTE8       6600000000
+07. byte1           FT_BYTE8       -120
+08. byte2           FT_BYTE8       -30000
+09. byte3           FT_BYTE8       8000000
+10. byte4           FT_BYTE8       -2000000000
+11. byte5           FT_BYTE8       -7700000000
+12. real9           FT_REAL18      7.98399999999999999E+00
+13. real18          FT_REAL18      5.31234234342299985E+01
+14. exact_decimal   FT_REAL18      1.23450000000000003E+02
+15. bit_type        FT_CHAIN       0C 93
+16. my_date         FT_TEXTUAL     1993-01-15
+17. my_datetime     FT_TEXTUAL     1972-08-01 08:00:05
+18. my_timestamp    FT_TEXTUAL     2016-05-03 20:17:51
+19. my_time         FT_TEXTUAL     04:30:02
+20. my_year         FT_BYTE8       1988
+21. fixed_string    FT_TEXTUAL     ABCD1234EFGH5678
+22. variable_string FT_TEXTUAL     The quick brown fox jumped over the lazy dogs
+23. my_tinytext     FT_TEXTUAL     You're going to need a bigger boat.
+24. my_text         FT_TEXTUAL     Take your stinkin' paws off me, you damn dirty ape!
+25. my_mediumtext   FT_TEXTUAL     Toto, I've a feeling we're not in Kansas anymore.
+26. my_longtext     FT_TEXTUAL     I ate his liver with some fava beans and a nice chianti.
+27. enumtype        FT_TEXTUAL     red
+28. settype         FT_TEXTUAL     blue,black,white,yellow
+29. my_binary       FT_CHAIN       61 24 26 25
+30. my_varbinary    FT_CHAIN       64 6F 67
+31. my_tinyblob     FT_CHAIN       61 62 63 64 65 66 67
+32. my_mediumblob   FT_CHAIN       31 32 33 34 28 2A 26 5E 23 3D 3D
+33. my_blob         FT_CHAIN       5B 60 60 60 3B 5E 25 5E 26 31 32 33 40 23 31 32
+34. my_longblob     FT_CHAIN       6A 61 73 6F 6E 2E 62 6F 75 72 6E 65
+
+Dumping Result from PS/Bound fetch ...
+ 1. nbyte0          TRUE
+ 2. nbyte1           129
+ 3. nbyte2           33000
+ 4. nbyte3           1
+ 5. nbyte4           2200000000
+ 6. nbyte8           6600000000
+ 7. byte1           -120
+ 8. byte2           -30000
+ 9. byte3            8000000
+10. byte4           -2000000000
+11. byte8           -7700000000
+12. real9            7.98400000E+00
+13. real18           5.31234234342299985E+01
+14. exact            1.23450000E+02
+15. bits            0C 93
+16. date            1993-01-15 00:00:00
+17. datetime        1972-08-01 08:00:05
+18. timestamp       2016-05-03 20:17:51
+19. time            1901-01-01 04:30:02
+20. year             1988
+21. fixed string    ABCD1234EFGH5678
+22. variable string The quick brown fox jumped over the lazy dogs
+23. tinytext        You're going to need a bigger boat.
+24. text            Take your stinkin' paws off me, you damn dirty ape!
+25. medium text     Toto, I've a feeling we're not in Kansas anymore.
+26. long text       I ate his liver with some fava beans and a nice chianti.
+27. enum            red
+28. settype         blue,black,white,yellow
+29. binary          61 24 26 25
+30. varbinary       64 6F 67 00 00 00
+31. tiny blob       61 62 63 64 65 66 67 00 00 00 00 00 00 00 00 00
+32. medium blob     31 32 33 34 28 2A 26 5E 23 3D 3D 00 00 00 00 00
+33. blob            5B 60 60 60 3B 5E 25 5E 26 31 32 33 40 23 31 32
+34. long blob       6A 61 73 6F 6E 2E 62 6F 75 72 6E 65 00 00 00 00
+
+Inserted 1 row(s)
+Inserted 1 row(s)
+Inserted 1 row(s)
+Inserted 1 row(s)
