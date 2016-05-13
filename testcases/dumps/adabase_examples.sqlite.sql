@@ -2,40 +2,40 @@ PRAGMA synchronous = OFF;
 PRAGMA journal_mode = MEMORY;
 BEGIN TRANSACTION;
 CREATE TABLE all_types (
-  id_nbyte3 integer  NOT NULL PRIMARY KEY AUTOINCREMENT
-,  nbyte0 integer NOT NULL
-,  nbyte1 integer  NOT NULL
-,  nbyte2 integer  NOT NULL
-,  nbyte4 integer  NOT NULL
-,  nbyte8 integer  NOT NULL
-,  byte1 integer NOT NULL
-,  byte2 integer NOT NULL
-,  byte3 integer NOT NULL
-,  byte4 integer NOT NULL
-,  byte5 integer NOT NULL
-,  real9 float NOT NULL
-,  real18 double NOT NULL
-,  exact_decimal decimal(5,2) NOT NULL
-,  bit_type bit(12) NOT NULL
-,  my_date date NOT NULL
-,  my_datetime datetime NOT NULL
-,  my_timestamp timestamp NOT NULL 
-,  my_time time NOT NULL
-,  my_year year(4) NOT NULL
-,  fixed_string char(16) NOT NULL
-,  variable_string varchar(50) NOT NULL
-,  my_tinytext tinytext NOT NULL
-,  my_text text NOT NULL
-,  my_mediumtext mediumtext NOT NULL
-,  my_longtext longtext NOT NULL
-,  my_binary binary(4) NOT NULL
-,  my_varbinary varbinary(6) NOT NULL
-,  my_tinyblob tinyblob NOT NULL
-,  my_mediumblob mediumblob NOT NULL
-,  my_blob blob NOT NULL
-,  my_longblob longblob NOT NULL
-,  enumtype text  NOT NULL
-,  settype text  NOT NULL
+  id_nbyte3 integer  PRIMARY KEY AUTOINCREMENT
+,  nbyte0 integer
+,  nbyte1 integer
+,  nbyte2 integer
+,  nbyte4 integer
+,  nbyte8 integer
+,  byte1 integer
+,  byte2 integer
+,  byte3 integer
+,  byte4 integer
+,  byte5 integer
+,  real9 float
+,  real18 double
+,  exact_decimal decimal(5,2)
+,  bit_type bit(12)
+,  my_date date
+,  my_datetime datetime
+,  my_timestamp timestamp
+,  my_time time
+,  my_year year(4)
+,  fixed_string char(16)
+,  variable_string varchar(50)
+,  my_tinytext tinytext
+,  my_text text
+,  my_mediumtext mediumtext
+,  my_longtext longtext
+,  my_binary binary(4)
+,  my_varbinary varbinary(6)
+,  my_tinyblob tinyblob
+,  my_mediumblob mediumblob
+,  my_blob blob
+,  my_longblob longblob
+,  enumtype text
+,  settype text
 );
 INSERT INTO all_types VALUES (1,1,129,33000,2200000000,6600000000,-120,-30000,8000000,-2000000000,-7700000000,7.984,53.12342343423,123.45,'“','1993-01-15','1972-08-01 08:00:05','2016-05-03 20:17:51','04:30:02',1988,'ABCD1234EFGH5678','The quick brown fox jumped over the lazy dogs','You''re going to need a bigger boat.','Take your stinkin'' paws off me, you damn dirty ape!','Toto, I''ve a feeling we''re not in Kansas anymore.','I ate his liver with some fava beans and a nice chianti.','a$&%','dog','abcdefg','1234(*&^#==','[;^%^&123@#12','jason.bourne','red','blue,black,white,yellow');
 CREATE TABLE fruits (
