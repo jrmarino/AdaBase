@@ -629,7 +629,7 @@ package body AdaBase.Results.Converters is
 
    function convert (nv : nbyte8) return byte2
    is
-      max : constant nbyte8 := nbyte8 (byte1'Last);
+      max : constant nbyte8 := nbyte8 (byte2'Last);
    begin
       case nv is
          when 0 .. max => return byte2 (nv);
@@ -639,7 +639,7 @@ package body AdaBase.Results.Converters is
 
    function convert (nv : nbyte8) return byte3
    is
-      max : constant nbyte8 := nbyte8 (byte1'Last);
+      max : constant nbyte8 := nbyte8 (byte3'Last);
    begin
       case nv is
          when 0 .. max => return byte3 (nv);
@@ -649,7 +649,7 @@ package body AdaBase.Results.Converters is
 
    function convert (nv : nbyte8) return byte4
    is
-      max : constant nbyte8 := nbyte8 (byte1'Last);
+      max : constant nbyte8 := nbyte8 (byte4'Last);
    begin
       case nv is
          when 0 .. max => return byte4 (nv);
@@ -659,7 +659,7 @@ package body AdaBase.Results.Converters is
 
    function convert (nv : nbyte8) return byte8
    is
-      max : constant nbyte8 := nbyte8 (byte1'Last);
+      max : constant nbyte8 := nbyte8 (byte8'Last);
    begin
       case nv is
          when 0 .. max => return byte8 (nv);
