@@ -52,31 +52,31 @@ package AdaBase.Connection.Base.SQLite is
    procedure setAutoCommit (conn : out SQLite_Connection; auto : Boolean);
 
    overriding
-   function description   (conn : SQLite_Connection) return String;
+   function description    (conn : SQLite_Connection) return String;
 
    overriding
-   function SqlState      (conn : SQLite_Connection) return TSqlState;
+   function SqlState       (conn : SQLite_Connection) return TSqlState;
 
    overriding
-   function driverMessage (conn : SQLite_Connection) return String;
+   function driverMessage  (conn : SQLite_Connection) return String;
 
    overriding
-   function driverCode    (conn : SQLite_Connection) return DriverCodes;
+   function driverCode     (conn : SQLite_Connection) return DriverCodes;
 
    overriding
-   function lastInsertID  (conn : SQLite_Connection) return TraxID;
+   function lastInsertID   (conn : SQLite_Connection) return TraxID;
 
    overriding
-   procedure commit       (conn : out SQLite_Connection);
+   procedure commit        (conn : out SQLite_Connection);
 
    overriding
-   procedure rollback     (conn : out SQLite_Connection);
+   procedure rollback      (conn : out SQLite_Connection);
 
    overriding
-   procedure disconnect   (conn : out SQLite_Connection);
+   procedure disconnect    (conn : out SQLite_Connection);
 
    overriding
-   procedure execute      (conn : out SQLite_Connection; sql : String);
+   procedure execute       (conn : out SQLite_Connection; sql : String);
 
    overriding
    function rows_affected_by_execution (conn : SQLite_Connection)
@@ -218,5 +218,7 @@ private
    procedure finalize (conn : in out SQLite_Connection);
 
    procedure private_execute (conn : SQLite_Connection; sql : String);
+
+   function sqlite_autocommit_on (conn : SQLite_Connection) return Boolean;
 
 end AdaBase.Connection.Base.SQLite;

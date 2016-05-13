@@ -215,6 +215,10 @@ package AdaBase.Bindings.SQLite is
    function sqlite3_sourceid return ICS.chars_ptr;
    pragma Import (C, sqlite3_sourceid);
 
+   function sqlite3_get_autocommit (db : not null sqlite3_Access)
+                                    return IC.int;
+   pragma Import (C, sqlite3_get_autocommit);
+
 private
 
    type sqlite3      is limited null record;

@@ -763,6 +763,18 @@ package body AdaBase.Connection.Base.SQLite is
    end prep_finalize;
 
 
+   ----------------------------
+   --  sqlite_autocommit_on  --
+   ----------------------------
+   function sqlite_autocommit_on (conn : SQLite_Connection) return Boolean
+   is
+      use type BND.IC.int;
+      result : BND.IC.int := BND.sqlite3_get_autocommit (db => conn.handle);
+   begin
+      return (result /= 0);
+   end sqlite_autocommit_on;
+
+
    ----------------------
    --  marker_is_null  --
    ----------------------
