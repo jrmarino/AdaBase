@@ -149,4 +149,7 @@ private
    procedure free_binary is new Ada.Unchecked_Deallocation
      (BND.IC.char_array, BND.ICS.char_array_access);
 
+   procedure auto_assign (Stmt  : out SQLite_statement; index : Positive;
+                          value : String);
+
 end AdaBase.Statement.Base.SQLite;

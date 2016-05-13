@@ -446,11 +446,64 @@ package body AdaBase.Statement.Base.SQLite is
    function execute (Stmt : out SQLite_statement; parameters : String;
                      delimiter  : Character := '|') return Boolean
    is
-      pragma Unreferenced (Stmt);
-      --  conn : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
+      function parameters_given return Natural;
+      num_markers : constant Natural := Natural (Stmt.realmccoy.Length);
+
+      function parameters_given return Natural
+      is
+         result : Natural := 1;
+      begin
+         for x in parameters'Range loop
+            if parameters (x) = delimiter then
+               result := result + 1;
+            end if;
+         end loop;
+         return result;
+      end parameters_given;
    begin
-      --  TO BE IMPLEMENTED
-      return True;
+      if Stmt.type_of_statement = direct_statement then
+         raise INVALID_FOR_DIRECT_QUERY
+           with "The execute command is for prepared statements only";
+      end if;
+
+      if num_markers /= parameters_given then
+         raise STMT_PREPARATION
+           with "Parameter number mismatch, " & num_markers'Img &
+           " expected, but" & parameters_given'Img & " provided.";
+      end if;
+
+      declare
+         index : Natural := 1;
+         arrow : Natural := parameters'First;
+         scans : Boolean := False;
+         start : Natural := 1;
+         stop  : Natural := 0;
+      begin
+         for x in parameters'Range loop
+            if parameters (x) = delimiter then
+               if not scans then
+                  Stmt.auto_assign (index, "");
+               else
+                  Stmt.auto_assign (index, parameters (start .. stop));
+                  scans := False;
+               end if;
+               index := index + 1;
+            else
+               stop := x;
+               if not scans then
+                  start := x;
+                  scans := True;
+               end if;
+            end if;
+         end loop;
+         if not scans then
+            Stmt.auto_assign (index, "");
+         else
+            Stmt.auto_assign (index, parameters (start .. stop));
+         end if;
+      end;
+
+      return Stmt.execute;
    end execute;
 
    ------------------
@@ -1092,5 +1145,86 @@ package body AdaBase.Statement.Base.SQLite is
          end;
       end loop;
    end iterate;
+
+
+   -------------------
+   --  auto_assign  --
+   -------------------
+   procedure auto_assign (Stmt  : out SQLite_statement; index : Positive;
+                          value : String)
+   is
+      zone : bindrec renames Stmt.realmccoy.Element (index);
+      ST   : AR.textual;
+      STW  : AR.textwide;
+      STS  : AR.textsuper;
+      hold : ARF.variant;
+   begin
+      case zone.output_type is
+         when ft_widetext =>
+            ST  := CT.SUS (value);
+            STW := SUW.To_Unbounded_Wide_String (ARC.convert (ST));
+         when ft_supertext =>
+            ST  := CT.SUS (value);
+            STS := SWW.To_Unbounded_Wide_Wide_String (ARC.convert (ST));
+         when ft_timestamp | ft_settype | ft_chain =>
+            null;
+         when others =>
+            ST := CT.SUS (value);
+      end case;
+      case zone.output_type is
+         when ft_nbyte0    => hold := (ft_nbyte0, ARC.convert (ST));
+         when ft_nbyte1    => hold := (ft_nbyte1, ARC.convert (ST));
+         when ft_nbyte2    => hold := (ft_nbyte2, ARC.convert (ST));
+         when ft_nbyte3    => hold := (ft_nbyte3, ARC.convert (ST));
+         when ft_nbyte4    => hold := (ft_nbyte4, ARC.convert (ST));
+         when ft_nbyte8    => hold := (ft_nbyte8, ARC.convert (ST));
+         when ft_byte1     => hold := (ft_byte1, ARC.convert (ST));
+         when ft_byte2     => hold := (ft_byte2, ARC.convert (ST));
+         when ft_byte3     => hold := (ft_byte3, ARC.convert (ST));
+         when ft_byte4     => hold := (ft_byte4, ARC.convert (ST));
+         when ft_byte8     => hold := (ft_byte8, ARC.convert (ST));
+         when ft_real9     => hold := (ft_real9, ARC.convert (ST));
+         when ft_real18    => hold := (ft_real18, ARC.convert (ST));
+         when ft_textual   => hold := (ft_textual, ST);
+         when ft_widetext  => hold := (ft_widetext, STW);
+         when ft_supertext => hold := (ft_supertext, STS);
+         when ft_timestamp => hold := (ft_timestamp, (ARC.convert (value)));
+         when ft_chain     => null;
+         when ft_enumtype  => hold := (ft_enumtype, (ARC.convert (ST)));
+         when ft_settype   => null;
+      end case;
+      case zone.output_type is
+         when ft_nbyte0    => Stmt.assign (index, hold.v00);
+         when ft_nbyte1    => Stmt.assign (index, hold.v01);
+         when ft_nbyte2    => Stmt.assign (index, hold.v02);
+         when ft_nbyte3    => Stmt.assign (index, hold.v03);
+         when ft_nbyte4    => Stmt.assign (index, hold.v04);
+         when ft_nbyte8    => Stmt.assign (index, hold.v05);
+         when ft_byte1     => Stmt.assign (index, hold.v06);
+         when ft_byte2     => Stmt.assign (index, hold.v07);
+         when ft_byte3     => Stmt.assign (index, hold.v08);
+         when ft_byte4     => Stmt.assign (index, hold.v09);
+         when ft_byte8     => Stmt.assign (index, hold.v10);
+         when ft_real9     => Stmt.assign (index, hold.v11);
+         when ft_real18    => Stmt.assign (index, hold.v12);
+         when ft_textual   => Stmt.assign (index, hold.v13);
+         when ft_widetext  => Stmt.assign (index, hold.v14);
+         when ft_supertext => Stmt.assign (index, hold.v15);
+         when ft_timestamp => Stmt.assign (index, hold.v16);
+         when ft_enumtype  => Stmt.assign (index, hold.v18);
+         when ft_chain     =>
+            declare
+               my_chain : AR.chain := ARC.convert (value);
+            begin
+               Stmt.assign (index, my_chain);
+            end;
+         when ft_settype   =>
+            declare
+               set : AR.settype := ARC.convert (value);
+            begin
+               Stmt.assign (index, set);
+            end;
+      end case;
+   end auto_assign;
 
 end AdaBase.Statement.Base.SQLite;
