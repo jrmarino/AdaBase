@@ -95,14 +95,10 @@ package body AdaBase.Connection.Base.SQLite is
       --  SQLite doesn't have a controllable setting for autocommit
       --  One indirectly controls it by issuing BEGIN command which inhibits it
       --  Autocommit is re-enabled when COMMIT or ROLLBACK is issued.
-      --  Thus, we will have to simulate this by keeping track of "within"
-      --  transaction and issuing BEGIN invisibly when autocommit is off
-      --  (which is the AdaBase default)
+      --  Thus, we will have to simulate this by polling SQLite for the
+      --  current autocommit setting before every query and starting
+      --  transactions as necessary.  Don't attempt to implicitly commit.
    begin
-      if not conn.prop_auto_commit and then auto and then conn.in_transaction
-      then
-         conn.commit;
-      end if;
       conn.prop_auto_commit := auto;
    end setAutoCommit;
 
@@ -205,10 +201,9 @@ package body AdaBase.Connection.Base.SQLite is
    -------------------------
    --  begin_transaction  --
    -------------------------
-   procedure begin_transaction (conn : out SQLite_Connection) is
+   procedure begin_transaction (conn : SQLite_Connection) is
    begin
       conn.private_execute ("BEGIN TRANSACTION");
-      conn.in_transaction := True;
    end begin_transaction;
 
 
@@ -219,7 +214,7 @@ package body AdaBase.Connection.Base.SQLite is
    procedure rollback (conn : out SQLite_Connection) is
    begin
       conn.private_execute ("ROLLBACK");
-      conn.in_transaction := False;
+      conn.dummy := True;
    exception
       when QUERY_FAIL => raise ROLLBACK_FAIL;
    end rollback;
@@ -232,7 +227,7 @@ package body AdaBase.Connection.Base.SQLite is
    procedure commit (conn : out SQLite_Connection) is
    begin
       conn.private_execute ("COMMIT");
-      conn.in_transaction := False;
+      conn.dummy := True;
    exception
       when QUERY_FAIL => raise COMMIT_FAIL;
    end commit;
@@ -264,29 +259,23 @@ package body AdaBase.Connection.Base.SQLite is
    overriding
    procedure execute (conn : out SQLite_Connection; sql : String)
    is
-      --  Logic table: autocommit (Boolean) vs in_transaction (Boolean)
+      --  Logic table: autocommit (Boolean) vs sqlite_autocommit (Boolean)
       --  -------------------------------------------------------------------
-      --  autocommit = True  + in_transaction = True  = impossible
-      --  autocommit = True  + in_transaction = False = BEGIN + exec + COMMIT
-      --  autocommit = False + in_transaction = True  = exec
-      --  autocommit = False + in_transaction = False = BEGIN + exec
+      --  autocommit = True  + sqlite_autocommit = True  = exec
+      --  autocommit = True  + sqlite_autocommit = False = COMMIT + exec
+      --  autocommit = False + sqlite_autocommit = True  = BEGIN + exec
+      --  autocommit = False + sqlite_autocommit = False = exec
+
+      sqlite_autocommit : Boolean := conn.sqlite_autocommit_on;
    begin
-      if conn.autoCommit then
-         if conn.in_transaction then
-            raise AUTOCOMMIT_FAIL
-              with "Impossible: In transaction with autocommit set on";
-         else
-            conn.begin_transaction;
-            conn.private_execute (sql);
-            conn.commit;
-         end if;
+      if conn.autoCommit = sqlite_autocommit then
+         conn.private_execute (sql);
+      elsif conn.autoCommit and then not sqlite_autocommit then
+         conn.commit;
+         conn.private_execute (sql);
       else
-         if conn.in_transaction then
-            conn.private_execute (sql);
-         else
-            conn.begin_transaction;
-            conn.private_execute (sql);
-         end if;
+         conn.begin_transaction;
+         conn.private_execute (sql);
       end if;
    end execute;
 
@@ -316,7 +305,7 @@ package body AdaBase.Connection.Base.SQLite is
    -------------------------
    --  prepare_statement  --
    -------------------------
-   function prepare_statement (conn : SQLite_Connection;
+   function prepare_statement (conn : out SQLite_Connection;
                                stmt : aliased out BND.sqlite3_stmt_Access;
                                sql  : String) return Boolean
    is
@@ -326,7 +315,17 @@ package body AdaBase.Connection.Base.SQLite is
       nbyte  : BND.IC.int := BND.IC.int (sql8'Length + 1);
       result : BND.IC.int;
       dummy  : aliased BND.ICS.chars_ptr;
+
+      sqlite_autocommit : Boolean := conn.sqlite_autocommit_on;
    begin
+      if sqlite_autocommit /= conn.autoCommit then
+         if sqlite_autocommit then
+            conn.begin_transaction;
+         else
+            conn.commit;
+         end if;
+      end if;
+
       result := BND.sqlite3_prepare_v2 (db     => conn.handle,
                                         zSql   => query,
                                         nByte  => nbyte,

@@ -90,7 +90,7 @@ package AdaBase.Connection.Base.SQLite is
    --  SUBROUTINES PARTICULAR TO SQLITE DRIVER  --
    -----------------------------------------------
 
-   function prepare_statement (conn : SQLite_Connection;
+   function prepare_statement (conn : out SQLite_Connection;
                                stmt : aliased out BND.sqlite3_stmt_Access;
                                sql  : String) return Boolean;
 
@@ -204,13 +204,13 @@ private
    type SQLite_Connection is new Base_Connection and AIC.iConnection
      with record
       info_description : String (1 .. 21) := "SQLite3 native driver";
-      in_transaction   : Boolean := False;
+      dummy            : Boolean := False;
       handle           : aliased BND.sqlite3_Access := null;
    end record;
 
    function PUTF82S (cstr : BND.ICS.chars_ptr) return String;
 
-   procedure begin_transaction (conn : out SQLite_Connection);
+   procedure begin_transaction (conn : SQLite_Connection);
 
    procedure Initialize (conn : in out SQLite_Connection);
 
