@@ -19,7 +19,7 @@ library project AdaBase is
                                       "-Wl,-R,@PREFIX@/lib/mysql",
                                       "-lmysqlclient");
    end case;
-   case Driver Driver_SQLite is
+   case Driver_SQLite is
       when "no"  => null;
       when "yes" =>  Linker_SQLite := ("-L@PREFIX@/lib",
                                        "-Wl,-R,@PREFIX@/lib",
@@ -27,7 +27,7 @@ library project AdaBase is
    end case;
 
    package Linker is
-      for Linker_Options use Linker_MySQL & Linker_MySQL;
+      for Linker_Options use Linker_MySQL & Linker_SQLite;
    end Linker;
 
 end AdaBase;

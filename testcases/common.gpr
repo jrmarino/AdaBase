@@ -25,20 +25,8 @@ project Common is
 
    package Linker is
       case Opsys is
-         when "unix" =>
-            case Driver is
-               when "mysql" =>
-                  for Default_Switches ("ada") use ("-L/usr/local/lib/mysql",
-                     "-lmysqlclient");
-               when "postgresql" =>
-                   null;
-               when "sqlite" =>
-                  for Default_Switches ("ada") use ("-L/usr/local/lib",
-                     "-lsqlite3");
-               when "firebird" =>
-                   null;
-            end case;
-         when "windows" =>
+         when "unix" => null;       --  HANDLED BY ADABASE.GPR
+         when "windows" =>          --  TO BE IMPLEMENTED
             case Driver is
                when "mysql" =>
                   for Default_Switches ("ada") use ("-lmysql");
