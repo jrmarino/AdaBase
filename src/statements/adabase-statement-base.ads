@@ -6,6 +6,7 @@ with AdaBase.Connection.Base;
 with AdaBase.Interfaces.Statement;
 with AdaBase.Logger.Facility;
 with AdaBase.Results.Sets;
+with AdaBase.Results.Field;
 with AdaBase.Results.Converters;
 with AdaBase.Results.Generic_Converters;
 with Ada.Calendar.Formatting;
@@ -31,6 +32,7 @@ package AdaBase.Statement.Base is
    package ALF renames AdaBase.Logger.Facility;
    package ARC renames AdaBase.Results.Converters;
    package RGC renames AdaBase.Results.Generic_Converters;
+   package ARF renames AdaBase.Results.Field;
    package ARS renames AdaBase.Results.Sets;
 
    type SQL_access is access all String;
@@ -678,6 +680,9 @@ private
 
    function assign_index (Stmt : Base_Statement; moniker : String)
                           return Positive;
+
+   procedure auto_assign (Stmt  : out Base_Statement; index : Positive;
+                          value : String);
 
    package bind_crate is new Ada.Containers.Vectors
      (Index_Type   => Positive,

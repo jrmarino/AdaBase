@@ -1499,4 +1499,85 @@ package body AdaBase.Statement.Base is
    end iterate;
 
 
+   -------------------
+   --  auto_assign  --
+   -------------------
+   procedure auto_assign (Stmt  : out Base_Statement; index : Positive;
+                          value : String)
+   is
+      zone : bindrec renames Stmt.realmccoy.Element (index);
+      ST   : AR.textual;
+      STW  : AR.textwide;
+      STS  : AR.textsuper;
+      hold : ARF.variant;
+   begin
+      case zone.output_type is
+         when ft_widetext =>
+            ST  := CT.SUS (value);
+            STW := SUW.To_Unbounded_Wide_String (ARC.convert (ST));
+         when ft_supertext =>
+            ST  := CT.SUS (value);
+            STS := SWW.To_Unbounded_Wide_Wide_String (ARC.convert (ST));
+         when ft_timestamp | ft_settype | ft_chain =>
+            null;
+         when others =>
+            ST := CT.SUS (value);
+      end case;
+      case zone.output_type is
+         when ft_nbyte0    => hold := (ft_nbyte0, ARC.convert (ST));
+         when ft_nbyte1    => hold := (ft_nbyte1, ARC.convert (ST));
+         when ft_nbyte2    => hold := (ft_nbyte2, ARC.convert (ST));
+         when ft_nbyte3    => hold := (ft_nbyte3, ARC.convert (ST));
+         when ft_nbyte4    => hold := (ft_nbyte4, ARC.convert (ST));
+         when ft_nbyte8    => hold := (ft_nbyte8, ARC.convert (ST));
+         when ft_byte1     => hold := (ft_byte1, ARC.convert (ST));
+         when ft_byte2     => hold := (ft_byte2, ARC.convert (ST));
+         when ft_byte3     => hold := (ft_byte3, ARC.convert (ST));
+         when ft_byte4     => hold := (ft_byte4, ARC.convert (ST));
+         when ft_byte8     => hold := (ft_byte8, ARC.convert (ST));
+         when ft_real9     => hold := (ft_real9, ARC.convert (ST));
+         when ft_real18    => hold := (ft_real18, ARC.convert (ST));
+         when ft_textual   => hold := (ft_textual, ST);
+         when ft_widetext  => hold := (ft_widetext, STW);
+         when ft_supertext => hold := (ft_supertext, STS);
+         when ft_timestamp => hold := (ft_timestamp, (ARC.convert (value)));
+         when ft_chain     => null;
+         when ft_enumtype  => hold := (ft_enumtype, (ARC.convert (ST)));
+         when ft_settype   => null;
+      end case;
+      case zone.output_type is
+         when ft_nbyte0    => Stmt.assign (index, hold.v00);
+         when ft_nbyte1    => Stmt.assign (index, hold.v01);
+         when ft_nbyte2    => Stmt.assign (index, hold.v02);
+         when ft_nbyte3    => Stmt.assign (index, hold.v03);
+         when ft_nbyte4    => Stmt.assign (index, hold.v04);
+         when ft_nbyte8    => Stmt.assign (index, hold.v05);
+         when ft_byte1     => Stmt.assign (index, hold.v06);
+         when ft_byte2     => Stmt.assign (index, hold.v07);
+         when ft_byte3     => Stmt.assign (index, hold.v08);
+         when ft_byte4     => Stmt.assign (index, hold.v09);
+         when ft_byte8     => Stmt.assign (index, hold.v10);
+         when ft_real9     => Stmt.assign (index, hold.v11);
+         when ft_real18    => Stmt.assign (index, hold.v12);
+         when ft_textual   => Stmt.assign (index, hold.v13);
+         when ft_widetext  => Stmt.assign (index, hold.v14);
+         when ft_supertext => Stmt.assign (index, hold.v15);
+         when ft_timestamp => Stmt.assign (index, hold.v16);
+         when ft_enumtype  => Stmt.assign (index, hold.v18);
+         when ft_chain     =>
+            declare
+               my_chain : AR.chain := ARC.convert (value);
+            begin
+               Stmt.assign (index, my_chain);
+            end;
+         when ft_settype   =>
+            declare
+               set : AR.settype := ARC.convert (value);
+            begin
+               Stmt.assign (index, set);
+            end;
+      end case;
+   end auto_assign;
+
+
 end AdaBase.Statement.Base;

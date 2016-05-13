@@ -101,9 +101,6 @@ private
                                   struct : out ABM.MYSQL_BIND;
                                   canvas : out mysql_canvas;
                                   marker : Positive);
-   procedure auto_assign         (Stmt  : out MySQL_statement;
-                                  index : Positive;
-                                  value : String);
    function internal_fetch_bound (Stmt : out MySQL_statement) return Boolean;
    function internal_fetch_row   (Stmt : out MySQL_statement)
                                   return ARS.DataRow;
