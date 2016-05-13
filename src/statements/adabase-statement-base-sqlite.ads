@@ -9,7 +9,6 @@ package AdaBase.Statement.Base.SQLite is
 
    package ACS renames AdaBase.Connection.Base.SQLite;
    package BND renames AdaBase.Bindings.SQLite;
-   package ARS renames AdaBase.Results.Sets;
    package AC  renames Ada.Containers;
 
    type SQLite_statement (type_of_statement : stmt_type;
@@ -75,14 +74,6 @@ package AdaBase.Statement.Base.SQLite is
    procedure fetch_next_set (Stmt         : out SQLite_statement;
                              data_present : out Boolean;
                              data_fetched : out Boolean);
-
-   overriding
-   procedure iterate (Stmt    : out SQLite_statement;
-                      process : not null access procedure);
-
-   overriding
-   procedure iterate (Stmt    : out SQLite_statement;
-                      process : not null access procedure (row : ARS.DataRow));
 
 private
 

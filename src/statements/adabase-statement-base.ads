@@ -31,6 +31,7 @@ package AdaBase.Statement.Base is
    package ALF renames AdaBase.Logger.Facility;
    package ARC renames AdaBase.Results.Converters;
    package RGC renames AdaBase.Results.Generic_Converters;
+   package ARS renames AdaBase.Results.Sets;
 
    type SQL_access is access all String;
 
@@ -61,6 +62,13 @@ package AdaBase.Statement.Base is
    overriding
    function data_discarded (Stmt : Base_Statement) return Boolean;
 
+   overriding
+   procedure iterate (Stmt    : out Base_Statement;
+                      process : not null access procedure);
+
+   overriding
+   procedure iterate (Stmt    : out Base_Statement;
+                      process : not null access procedure (row : ARS.DataRow));
 
    -------------------------------------------
    --      20 bind using integer index      --

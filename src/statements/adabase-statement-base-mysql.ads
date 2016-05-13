@@ -9,7 +9,6 @@ package AdaBase.Statement.Base.MySQL is
 
    package ACM renames AdaBase.Connection.Base.MySQL;
    package ABM renames AdaBase.Bindings.MySQL;
-   package ARS renames AdaBase.Results.Sets;
    package AC  renames Ada.Containers;
 
    type MySQL_statement (type_of_statement : stmt_type;
@@ -76,14 +75,6 @@ package AdaBase.Statement.Base.MySQL is
    procedure fetch_next_set (Stmt         : out MySQL_statement;
                              data_present : out Boolean;
                              data_fetched : out Boolean);
-
-   overriding
-   procedure iterate        (Stmt         : out MySQL_statement;
-                             process      : not null access procedure);
-
-   overriding
-   procedure iterate (Stmt    : out MySQL_statement;
-                      process : not null access procedure (row : ARS.DataRow));
 
 private
 
