@@ -81,8 +81,8 @@ package body AdaBase.Driver.Base.MySQL is
         CT.SUS ("ACK! Commit attempted on inactive connection");
       err2 : constant CT.Text :=
         CT.SUS ("ACK! Commit attempted when autocommit mode set on");
-      err3 : constant CT.Text :=
-        CT.SUS ("Commit attempt failed");
+      err3 : constant CT.Text := CT.SUS ("Commit attempt failed");
+      msg1 : constant CT.Text := CT.SUS ("END TRANSACTION (COMMIT)");
    begin
       if not driver.connection_active then
          --  Non-fatal attempt to commit when no database is connected
@@ -97,8 +97,8 @@ package body AdaBase.Driver.Base.MySQL is
          return;
       end if;
 
-      driver.connection.all.commit;
-
+      driver.connection.commit;
+      driver.log_nominal (category => transaction, message => msg1);
    exception
       when ACM.COMMIT_FAIL =>
          driver.log_problem (category   => transaction,
