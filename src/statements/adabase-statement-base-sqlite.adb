@@ -706,12 +706,12 @@ package body AdaBase.Statement.Base.SQLite is
                      when ft_settype =>
                         declare
                            FL    : Natural := dossier.a19.all'Length;
-                           DVLEN : Natural := ST'Length;
+                           items : constant Natural := num_set_items (ST);
                         begin
-                           if DVLEN < FL then
+                           if items > FL then
                               raise BINDING_SIZE_MISMATCH with
-                                "native size : " & DVLEN'Img &
-                                " less than binding size : " & FL'Img;
+                                "native size : " & items'Img &
+                                " greater than binding size : " & FL'Img;
                            end if;
                            dossier.a19.all := ARC.convert (ST, FL);
                         end;
@@ -724,9 +724,9 @@ package body AdaBase.Statement.Base.SQLite is
                      FL    : Natural := dossier.a17.all'Length;
                      DVLEN : Natural := ST'Length;
                   begin
-                     if DVLEN < FL then
+                     if DVLEN > FL then
                         raise BINDING_SIZE_MISMATCH with "native size : " &
-                          DVLEN'Img & " less than binding size : " & FL'Img;
+                          DVLEN'Img & " greater than binding size : " & FL'Img;
                      end if;
                      dossier.a17.all := ARC.convert (ST, FL);
                   end;
