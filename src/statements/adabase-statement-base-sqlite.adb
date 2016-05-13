@@ -383,12 +383,9 @@ package body AdaBase.Statement.Base.SQLite is
       end if;
       Stmt.successful_execution := False;
 
-      if not Stmt.virgin then
-         conn.reset_prep_stmt (Stmt.stmt_handle);
-         Stmt.reclaim_canvas;
-         Stmt.step_result := unset;
-         Stmt.virgin := False;
-      end if;
+      conn.reset_prep_stmt (Stmt.stmt_handle);
+      Stmt.reclaim_canvas;
+      Stmt.step_result := unset;
 
       if num_markers > 0 then
          --  Check to make sure all prepared markers are bound
@@ -1061,8 +1058,11 @@ package body AdaBase.Statement.Base.SQLite is
                end if;
          end case;
          if not okay then
-            raise STMT_EXECUTION with "failed to bind " & vartype'Img &
-              " type to marker " & marker'Img;
+            Stmt.log_problem (category   => statement_execution,
+                              message    => "failed to bind " & vartype'Img &
+                                            " type to marker " & marker'Img,
+                              pull_codes => True,
+                              break      => True);
          end if;
       end if;
       return product;

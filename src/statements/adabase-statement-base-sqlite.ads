@@ -118,7 +118,6 @@ private
       record
          stmt_handle    : aliased BND.sqlite3_stmt_Access := null;
          step_result    : step_result_type := unset;
-         virgin         : Boolean          := True;
          assign_counter : Natural          := 0;
          num_columns    : Natural          := 0;
          column_info    : VColumns.Vector;
