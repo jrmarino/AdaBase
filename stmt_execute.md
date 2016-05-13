@@ -375,6 +375,93 @@ retrieval mechanisms of direct and prep stmt results.
 </pre>
 <p class="caption">Output using MySQL Driver</p>
 <br/>
+<pre class="output">
+Dumping Result from direct statement ...
+
+01. id_nbyte3       FT_BYTE8       20
+02. nbyte0          FT_BYTE8       1
+03. nbyte1          FT_BYTE8       150
+04. byte2           FT_BYTE8       -10
+05. byte4           FT_BYTE8       -90000
+06. nbyte8          FT_BYTE8       3200100
+07. real9           FT_REAL18      8.72340999999999980E+01
+08. real18          FT_REAL18      1.55552137928312131E+04
+09. exact_decimal   FT_REAL18      8.75440000000000055E+02
+10. my_date         FT_TEXTUAL     2014-10-20 00:00:00
+11. my_timestamp    FT_TEXTUAL     2000-03-25 15:15:00
+12. my_time         FT_TEXTUAL     1901-01-01 20:18:13
+13. my_year         FT_BYTE8       1986
+14. my_tinytext     FT_TEXTUAL     AdaBase is so cool!
+15. enumtype        FT_TEXTUAL     green
+16. settype         FT_TEXTUAL     yellow,black
+17. my_varbinary    FT_CHAIN       20 30 31 32 33
+18. my_blob         FT_CHAIN       34 35 36 37 38 39 41 42 43 2E 2C 7A 5B 5D
+
+01. id_nbyte3       FT_BYTE8       25
+02. nbyte0          FT_BYTE8       0
+03. nbyte1          FT_BYTE8       200
+04. byte2           FT_BYTE8       25
+05. byte4           FT_BYTE8       22222
+06. nbyte8          FT_BYTE8       50
+07. real9           FT_REAL18      4.84324981999999959E+00
+08. real18          FT_REAL18      9.23496312323598750E+06
+09. exact_decimal   FT_REAL18      1.57899999999999991E+01
+10. my_date         FT_TEXTUAL     1910-11-05 00:00:00
+11. my_timestamp    FT_TEXTUAL     2030-12-25 11:59:59
+12. my_time         FT_TEXTUAL     1901-01-01 04:00:45
+13. my_year         FT_BYTE8       1945
+14. my_tinytext     FT_TEXTUAL     This is what it sounds like when doves cry
+15. enumtype        FT_TEXTUAL     red
+16. settype         FT_TEXTUAL     blue,white
+17. my_varbinary    FT_CHAIN       51 7C 45 52
+18. my_blob         FT_CHAIN       30 31 32 33 34 00 0A 37 38 39
+
+Dumping Result from prepared statement ...
+
+01. id_nbyte3       FT_BYTE8       20
+02. nbyte0          FT_BYTE8       1
+03. nbyte1          FT_BYTE8       150
+04. byte2           FT_BYTE8       -10
+05. byte4           FT_BYTE8       -90000
+06. nbyte8          FT_BYTE8       3200100
+07. real9           FT_REAL18      8.72340999999999980E+01
+08. real18          FT_REAL18      1.55552137928312131E+04
+09. exact_decimal   FT_REAL18      8.75440000000000055E+02
+10. my_date         FT_TEXTUAL     2014-10-20 00:00:00
+11. my_timestamp    FT_TEXTUAL     2000-03-25 15:15:00
+12. my_time         FT_TEXTUAL     1901-01-01 20:18:13
+13. my_year         FT_BYTE8       1986
+14. my_tinytext     FT_TEXTUAL     AdaBase is so cool!
+15. enumtype        FT_TEXTUAL     green
+16. settype         FT_TEXTUAL     yellow,black
+17. my_varbinary    FT_CHAIN       20 30 31 32 33
+18. my_blob         FT_CHAIN       34 35 36 37 38 39 41 42 43 2E 2C 7A 5B 5D
+
+01. id_nbyte3       FT_BYTE8       25
+02. nbyte0          FT_BYTE8       0
+03. nbyte1          FT_BYTE8       200
+04. byte2           FT_BYTE8       25
+05. byte4           FT_BYTE8       22222
+06. nbyte8          FT_BYTE8       50
+07. real9           FT_REAL18      4.84324981999999959E+00
+08. real18          FT_REAL18      9.23496312323598750E+06
+09. exact_decimal   FT_REAL18      1.57899999999999991E+01
+10. my_date         FT_TEXTUAL     1910-11-05 00:00:00
+11. my_timestamp    FT_TEXTUAL     2030-12-25 11:59:59
+12. my_time         FT_TEXTUAL     1901-01-01 04:00:45
+13. my_year         FT_BYTE8       1945
+14. my_tinytext     FT_TEXTUAL     This is what it sounds like when doves cry
+15. enumtype        FT_TEXTUAL     red
+16. settype         FT_TEXTUAL     blue,white
+17. my_varbinary    FT_CHAIN       51 7C 45 52
+18. my_blob         FT_CHAIN       30 31 32 33 34 00 0A 37 38 39
+
+Note slight differences in real9 and real18 field values
+due to rounding differences inherent in the different
+retrieval mechanisms of direct and prep stmt results.
+</pre>
+<p class="caption">Output using SQLite Driver</p>
+<br/>
 <p>{{ page.supported_stmts }}</p>
 </div>
 <div class="sidenav">
