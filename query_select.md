@@ -48,13 +48,7 @@ procedure Query_Select is
 
 begin
 
-   begin
-      CON.connect_database;
-   exception
-      when others =>
-         TIO.Put_Line ("database connect failed.");
-         return;
-   end;
+   CON.connect_database;
 
    CON.DR.set_trait_column_case (AdaBase.upper_case);
 

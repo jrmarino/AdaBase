@@ -48,14 +48,7 @@ procedure Traits is
 
 begin
 
-   declare
-   begin
-      CON.connect_database;
-   exception
-      when others =>
-         TIO.Put_Line ("database connection failed, ending.");
-         return;
-   end;
+   CON.connect_database;
 
    display_versions (driver => CON.DR);
    display_traits   (driver => CON.DR);

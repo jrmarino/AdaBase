@@ -66,13 +66,7 @@ begin
 
    CON.DR.command_standard_logger (device => ALF.screen, action => ALF.attach);
 
-   begin
-      CON.connect_database;
-   exception
-      when others =>
-         TIO.Put_Line ("database connect failed.");
-         return;
-   end;
+   CON.connect_database;
 
    declare
       max_calories : aliased AR.byte2 := 200;
