@@ -4,8 +4,8 @@ defaults:
        path: ""
      values:
        layout: "default"
-       supported_drivers: '[DB] is "MySQL.MySQL_Driver", "PgSQL.PgSQL_Driver", or "SQLite.SQLite_Driver"'
-       supported_stmts: '[STMT] is "MySQL.MySQL_statement", "PgSQL.PgSQL_statement", or "SQLite.SQLite_statement"'
+       supported_drivers: '[DB] is "MySQL.MySQL_Driver", "PostgreSQL.PostgreSQL_Driver", or "SQLite.SQLite_Driver"'
+       supported_stmts: '[STMT] is "MySQL.MySQL_statement", "PostgreSQL.PostgreSQL_statement", or "SQLite.SQLite_statement"'
 
        trait_client: '<a href="trait_client.html">client traits</a>'
        f_trait_client_info: '<a href="trait_client.html">func trait_client_info</a>'
