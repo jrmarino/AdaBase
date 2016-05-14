@@ -3,7 +3,7 @@ with "../common.gpr";
 project Fruit1 is
 
    for Main use ("fruit1");
-   for Object_Dir use "obj";
+   for Object_Dir use "obj/" & Common.driver;
 
    package Compiler renames Common.Compiler;
    package Linker renames Common.Linker;

@@ -6,7 +6,7 @@ project Traits_MySQL is
    Opsys  : Os_Type := external ("opsys", "unix");
 
    for Main use ("traits_mysql");
-   for Object_Dir use "obj";
+   for Object_Dir use "obj/" & Common.driver;
    for Source_Dirs use (".", "../driver_connections/mysql");
 
    package Compiler is
