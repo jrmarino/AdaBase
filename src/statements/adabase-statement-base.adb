@@ -46,94 +46,113 @@ package body AdaBase.Statement.Base is
 
 
    ---------------------
+   --  redact_quotes  --
+   ---------------------
+   function redact_quotes (sql : String) return String
+   is
+      --  This block will mask anything between quotes (single or double)
+      --  These are considered to be literal and not suitable for binding
+      type seeking is (none, single, double);
+      redacted    : String := sql;
+      seek_status : seeking := none;
+      arrow       : Positive := 1;
+   begin
+      if CT.IsBlank (sql) then
+         return "";
+      end if;
+      loop
+         case sql (arrow) is
+            when ''' =>
+               case seek_status is
+                  when none =>
+                     seek_status := single;
+                     redacted (arrow) := '#';
+                  when single =>
+                     seek_status := none;
+                     redacted (arrow) := '#';
+                  when double => null;
+               end case;
+            when ASCII.Quotation =>
+               case seek_status is
+                  when none =>
+                     seek_status := double;
+                     redacted (arrow) := '#';
+                  when double =>
+                     seek_status := none;
+                     redacted (arrow) := '#';
+                  when single => null;
+               end case;
+            when others => null;
+         end case;
+         exit when arrow = sql'Length;
+         arrow := arrow + 1;
+      end loop;
+      return redacted;
+   end redact_quotes;
+
+
+   ---------------------
    --  transform_sql  --
    ---------------------
    function transform_sql (Stmt : out Base_Statement; sql : String)
                            return String
    is
-      transformed : String := sql;
-      sql_mask : String := sql;
+      procedure reserve_marker;
+
+      sql_mask : String := redact_quotes (sql);
+
+      procedure reserve_marker
+      is
+         brec   : bindrec;
+      begin
+         brec.v00 := False;
+         Stmt.realmccoy.Append (New_Item => brec);
+      end reserve_marker;
+
    begin
       Stmt.alpha_markers.Clear;
       Stmt.realmccoy.Clear;
-      if sql'Length = 0 then
-         return sql;
+
+      if CT.IsBlank (sql) then
+         return "";
       end if;
-      declare
-         --  This block will mask anything between quotes (single or double)
-         --  These are considered to be literal and not suitable for binding
-         type seeking is (none, single, double);
-         seek_status : seeking := none;
-         arrow : Positive := 1;
-      begin
-         loop
-            case sql (arrow) is
-               when ''' =>
-                  case seek_status is
-                     when none =>
-                        seek_status := single;
-                        sql_mask (arrow) := '#';
-                     when single =>
-                        seek_status := none;
-                        sql_mask (arrow) := '#';
-                     when double => null;
-                  end case;
-               when ASCII.Quotation =>
-                  case seek_status is
-                     when none =>
-                        seek_status := double;
-                        sql_mask (arrow) := '#';
-                     when double =>
-                        seek_status := none;
-                        sql_mask (arrow) := '#';
-                     when single => null;
-                  end case;
-               when others => null;
-            end case;
-            exit when arrow = sql'Length;
-            arrow := arrow + 1;
-         end loop;
-      end;
+
       declare
          --  This block does two things:
          --  1) finds "?" and increments the replacement index
-         --  2) finds ":[A-Za-z0-9]*", replaces with "?", increments the
+         --  2) finds ":[A-Za-z0-9_]*", replaces with "?", increments the
          --     replacement index, and pushes the string into alpha markers
          --  Normally ? and : aren't mixed but we will support it.
          procedure replace_alias;
-         procedure save_classic_marker;
+         procedure lock_and_advance (symbol : Character);
+
          start    : Natural  := 0;
          final    : Natural  := 0;
          arrow    : Positive := 1;
+         polaris  : Natural  := 0;
          scanning : Boolean  := False;
+         product  : String (1 .. sql'Length) := (others => ' ');
+
+         adjacent_error : constant String :=
+                          "Bindings are not separated; they are touching: ";
+
+         procedure lock_and_advance (symbol : Character) is
+         begin
+            polaris := polaris + 1;
+            product (polaris) := symbol;
+         end lock_and_advance;
 
          procedure replace_alias is
             len    : Natural := final - start;
             alias  : String (1 .. len) := sql_mask (start + 1 .. final);
-            scab   : String (1 .. len + 1) := ('?', others => ' ');
-            brec   : bindrec;
          begin
             if Stmt.alpha_markers.Contains (Key => alias) then
                raise ILLEGAL_BIND_SQL with "multiple instances of " & alias;
             end if;
-            brec.v00 := False;
-            Stmt.realmccoy.Append (New_Item => brec);
-            Stmt.alpha_markers.Insert (Key => alias,
-                                       New_Item => Stmt.realmccoy.Last_Index);
-            transformed (start .. final) := scab;
+            reserve_marker;
+            Stmt.alpha_markers.Insert (alias, Stmt.realmccoy.Last_Index);
             scanning := False;
          end replace_alias;
-
-         procedure save_classic_marker
-         is
-            brec   : bindrec;
-         begin
-            brec.v00 := False;
-            Stmt.realmccoy.Append (New_Item => brec);
-         end save_classic_marker;
-
-         adjacent_error : constant String :=
-                          "Bindings are not separated; they are touching: ";
 
       begin
          loop
@@ -141,13 +160,14 @@ package body AdaBase.Statement.Base is
                when ASCII.Query =>
                   if scanning then
                      raise ILLEGAL_BIND_SQL
-                       with adjacent_error & transformed (start .. arrow);
+                       with adjacent_error & sql_mask (start .. arrow);
                   end if;
-                  save_classic_marker;
+                  reserve_marker;
+                  lock_and_advance (ASCII.Query);
                when ASCII.Colon =>
                   if scanning then
                      raise ILLEGAL_BIND_SQL
-                       with adjacent_error & transformed (start .. arrow);
+                       with adjacent_error & sql_mask (start .. arrow);
                   end if;
                   scanning := True;
                   start := arrow;
@@ -156,18 +176,26 @@ package body AdaBase.Statement.Base is
                      case sql_mask (arrow) is
                         when 'A' .. 'Z' | 'a' .. 'z' | '0' .. '9' | '_' =>
                            final := arrow;
-                        when others => replace_alias;
+                        when others =>
+                           replace_alias;
+                           lock_and_advance (ASCII.Query);
+                           lock_and_advance (sql (arrow));
                      end case;
+                  else
+                     lock_and_advance (sql (arrow));
                   end if;
             end case;
             if scanning and then arrow = sql_mask'Length then
                replace_alias;
+               lock_and_advance (ASCII.Query);
             end if;
             exit when arrow = sql_mask'Length;
             arrow := arrow + 1;
          end loop;
+         --  Leave trailing white space
+         --  Output string is expected to be same length as original SQL
+         return product;
       end;
-      return transformed;
    end transform_sql;
 
 
