@@ -15,15 +15,8 @@ procedure Fruit2 is
 
 begin
 
-   declare
-   begin
-      CON.connect_database;
-      CON.DR.set_trait_error_mode (trait => AdaBase.raise_exception);
-   exception
-      when others =>
-         TIO.Put_Line ("database connect failed.");
-         return;
-   end;
+   CON.connect_database;
+   CON.DR.set_trait_error_mode (trait => AdaBase.raise_exception);
 
    TIO.Put_Line ("SQL: " & cmd);
    declare

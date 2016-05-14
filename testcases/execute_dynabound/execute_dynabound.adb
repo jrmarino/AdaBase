@@ -124,13 +124,7 @@ procedure Execute_Dynabound is
 
 begin
 
-   begin
-      CON.connect_database;
-   exception
-      when others =>
-         TIO.Put_Line ("database connect failed.");
-         return;
-   end;
+   CON.connect_database;
 
    declare
       numrows : AdaBase.AffectedRows;

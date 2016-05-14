@@ -19,14 +19,7 @@ begin
 
    CON.DR.command_standard_logger (device => ALF.screen, action => ALF.attach);
 
-   declare
-   begin
-      CON.connect_database;
-   exception
-      when others =>
-         TIO.Put_Line ("database connect failed.");
-         return;
-   end;
+   CON.connect_database;
 
    --  delete breakfast table if it already exists
    --  No need to set cascade; it illustrates logging on MySQL (only)

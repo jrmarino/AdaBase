@@ -45,13 +45,7 @@ begin
       testnumber := Integer'Value (CLI.Argument (2));
    end if;
 
-   begin
-      CON.connect_database;
-   exception
-      when others =>
-         TIO.Put_Line ("database connect failed.");
-         return;
-   end;
+   CON.connect_database;
 
    for x in Integer range 1 .. cycles loop
       if testnumber = 1 then

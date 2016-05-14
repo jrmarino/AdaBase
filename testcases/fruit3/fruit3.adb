@@ -20,14 +20,7 @@ begin
    CON.DR.set_logger_filename (filename => log);
    TIO.Put_Line ("The " & log & " has been attached.");
 
-   declare
-   begin
-      CON.connect_database;
-   exception
-      when others =>
-         TIO.Put_Line ("database connect failed.");
-         return;
-   end;
+   CON.connect_database;
 
    numrows := CON.DR.execute (sql => cmd);
    TIO.Put_Line ("SQL: " & cmd);

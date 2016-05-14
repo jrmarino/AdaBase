@@ -24,14 +24,7 @@ begin
    CON.DR.attach_custom_logger (logger_access => MyLogger.clogger'Access);
    TIO.Put_Line (atch);
 
-   declare
-   begin
-      CON.connect_database;
-   exception
-      when others =>
-         TIO.Put_Line ("database connect failed.");
-         return;
-   end;
+   CON.connect_database;
 
    numrows := CON.DR.execute (sql => cmd1);
    TIO.Put_Line ("SQL: " & cmd1);

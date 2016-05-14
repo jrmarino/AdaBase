@@ -52,13 +52,7 @@ procedure Stored_Procs is
 
 begin
 
-   begin
-      CON.connect_database;
-   exception
-      when others =>
-         TIO.Put_Line ("database connect failed.");
-         return;
-   end;
+   CON.connect_database;
 
    declare
       stmt : aliased CON.Stmt_Type := CON.DR.query (sql);
