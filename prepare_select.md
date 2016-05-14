@@ -120,7 +120,7 @@ end Prep_Stmt;
 <br/>
 <pre class="output">
 2016-05-02 18:28:28    mysql :       Connect : Connection to adabase_examples database succeeded.
-2016-05-02 18:28:28    mysql :  Prepare Stmt : SELECT ALL * FROM fruits WHERE color = ? and calories > ?       and calories < ?
+2016-05-02 18:28:28    mysql :  Prepare Stmt : SELECT ALL * FROM fruits WHERE color = ? and calories > ? and calories < ?
 2016-05-02 18:28:28    mysql :  Execute Stmt : Exec with 3 bound parameters
 execute succeeded
 Column 1 heading: id
@@ -140,7 +140,7 @@ Affected rows:  1
 <br/>
 <pre class="output">
 2016-05-12 14:27:02   sqlite :       Connect : Connection to file:///home/marino/adabase.sqlite database succeeded.
-2016-05-12 14:27:02   sqlite :  Prepare Stmt : SELECT ALL * FROM fruits WHERE color = ? and calories > ?       and calories < ?
+2016-05-12 14:27:02   sqlite :  Prepare Stmt : SELECT ALL * FROM fruits WHERE color = ? and calories > ? and calories < ?
 2016-05-12 14:27:02   sqlite :  Execute Stmt : Exec with 3 bound parameters
 execute succeeded
 Column 1 heading: id
