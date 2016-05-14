@@ -38,9 +38,9 @@ defaults:
        f_trait_compressed: '<a href="trait_compressed.html">func trait_protocol_compressed [DS]</a>'
        p_trait_compressed: '<a href="trait_compressed.html">proc set_trait_protocol_compressed [DS]</a>'
 
-       trait_multiquery: '<a href="trait_multiquery.html">multiquery settings [DS]</a>'
-       f_trait_multiquery: '<a href="trait_multiquery.html">func trait_multiquery_enabled [DS]</a>'
-       p_trait_multiquery: '<a href="trait_multiquery.html">proc set_trait_multiquery_enabled [DS]</a>'
+       trait_multiquery: '<a href="trait_multiquery.html">multiquery settings</a>'
+       f_trait_multiquery: '<a href="trait_multiquery.html">func trait_multiquery_enabled</a>'
+       p_trait_multiquery: '<a href="trait_multiquery.html">proc set_trait_multiquery_enabled</a>'
 
        trait_buffers: '<a href="trait_buffers.html">query buffer settings [DS]</a>'
        f_trait_buffers: '<a href="trait_buffers.html">func trait_query_buffers_used [DS]</a>'

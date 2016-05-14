@@ -7,7 +7,7 @@ title: MultiQuery Trait
 AdaBase.Driver.Base.[DB].trait_multiquery_enabled ()</h3>
 <p>This is a connection attribute.  It returns True if the driver is
 configured to accept multiple queries separated by semicolons in the
-query string.  This feature is not supported by all drivers.  For the
+query string.  This feature is not fully supported by all drivers.  For the
 MySQL driver, this attribute is <b>False</b> by default.</p>
 <br/>
 <h3>Procedure<br/>
@@ -118,8 +118,7 @@ Failed to test this setting
 </pre>
 <p class="caption">Output using SQLite Driver</p>
 <br/>
-<p>This trait is limited to specific drivers.  Specially [DB] is limited to "MySQL.MySQL_Driver"
-and "SQLite.SQLite_Driver"</p>
+<p>{{ page.supported_drivers }}</p>
 </div>
 <div class="sidenav">
   <h3>See Also</h3>

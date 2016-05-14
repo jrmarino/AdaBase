@@ -46,8 +46,8 @@ title: AdaBase by jrmarino
 <li>{{ page.f_trait_column_case }}</li>
 <li>{{ page.f_trait_error_mode }}</li>
 <li>{{ page.f_trait_blob_size }}</li>
-<li>{{ page.f_trait_compressed }}</li>
 <li>{{ page.f_trait_multiquery }}</li>
+<li>{{ page.f_trait_compressed }}</li>
 <li>{{ page.f_trait_buffers }}</li>
 </ul>
 
