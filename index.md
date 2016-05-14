@@ -57,8 +57,8 @@ title: AdaBase by jrmarino
 <li>{{ page.p_trait_column_case }}</li>
 <li>{{ page.p_trait_error_mode }}</li>
 <li>{{ page.p_trait_blob_size }}</li>
-<li>{{ page.p_trait_compressed }}</li>
 <li>{{ page.p_trait_multiquery }}</li>
+<li>{{ page.p_trait_compressed }}</li>
 <li>{{ page.p_trait_buffers }}</li>
 </ul>
 
