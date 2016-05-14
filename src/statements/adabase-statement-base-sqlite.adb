@@ -108,9 +108,7 @@ package body AdaBase.Statement.Base.SQLite is
    procedure initialize (Object : in out SQLite_statement)
    is
       use type ACS.SQLite_Connection_Access;
-      conn : ACS.SQLite_Connection_Access renames Object.sqlite_conn;
-
-      len : Natural := CT.len (Object.initial_sql.all);
+      conn   : ACS.SQLite_Connection_Access renames Object.sqlite_conn;
       logcat : LogCategory;
    begin
 
@@ -120,16 +118,15 @@ package body AdaBase.Statement.Base.SQLite is
 
       logger_access     := Object.log_handler;
       Object.dialect    := driver_sqlite;
-      Object.sql_final  := new String (1 .. len);
       Object.connection := ACB.Base_Connection_Access (conn);
 
       case Object.type_of_statement is
          when direct_statement =>
-            Object.sql_final.all := Object.initial_sql.all;
+            Object.sql_final := new String'(Object.initial_sql.all);
             logcat := statement_execution;
          when prepared_statement =>
-            Object.sql_final.all :=
-              Object.transform_sql (Object.initial_sql.all);
+            Object.sql_final := new String'(Object.transform_sql
+                                            (Object.initial_sql.all));
             logcat := statement_preparation;
       end case;
 
@@ -142,8 +139,8 @@ package body AdaBase.Statement.Base.SQLite is
       else
          Object.log_problem
               (category => statement_preparation,
-               message  => "Failed to parse a direct SQL query: " &
-                            Object.sql_final.all,
+               message  => "Failed to parse a direct SQL query: '" &
+                            Object.sql_final.all & "'",
                pull_codes => True);
          return;
       end if;

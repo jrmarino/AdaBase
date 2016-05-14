@@ -192,9 +192,7 @@ package body AdaBase.Statement.Base is
             exit when arrow = sql_mask'Length;
             arrow := arrow + 1;
          end loop;
-         --  Leave trailing white space
-         --  Output string is expected to be same length as original SQL
-         return product;
+         return product (1 .. polaris);
       end;
    end transform_sql;
 
