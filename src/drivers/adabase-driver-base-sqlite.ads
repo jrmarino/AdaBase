@@ -63,6 +63,9 @@ package AdaBase.Driver.Base.SQLite is
    procedure query_clear_table (driver : SQLite_Driver;
                                 table  : String);
 
+   overriding
+   procedure set_trait_multiquery_enabled  (driver : SQLite_Driver;
+                                            trait  : Boolean);
 
    function query          (driver     : SQLite_Driver;
                             sql        : String)
@@ -97,11 +100,6 @@ package AdaBase.Driver.Base.SQLite is
                             limit      : TraxID := 0;
                             offset     : TraxID := 0)
                             return ASS.SQLite_statement;
-
-   function trait_multiquery_enabled       (driver : SQLite_Driver)
-                                            return Boolean;
-   procedure set_trait_multiquery_enabled  (driver : SQLite_Driver;
-                                            trait  : Boolean);
 
 private
 

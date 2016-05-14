@@ -167,6 +167,17 @@ package body AdaBase.Driver.Base is
    end set_trait_max_blob_size;
 
 
+   --------------------------------
+   --  trait_multiquery_enabled  --
+   --------------------------------
+   overriding
+   function trait_multiquery_enabled (driver : Base_Driver) return Boolean
+   is
+   begin
+      return driver.connection.all.multiquery;
+   end trait_multiquery_enabled;
+
+
    -----------------------
    --  standard_logger  --
    -----------------------

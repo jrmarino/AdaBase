@@ -48,6 +48,12 @@ package AdaBase.Interfaces.Driver is
    procedure set_trait_max_blob_size (driver : iDriver;
                                       trait  : BLOB_maximum) is null;
 
+   function trait_multiquery_enabled       (driver : iDriver)
+                                            return Boolean is abstract;
+
+   procedure set_trait_multiquery_enabled  (driver : iDriver;
+                                            trait  : Boolean) is null;
+
    function last_insert_id       (driver : iDriver)
                                   return TraxID is abstract;
 

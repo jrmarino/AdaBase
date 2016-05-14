@@ -492,19 +492,10 @@ package body AdaBase.Driver.Base.SQLite is
    end query_clear_table;
 
 
-   --------------------------------
-   --  trait_multiquery_enabled  --
-   --------------------------------
-   function trait_multiquery_enabled (driver : SQLite_Driver) return Boolean
-   is
-   begin
-      return driver.local_connection.all.multiquery;
-   end trait_multiquery_enabled;
-
-
    ------------------------------------
    --  set_trait_multiquery_enabled  --
    ------------------------------------
+   overriding
    procedure set_trait_multiquery_enabled (driver : SQLite_Driver;
                                            trait  : Boolean)
    is

@@ -72,6 +72,10 @@ package AdaBase.Driver.Base is
                                     return BLOB_maximum;
 
    overriding
+   function trait_multiquery_enabled (driver : Base_Driver)
+                                      return Boolean;
+
+   overriding
    procedure set_trait_autocommit  (driver : Base_Driver;
                                     trait  : Boolean);
 
