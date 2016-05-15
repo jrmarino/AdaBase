@@ -142,12 +142,12 @@ private
 
    type PostgreSQL_Connection is new Base_Connection and AIC.iConnection
      with record
-      info_description : String (1 .. 24) := "PostgreSQL native driver";
+      info_description : String (1 .. 29) := "PostgreSQL 9.1+ native driver";
+      prop_multiquery  : Boolean := False;
       dummy            : Boolean := False;
       handle           : aliased BND.PGconn_Access := null;
       cmd_sql_state    : TSqlState := stateless;
       cmd_rows_impact  : AffectedRows := 0;
-     --  last_command     : PGresult_Access := null;
    end record;
 
    procedure private_execute (conn : out PostgreSQL_Connection; sql : String);

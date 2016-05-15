@@ -2,14 +2,14 @@
 --  Reference: ../../License.txt
 
 with AdaBase.Interfaces.Driver;
-with AdaBase.Connection.Base.SQLite;
 with AdaBase.Statement.Base.PostgreSQL;
+with AdaBase.Connection.Base.PostgreSQL;
 
 package AdaBase.Driver.Base.PostgreSQL is
 
    package AID renames AdaBase.Interfaces.Driver;
-   package CON renames AdaBase.Connection.Base.PostgreSQL;
    package SMT renames AdaBase.Statement.Base.PostgreSQL;
+   package CON renames AdaBase.Connection.Base.PostgreSQL;
 
    type PostgreSQL_Driver is new Base_Driver and AID.iDriver with private;
 
