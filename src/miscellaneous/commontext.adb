@@ -237,4 +237,20 @@ package body CommonText is
       return S'Length;
    end len;
 
+
+   ------------------
+   --  count_char  --
+   ------------------
+   function count_char (S : String; focus : Character) return Natural
+   is
+      result : Natural := 0;
+   begin
+      for x in S'Range loop
+         if S (x) = focus then
+            result := result + 1;
+         end if;
+      end loop;
+      return result;
+   end count_char;
+
 end CommonText;

@@ -150,9 +150,16 @@ private
       cmd_rows_impact  : AffectedRows := 0;
    end record;
 
-   procedure private_execute (conn : out PostgreSQL_Connection; sql : String);
+   function is_ipv4_or_ipv6 (teststr : String) return Boolean;
+   function convert_version (pgsql_version : Natural) return CT.Text;
+   function get_library_version return Natural;
 
+   procedure private_execute (conn : out PostgreSQL_Connection; sql : String);
    procedure begin_transaction (conn : out PostgreSQL_Connection);
+   function get_server_version (conn : PostgreSQL_Connection) return Natural;
+   function get_server_info    (conn : PostgreSQL_Connection) return CT.Text;
+   function connection_attempt_succeeded (conn : PostgreSQL_Connection)
+                                          return Boolean;
 
    overriding
    procedure finalize (conn : in out PostgreSQL_Connection);

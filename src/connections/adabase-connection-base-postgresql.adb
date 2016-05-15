@@ -369,6 +369,126 @@ package body AdaBase.Connection.Base.PostgreSQL is
    end setTransactionIsolation;
 
 
+   ------------------------------------
+   --  connection_attempt_succeeded  --
+   ------------------------------------
+   function connection_attempt_succeeded (conn : PostgreSQL_Connection)
+                                          return Boolean
+   is
+      use type BND.ConnStatusType;
+      status : constant BND.ConnStatusType := BND.PQstatus (conn.handle);
+   begin
+      return (status = BND.CONNECTION_OK);
+   end connection_attempt_succeeded;
+
+
+   -----------------------
+   --  convert_version  --
+   -----------------------
+   function convert_version (pgsql_version : Natural) return CT.Text
+   is
+      six : String (1 .. 6) := (others => '0');
+      raw : constant String := pgsql_version'Img;
+      len : constant Natural := raw'Length;
+   begin
+      six (7 - len .. 6) := raw;
+      return CT.SUS (raw (1 .. 2) & '.' & raw (3 .. 4) & '.' & raw (5 .. 6));
+   end convert_version;
+
+
+   --------------------------
+   --  get_server_version  --
+   --------------------------
+   function get_server_version (conn : PostgreSQL_Connection) return Natural
+   is
+      use type BND.IC.int;
+      version : BND.IC.int := BND.PQserverVersion (conn.handle);
+   begin
+      return Natural (version);
+   end get_server_version;
+
+
+   ---------------------------
+   --  get_library_version  --
+   ---------------------------
+   function get_library_version return Natural
+   is
+      use type BND.IC.int;
+      version : BND.IC.int := BND.PQlibVersion;
+   begin
+      return Natural (version);
+   end get_library_version;
+
+
+   -----------------------
+   --  get_server_info  --
+   -----------------------
+   function get_server_info (conn : PostgreSQL_Connection) return CT.Text
+   is
+      use type BND.IC.int;
+      protocol : BND.IC.int := BND.PQprotocolVersion (conn.handle);
+   begin
+      return CT.SUS ("Protocol " & CT.int2str (Integer (protocol)) & ".0");
+   end get_server_info;
+
+
+   -----------------------
+   --  is_ipv4_or_ipv6  --
+   -----------------------
+   function is_ipv4_or_ipv6 (teststr : String) return Boolean
+   is
+      function is_byte (segment : String) return Boolean;
+      function is_byte (segment : String) return Boolean is
+      begin
+         if segment'Length > 3 then
+            return False;
+         end if;
+         for x in segment'Range loop
+            case segment (x) is
+               when '0' .. '9' => null;
+               when others => return False;
+            end case;
+         end loop;
+         return (Integer'Value (segment) < 256);
+      end is_byte;
+
+      num_dots : constant Natural := CT.count_char (teststr, '.');
+      dot      : constant String  := ".";
+   begin
+      if num_dots = 3 then
+         declare
+            P1A : String := CT.part_1 (teststr, dot);
+            P1B : String := CT.part_2 (teststr, dot);
+         begin
+            if is_byte (P1A) then
+               declare
+                  P2A : String := CT.part_1 (P1B, dot);
+                  P2B : String := CT.part_2 (P1B, dot);
+               begin
+                  if is_byte (P2A) then
+                     declare
+                        P3A : String := CT.part_1 (P2B, dot);
+                        P3B : String := CT.part_2 (P2B, dot);
+                     begin
+                        if is_byte (P3A) and then is_byte (P3B) then
+                           return True;
+                        end if;
+                     end;
+                  end if;
+               end;
+            end if;
+         end;
+      end if;
+      for x in teststr'Range loop
+         case teststr (x) is
+            when ':' | '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' => null;
+            when others => return False;
+         end case;
+      end loop;
+      return True;
+   end is_ipv4_or_ipv6;
+
+
    ---------------
    --  connect  --
    ---------------
@@ -381,9 +501,55 @@ package body AdaBase.Connection.Base.PostgreSQL is
                       socket   : String := blankstring;
                       port     : PosixPort := portless)
    is
+      constr : CT.Text := CT.SUS ("dbname=" & database);
    begin
-      --  TO BE IMPLEMENTED
-      null;
+      if conn.prop_active then
+         raise NOT_WHILE_CONNECTED;
+      end if;
+
+      if not CT.IsBlank (username) then
+         CT.SU.Append (constr, " user=" & username);
+      end if;
+      if not CT.IsBlank (password) then
+         CT.SU.Append (constr, " password=" & password);
+      end if;
+      if not CT.IsBlank (hostname) then
+         if is_ipv4_or_ipv6 (hostname) then
+            CT.SU.Append (constr, " hostaddr=" & hostname);
+         else
+            CT.SU.Append (constr, " host=" & hostname);
+         end if;
+      else
+         if not CT.IsBlank (socket) then
+            CT.SU.Append (constr, " host=" & socket);
+         end if;
+      end if;
+      if port /= portless then
+         CT.SU.Append (constr, " port=" & CT.int2str (port));
+      end if;
+
+      declare
+         use type BND.PGconn_Access;
+         conninfo : BND.ICS.chars_ptr := BND.ICS.New_String (CT.USS (constr));
+      begin
+         conn.handle := BND.PQconnectdb (conninfo);
+         BND.ICS.Free (conninfo);
+
+         if conn.handle = null then
+            raise CONNECT_FAILED;
+         end if;
+      end;
+
+      conn.prop_active := True;
+      conn.info_client_version := convert_version (get_library_version);
+      conn.info_client         := conn.info_client_version;
+      conn.info_server_version := convert_version (conn.get_server_version);
+      conn.info_server         := conn.get_server_info;
+
+      --  not yet implemented  conn.set_character_set;
+      conn.setTransactionIsolation (conn.prop_trax_isolation);
+      conn.setAutoCommit (conn.prop_auto_commit);
+
    end connect;
 
 

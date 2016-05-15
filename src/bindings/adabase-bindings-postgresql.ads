@@ -90,6 +90,9 @@ package AdaBase.Bindings.PostgreSQL is
    function PQclientEncoding (conn : PGconn_Access) return IC.int;
    pragma Import (C, PQclientEncoding);
 
+   function PQconnectdb (conninfo : ICS.chars_ptr) return PGconn_Access;
+   pragma Import (C, PQconnectdb);
+
    function PQconnectdbParams (keywords     : ICS.chars_ptr_array;
                                values       : ICS.chars_ptr_array;
                                expand_dbnam : IC.int) return PGconn_Access;
@@ -172,6 +175,15 @@ package AdaBase.Bindings.PostgreSQL is
 
    function PQstatus (conn : PGconn_Access) return ConnStatusType;
    pragma Import (C, PQstatus);
+
+   function PQserverVersion (conn : PGconn_Access) return IC.int;
+   pragma Import (C, PQserverVersion);
+
+   function PQprotocolVersion (conn : PGconn_Access) return IC.int;
+   pragma Import (C, PQprotocolVersion);
+
+   function PQlibVersion return IC.int;
+   pragma Import (C, PQlibVersion);
 
 private
 

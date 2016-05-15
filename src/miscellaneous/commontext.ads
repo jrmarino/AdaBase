@@ -59,4 +59,7 @@ package CommonText is
    function len (US : Text) return Natural;
    function len (S : String) return Natural;
 
+   --  Returns number of instances of a given character in a given string
+   function count_char (S : String; focus : Character) return Natural;
+
 end CommonText;
