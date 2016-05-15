@@ -45,9 +45,9 @@ package body AdaBase.Connection.Base.PostgreSQL is
    end useBuffer;
 
 
-   ---------------------
-   --  driverMessage  --
-   ---------------------
+   --------------------------------
+   --  driverMessage (interface) --
+   --------------------------------
    overriding
    function driverMessage (conn : PostgreSQL_Connection) return String
    is
@@ -57,9 +57,21 @@ package body AdaBase.Connection.Base.PostgreSQL is
    end driverMessage;
 
 
-   ------------------
-   --  driverCode  --
-   ------------------
+   -----------------------
+   --  driverMessage #2 --
+   -----------------------
+   function driverMessage (conn : PostgreSQL_Connection;
+                           res : BND.PGresult_Access) return String
+   is
+      result : BND.ICS.chars_ptr := BND.PQresultErrorMessage (res);
+   begin
+      return BND.ICS.Value (result);
+   end driverMessage;
+
+
+   ------------------------------
+   --  driverCode (interface)  --
+   ------------------------------
    overriding
    function driverCode (conn : PostgreSQL_Connection) return DriverCodes is
    begin
@@ -69,6 +81,24 @@ package body AdaBase.Connection.Base.PostgreSQL is
          return 0;
       end if;
       if conn.cmd_sql_state (1 .. 2) = "01" then
+         return 1;
+      end if;
+      return 2;
+   end driverCode;
+
+
+   ---------------------
+   --  driverCode #2  --
+   ---------------------
+   function driverCode (conn : PostgreSQL_Connection;
+                        res  : BND.PGresult_Access) return DriverCodes
+   is
+      SS : constant TSqlState := conn.SqlState (res);
+   begin
+      if SS = stateless or else SS = "00000" then
+         return 0;
+      end if;
+      if SS (1 .. 2) = "01" then
          return 1;
       end if;
       return 2;
@@ -95,7 +125,11 @@ package body AdaBase.Connection.Base.PostgreSQL is
       detail    : BND.ICS.chars_ptr;
    begin
       detail := BND.PQresultErrorField (res, fieldcode);
-      return BND.ICS.Value (detail);
+      declare
+         SS : String := BND.ICS.Value (detail);
+      begin
+         return TSqlState (SS);
+      end;
    end SqlState;
 
 
@@ -127,7 +161,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
       conn.cmd_sql_state := conn.SqlState (pgres);
 
       if success then
-         conn.cmd_rows_impact := conn.rows_affected_by_execution (pgres);
+         conn.cmd_rows_impact := conn.rows_impacted (pgres);
       else
          conn.cmd_rows_impact := 0;
       end if;
@@ -152,22 +186,43 @@ package body AdaBase.Connection.Base.PostgreSQL is
    end rows_affected_by_execution;
 
 
-   -------------------------------------
-   --  rows_affected_by_execution #2  --
-   -------------------------------------
-   function rows_affected_by_execution (conn : PostgreSQL_Connection;
-                                        res  : BND.PGresult_Access)
-                                        return AffectedRows
+   ----------------------
+   --  rows_in_result  --
+   ----------------------
+   function rows_in_result (conn : PostgreSQL_Connection;
+                            res  : BND.PGresult_Access)
+                            return AffectedRows
    is
       use type BND.IC.int;
       result : BND.IC.int := BND.PQntuples (res);
    begin
       if result < 0 then
-         --  overflowed (> 2 ** 31)
+         --  overflowed (e.g. > 2 ** 31 on 32-bit system)
          return AffectedRows'Last;
       end if;
       return AffectedRows (result);
-   end rows_affected_by_execution;
+   end rows_in_result;
+
+
+   ---------------------
+   --  rows_impacted  --
+   ---------------------
+   function rows_impacted (conn : PostgreSQL_Connection;
+                           res  : BND.PGresult_Access)
+                           return AffectedRows
+   is
+      result  : BND.ICS.chars_ptr := BND.PQcmdTuples (res);
+      resstr  : constant String := BND.ICS.Value (result);
+   begin
+      if CT.IsBlank (resstr) then
+         return 0;
+      end if;
+      begin
+         return AffectedRows (Integer'Value (resstr));
+      exception
+         when others => return 0;
+      end;
+   end rows_impacted;
 
 
    -------------------------
@@ -551,6 +606,20 @@ package body AdaBase.Connection.Base.PostgreSQL is
       conn.setAutoCommit (conn.prop_auto_commit);
 
    end connect;
+
+
+   ------------------
+   --  field_name  --
+   ------------------
+   function field_name (conn : PostgreSQL_Connection;
+                        res  : BND.PGresult_Access;
+                        column_number : Natural) return String
+   is
+      colnum : constant BND.IC.int := BND.IC.int (column_number);
+      result : BND.ICS.chars_ptr := BND.PQfname (res, colnum);
+   begin
+      return BND.ICS.Value (result);
+   end field_name;
 
 
    --------------------

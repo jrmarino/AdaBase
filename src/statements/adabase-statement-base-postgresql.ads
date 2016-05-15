@@ -106,7 +106,7 @@ private
    is new Base_Statement and AIS.iStatement with
       record
          delivery       : fetch_status          := completed;
-         stmt_handle    : BND.PGresult_Access   := null;
+         result_handle  : BND.PGresult_Access   := null;
          assign_counter : Natural               := 0;
          num_columns    : Natural               := 0;
          size_of_rowset : TraxID                := 0;

@@ -101,6 +101,9 @@ package AdaBase.Bindings.PostgreSQL is
    function PQerrorMessage (conn : PGconn_Access) return ICS.chars_ptr;
    pragma Import (C, PQerrorMessage);
 
+   function PQresultErrorMessage (res : PGresult_Access) return ICS.chars_ptr;
+   pragma Import (C, PQresultErrorMessage);
+
    function PQresultErrorField (res : PGresult_Access; fieldcode : IC.int)
                                 return ICS.chars_ptr;
    pragma Import (C, PQresultErrorField);
@@ -154,6 +157,9 @@ package AdaBase.Bindings.PostgreSQL is
 
    function PQnparams (res : PGresult_Access) return IC.int;
    pragma Import (C, PQnparams);
+
+   function PQcmdTuples (res : PGresult_Access) return ICS.chars_ptr;
+   pragma Import (C, PQcmdTuples);
 
    function PQfname (res : PGresult_Access; column_number : IC.int)
                      return ICS.chars_ptr;

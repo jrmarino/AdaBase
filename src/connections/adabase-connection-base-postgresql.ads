@@ -96,12 +96,16 @@ package AdaBase.Connection.Base.PostgreSQL is
    function SqlState (conn : PostgreSQL_Connection; res : BND.PGresult_Access)
                       return TSqlState;
 
-   procedure discard_pgresult          (conn : PostgreSQL_Connection;
-                                        res  : BND.PGresult_Access);
+   procedure discard_pgresult    (conn : PostgreSQL_Connection;
+                                  res  : BND.PGresult_Access);
 
-   function rows_affected_by_execution (conn : PostgreSQL_Connection;
-                                        res  : BND.PGresult_Access)
-                                        return AffectedRows;
+   function rows_in_result       (conn : PostgreSQL_Connection;
+                                  res  : BND.PGresult_Access)
+                                  return AffectedRows;
+
+   function rows_impacted        (conn : PostgreSQL_Connection;
+                                  res  : BND.PGresult_Access)
+                                  return AffectedRows;
 
    function field_data_is_binary (conn : PostgreSQL_Connection;
                                   res  : BND.PGresult_Access;
@@ -119,6 +123,17 @@ package AdaBase.Connection.Base.PostgreSQL is
                            res  : BND.PGresult_Access;
                            row_number    : Natural;
                            column_number : Natural) return Natural;
+
+   function field_name    (conn : PostgreSQL_Connection;
+                           res  : BND.PGresult_Access;
+                           column_number : Natural) return String;
+
+   function driverMessage (conn : PostgreSQL_Connection;
+                           res  : BND.PGresult_Access) return String;
+
+   function driverCode    (conn : PostgreSQL_Connection;
+                           res  : BND.PGresult_Access) return DriverCodes;
+
    ------------------
    --  EXCEPTIONS  --
    ------------------

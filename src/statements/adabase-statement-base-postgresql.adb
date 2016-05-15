@@ -43,4 +43,209 @@ package body AdaBase.Statement.Base.PostgreSQL is
       end;
    end reformat_markers;
 
+
+   --------------------
+   --  column_count  --
+   --------------------
+   overriding
+   function column_count (Stmt : PostgreSQL_statement) return Natural
+   is
+      conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+   begin
+      return conn.fields_count (Stmt.result_handle);
+   end column_count;
+
+
+   ----------------------
+   --  last_insert_id  --
+   ----------------------
+   overriding
+   function last_insert_id (Stmt : PostgreSQL_statement) return TraxID
+   is
+      conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+   begin
+      --  return conn.lastInsertID
+      --  TO BE IMPLEMENTED (depends on connection implementation)
+      return 0;
+   end last_insert_id;
+
+
+   ----------------------
+   --  last_sql_state  --
+   ----------------------
+   overriding
+   function last_sql_state (Stmt : PostgreSQL_statement) return TSqlState
+   is
+      conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+   begin
+      return conn.SqlState (Stmt.result_handle);
+   end last_sql_state;
+
+
+   ------------------------
+   --  last_driver_code  --
+   ------------------------
+   overriding
+   function last_driver_code (Stmt : PostgreSQL_statement) return DriverCodes
+   is
+      conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+   begin
+      return conn.driverCode (Stmt.result_handle);
+   end last_driver_code;
+
+
+   ---------------------------
+   --  last_driver_message  --
+   ---------------------------
+   overriding
+   function last_driver_message (Stmt : PostgreSQL_statement) return String
+   is
+      conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+   begin
+      return conn.driverMessage (Stmt.result_handle);
+   end last_driver_message;
+
+
+   --------------------
+   --  discard_rest  --
+   --------------------
+   overriding
+   procedure discard_rest (Stmt : out PostgreSQL_statement) is
+   begin
+      --  TO BE IMPLEMENTED
+      null;
+   end discard_rest;
+
+
+   ------------------
+   --  execute #1  --
+   ------------------
+   overriding
+   function execute (Stmt : out PostgreSQL_statement) return Boolean is
+   begin
+      --  TO BE IMPLEMENTED
+      Stmt.delivery := completed;
+      return False;
+   end execute;
+
+
+   ------------------
+   --  execute #2  --
+   ------------------
+   overriding
+   function execute (Stmt : out PostgreSQL_statement; parameters : String;
+                     delimiter  : Character := '|') return Boolean is
+   begin
+      --  TO BE IMPLEMENTED
+      Stmt.delivery := completed;
+      return False;
+   end execute;
+
+
+   ---------------------
+   --  rows_returned  --
+   ---------------------
+   overriding
+   function rows_returned (Stmt : PostgreSQL_statement) return AffectedRows
+   is
+      conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+   begin
+      return conn.rows_impacted (Stmt.result_handle);
+   end rows_returned;
+
+
+   -------------------
+   --  column_name  --
+   -------------------
+   overriding
+   function column_name (Stmt : PostgreSQL_statement; index : Positive)
+                         return String
+   is
+      conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+   begin
+      return conn.field_name (Stmt.result_handle, index);
+   end column_name;
+
+
+   --------------------
+   --  column_table  --
+   --------------------
+   overriding
+   function column_table  (Stmt : PostgreSQL_statement; index : Positive)
+                           return String
+   is
+      conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+   begin
+      --  TO BE IMPLEMENTED
+      return "";
+   end column_table;
+
+
+   --------------------------
+   --  column_native_type  --
+   --------------------------
+   overriding
+   function column_native_type (Stmt : PostgreSQL_statement; index : Positive)
+                                return field_types
+   is
+      conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+   begin
+      --  TO BE IMPLEMENTED
+      return ft_nbyte0;
+   end column_native_type;
+
+
+   ------------------
+   --  fetch_next  --
+   ------------------
+   overriding
+   function fetch_next (Stmt : out PostgreSQL_statement) return ARS.DataRow
+   is
+      dummy : ARS.DataRow := ARS.Empty_DataRow;
+   begin
+      --  TO BE IMPLEMENTED
+      Stmt.delivery := completed;
+      return dummy;
+   end fetch_next;
+
+
+   -----------------
+   --  fetch_all  --
+   -----------------
+   overriding
+   function fetch_all (Stmt : out PostgreSQL_statement) return ARS.DataRowSet
+   is
+      dummy : ARS.DataRowSet (1 .. 0);
+   begin
+      --  TO BE IMPLEMENTED
+      Stmt.delivery := completed;
+      return dummy;
+   end fetch_all;
+
+
+   -------------------
+   --  fetch_bound  --
+   -------------------
+   overriding
+   function fetch_bound (Stmt : out PostgreSQL_statement) return Boolean is
+   begin
+      --  TO BE IMPLEMENTED
+      Stmt.delivery := completed;
+      return False;
+   end fetch_bound;
+
+
+   ----------------------
+   --  fetch_next_set  --
+   ----------------------
+   overriding
+   procedure fetch_next_set (Stmt         : out PostgreSQL_statement;
+                             data_present : out Boolean;
+                             data_fetched : out Boolean) is
+   begin
+      --  TO BE IMPLEMENTED
+      null;
+   end fetch_next_set;
+
+
 end AdaBase.Statement.Base.PostgreSQL;
