@@ -8,6 +8,7 @@ library project AdaBase is
 
    type Driver_Included is ("yes", "no");
    Driver_MySQL  : Driver_Included := "@MYSQL@";
+   Driver_PGSQL  : Driver_Included := "@PGSQL@";
    Driver_SQLite : Driver_Included := "@SQLITE@";
 
    Linker_MySQL  := ();
@@ -19,6 +20,12 @@ library project AdaBase is
                                       "-Wl,-R,@PREFIX@/lib/mysql",
                                       "-lmysqlclient");
    end case;
+   case Driver_PGSQL is
+      when "no"  => null;
+      when "yes" => Linker_PGSQL  := ("-L@PREFIX@/lib",
+                                      "-Wl,-R,@PREFIX@/lib",
+                                      "-lpq");
+   end case;
    case Driver_SQLite is
       when "no"  => null;
       when "yes" =>  Linker_SQLite := ("-L@PREFIX@/lib",
@@ -27,7 +34,7 @@ library project AdaBase is
    end case;
 
    package Linker is
-      for Linker_Options use Linker_MySQL & Linker_SQLite;
+      for Linker_Options use Linker_MySQL & Linker_SQLite & Linker_PGSQL;
    end Linker;
 
 end AdaBase;
