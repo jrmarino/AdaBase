@@ -12,6 +12,7 @@ library project AdaBase is
    Driver_SQLite : Driver_Included := "@SQLITE@";
 
    Linker_MySQL  := ();
+   Linker_PGSQL  := ();
    Linker_SQLite := ();
 
    case Driver_MySQL is

@@ -31,13 +31,13 @@ project AdaBase is
    end case;
    case Driver_PgSQL is
       when "no"  => null;
-      when "yes" => PgSQL_List := ("adabase-bindings-pgsql.ads",
-                                   "adabase-connection-base-pgsql.ads",
-                                   "adabase-connection-base-pgsql.adb",
-                                   "adabase-driver-base-pgsql.ads",
-                                   "adabase-driver-base-pgsql.adb",
-                                   "adabase-statement-base-pgsql.ads",
-                                   "adabase-statement-base-pgsql.adb");
+      when "yes" => PgSQL_List := ("adabase-bindings-postgresql.ads",
+                                   "adabase-connection-base-postgresql.ads",
+                                   "adabase-connection-base-postgresql.adb",
+                                   "adabase-driver-base-postgresql.ads",
+                                   "adabase-driver-base-postgresql.adb",
+                                   "adabase-statement-base-postgresql.ads",
+                                   "adabase-statement-base-postgresql.adb");
    end case;
    case Driver_FBird is
       when "no"  => null;
