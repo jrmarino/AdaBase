@@ -154,23 +154,23 @@ package body AdaBase.Connection.Base.PostgreSQL is
       query   : BND.ICS.chars_ptr := BND.ICS.New_String (Str => sql);
       success : Boolean;
    begin
-      pgres := BND.PQexec (conn => conn.handle, command => query);
+--      pgres := BND.PQexec (conn => conn.handle, command => query);
 
       BND.ICS.Free (query);
-      success := (BND.PQresultStatus (pgres) = BND.PGRES_COMMAND_OK);
-      conn.cmd_sql_state := conn.SqlState (pgres);
-
-      if success then
-         conn.cmd_rows_impact := conn.rows_impacted (pgres);
-      else
-         conn.cmd_rows_impact := 0;
-      end if;
-
-      BND.PQclear (pgres);
-
-      if not success then
-         raise QUERY_FAIL;
-      end if;
+--        success := (BND.PQresultStatus (pgres) = BND.PGRES_COMMAND_OK);
+--        conn.cmd_sql_state := conn.SqlState (pgres);
+--
+--        if success then
+--           conn.cmd_rows_impact := conn.rows_impacted (pgres);
+--        else
+--           conn.cmd_rows_impact := 0;
+--        end if;
+--
+--        BND.PQclear (pgres);
+--
+--        if not success then
+--           raise QUERY_FAIL;
+--        end if;
 
    end private_execute;
 
@@ -412,8 +412,8 @@ package body AdaBase.Connection.Base.PostgreSQL is
                                       isolation : TransIsolation)
    is
       use type TransIsolation;
-      sql : constant String := "SSET SESSION CHARACTERISTICS AS TRANSACTION " &
-                               IsoKeywords (isolation);
+      sql : constant String := "SET SESSION CHARACTERISTICS AS TRANSACTION " &
+                               "ISOLATION LEVEL " & IsoKeywords (isolation);
    begin
       if conn.prop_active then
          conn.private_execute (sql);
@@ -445,11 +445,16 @@ package body AdaBase.Connection.Base.PostgreSQL is
    function convert_version (pgsql_version : Natural) return CT.Text
    is
       six : String (1 .. 6) := (others => '0');
-      raw : constant String := pgsql_version'Img;
+      raw : constant String := CT.int2str (pgsql_version);
       len : constant Natural := raw'Length;
    begin
       six (7 - len .. 6) := raw;
-      return CT.SUS (raw (1 .. 2) & '.' & raw (3 .. 4) & '.' & raw (5 .. 6));
+      if six (1) = '0' then
+         return CT.SUS (six (2) & '.' & six (3 .. 4) & '.' & six (5 .. 6));
+      else
+         return CT.SUS
+           (six (1 .. 2) & '.' & six (3 .. 4) & '.' & six (5 .. 6));
+      end if;
    end convert_version;
 
 
