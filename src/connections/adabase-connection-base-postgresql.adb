@@ -596,8 +596,6 @@ package body AdaBase.Connection.Base.PostgreSQL is
       end;
 
       conn.prop_active := True;
-      conn.info_client_version := convert_version (get_library_version);
-      conn.info_client         := conn.info_client_version;
       conn.info_server_version := convert_version (conn.get_server_version);
       conn.info_server         := conn.get_server_info;
 
@@ -620,6 +618,17 @@ package body AdaBase.Connection.Base.PostgreSQL is
          conn.disconnect;
          EX.Reraise_Occurrence (rest);
    end connect;
+
+
+   ------------------
+   --  Initialize  --
+   ------------------
+   overriding
+   procedure Initialize (conn : in out PostgreSQL_Connection) is
+   begin
+      conn.info_client_version := convert_version (get_library_version);
+      conn.info_client := conn.info_client_version;
+   end Initialize;
 
 
    ------------------

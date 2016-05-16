@@ -169,6 +169,7 @@ private
    function convert_version (pgsql_version : Natural) return CT.Text;
    function get_library_version return Natural;
 
+   procedure Initialize (conn : in out PostgreSQL_Connection);
    procedure private_execute (conn : out PostgreSQL_Connection; sql : String);
    procedure begin_transaction (conn : out PostgreSQL_Connection);
    function get_server_version (conn : PostgreSQL_Connection) return Natural;
