@@ -121,10 +121,14 @@ package body AdaBase.Connection.Base.PostgreSQL is
    function SqlState (conn : PostgreSQL_Connection; res : BND.PGresult_Access)
                       return TSqlState
    is
+      use type BND.ICS.chars_ptr;
       fieldcode : constant BND.IC.int := BND.PG_DIAG_SQLSTATE;
       detail    : BND.ICS.chars_ptr;
    begin
       detail := BND.PQresultErrorField (res, fieldcode);
+      if detail = BND.ICS.Null_Ptr then
+         return stateless;
+      end if;
       declare
          SS : String := BND.ICS.Value (detail);
       begin
@@ -153,24 +157,31 @@ package body AdaBase.Connection.Base.PostgreSQL is
       pgres   : BND.PGresult_Access;
       query   : BND.ICS.chars_ptr := BND.ICS.New_String (Str => sql);
       success : Boolean;
+      msg     : CT.Text;
    begin
---      pgres := BND.PQexec (conn => conn.handle, command => query);
+      pgres := BND.PQexec (conn => conn.handle, command => query);
 
       BND.ICS.Free (query);
---        success := (BND.PQresultStatus (pgres) = BND.PGRES_COMMAND_OK);
---        conn.cmd_sql_state := conn.SqlState (pgres);
---
---        if success then
---           conn.cmd_rows_impact := conn.rows_impacted (pgres);
---        else
---           conn.cmd_rows_impact := 0;
---        end if;
---
---        BND.PQclear (pgres);
---
---        if not success then
---           raise QUERY_FAIL;
---        end if;
+      case BND.PQresultStatus (pgres) is
+         when BND.PGRES_COMMAND_OK | BND.PGRES_TUPLES_OK =>
+            success := True;
+         when others =>
+            success := False;
+            msg := CT.SUS (conn.driverMessage (pgres));
+      end case;
+      conn.cmd_sql_state := conn.SqlState (pgres);
+
+      if success then
+         conn.cmd_rows_impact := conn.rows_impacted (pgres);
+      else
+         conn.cmd_rows_impact := 0;
+      end if;
+
+      BND.PQclear (pgres);
+
+      if not success then
+         raise QUERY_FAIL with CT.USS (msg);
+      end if;
 
    end private_execute;
 
@@ -233,7 +244,8 @@ package body AdaBase.Connection.Base.PostgreSQL is
       conn.private_execute ("BEGIN");
       conn.dummy := True;
    exception
-      when QUERY_FAIL => raise TRAX_BEGIN_FAIL;
+      when E : QUERY_FAIL =>
+         raise TRAX_BEGIN_FAIL with EX.Exception_Message (E);
    end begin_transaction;
 
 
@@ -246,7 +258,8 @@ package body AdaBase.Connection.Base.PostgreSQL is
       conn.private_execute ("COMMIT");
       conn.dummy := True;
    exception
-      when QUERY_FAIL => raise COMMIT_FAIL;
+      when E : QUERY_FAIL =>
+         raise COMMIT_FAIL with EX.Exception_Message (E);
    end commit;
 
 
@@ -259,7 +272,8 @@ package body AdaBase.Connection.Base.PostgreSQL is
       conn.private_execute ("ROLLBACK");
       conn.dummy := True;
    exception
-      when QUERY_FAIL => raise ROLLBACK_FAIL;
+      when E : QUERY_FAIL =>
+         raise ROLLBACK_FAIL with EX.Exception_Message (E);
    end rollback;
 
 
@@ -269,17 +283,25 @@ package body AdaBase.Connection.Base.PostgreSQL is
    overriding
    procedure setAutoCommit (conn : out PostgreSQL_Connection; auto : Boolean)
    is
+      --  PGSQL documentation is false.
+      --  Starting with 9.5, you can't turn off autocommit, at all.
+      --  Moreover, it's on by default, but docs said it was off by default.
    begin
-      if conn.prop_active then
-         if auto then
-            conn.private_execute ("SET AUTOCOMMIT ON");
-         else
-            conn.private_execute ("SET AUTOCOMMIT OFF");
-         end if;
-      end if;
-      conn.prop_auto_commit := auto;
-   exception
-         when QUERY_FAIL => raise AUTOCOMMIT_FAIL;
+      null;
+
+      --  do nothing for now.
+
+--        if conn.prop_active then
+--           if auto then
+--              conn.private_execute ("SET AUTOCOMMIT TO ON");
+--           else
+--              conn.private_execute ("SET AUTOCOMMIT TO OFF");
+--           end if;
+--        end if;
+--        conn.prop_auto_commit := auto;
+--     exception
+--        when E : QUERY_FAIL =>
+--           raise AUTOCOMMIT_FAIL with EX.Exception_Message (E);
    end setAutoCommit;
 
 
