@@ -590,7 +590,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
          conn.handle := BND.PQconnectdb (conninfo);
          BND.ICS.Free (conninfo);
 
-         if conn.handle = null then
+         if not conn.connection_attempt_succeeded then
             raise CONNECT_FAILED;
          end if;
       end;
@@ -605,6 +605,20 @@ package body AdaBase.Connection.Base.PostgreSQL is
       conn.setTransactionIsolation (conn.prop_trax_isolation);
       conn.setAutoCommit (conn.prop_auto_commit);
 
+   exception
+      when NOT_WHILE_CONNECTED =>
+         raise NOT_WHILE_CONNECTED with
+           "Reconnection attempted during an active connection";
+      when CONNECT_FAILED =>
+         declare
+            msg : String := "connection failure: " & conn.driverMessage;
+         begin
+            conn.disconnect;
+            raise CONNECT_FAILED with msg;
+         end;
+      when rest : others =>
+         conn.disconnect;
+         EX.Reraise_Occurrence (rest);
    end connect;
 
 
