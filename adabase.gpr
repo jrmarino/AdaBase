@@ -8,6 +8,7 @@ project AdaBase is
    Driver_PgSQL  : Driver_Included := external ("POSTGRESQL", "no");
    Driver_FBird  : Driver_Included := external ("FIREBIRD", "no");
    Driver_SQLite : Driver_Included := external ("SQLITE", "no");
+   Debug_Symbols : Driver_Included := external ("DEBUGSYM", "no");
 
    for Source_Dirs use ("src/**");
    for Object_Dir use "obj";
@@ -18,7 +19,12 @@ project AdaBase is
    PgSQL_List  := ();
    FBird_List  := ();
    SQLite_List := ();
+   Extra_Flags := ();
 
+   case Debug_Symbols is
+      when "no" => null;
+      when "yes" => Extra_Flags := ("-g");
+   end case;
    case Driver_MySQL is
       when "no"  => null;
       when "yes" => MySQL_List := ("adabase-bindings-mysql.ads",
@@ -112,7 +118,8 @@ project AdaBase is
    end Ide;
 
    package Compiler is
-      for Default_Switches ("ada") use ("-gnatyaAbBcdefhiIklnOprsStx", "-gnat12");
+      for Default_Switches ("ada")
+         use ("-gnatyaAbBcdefhiIklnOprsStx", "-gnat12") & Extra_Flags;
    end Compiler;
 
    package Pretty_Printer is
