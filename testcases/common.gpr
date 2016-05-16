@@ -23,7 +23,7 @@ project Common is
    end case;
 
    package Compiler is
-      for Default_Switches ("Ada") use ("-gnaty");
+      for Default_Switches ("Ada") use ("-gnaty", "-g");
    end Compiler;
 
    package Linker is
@@ -42,5 +42,10 @@ project Common is
             end case;
       end case;
    end Linker;
+
+   --  For now, pass "-bargs -E" throught the command line to set tracebacks
+   --  package Binder is
+   --     for Required_Switches ("Ada") use ("-E");
+   --  end Binder;
 
 end Common;
