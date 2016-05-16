@@ -85,32 +85,32 @@ package AdaBase.Bindings.PostgreSQL is
    pragma Import (C, pg_encoding_to_char);
 
    procedure PQclear (res : PGresult_Access);
-   pragma Import (C, PQclear);
+   pragma Import (C, PQclear, "PQclear");
 
    function PQclientEncoding (conn : PGconn_Access) return IC.int;
-   pragma Import (C, PQclientEncoding);
+   pragma Import (C, PQclientEncoding, "PQclientEncoding");
 
    function PQconnectdb (conninfo : ICS.chars_ptr) return PGconn_Access;
-   pragma Import (C, PQconnectdb);
+   pragma Import (C, PQconnectdb, "PQconnectdb");
 
    function PQconnectdbParams (keywords     : ICS.chars_ptr_array;
                                values       : ICS.chars_ptr_array;
                                expand_dbnam : IC.int) return PGconn_Access;
-   pragma Import (C, PQconnectdbParams);
+   pragma Import (C, PQconnectdbParams, "PQconnectdbParams");
 
    function PQerrorMessage (conn : PGconn_Access) return ICS.chars_ptr;
-   pragma Import (C, PQerrorMessage);
+   pragma Import (C, PQerrorMessage, "PQerrorMessage");
 
    function PQresultErrorMessage (res : PGresult_Access) return ICS.chars_ptr;
-   pragma Import (C, PQresultErrorMessage);
+   pragma Import (C, PQresultErrorMessage, "PQresultErrorMessage");
 
    function PQresultErrorField (res : PGresult_Access; fieldcode : IC.int)
                                 return ICS.chars_ptr;
-   pragma Import (C, PQresultErrorField);
+   pragma Import (C, PQresultErrorField, "PQresultErrorField");
 
    function PQexec (conn    : PGconn_Access;
                     command : ICS.chars_ptr) return PGresult_Access;
-   pragma Import (C, PQexec);
+   pragma Import (C, PQexec, "PQexec");
 
    function PQexecPrepared (conn         : PGconn_Access;
                             stmtName     : ICS.chars_ptr;
@@ -119,77 +119,77 @@ package AdaBase.Bindings.PostgreSQL is
                             paramLengths : int_Access;
                             paramFormats : int_Access;
                             resultFormat : IC.int) return PGresult_Access;
-   pragma Import (C, PQexecPrepared);
+   pragma Import (C, PQexecPrepared, "PQexecPrepared");
 
    procedure PQfinish (conn : PGconn_Access);
-   pragma Import (C, PQfinish);
+   pragma Import (C, PQfinish, "PQfinish");
 
    function PQftype (res : PGresult_Access; column_number : IC.int) return Oid;
-   pragma Import (C, PQftype);
+   pragma Import (C, PQftype, "PQftype");
 
    function PQgetisnull (res           : PGresult_Access;
                          row_number    : IC.int;
                          column_number : IC.int) return IC.int;
-   pragma Import (C, PQgetisnull);
+   pragma Import (C, PQgetisnull, "PQgetisnull");
 
    function PQgetlength (res           : PGresult_Access;
                          row_number    : IC.int;
                          column_number : IC.int) return IC.int;
-   pragma Import (C, PQgetlength);
+   pragma Import (C, PQgetlength, "PQgetlength");
 
    function PQgetvalue  (res           : PGresult_Access;
                          row_number    : IC.int;
                          column_number : IC.int) return ICS.chars_ptr;
-   pragma Import (C, PQgetvalue);
+   pragma Import (C, PQgetvalue, "PQgetvalue");
 
    function PQfformat   (res           : PGresult_Access;
                          column_number : IC.int) return IC.int;
-   pragma Import (C, PQfformat);
+   pragma Import (C, PQfformat, "PQfformat");
 
    function PQisthreadsafe return IC.int;
-   pragma Import (C, PQisthreadsafe);
+   pragma Import (C, PQisthreadsafe, "PQisthreadsafe");
 
    function PQntuples (res : PGresult_Access) return IC.int;
-   pragma Import (C, PQntuples);
+   pragma Import (C, PQntuples, "PQntuples");
 
    function PQnfields (res : PGresult_Access) return IC.int;
-   pragma Import (C, PQnfields);
+   pragma Import (C, PQnfields, "PQnfields");
 
    function PQnparams (res : PGresult_Access) return IC.int;
-   pragma Import (C, PQnparams);
+   pragma Import (C, PQnparams, "PQnparams");
 
    function PQcmdTuples (res : PGresult_Access) return ICS.chars_ptr;
-   pragma Import (C, PQcmdTuples);
+   pragma Import (C, PQcmdTuples, "PQcmdTuples");
 
    function PQfname (res : PGresult_Access; column_number : IC.int)
                      return ICS.chars_ptr;
-   pragma Import (C, PQfname);
+   pragma Import (C, PQfname, "PQfname");
 
    function PQprepare (conn       : PGconn_Access;
                        stmtName   : ICS.chars_ptr;
                        query      : ICS.chars_ptr;
                        nParams    : IC.int;
                        paramTypes : Oid_Access) return PGresult_Access;
-   pragma Import (C, PQprepare);
+   pragma Import (C, PQprepare, "PQprepare");
 
    function PQresultStatus (res : PGresult_Access) return ExecStatusType;
-   pragma Import (C, PQresultStatus);
+   pragma Import (C, PQresultStatus, "PQresultStatus");
 
    function PQsetClientEncoding (conn     : PGconn_Access;
                                  encoding : ICS.chars_ptr) return IC.int;
-   pragma Import (C, PQsetClientEncoding);
+   pragma Import (C, PQsetClientEncoding, "PQsetClientEncoding");
 
    function PQstatus (conn : PGconn_Access) return ConnStatusType;
-   pragma Import (C, PQstatus);
+   pragma Import (C, PQstatus, "PQstatus");
 
    function PQserverVersion (conn : PGconn_Access) return IC.int;
-   pragma Import (C, PQserverVersion);
+   pragma Import (C, PQserverVersion, "PQserverVersion");
 
    function PQprotocolVersion (conn : PGconn_Access) return IC.int;
-   pragma Import (C, PQprotocolVersion);
+   pragma Import (C, PQprotocolVersion, "PQprotocolVersion");
 
    function PQlibVersion return IC.int;
-   pragma Import (C, PQlibVersion);
+   pragma Import (C, PQlibVersion, "PQlibVersion");
 
 private
 
