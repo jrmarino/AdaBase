@@ -1,11 +1,15 @@
 with Ada.Text_IO;
+with Ada.Exceptions;
 with AdaBase;
 with Connect;
+with GNAT.Traceback.Symbolic;
 
 procedure Traits is
 
+   package SYM renames GNAT.Traceback.Symbolic;
    package TIO renames Ada.Text_IO;
    package CON renames Connect;
+   package EX  renames Ada.Exceptions;
 
    --  Database_Driver renames specific driver using subtype
 
@@ -44,5 +48,13 @@ begin
 
    display_traits   (driver => CON.DR);
    CON.DR.disconnect;
+
+exception
+   when E : others =>
+      TIO.Put_Line ("");
+      TIO.Put_Line ("exception name: " & EX.Exception_Name (E));
+      TIO.Put_Line ("exception msg : " & EX.Exception_Message (E));
+      TIO.Put_Line ("Traceback:");
+      TIO.Put_Line (SYM.Symbolic_Traceback (E));
 
 end Traits;
