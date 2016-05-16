@@ -270,12 +270,14 @@ package body AdaBase.Connection.Base.PostgreSQL is
    procedure setAutoCommit (conn : out PostgreSQL_Connection; auto : Boolean)
    is
    begin
-      if auto then
-         conn.private_execute ("SET AUTOCOMMIT ON");
-      else
-         conn.private_execute ("SET AUTOCOMMIT OFF");
+      if conn.prop_active then
+         if auto then
+            conn.private_execute ("SET AUTOCOMMIT ON");
+         else
+            conn.private_execute ("SET AUTOCOMMIT OFF");
+         end if;
       end if;
-      conn.dummy := True;
+      conn.prop_auto_commit := auto;
    exception
          when QUERY_FAIL => raise AUTOCOMMIT_FAIL;
    end setAutoCommit;
