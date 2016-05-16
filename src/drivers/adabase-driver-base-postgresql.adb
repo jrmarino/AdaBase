@@ -202,8 +202,10 @@ package body AdaBase.Driver.Base.PostgreSQL is
                             password : String := blankstring;
                             socket   : String := blankstring) is
    begin
-      --  TO BE IMPLEMENTED
-      null;
+      driver.private_connect (database => database,
+                              username => username,
+                              password => password,
+                              socket   => socket);
    end basic_connect;
 
 
@@ -218,10 +220,52 @@ package body AdaBase.Driver.Base.PostgreSQL is
                             hostname : String := blankstring;
                             port     : PosixPort) is
    begin
-      --  TO BE IMPLEMENTED
-      null;
+      driver.private_connect (database => database,
+                              username => username,
+                              password => password,
+                              hostname => hostname,
+                              port     => port);
    end basic_connect;
 
+
+   -----------------------
+   --  private_connect  --
+   -----------------------
+   procedure private_connect (driver   : out PostgreSQL_Driver;
+                              database : String;
+                              username : String;
+                              password : String;
+                              hostname : String := blankstring;
+                              socket   : String := blankstring;
+                              port     : PosixPort := portless)
+   is
+      err1 : constant CT.Text :=
+        CT.SUS ("ACK! Reconnection attempted on active connection");
+      nom  : constant CT.Text :=
+        CT.SUS ("Connection to " & database & " database succeeded.");
+   begin
+      if driver.connection_active then
+         driver.log_problem (category => execution,
+                             message  => err1);
+         return;
+      end if;
+      driver.connection.connect (database => database,
+                                 username => username,
+                                 password => password,
+                                 socket   => socket,
+                                 hostname => hostname,
+                                 port     => port);
+
+      driver.connection_active := driver.connection.all.connected;
+
+      driver.log_nominal (category => connecting, message => nom);
+   exception
+      when Error : others =>
+         driver.log_problem
+           (category => connecting,
+            break    => True,
+            message  => CT.SUS (CON.EX.Exception_Message (X => Error)));
+   end private_connect;
 
    ------------------
    --  execute #1  --

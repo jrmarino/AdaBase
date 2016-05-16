@@ -111,14 +111,14 @@ private
          database : CT.Text := CT.blank;
       end record;
 
---     procedure private_connect (driver   : out PostgreSQL_Driver;
---                                database : String;
---                                username : String;
---                                password : String;
---                                hostname : String    := blankstring;
---                                socket   : String    := blankstring;
---                                port     : PosixPort := portless);
---
+   procedure private_connect (driver   : out PostgreSQL_Driver;
+                              database : String;
+                              username : String;
+                              password : String;
+                              hostname : String    := blankstring;
+                              socket   : String    := blankstring;
+                              port     : PosixPort := portless);
+
 --     function private_statement (driver   : PostgreSQL_Driver;
 --                                 sql      : String;
 --                                 prepared : Boolean)
