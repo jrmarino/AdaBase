@@ -255,11 +255,15 @@ package body AdaBase.Connection.Base.PostgreSQL is
    overriding
    procedure commit (conn : out PostgreSQL_Connection) is
    begin
-      conn.private_execute ("COMMIT");
-      conn.dummy := True;
-   exception
-      when E : QUERY_FAIL =>
-         raise COMMIT_FAIL with EX.Exception_Message (E);
+      begin
+         conn.private_execute ("COMMIT");
+      exception
+         when E : QUERY_FAIL =>
+            raise COMMIT_FAIL with EX.Exception_Message (E);
+      end;
+      if not conn.autoCommit then
+         conn.begin_transaction;
+      end if;
    end commit;
 
 
@@ -269,11 +273,15 @@ package body AdaBase.Connection.Base.PostgreSQL is
    overriding
    procedure rollback (conn : out PostgreSQL_Connection) is
    begin
-      conn.private_execute ("ROLLBACK");
-      conn.dummy := True;
-   exception
-      when E : QUERY_FAIL =>
-         raise ROLLBACK_FAIL with EX.Exception_Message (E);
+      begin
+         conn.private_execute ("ROLLBACK");
+      exception
+         when E : QUERY_FAIL =>
+            raise ROLLBACK_FAIL with EX.Exception_Message (E);
+      end;
+      if not conn.autoCommit then
+         conn.begin_transaction;
+      end if;
    end rollback;
 
 
@@ -283,25 +291,28 @@ package body AdaBase.Connection.Base.PostgreSQL is
    overriding
    procedure setAutoCommit (conn : out PostgreSQL_Connection; auto : Boolean)
    is
-      --  PGSQL documentation is false.
-      --  Starting with 9.5, you can't turn off autocommit, at all.
-      --  Moreover, it's on by default, but docs said it was off by default.
+      --  PGSQL server has no setting to disable autocommit.  Only issuing
+      --  a BEGIN transaction command will inhibit autocommit (and commit/
+      --  rollback enables it again).  Thus autocommit has to be handled at
+      --  the adabase level.   A "BEGIN" command is issued immediately after
+      --  connection, COMMIT and ROLLBACK to ensure we're always in a
+      --  transaction when autocommit is off.
    begin
-      null;
+      if conn.prop_active then
+         if auto /= conn.prop_auto_commit then
+            if conn.within_transaction then
+               if auto then
+                  conn.commit;
+               end if;
+            else
+               if not auto then
+                  conn.begin_transaction;
+               end if;
+            end if;
+         end if;
+      end if;
 
-      --  do nothing for now.
-
---        if conn.prop_active then
---           if auto then
---              conn.private_execute ("SET AUTOCOMMIT TO ON");
---           else
---              conn.private_execute ("SET AUTOCOMMIT TO OFF");
---           end if;
---        end if;
---        conn.prop_auto_commit := auto;
---     exception
---        when E : QUERY_FAIL =>
---           raise AUTOCOMMIT_FAIL with EX.Exception_Message (E);
+      conn.prop_auto_commit := auto;
    end setAutoCommit;
 
 
@@ -573,6 +584,19 @@ package body AdaBase.Connection.Base.PostgreSQL is
    end is_ipv4_or_ipv6;
 
 
+   --------------------------
+   --  within_transaction  --
+   --------------------------
+   function within_transaction (conn : PostgreSQL_Connection) return Boolean
+   is
+      use type BND.PGTransactionStatusType;
+      status : BND.PGTransactionStatusType;
+   begin
+      status := BND.PQtransactionStatus (conn.handle);
+      return (status /= BND.PQTRANS_IDLE);
+   end within_transaction;
+
+
    ---------------
    --  connect  --
    ---------------
@@ -630,7 +654,9 @@ package body AdaBase.Connection.Base.PostgreSQL is
 
       --  not yet implemented  conn.set_character_set;
       conn.setTransactionIsolation (conn.prop_trax_isolation);
-      conn.setAutoCommit (conn.prop_auto_commit);
+      if not conn.prop_auto_commit then
+         conn.begin_transaction;
+      end if;
 
    exception
       when NOT_WHILE_CONNECTED =>

@@ -267,6 +267,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
             message  => CT.SUS (CON.EX.Exception_Message (X => Error)));
    end private_connect;
 
+
    ------------------
    --  execute #1  --
    ------------------

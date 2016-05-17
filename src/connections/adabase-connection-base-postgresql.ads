@@ -174,6 +174,7 @@ private
    procedure begin_transaction (conn : out PostgreSQL_Connection);
    function get_server_version (conn : PostgreSQL_Connection) return Natural;
    function get_server_info    (conn : PostgreSQL_Connection) return CT.Text;
+   function within_transaction (conn : PostgreSQL_Connection) return Boolean;
    function connection_attempt_succeeded (conn : PostgreSQL_Connection)
                                           return Boolean;
 

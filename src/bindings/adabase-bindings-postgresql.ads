@@ -56,6 +56,14 @@ package AdaBase.Bindings.PostgreSQL is
      PGRES_FATAL_ERROR);
    pragma Convention (C, ExecStatusType);
 
+   type PGTransactionStatusType is
+     (PQTRANS_IDLE,                   --  connection idle
+      PQTRANS_ACTIVE,                 --  command in progress
+      PQTRANS_INTRANS,                --  idle, within transaction block
+      PQTRANS_INERROR,                --  idle, within failed transaction
+      PQTRANS_UNKNOWN);               --  cannot determine status
+   pragma Convention (C, PGTransactionStatusType);
+
    type chars_ptr_Access is access all ICS.chars_ptr;
    pragma Convention (C, chars_ptr_Access);
 
@@ -190,6 +198,10 @@ package AdaBase.Bindings.PostgreSQL is
 
    function PQlibVersion return IC.int;
    pragma Import (C, PQlibVersion, "PQlibVersion");
+
+   function PQtransactionStatus (conn : PGconn_Access)
+                                 return PGTransactionStatusType;
+   pragma Import (C, PQtransactionStatus, "PQtransactionStatus");
 
 private
 
