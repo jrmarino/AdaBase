@@ -213,10 +213,14 @@ package body CommonText is
    is
       template : String (1 .. places) := (others => '0');
       myimage  : constant String := trim (N'Img);
-      startpos : constant Natural := 1 + places - myimage'Length;
+      startpos : constant Integer := 1 + places - myimage'Length;
    begin
-      template (startpos .. places) := myimage;
-      return template;
+      if startpos < 1 then
+         return myimage;
+      else
+         template (startpos .. places) := myimage;
+         return template;
+      end if;
    end zeropad;
 
 
