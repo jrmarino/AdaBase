@@ -22,14 +22,14 @@ procedure Autocommit is
    procedure test_uno (expected : Natural; version2 : Boolean);
    procedure test_dos (expected : Natural; version2 : Boolean);
    procedure test_tres (expected : Natural);
-   procedure expect (impacted : AdaBase.AffectedRows; expected : Natural);
+   procedure expect (impacted, expected : Natural);
    procedure show_results (expected : Natural);
 
-   procedure expect (impacted : AdaBase.AffectedRows; expected : Natural) is
+   procedure expect (impacted, expected : Natural) is
    begin
       TIO.Put_Line ("Rows expected:" & expected'Img);
       TIO.Put_Line ("Rows returned:" & impacted'Img);
-      if Natural (impacted) = expected then
+      if impacted = expected then
          TIO.Put_Line ("=== PASSED ===");
       else
          TIO.Put_Line ("=== FAILED ===   <<----------------------------");
@@ -42,8 +42,15 @@ procedure Autocommit is
       CON.connect_database;
       declare
          stmt : CON.Stmt_Type := CON.DR.query (sel);
+         row  : ARS.DataRow;
+         NR   : Natural := 0;
       begin
-         expect (stmt.rows_returned, expected);
+         loop
+            row := stmt.fetch_next;
+            exit when row.data_exhausted;
+            NR := NR + 1;
+         end loop;
+         expect (NR, expected);
       end;
       CON.DR.disconnect;
    end show_results;
@@ -86,7 +93,7 @@ procedure Autocommit is
       AR := CON.DR.execute (ins1);
       CON.DR.set_trait_autocommit (True);
       CON.DR.disconnect;
-      show_results (expected);   
+      show_results (expected);
    end test_tres;
 
    procedure clear_table
@@ -95,7 +102,9 @@ procedure Autocommit is
    begin
       CON.connect_database;
       AR := CON.DR.execute (del);
-      CON.DR.commit;
+      if not CON.DR.trait_autocommit then
+         CON.DR.commit;
+      end if;
       CON.DR.disconnect;
    end clear_table;
 
