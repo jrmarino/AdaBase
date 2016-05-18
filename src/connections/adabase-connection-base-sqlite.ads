@@ -190,6 +190,7 @@ package AdaBase.Connection.Base.SQLite is
    DISCONNECT_FAILED     : exception;
    CONNECT_FAILED        : exception;
    AUTOCOMMIT_FAIL       : exception;
+   TRAX_BEGIN_FAIL       : exception;
    TRAXISOL_FAIL         : exception;
    ROLLBACK_FAIL         : exception;
    COMMIT_FAIL           : exception;
@@ -210,15 +211,15 @@ private
 
    function PUTF82S (cstr : BND.ICS.chars_ptr) return String;
 
-   procedure begin_transaction (conn : SQLite_Connection);
+   procedure begin_transaction (conn : out SQLite_Connection);
 
    procedure Initialize (conn : in out SQLite_Connection);
 
    overriding
    procedure finalize (conn : in out SQLite_Connection);
 
-   procedure private_execute (conn : SQLite_Connection; sql : String);
+   procedure private_execute (conn : out SQLite_Connection; sql : String);
 
-   function sqlite_autocommit_on (conn : SQLite_Connection) return Boolean;
+   function within_transaction (conn : SQLite_Connection) return Boolean;
 
 end AdaBase.Connection.Base.SQLite;

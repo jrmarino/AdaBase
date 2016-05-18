@@ -95,11 +95,27 @@ package body AdaBase.Connection.Base.SQLite is
       --  SQLite doesn't have a controllable setting for autocommit
       --  One indirectly controls it by issuing BEGIN command which inhibits it
       --  Autocommit is re-enabled when COMMIT or ROLLBACK is issued.
-      --  Thus, we will have to simulate this by polling SQLite for the
-      --  current autocommit setting before every query and starting
-      --  transactions as necessary.  Don't attempt to implicitly commit.
+      --  To simulate it at the AdaBase level, a "BEGIN" command is issued
+      --  immediately after connection, COMMIT and ROLLBACK to ensure we're
+      --  always in a transaction when autocommit is off;
+
+      previous_state : Boolean := conn.prop_auto_commit;
    begin
       conn.prop_auto_commit := auto;
+
+      if conn.prop_active then
+         if auto /= previous_state then
+            if conn.within_transaction then
+               if auto then
+                  conn.commit;
+               end if;
+            else
+               if not auto then
+                  conn.begin_transaction;
+               end if;
+            end if;
+         end if;
+      end if;
    end setAutoCommit;
 
 
@@ -201,9 +217,13 @@ package body AdaBase.Connection.Base.SQLite is
    -------------------------
    --  begin_transaction  --
    -------------------------
-   procedure begin_transaction (conn : SQLite_Connection) is
+   procedure begin_transaction (conn : out SQLite_Connection) is
    begin
       conn.private_execute ("BEGIN TRANSACTION");
+      conn.dummy := True;
+   exception
+      when E : QUERY_FAIL =>
+         raise TRAX_BEGIN_FAIL with EX.Exception_Message (E);
    end begin_transaction;
 
 
@@ -213,10 +233,15 @@ package body AdaBase.Connection.Base.SQLite is
    overriding
    procedure rollback (conn : out SQLite_Connection) is
    begin
-      conn.private_execute ("ROLLBACK");
-      conn.dummy := True;
-   exception
-      when QUERY_FAIL => raise ROLLBACK_FAIL;
+      begin
+         conn.private_execute ("ROLLBACK");
+      exception
+         when E : QUERY_FAIL =>
+            raise ROLLBACK_FAIL with EX.Exception_Message (E);
+      end;
+      if not conn.autoCommit then
+         conn.begin_transaction;
+      end if;
    end rollback;
 
 
@@ -226,10 +251,15 @@ package body AdaBase.Connection.Base.SQLite is
    overriding
    procedure commit (conn : out SQLite_Connection) is
    begin
-      conn.private_execute ("COMMIT");
-      conn.dummy := True;
-   exception
-      when QUERY_FAIL => raise COMMIT_FAIL;
+      begin
+         conn.private_execute ("COMMIT");
+      exception
+         when E : QUERY_FAIL =>
+            raise COMMIT_FAIL with EX.Exception_Message (E);
+      end;
+      if not conn.autoCommit then
+         conn.begin_transaction;
+      end if;
    end commit;
 
 
@@ -257,33 +287,16 @@ package body AdaBase.Connection.Base.SQLite is
    --  execute  --
    ---------------
    overriding
-   procedure execute (conn : out SQLite_Connection; sql : String)
-   is
-      --  Logic table: autocommit (Boolean) vs sqlite_autocommit (Boolean)
-      --  -------------------------------------------------------------------
-      --  autocommit = True  + sqlite_autocommit = True  = exec
-      --  autocommit = True  + sqlite_autocommit = False = COMMIT + exec
-      --  autocommit = False + sqlite_autocommit = True  = BEGIN + exec
-      --  autocommit = False + sqlite_autocommit = False = exec
-
-      sqlite_autocommit : Boolean := conn.sqlite_autocommit_on;
+   procedure execute (conn : out SQLite_Connection; sql : String) is
    begin
-      if conn.autoCommit = sqlite_autocommit then
-         conn.private_execute (sql);
-      elsif conn.autoCommit and then not sqlite_autocommit then
-         conn.commit;
-         conn.private_execute (sql);
-      else
-         conn.begin_transaction;
-         conn.private_execute (sql);
-      end if;
+      conn.private_execute (sql);
    end execute;
 
 
    -----------------------
    --  private_execute  --
    -----------------------
-   procedure private_execute (conn : SQLite_Connection; sql : String)
+   procedure private_execute (conn : out SQLite_Connection; sql : String)
    is
       use type BND.IC.int;
       result : BND.IC.int;
@@ -296,6 +309,7 @@ package body AdaBase.Connection.Base.SQLite is
                                   firstarg => BND.SYS.Null_Address,
                                   errmsg   => BND.SYS.Null_Address);
       BND.ICS.Free (query);
+      conn.dummy := True;
       if result /= BND.SQLITE_OK then
          raise QUERY_FAIL;
       end if;
@@ -315,23 +329,14 @@ package body AdaBase.Connection.Base.SQLite is
       nbyte  : BND.IC.int := BND.IC.int (sql8'Length + 1);
       result : BND.IC.int;
       dummy  : aliased BND.ICS.chars_ptr;
-
-      sqlite_autocommit : Boolean := conn.sqlite_autocommit_on;
    begin
-      if sqlite_autocommit /= conn.autoCommit then
-         if sqlite_autocommit then
-            conn.begin_transaction;
-         else
-            conn.commit;
-         end if;
-      end if;
-
       result := BND.sqlite3_prepare_v2 (db     => conn.handle,
                                         zSql   => query,
                                         nByte  => nbyte,
                                         ppStmt => stmt'Access,
                                         pzTail => dummy'Access);
       BND.ICS.Free (query);
+      conn.dummy := True;
       return (result = BND.SQLITE_OK);
    end prepare_statement;
 
@@ -382,6 +387,9 @@ package body AdaBase.Connection.Base.SQLite is
       end;
 
       conn.setTransactionIsolation (conn.prop_trax_isolation);
+      if not conn.prop_auto_commit then
+         conn.begin_transaction;
+      end if;
 
    exception
       when NOT_WHILE_CONNECTED =>
@@ -762,16 +770,16 @@ package body AdaBase.Connection.Base.SQLite is
    end prep_finalize;
 
 
-   ----------------------------
-   --  sqlite_autocommit_on  --
-   ----------------------------
-   function sqlite_autocommit_on (conn : SQLite_Connection) return Boolean
+   --------------------------
+   --  within_transaction  --
+   --------------------------
+   function within_transaction (conn : SQLite_Connection) return Boolean
    is
       use type BND.IC.int;
       result : BND.IC.int := BND.sqlite3_get_autocommit (db => conn.handle);
    begin
-      return (result /= 0);
-   end sqlite_autocommit_on;
+      return (result = 0);
+   end within_transaction;
 
 
    ----------------------
