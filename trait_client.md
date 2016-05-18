@@ -103,6 +103,25 @@ server version: Not applicable
 </pre>
 <p class="caption">Output using SQlite Driver</p>
 <br/>
+<pre class="output">
+   client info: 9.05.02
+client version: 9.05.02
+   server info: Protocol 3.0
+server version: 9.05.02
+        driver: PostgreSQL 9.1+ native driver
+
+    autocommit: FALSE
+   column case: NATURAL_CASE
+    error_mode: WARNING
+     blob_size:  4096
+
+    autocommit: TRUE
+   column case: UPPER_CASE
+    error_mode: SILENT
+     blob_size:  65536
+</pre>
+<p class="caption">Output using PostgreSQL Driver</p>
+<br/>
 <p>{{ page.supported_drivers }}</p>
 </div>
 <div class="sidenav">
