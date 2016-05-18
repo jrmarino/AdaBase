@@ -186,8 +186,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
    overriding
    procedure initialize (Object : in out PostgreSQL_Driver) is
    begin
-      Object.connection       := backend'Access;
-      Object.local_connection := backend'Access;
+      Object.connection       := Object.local_connection'Unchecked_Access;
       Object.dialect          := driver_postgresql;
    end initialize;
 

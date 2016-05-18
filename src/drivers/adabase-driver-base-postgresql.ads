@@ -103,11 +103,11 @@ package AdaBase.Driver.Base.PostgreSQL is
 
 private
 
-   backend : aliased CON.PostgreSQL_Connection;
+   --  backend : aliased CON.PostgreSQL_Connection;
 
    type PostgreSQL_Driver is new Base_Driver and AID.iDriver with
       record
-         local_connection : CON.PostgreSQL_Connection_Access := null;
+         local_connection : aliased CON.PostgreSQL_Connection;
          database : CT.Text := CT.blank;
       end record;
 
