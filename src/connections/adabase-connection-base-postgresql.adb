@@ -297,9 +297,12 @@ package body AdaBase.Connection.Base.PostgreSQL is
       --  the adabase level.   A "BEGIN" command is issued immediately after
       --  connection, COMMIT and ROLLBACK to ensure we're always in a
       --  transaction when autocommit is off.
+      previous_state : Boolean := conn.prop_auto_commit;
    begin
+      conn.prop_auto_commit := auto;
+
       if conn.prop_active then
-         if auto /= conn.prop_auto_commit then
+         if auto /= previous_state then
             if conn.within_transaction then
                if auto then
                   conn.commit;
@@ -311,8 +314,6 @@ package body AdaBase.Connection.Base.PostgreSQL is
             end if;
          end if;
       end if;
-
-      conn.prop_auto_commit := auto;
    end setAutoCommit;
 
 
