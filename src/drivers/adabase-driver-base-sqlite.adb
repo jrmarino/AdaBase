@@ -328,8 +328,7 @@ package body AdaBase.Driver.Base.SQLite is
    procedure initialize (Object : in out SQLite_Driver)
    is
    begin
-      Object.connection       := backend'Access;
-      Object.local_connection := backend'Access;
+      Object.connection       := Object.local_connection'Unchecked_Access;
       Object.dialect          := driver_sqlite;
    end initialize;
 
@@ -397,7 +396,8 @@ package body AdaBase.Driver.Base.SQLite is
             statement : ASS.SQLite_statement
               (type_of_statement => stype,
                log_handler       => logger'Access,
-               sqlite_conn       => driver.local_connection,
+               sqlite_conn       => ACS.SQLite_Connection_Access
+                                    (driver.connection),
                initial_sql       => duplicate'Unchecked_Access,
                con_error_mode    => driver.trait_error_mode,
                con_case_mode     => driver.trait_column_case,
@@ -500,7 +500,7 @@ package body AdaBase.Driver.Base.SQLite is
                                            trait  : Boolean)
    is
    begin
-      driver.local_connection.all.setMultiQuery (multiple => trait);
+      driver.connection.setMultiQuery (multiple => trait);
    end set_trait_multiquery_enabled;
 
 end AdaBase.Driver.Base.SQLite;

@@ -103,12 +103,10 @@ package AdaBase.Driver.Base.SQLite is
 
 private
 
-   backend : aliased ACS.SQLite_Connection;
-
    type SQLite_Driver is new Base_Driver and AID.iDriver with
       record
-         local_connection : ACS.SQLite_Connection_Access := null;
-         database : CT.Text := CT.blank;
+         local_connection : aliased ACS.SQLite_Connection;
+         database         : CT.Text := CT.blank;
       end record;
 
    procedure private_connect (driver   : out SQLite_Driver;
