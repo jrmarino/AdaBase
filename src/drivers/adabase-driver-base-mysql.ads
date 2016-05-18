@@ -101,11 +101,9 @@ package AdaBase.Driver.Base.MySQL is
 
 private
 
-   backend : aliased ACM.MySQL_Connection;
-
    type MySQL_Driver is new Base_Driver and AID.iDriver with
       record
-         local_connection : ACM.MySQL_Connection_Access := null;
+         local_connection : aliased ACM.MySQL_Connection;
          database : CT.Text := CT.blank;
       end record;
 

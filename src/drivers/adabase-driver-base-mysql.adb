@@ -292,7 +292,7 @@ package body AdaBase.Driver.Base.MySQL is
    function trait_protocol_compressed (driver : MySQL_Driver) return Boolean
    is
    begin
-      return driver.local_connection.all.compressed;
+      return driver.connection.compressed;
    end trait_protocol_compressed;
 
 
@@ -302,7 +302,7 @@ package body AdaBase.Driver.Base.MySQL is
    function trait_query_buffers_used  (driver : MySQL_Driver) return Boolean
    is
    begin
-      return driver.local_connection.all.useBuffer;
+      return driver.connection.useBuffer;
    end trait_query_buffers_used;
 
 
@@ -313,7 +313,7 @@ package body AdaBase.Driver.Base.MySQL is
                                             trait  : Boolean)
    is
    begin
-      driver.local_connection.all.setCompressed (compressed => trait);
+      driver.connection.setCompressed (compressed => trait);
    end set_trait_protocol_compressed;
 
 
@@ -325,7 +325,7 @@ package body AdaBase.Driver.Base.MySQL is
                                            trait  : Boolean)
    is
    begin
-      driver.local_connection.all.setMultiQuery (multiple => trait);
+      driver.connection.setMultiQuery (multiple => trait);
    end set_trait_multiquery_enabled;
 
 
@@ -336,7 +336,7 @@ package body AdaBase.Driver.Base.MySQL is
                                            trait  : Boolean)
    is
    begin
-      driver.local_connection.all.setUseBuffer (buffered => trait);
+      driver.connection.setUseBuffer (buffered => trait);
    end set_trait_query_buffers_used;
 
 
@@ -389,8 +389,7 @@ package body AdaBase.Driver.Base.MySQL is
    procedure initialize (Object : in out MySQL_Driver)
    is
    begin
-      Object.connection       := backend'Access;
-      Object.local_connection := backend'Access;
+      Object.connection       := Object.local_connection'Unchecked_Access;
       Object.dialect          := driver_mysql;
    end initialize;
 
@@ -451,7 +450,8 @@ package body AdaBase.Driver.Base.MySQL is
             statement : ASM.MySQL_statement
                 (type_of_statement => AID.ASB.direct_statement,
                  log_handler       => logger'Access,
-                 mysql_conn        => driver.local_connection,
+                 mysql_conn        => ACM.MySQL_Connection_Access
+                                      (driver.connection),
                  initial_sql       => duplicate'Unchecked_Access,
                  con_error_mode    => driver.trait_error_mode,
                  con_case_mode     => driver.trait_column_case,
@@ -503,7 +503,8 @@ package body AdaBase.Driver.Base.MySQL is
             statement : ASM.MySQL_statement
                 (type_of_statement => AID.ASB.prepared_statement,
                  log_handler       => logger'Access,
-                 mysql_conn        => driver.local_connection,
+                 mysql_conn        => ACM.MySQL_Connection_Access
+                                      (driver.connection),
                  initial_sql       => duplicate'Unchecked_Access,
                  con_error_mode    => driver.trait_error_mode,
                  con_case_mode     => driver.trait_column_case,
