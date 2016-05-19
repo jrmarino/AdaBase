@@ -160,48 +160,6 @@ package body AdaBase.Driver.Base.SQLite is
    end prepare_select;
 
    ------------------------------------------------------------------------
-   --  PUBLIC ROUTINES NOT COVERED BY INTERFACES                         --
-   ------------------------------------------------------------------------
-
-   ---------------------
-   --  basic_connect  --
-   ---------------------
-   overriding
-   procedure basic_connect (driver   : out SQLite_Driver;
-                            database : String;
-                            username : String := blankstring;
-                            password : String := blankstring;
-                            socket   : String := blankstring)
-   is
-   begin
-      driver.private_connect (database => database,
-                              username => username,
-                              password => password,
-                              socket   => socket);
-   end basic_connect;
-
-
-   ---------------------
-   --  basic_connect  --
-   ---------------------
-   overriding
-   procedure basic_connect (driver   : out SQLite_Driver;
-                            database : String;
-                            username : String := blankstring;
-                            password : String := blankstring;
-                            hostname : String := blankstring;
-                            port     : PosixPort)
-   is
-   begin
-      driver.private_connect (database => database,
-                              username => username,
-                              password => password,
-                              hostname => hostname,
-                              port     => port);
-   end basic_connect;
-
-
-   ------------------------------------------------------------------------
    --  PRIVATE ROUTINES NOT COVERED BY INTERFACES                        --
    ------------------------------------------------------------------------
 
@@ -220,6 +178,7 @@ package body AdaBase.Driver.Base.SQLite is
    -----------------------
    --  private_connect  --
    -----------------------
+   overriding
    procedure private_connect (driver   : out SQLite_Driver;
                               database : String;
                               username : String;

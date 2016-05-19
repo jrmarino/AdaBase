@@ -75,45 +75,10 @@ package body AdaBase.Driver.Base.PostgreSQL is
    end initialize;
 
 
-   ------------------------
-   --  basic_connect #1  --
-   ------------------------
-   overriding
-   procedure basic_connect (driver   : out PostgreSQL_Driver;
-                            database : String;
-                            username : String := blankstring;
-                            password : String := blankstring;
-                            socket   : String := blankstring) is
-   begin
-      driver.private_connect (database => database,
-                              username => username,
-                              password => password,
-                              socket   => socket);
-   end basic_connect;
-
-
-   ------------------------
-   --  basic_connect #2  --
-   ------------------------
-   overriding
-   procedure basic_connect (driver   : out PostgreSQL_Driver;
-                            database : String;
-                            username : String := blankstring;
-                            password : String := blankstring;
-                            hostname : String := blankstring;
-                            port     : PosixPort) is
-   begin
-      driver.private_connect (database => database,
-                              username => username,
-                              password => password,
-                              hostname => hostname,
-                              port     => port);
-   end basic_connect;
-
-
    -----------------------
    --  private_connect  --
    -----------------------
+   overriding
    procedure private_connect (driver   : out PostgreSQL_Driver;
                               database : String;
                               username : String;

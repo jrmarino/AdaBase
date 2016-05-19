@@ -420,6 +420,50 @@ package body AdaBase.Driver.Base is
    end last_insert_id;
 
 
+   ------------------------------------------------------------------------
+   --  PUBLIC ROUTINES NOT COVERED BY INTERFACES                         --
+   ------------------------------------------------------------------------
+
+   ------------------------
+   --  basic_connect #1  --
+   ------------------------
+   overriding
+   procedure basic_connect (driver   : out Base_Driver;
+                            database : String;
+                            username : String := blankstring;
+                            password : String := blankstring;
+                            socket   : String := blankstring)
+   is
+   begin
+      private_connect (driver   => Base_Driver'Class (driver),
+                       database => database,
+                       username => username,
+                       password => password,
+                       socket   => socket);
+   end basic_connect;
+
+
+   ------------------------
+   --  basic_connect #2  --
+   ------------------------
+   overriding
+   procedure basic_connect (driver   : out Base_Driver;
+                            database : String;
+                            username : String := blankstring;
+                            password : String := blankstring;
+                            hostname : String := blankstring;
+                            port     : PosixPort)
+   is
+   begin
+      private_connect (driver   => Base_Driver'Class (driver),
+                       database => database,
+                       username => username,
+                       password => password,
+                       hostname => hostname,
+                       port     => port);
+   end basic_connect;
+
+
    -----------------------------------------------------------------------
    --  PRIVATE ROUTINES NOT COVERED BY INTERFACES                        --
    ------------------------------------------------------------------------

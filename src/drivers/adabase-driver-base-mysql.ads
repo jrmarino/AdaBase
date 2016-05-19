@@ -27,21 +27,6 @@ package AdaBase.Driver.Base.MySQL is
    procedure set_trait_query_buffers_used  (driver : MySQL_Driver;
                                             trait  : Boolean);
 
-   overriding
-   procedure basic_connect (driver   : out MySQL_Driver;
-                            database : String;
-                            username : String := blankstring;
-                            password : String := blankstring;
-                            socket   : String := blankstring);
-
-   overriding
-   procedure basic_connect (driver   : out MySQL_Driver;
-                            database : String;
-                            username : String := blankstring;
-                            password : String := blankstring;
-                            hostname : String := blankstring;
-                            port     : PosixPort);
-
    function query          (driver     : MySQL_Driver;
                             sql        : String)
                             return ASM.MySQL_statement;
@@ -83,6 +68,7 @@ private
          local_connection : aliased ACM.MySQL_Connection;
       end record;
 
+   overriding
    procedure private_connect (driver   : out MySQL_Driver;
                               database : String;
                               username : String;

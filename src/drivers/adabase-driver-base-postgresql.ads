@@ -17,20 +17,6 @@ package AdaBase.Driver.Base.PostgreSQL is
    function execute (driver : PostgreSQL_Driver; sql : String)
                      return AffectedRows;
 
-   overriding
-   procedure basic_connect (driver   : out PostgreSQL_Driver;
-                            database : String;
-                            username : String := blankstring;
-                            password : String := blankstring;
-                            socket   : String := blankstring);
-
-   overriding
-   procedure basic_connect (driver   : out PostgreSQL_Driver;
-                            database : String;
-                            username : String := blankstring;
-                            password : String := blankstring;
-                            hostname : String := blankstring;
-                            port     : PosixPort);
 
 --     function query          (driver     : PostgreSQL_Driver;
 --                              sql        : String)
@@ -75,6 +61,7 @@ private
          local_connection : aliased CON.PostgreSQL_Connection;
       end record;
 
+   overriding
    procedure private_connect (driver   : out PostgreSQL_Driver;
                               database : String;
                               username : String;

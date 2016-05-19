@@ -53,6 +53,21 @@ package AdaBase.Driver.Base is
    function last_driver_message  (driver : Base_Driver) return String;
 
    overriding
+   procedure basic_connect       (driver   : out Base_Driver;
+                                  database : String;
+                                  username : String := blankstring;
+                                  password : String := blankstring;
+                                  socket   : String := blankstring);
+
+   overriding
+   procedure basic_connect       (driver   : out Base_Driver;
+                                  database : String;
+                                  username : String := blankstring;
+                                  password : String := blankstring;
+                                  hostname : String := blankstring;
+                                  port     : PosixPort);
+
+   overriding
    function trait_autocommit     (driver : Base_Driver)
                                   return Boolean;
 
@@ -159,5 +174,13 @@ private
                                     groupby    : String;
                                     having     : String;
                                     order      : String) return String;
+
+   procedure private_connect (driver   : out Base_Driver;
+                              database : String;
+                              username : String;
+                              password : String;
+                              hostname : String    := blankstring;
+                              socket   : String    := blankstring;
+                              port     : PosixPort := portless) is null;
 
 end AdaBase.Driver.Base;

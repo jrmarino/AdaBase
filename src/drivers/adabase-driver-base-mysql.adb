@@ -205,45 +205,6 @@ package body AdaBase.Driver.Base.MySQL is
       driver.connection.setUseBuffer (buffered => trait);
    end set_trait_query_buffers_used;
 
-
-   ---------------------
-   --  basic_connect  --
-   ---------------------
-   overriding
-   procedure basic_connect (driver   : out MySQL_Driver;
-                            database : String;
-                            username : String := blankstring;
-                            password : String := blankstring;
-                            socket   : String := blankstring)
-   is
-   begin
-      driver.private_connect (database => database,
-                              username => username,
-                              password => password,
-                              socket   => socket);
-   end basic_connect;
-
-
-   ---------------------
-   --  basic_connect  --
-   ---------------------
-   overriding
-   procedure basic_connect (driver   : out MySQL_Driver;
-                            database : String;
-                            username : String := blankstring;
-                            password : String := blankstring;
-                            hostname : String := blankstring;
-                            port     : PosixPort)
-   is
-   begin
-      driver.private_connect (database => database,
-                              username => username,
-                              password => password,
-                              hostname => hostname,
-                              port     => port);
-   end basic_connect;
-
-
    ------------------------------------------------------------------------
    --  PRIVATE ROUTINES NOT COVERED BY INTERFACES                        --
    ------------------------------------------------------------------------
@@ -263,6 +224,7 @@ package body AdaBase.Driver.Base.MySQL is
    -----------------------
    --  private_connect  --
    -----------------------
+   overriding
    procedure private_connect (driver   : out MySQL_Driver;
                               database : String;
                               username : String;

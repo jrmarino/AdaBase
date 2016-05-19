@@ -18,21 +18,6 @@ package AdaBase.Driver.Base.SQLite is
                      return AffectedRows;
 
    overriding
-   procedure basic_connect (driver   : out SQLite_Driver;
-                            database : String;
-                            username : String := blankstring;
-                            password : String := blankstring;
-                            socket   : String := blankstring);
-
-   overriding
-   procedure basic_connect (driver   : out SQLite_Driver;
-                            database : String;
-                            username : String := blankstring;
-                            password : String := blankstring;
-                            hostname : String := blankstring;
-                            port     : PosixPort);
-
-   overriding
    procedure query_drop_table  (driver      : SQLite_Driver;
                                 tables      : String;
                                 when_exists : Boolean := False;
@@ -83,6 +68,7 @@ private
          local_connection : aliased ACS.SQLite_Connection;
       end record;
 
+   overriding
    procedure private_connect (driver   : out SQLite_Driver;
                               database : String;
                               username : String;
