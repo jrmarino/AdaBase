@@ -190,7 +190,7 @@ package body AdaBase.Driver.Base.MySQL is
          --  so it is not necessary to loop through subqueries.  We send the
          --  trimmed compound query as it was received.
          driver.connection.execute (trsql);
-         driver.log_nominal (execution, CT.SUS (sql));
+         driver.log_nominal (execution, CT.SUS (trsql));
          result := driver.connection.rows_affected_by_execution;
          return result;
       exception
