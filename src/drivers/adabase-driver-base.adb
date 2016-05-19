@@ -11,7 +11,7 @@ package body AdaBase.Driver.Base is
    function trait_autocommit (driver : Base_Driver) return Boolean
    is
    begin
-      return driver.connection.all.autoCommit;
+      return driver.connection.autoCommit;
    end trait_autocommit;
 
 
@@ -22,7 +22,7 @@ package body AdaBase.Driver.Base is
    function trait_column_case (driver : Base_Driver) return CaseMode
    is
    begin
-      return driver.connection.all.getCaseMode;
+      return driver.connection.getCaseMode;
    end trait_column_case;
 
 
@@ -44,7 +44,7 @@ package body AdaBase.Driver.Base is
    function trait_connected (driver : Base_Driver) return Boolean
    is
    begin
-      return driver.connection.all.connected;
+      return driver.connection.connected;
    end trait_connected;
 
 
@@ -55,7 +55,7 @@ package body AdaBase.Driver.Base is
    function trait_driver (driver : Base_Driver) return String
    is
    begin
-      return driver.connection.all.description;
+      return driver.connection.description;
    end trait_driver;
 
 
@@ -67,7 +67,7 @@ package body AdaBase.Driver.Base is
                                return String
    is
    begin
-      return driver.connection.all.clientInfo;
+      return driver.connection.clientInfo;
    end trait_client_info;
 
 
@@ -79,7 +79,7 @@ package body AdaBase.Driver.Base is
                                   return String
    is
    begin
-      return driver.connection.all.clientVersion;
+      return driver.connection.clientVersion;
    end trait_client_version;
 
 
@@ -91,7 +91,7 @@ package body AdaBase.Driver.Base is
                                return String
    is
    begin
-      return driver.connection.all.serverInfo;
+      return driver.connection.serverInfo;
    end trait_server_info;
 
 
@@ -103,7 +103,7 @@ package body AdaBase.Driver.Base is
                                   return String
    is
    begin
-      return driver.connection.all.serverVersion;
+      return driver.connection.serverVersion;
    end trait_server_version;
 
 
@@ -115,7 +115,7 @@ package body AdaBase.Driver.Base is
                                  return BLOB_maximum
    is
    begin
-      return driver.connection.all.maxBlobSize;
+      return driver.connection.maxBlobSize;
    end trait_max_blob_size;
 
 
@@ -127,7 +127,7 @@ package body AdaBase.Driver.Base is
                                     trait  : Boolean)
    is
    begin
-      driver.connection.all.setAutoCommit (auto => trait);
+      driver.connection.setAutoCommit (auto => trait);
    end set_trait_autocommit;
 
 
@@ -139,7 +139,7 @@ package body AdaBase.Driver.Base is
                                     trait  : CaseMode)
    is
    begin
-      driver.connection.all.setCaseMode (mode => trait);
+      driver.connection.setCaseMode (mode => trait);
    end set_trait_column_case;
 
 
@@ -163,7 +163,7 @@ package body AdaBase.Driver.Base is
                                       trait  : BLOB_maximum)
    is
    begin
-      driver.connection.all.setMaxBlobSize (maxsize => trait);
+      driver.connection.setMaxBlobSize (maxsize => trait);
    end set_trait_max_blob_size;
 
 
@@ -174,7 +174,7 @@ package body AdaBase.Driver.Base is
    function trait_multiquery_enabled (driver : Base_Driver) return Boolean
    is
    begin
-      return driver.connection.all.multiquery;
+      return driver.connection.multiquery;
    end trait_multiquery_enabled;
 
 
@@ -307,9 +307,9 @@ package body AdaBase.Driver.Base is
       sqlstate   : TSqlState    := stateless;
    begin
       if pull_codes then
-         error_msg  := CT.SUS (driver.connection.all.driverMessage);
-         error_code := driver.connection.all.driverCode;
-         sqlstate   := driver.connection.all.SqlState;
+         error_msg  := CT.SUS (driver.connection.driverMessage);
+         error_code := driver.connection.driverCode;
+         sqlstate   := driver.connection.SqlState;
       end if;
 
       logger.log_problem (driver     => driver.dialect,
