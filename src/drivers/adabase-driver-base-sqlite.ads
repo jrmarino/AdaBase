@@ -14,9 +14,6 @@ package AdaBase.Driver.Base.SQLite is
    type SQLite_Driver is new Base_Driver and AID.iDriver with private;
 
    overriding
-   procedure commit (driver : SQLite_Driver);
-
-   overriding
    function last_insert_id (driver : SQLite_Driver) return TraxID;
 
    overriding

@@ -38,6 +38,9 @@ package AdaBase.Driver.Base is
    procedure rollback            (driver : Base_Driver);
 
    overriding
+   procedure commit              (driver : Base_Driver);
+
+   overriding
    function trait_autocommit     (driver : Base_Driver)
                                   return Boolean;
 

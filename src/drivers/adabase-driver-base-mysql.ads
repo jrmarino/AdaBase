@@ -14,9 +14,6 @@ package AdaBase.Driver.Base.MySQL is
    type MySQL_Driver is new Base_Driver and AID.iDriver with private;
 
    overriding
-   procedure commit (driver : MySQL_Driver);
-
-   overriding
    function last_insert_id (driver : MySQL_Driver) return TraxID;
 
    overriding

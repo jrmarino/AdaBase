@@ -14,9 +14,6 @@ package AdaBase.Driver.Base.PostgreSQL is
    type PostgreSQL_Driver is new Base_Driver and AID.iDriver with private;
 
    overriding
-   procedure commit (driver : PostgreSQL_Driver);
-
-   overriding
    function last_insert_id (driver : PostgreSQL_Driver) return TraxID;
 
    overriding
