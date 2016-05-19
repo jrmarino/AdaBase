@@ -3,86 +3,86 @@
 
 package body AdaBase.Driver.Base.PostgreSQL is
 
+   -------------
+   --  query  --
+   -------------
+   function query (driver : PostgreSQL_Driver; sql : String)
+                   return SMT.PostgreSQL_statement is
+   begin
+      return driver.private_statement (sql => sql, prepared => False);
+   end query;
 
---     -------------
---     --  query  --
---     -------------
---     function query (driver : PostgreSQL_Driver; sql : String)
---                     return SMT.PostgreSQL_statement is
---     begin
---        return driver.private_statement (sql => sql, prepared => False);
---     end query;
---
---     ---------------
---     --  prepare  --
---     ---------------
---     function prepare (driver : PostgreSQL_Driver; sql : String)
---                       return SMT.PostgreSQL_statement is
---     begin
---        return driver.private_statement (sql => sql, prepared => True);
---     end prepare;
---
---
---     ----------------------
---     --  prepare_select  --
---     ----------------------
---     function prepare_select (driver     : PostgreSQL_Driver;
---                              distinct   : Boolean := False;
---                              tables     : String;
---                              columns    : String;
---                              conditions : String := blankstring;
---                              groupby    : String := blankstring;
---                              having     : String := blankstring;
---                              order      : String := blankstring;
---                              null_sort  : NullPriority := native;
---                              limit      : TraxID := 0;
---                              offset     : TraxID := 0)
---                              return SMT.PostgreSQL_statement is
---     begin
---        return driver.private_statement
---          (prepared => True,
---           sql      => sql_assemble (distinct   => distinct,
---                                     tables     => tables,
---                                     columns    => columns,
---                                     conditions => conditions,
---                                     groupby    => groupby,
---                                     having     => having,
---                                     order      => order,
---                                     null_sort  => null_sort,
---                                     limit      => limit,
---                                     offset     => offset));
---     end prepare_select;
---
---
---     --------------------
---     --  query_select  --
---     --------------------
---     function query_select   (driver     : PostgreSQL_Driver;
---                              distinct   : Boolean := False;
---                              tables     : String;
---                              columns    : String;
---                              conditions : String := blankstring;
---                              groupby    : String := blankstring;
---                              having     : String := blankstring;
---                              order      : String := blankstring;
---                              null_sort  : NullPriority := native;
---                              limit      : TraxID := 0;
---                              offset     : TraxID := 0)
---                              return SMT.PostgreSQL_statement is
---     begin
---        return driver.private_statement
---          (prepared => False,
---           sql      => sql_assemble (distinct   => distinct,
---                                     tables     => tables,
---                                     columns    => columns,
---                                     conditions => conditions,
---                                     groupby    => groupby,
---                                     having     => having,
---                                     order      => order,
---                                     null_sort  => null_sort,
---                                     limit      => limit,
---                                     offset     => offset));
---     end query_select;
+
+   ---------------
+   --  prepare  --
+   ---------------
+   function prepare (driver : PostgreSQL_Driver; sql : String)
+                     return SMT.PostgreSQL_statement is
+   begin
+      return driver.private_statement (sql => sql, prepared => True);
+   end prepare;
+
+
+   ----------------------
+   --  prepare_select  --
+   ----------------------
+   function prepare_select (driver     : PostgreSQL_Driver;
+                            distinct   : Boolean := False;
+                            tables     : String;
+                            columns    : String;
+                            conditions : String := blankstring;
+                            groupby    : String := blankstring;
+                            having     : String := blankstring;
+                            order      : String := blankstring;
+                            null_sort  : NullPriority := native;
+                            limit      : TraxID := 0;
+                            offset     : TraxID := 0)
+                            return SMT.PostgreSQL_statement is
+   begin
+      return driver.private_statement
+        (prepared => True,
+         sql      => sql_assemble (distinct   => distinct,
+                                   tables     => tables,
+                                   columns    => columns,
+                                   conditions => conditions,
+                                   groupby    => groupby,
+                                   having     => having,
+                                   order      => order,
+                                   null_sort  => null_sort,
+                                   limit      => limit,
+                                   offset     => offset));
+   end prepare_select;
+
+
+   --------------------
+   --  query_select  --
+   --------------------
+   function query_select   (driver     : PostgreSQL_Driver;
+                            distinct   : Boolean := False;
+                            tables     : String;
+                            columns    : String;
+                            conditions : String := blankstring;
+                            groupby    : String := blankstring;
+                            having     : String := blankstring;
+                            order      : String := blankstring;
+                            null_sort  : NullPriority := native;
+                            limit      : TraxID := 0;
+                            offset     : TraxID := 0)
+                            return SMT.PostgreSQL_statement is
+   begin
+      return driver.private_statement
+        (prepared => False,
+         sql      => sql_assemble (distinct   => distinct,
+                                   tables     => tables,
+                                   columns    => columns,
+                                   conditions => conditions,
+                                   groupby    => groupby,
+                                   having     => having,
+                                   order      => order,
+                                   null_sort  => null_sort,
+                                   limit      => limit,
+                                   offset     => offset));
+   end query_select;
 
 
    --------------------
@@ -231,5 +231,68 @@ package body AdaBase.Driver.Base.PostgreSQL is
             return aborted;
       end;
    end execute;
+
+
+   -------------------------
+   --  private_statement  --
+   -------------------------
+   function private_statement (driver   : PostgreSQL_Driver;
+                               sql      : String;
+                               prepared : Boolean)
+                               return SMT.PostgreSQL_statement
+   is
+      stype     : AID.ASB.stmt_type := AID.ASB.direct_statement;
+      logcat    : LogCategory       := execution;
+      duplicate : aliased String    := sql;
+      err1      : constant CT.Text  :=
+                  CT.SUS ("ACK! Query attempted on inactive connection");
+   begin
+      if prepared then
+         stype  := AID.ASB.prepared_statement;
+         logcat := statement_preparation;
+      end if;
+      if driver.connection_active then
+         declare
+            statement : SMT.PostgreSQL_statement
+              (type_of_statement => AID.ASB.prepared_statement,
+               log_handler       => logger'Access,
+               pgsql_conn        => CON.PostgreSQL_Connection_Access
+                                    (driver.connection),
+               initial_sql       => duplicate'Unchecked_Access,
+               con_error_mode    => driver.trait_error_mode,
+               con_case_mode     => driver.trait_column_case,
+               con_max_blob      => driver.trait_max_blob_size,
+               con_buffered      => True);
+         begin
+            if not prepared then
+               if statement.successful then
+                  driver.log_nominal
+                    (category => logcat,
+                     message  => CT.SUS ("query succeeded," &
+                         statement.rows_returned'Img & " rows returned"));
+               else
+                  driver.log_nominal (category => execution,
+                                      message  => CT.SUS ("Query failed!"));
+               end if;
+            end if;
+            return statement;
+         exception
+            when RES : others =>
+               --  Fatal attempt to prepare a statement
+               --  Logged already by stmt initialization
+               --  Should be internally marked as unsuccessful
+               return statement;
+         end;
+      else
+         --  Fatal attempt to query an unconnected database
+         driver.log_problem (category => logcat,
+                             message  => err1,
+                             break    => True);
+      end if;
+      --  We never get here, the driver.log_problem throws exception first
+      raise CON.STMT_NOT_VALID
+        with "failed to return SQLite statement";
+
+   end private_statement;
 
 end AdaBase.Driver.Base.PostgreSQL;

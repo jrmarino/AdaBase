@@ -18,43 +18,41 @@ package AdaBase.Driver.Base.PostgreSQL is
                      return AffectedRows;
 
 
---     function query          (driver     : PostgreSQL_Driver;
---                              sql        : String)
---                              return SMT.PostgreSQL_statement;
---
---     function prepare        (driver     : PostgreSQL_Driver;
---                              sql        : String)
---                              return SMT.PostgreSQL_statement;
---
---     function query_select   (driver     : PostgreSQL_Driver;
---                              distinct   : Boolean := False;
---                              tables     : String;
---                              columns    : String;
---                              conditions : String := blankstring;
---                              groupby    : String := blankstring;
---                              having     : String := blankstring;
---                              order      : String := blankstring;
---                              null_sort  : NullPriority := native;
---                              limit      : TraxID := 0;
---                              offset     : TraxID := 0)
---                              return SMT.PostgreSQL_statement;
---
---     function prepare_select (driver     : PostgreSQL_Driver;
---                              distinct   : Boolean := False;
---                              tables     : String;
---                              columns    : String;
---                              conditions : String := blankstring;
---                              groupby    : String := blankstring;
---                              having     : String := blankstring;
---                              order      : String := blankstring;
---                              null_sort  : NullPriority := native;
---                              limit      : TraxID := 0;
---                              offset     : TraxID := 0)
---                              return SMT.PostgreSQL_statement;
+   function query          (driver     : PostgreSQL_Driver;
+                            sql        : String)
+                            return SMT.PostgreSQL_statement;
+
+   function prepare        (driver     : PostgreSQL_Driver;
+                            sql        : String)
+                            return SMT.PostgreSQL_statement;
+
+   function query_select   (driver     : PostgreSQL_Driver;
+                            distinct   : Boolean := False;
+                            tables     : String;
+                            columns    : String;
+                            conditions : String := blankstring;
+                            groupby    : String := blankstring;
+                            having     : String := blankstring;
+                            order      : String := blankstring;
+                            null_sort  : NullPriority := native;
+                            limit      : TraxID := 0;
+                            offset     : TraxID := 0)
+                            return SMT.PostgreSQL_statement;
+
+   function prepare_select (driver     : PostgreSQL_Driver;
+                            distinct   : Boolean := False;
+                            tables     : String;
+                            columns    : String;
+                            conditions : String := blankstring;
+                            groupby    : String := blankstring;
+                            having     : String := blankstring;
+                            order      : String := blankstring;
+                            null_sort  : NullPriority := native;
+                            limit      : TraxID := 0;
+                            offset     : TraxID := 0)
+                            return SMT.PostgreSQL_statement;
 
 private
-
-   --  backend : aliased CON.PostgreSQL_Connection;
 
    type PostgreSQL_Driver is new Base_Driver and AID.iDriver with
       record
@@ -81,10 +79,10 @@ private
                           limit      : TraxID := 0;
                           offset     : TraxID := 0) return String;
 
---     function private_statement (driver   : PostgreSQL_Driver;
---                                 sql      : String;
---                                 prepared : Boolean)
---                                 return SMT.PostgreSQL_statement;
+   function private_statement (driver   : PostgreSQL_Driver;
+                               sql      : String;
+                               prepared : Boolean)
+                               return SMT.PostgreSQL_statement;
 
    overriding
    procedure initialize (Object : in out PostgreSQL_Driver);
