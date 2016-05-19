@@ -70,6 +70,17 @@ private
                               socket   : String    := blankstring;
                               port     : PosixPort := portless);
 
+   function sql_assemble (distinct   : Boolean := False;
+                          tables     : String;
+                          columns    : String;
+                          conditions : String := blankstring;
+                          groupby    : String := blankstring;
+                          having     : String := blankstring;
+                          order      : String := blankstring;
+                          null_sort  : NullPriority := native;
+                          limit      : TraxID := 0;
+                          offset     : TraxID := 0) return String;
+
 --     function private_statement (driver   : PostgreSQL_Driver;
 --                                 sql      : String;
 --                                 prepared : Boolean)

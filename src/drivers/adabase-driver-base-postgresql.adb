@@ -10,37 +10,17 @@ package body AdaBase.Driver.Base.PostgreSQL is
 --     function query (driver : PostgreSQL_Driver; sql : String)
 --                     return SMT.PostgreSQL_statement is
 --     begin
---        --  TO BE IMPLEMENTED
---        raise CON.UNSUPPORTED_BY_PGSQL;
+--        return driver.private_statement (sql => sql, prepared => False);
 --     end query;
 --
+--     ---------------
+--     --  prepare  --
+--     ---------------
 --     function prepare (driver : PostgreSQL_Driver; sql : String)
 --                       return SMT.PostgreSQL_statement is
 --     begin
---        --  TO BE IMPLEMENTED
---        raise CON.UNSUPPORTED_BY_PGSQL;
+--        return driver.private_statement (sql => sql, prepared => True);
 --     end prepare;
---
---
---     --------------------
---     --  query_select  --
---     --------------------
---     function query_select   (driver     : PostgreSQL_Driver;
---                              distinct   : Boolean := False;
---                              tables     : String;
---                              columns    : String;
---                              conditions : String := blankstring;
---                              groupby    : String := blankstring;
---                              having     : String := blankstring;
---                              order      : String := blankstring;
---                              null_sort  : NullPriority := native;
---                              limit      : TraxID := 0;
---                              offset     : TraxID := 0)
---                              return SMT.PostgreSQL_statement is
---     begin
---        --  TO BE IMPLEMENTED
---        raise CON.UNSUPPORTED_BY_PGSQL;
---     end query_select;
 --
 --
 --     ----------------------
@@ -59,9 +39,85 @@ package body AdaBase.Driver.Base.PostgreSQL is
 --                              offset     : TraxID := 0)
 --                              return SMT.PostgreSQL_statement is
 --     begin
---        --  TO BE IMPLEMENTED
---        raise CON.UNSUPPORTED_BY_PGSQL;
+--        return driver.private_statement
+--          (prepared => True,
+--           sql      => sql_assemble (distinct   => distinct,
+--                                     tables     => tables,
+--                                     columns    => columns,
+--                                     conditions => conditions,
+--                                     groupby    => groupby,
+--                                     having     => having,
+--                                     order      => order,
+--                                     null_sort  => null_sort,
+--                                     limit      => limit,
+--                                     offset     => offset));
 --     end prepare_select;
+--
+--
+--     --------------------
+--     --  query_select  --
+--     --------------------
+--     function query_select   (driver     : PostgreSQL_Driver;
+--                              distinct   : Boolean := False;
+--                              tables     : String;
+--                              columns    : String;
+--                              conditions : String := blankstring;
+--                              groupby    : String := blankstring;
+--                              having     : String := blankstring;
+--                              order      : String := blankstring;
+--                              null_sort  : NullPriority := native;
+--                              limit      : TraxID := 0;
+--                              offset     : TraxID := 0)
+--                              return SMT.PostgreSQL_statement is
+--     begin
+--        return driver.private_statement
+--          (prepared => False,
+--           sql      => sql_assemble (distinct   => distinct,
+--                                     tables     => tables,
+--                                     columns    => columns,
+--                                     conditions => conditions,
+--                                     groupby    => groupby,
+--                                     having     => having,
+--                                     order      => order,
+--                                     null_sort  => null_sort,
+--                                     limit      => limit,
+--                                     offset     => offset));
+--     end query_select;
+
+
+   --------------------
+   --  sql_assemble  --
+   --------------------
+   function sql_assemble (distinct   : Boolean := False;
+                          tables     : String;
+                          columns    : String;
+                          conditions : String := blankstring;
+                          groupby    : String := blankstring;
+                          having     : String := blankstring;
+                          order      : String := blankstring;
+                          null_sort  : NullPriority := native;
+                          limit      : TraxID := 0;
+                          offset     : TraxID := 0) return String
+   is
+      rockyroad : CT.Text;
+      vanilla   : String := assembly_common_select
+        (distinct, tables, columns, conditions, groupby, having, order);
+   begin
+      case null_sort is
+         when native      => rockyroad := CT.SUS (vanilla);
+         when nulls_first => rockyroad := CT.SUS (vanilla & " NULLS FIRST");
+         when nulls_last  => rockyroad := CT.SUS (vanilla & " NULLS LAST");
+      end case;
+      if limit > 0 then
+         if offset > 0 then
+            return CT.USS (rockyroad) & " LIMIT" & limit'Img &
+                                        " OFFSET" & offset'Img;
+         else
+            return CT.USS (rockyroad) & " LIMIT" & limit'Img;
+         end if;
+      end if;
+      return CT.USS (rockyroad);
+   end sql_assemble;
 
 
    ------------------
