@@ -64,9 +64,15 @@ begin
 
    TIO.Put_Line ("Testing query with MultiQuery option set to " & setting'Img);
    TIO.Put_Line ("--  Execution attempt #1  --");
-   numrows := CON.DR.execute (SQL);
-   followup (numrows);
-   CON.DR.rollback;
+   begin
+      numrows := CON.DR.execute (SQL);
+      followup (numrows);
+      CON.DR.rollback;
+   exception
+      when ouch : others =>
+         TIO.Put_Line ("Exception: " & EX.Exception_Message (ouch));
+         TIO.Put_Line ("Failed to test this setting");
+   end;
 
    TIO.Put_Line ("");
    TIO.Put_Line ("Attempt to toggle MultiQuery setting to " & nextone'Img);
@@ -94,29 +100,15 @@ SQL string used: DELETE FROM fruits WHERE color = 'red'; DELETE FROM fruits WHER
 
 Testing query with MultiQuery option set to FALSE
 --  Execution attempt #1  --
-Query failed!
-Driver Message: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'DELETE FROM fruits WHERE color = 'orange'' at line 1
+Exception: Driver is configured to allow only one query at time, but this SQL contains multiple queries: DELETE FROM fruits WHERE color = 'red'; DELETE FROM fruits WHERE color = 'orange'
+Failed to test this setting
 
 Attempt to toggle MultiQuery setting to TRUE
 --  Execution attempt #2  --
 Query succeeded
 </pre>
-<p class="caption">Output using MySQL Driver</p>
+<p class="caption">Output using any driver</p>
 
-<br/>
-<pre class="output">
-This demonstration shows how multiple queries in the same SQL string are handled.
-SQL string used: DELETE FROM fruits WHERE color = 'red'; DELETE FROM fruits WHERE color = 'orange'
-
-Testing query with MultiQuery option set to TRUE
---  Execution attempt #1  --
-Query succeeded
-
-Attempt to toggle MultiQuery setting to FALSE
-Exception: Multiple SQL statements cannot be disabled
-Failed to test this setting
-</pre>
-<p class="caption">Output using SQLite Driver</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>
 </div>
