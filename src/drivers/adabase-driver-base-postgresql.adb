@@ -62,10 +62,33 @@ package body AdaBase.Driver.Base.PostgreSQL is
    --  commit  --
    --------------
    overriding
-   procedure commit (driver : PostgreSQL_Driver) is
+   procedure commit (driver : PostgreSQL_Driver)
+   is
+      use type TransIsolation;
+      err1 : constant CT.Text :=
+        CT.SUS ("ACK! Commit attempted on inactive connection");
+      err2 : constant CT.Text :=
+        CT.SUS ("ACK! Commit attempted when autocommit mode set on");
+      err3 : constant CT.Text := CT.SUS ("Commit attempt failed");
+      msg1 : constant CT.Text := CT.SUS ("END TRANSACTION (COMMIT)");
    begin
-      --  TO BE IMPLEMENTED
-      null;
+      if not driver.connection_active then
+         --  Non-fatal attempt to commit when no database is connected
+         driver.log_problem (category => transaction, message  => err1);
+         return;
+      end if;
+      if driver.connection.autoCommit then
+         --  Non-fatal attempt to commit when autocommit is on
+         driver.log_problem (category => transaction, message  => err2);
+         return;
+      end if;
+      driver.connection.commit;
+      driver.log_nominal (category => transaction, message => msg1);
+   exception
+      when CON.COMMIT_FAIL =>
+         driver.log_problem (category   => transaction,
+                             message    => err3,
+                             pull_codes => True);
    end commit;
 
 
@@ -73,10 +96,34 @@ package body AdaBase.Driver.Base.PostgreSQL is
    --  rollback  --
    ----------------
    overriding
-   procedure rollback (driver : PostgreSQL_Driver) is
+   procedure rollback (driver : PostgreSQL_Driver)
+   is
+      use type TransIsolation;
+      err1 : constant CT.Text :=
+        CT.SUS ("ACK! Rollback attempted on inactive connection");
+      err2 : constant CT.Text :=
+        CT.SUS ("ACK! Rollback attempted when autocommit mode set on");
+      err3 : constant CT.Text :=
+        CT.SUS ("Rollback attempt failed");
    begin
-      --  TO BE IMPLEMENTED
-      null;
+      if not driver.connection_active then
+         --  Non-fatal attempt to roll back when no database is connected
+         driver.log_problem (category => miscellaneous,
+                             message  => err1);
+         return;
+      end if;
+      if driver.connection.autoCommit then
+         --  Non-fatal attempt to roll back when autocommit is on
+         driver.log_problem (category => miscellaneous,
+                             message  => err2);
+         return;
+      end if;
+      driver.connection.rollback;
+   exception
+      when CON.ROLLBACK_FAIL =>
+         driver.log_problem (category   => miscellaneous,
+                             message    => err3,
+                             pull_codes => True);
    end rollback;
 
 
