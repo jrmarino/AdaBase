@@ -14,9 +14,6 @@ package AdaBase.Driver.Base.MySQL is
    type MySQL_Driver is new Base_Driver and AID.iDriver with private;
 
    overriding
-   procedure disconnect (driver : out MySQL_Driver);
-
-   overriding
    procedure commit (driver : MySQL_Driver);
 
    overriding
@@ -102,7 +99,6 @@ private
    type MySQL_Driver is new Base_Driver and AID.iDriver with
       record
          local_connection : aliased ACM.MySQL_Connection;
-         database : CT.Text := CT.blank;
       end record;
 
    procedure private_connect (driver   : out MySQL_Driver;

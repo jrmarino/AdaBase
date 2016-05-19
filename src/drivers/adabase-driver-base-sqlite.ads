@@ -14,9 +14,6 @@ package AdaBase.Driver.Base.SQLite is
    type SQLite_Driver is new Base_Driver and AID.iDriver with private;
 
    overriding
-   procedure disconnect (driver : out SQLite_Driver);
-
-   overriding
    procedure commit (driver : SQLite_Driver);
 
    overriding
@@ -102,7 +99,6 @@ private
    type SQLite_Driver is new Base_Driver and AID.iDriver with
       record
          local_connection : aliased ACS.SQLite_Connection;
-         database         : CT.Text := CT.blank;
       end record;
 
    procedure private_connect (driver   : out SQLite_Driver;

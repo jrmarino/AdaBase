@@ -32,6 +32,9 @@ package AdaBase.Driver.Base is
       logger_access : ALF.AL.BaseClass_Logger_access);
 
    overriding
+   procedure disconnect          (driver : out Base_Driver);
+
+   overriding
    function trait_autocommit     (driver : Base_Driver)
                                   return Boolean;
 
@@ -111,9 +114,10 @@ private
 
    type Base_Driver is abstract new Base_Pure and AID.iDriver with
       record
-         connection_active : Boolean := False;
          connection        : ACB.Base_Connection_Access;
+         connection_active : Boolean := False;
          dialect           : TDriver := foundation;
+         database          : CT.Text := CT.blank;
       end record;
 
    procedure log_nominal (driver   : Base_Driver;

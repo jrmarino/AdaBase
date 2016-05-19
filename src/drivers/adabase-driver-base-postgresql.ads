@@ -14,9 +14,6 @@ package AdaBase.Driver.Base.PostgreSQL is
    type PostgreSQL_Driver is new Base_Driver and AID.iDriver with private;
 
    overriding
-   procedure disconnect (driver : out PostgreSQL_Driver);
-
-   overriding
    procedure commit (driver : PostgreSQL_Driver);
 
    overriding
@@ -94,7 +91,6 @@ private
    type PostgreSQL_Driver is new Base_Driver and AID.iDriver with
       record
          local_connection : aliased CON.PostgreSQL_Connection;
-         database : CT.Text := CT.blank;
       end record;
 
    procedure private_connect (driver   : out PostgreSQL_Driver;

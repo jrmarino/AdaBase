@@ -47,17 +47,6 @@ package body AdaBase.Driver.Base.PostgreSQL is
    end last_insert_id;
 
 
-   ------------------
-   --  disconnect  --
-   ------------------
-   overriding
-   procedure disconnect (driver : out PostgreSQL_Driver) is
-   begin
-      --  TO BE IMPLEMENTED
-      null;
-   end disconnect;
-
-
    --------------
    --  commit  --
    --------------

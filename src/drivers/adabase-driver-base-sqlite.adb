@@ -3,31 +3,6 @@
 
 package body AdaBase.Driver.Base.SQLite is
 
-   ------------------
-   --  disconnect  --
-   ------------------
-   overriding
-   procedure disconnect (driver : out SQLite_Driver)
-   is
-      msg : constant CT.Text :=
-        CT.SUS ("Disconnect From " & CT.USS (driver.database) & "database");
-      err : constant CT.Text :=
-        CT.SUS ("ACK! Disconnect attempted on inactive connection");
-   begin
-      if driver.connection_active then
-         driver.connection.disconnect;
-         driver.connection_active := False;
-
-         driver.log_nominal (category => disconnecting,
-                             message  => msg);
-      else
-         --  Non-fatal attempt to disconnect db when none is connected
-         driver.log_problem (category => disconnecting,
-                             message  => err);
-      end if;
-   end disconnect;
-
-
    ----------------
    --  rollback  --
    ----------------

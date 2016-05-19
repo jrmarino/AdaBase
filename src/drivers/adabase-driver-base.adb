@@ -286,6 +286,31 @@ package body AdaBase.Driver.Base is
    end query_drop_table;
 
 
+   ------------------
+   --  disconnect  --
+   ------------------
+   overriding
+   procedure disconnect (driver : out Base_Driver)
+   is
+      msg : constant CT.Text :=
+        CT.SUS ("Disconnect From " & CT.USS (driver.database) & "database");
+      err : constant CT.Text :=
+        CT.SUS ("ACK! Disconnect attempted on inactive connection");
+   begin
+      if driver.connection_active then
+         driver.connection.disconnect;
+         driver.connection_active := False;
+
+         driver.log_nominal (category => disconnecting,
+                             message  => msg);
+      else
+         --  Non-fatal attempt to disconnect db when none is connected
+         driver.log_problem (category => disconnecting,
+                             message  => err);
+      end if;
+   end disconnect;
+
+
    -----------------------------------------------------------------------
    --  PRIVATE ROUTINES NOT COVERED BY INTERFACES                        --
    ------------------------------------------------------------------------
