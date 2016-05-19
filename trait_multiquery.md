@@ -7,8 +7,11 @@ title: MultiQuery Trait
 AdaBase.Driver.Base.[DB].trait_multiquery_enabled ()</h3>
 <p>This is a connection attribute.  It returns True if the driver is
 configured to accept multiple queries separated by semicolons in the
-query string.  This feature is not fully supported by all drivers.  For the
-MySQL driver, this attribute is <b>False</b> by default.</p>
+query string.  This feature is fully supported by all drivers, but it
+only applies to direct statements.  Prepare statements are limited to
+single queries by definition.  This attribute is <b>False</b> by
+default on all drivers.
+</p>
 <br/>
 <h3>Procedure<br/>
 AdaBase.Driver.Base.[DB].set_trait_multiquery_enabled (trait : Boolean)</h3>
