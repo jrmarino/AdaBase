@@ -431,8 +431,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    --  multiquery  --
    ------------------
    overriding
-   function multiquery (conn : PostgreSQL_Connection) return Boolean
-   is
+   function multiquery (conn : PostgreSQL_Connection) return Boolean is
    begin
       return conn.prop_multiquery;
    end multiquery;

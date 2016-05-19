@@ -80,34 +80,6 @@ package body AdaBase.Driver.Base.PostgreSQL is
    end rollback;
 
 
-   ------------------------
-   --  query_drop_table  --
-   ------------------------
-   overriding
-   procedure query_drop_table  (driver      : PostgreSQL_Driver;
-                                tables      : String;
-                                when_exists : Boolean := False;
-                                cascade     : Boolean := False)
-   is
-   begin
-      --  TO BE IMPLEMENTED
-      null;
-   end query_drop_table;
-
-
-   -------------------------
-   --  query_clear_table  --
-   -------------------------
-   overriding
-   procedure query_clear_table (driver : PostgreSQL_Driver;
-                                table  : String)
-   is
-   begin
-      --  TO BE IMPLEMENTED
-      null;
-   end query_clear_table;
-
-
    ------------------------------------
    --  set_trait_multiquery_enabled  --
    ------------------------------------
@@ -115,8 +87,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
    procedure set_trait_multiquery_enabled  (driver : PostgreSQL_Driver;
                                             trait  : Boolean) is
    begin
-      --  TO BE IMPLEMENTED
-      null;
+      driver.connection.setMultiQuery (multiple => trait);
    end set_trait_multiquery_enabled;
 
 
@@ -255,7 +226,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
                                  hostname => hostname,
                                  port     => port);
 
-      driver.connection_active := driver.connection.all.connected;
+      driver.connection_active := driver.connection.connected;
 
       driver.log_nominal (category => connecting, message => nom);
    exception
@@ -267,38 +238,64 @@ package body AdaBase.Driver.Base.PostgreSQL is
    end private_connect;
 
 
-   ------------------
-   --  execute #1  --
-   ------------------
+   ---------------
+   --  execute  --
+   ---------------
    overriding
    function execute (driver : PostgreSQL_Driver; sql : String)
-                     return AffectedRows is
+                     return AffectedRows
+   is
+      trsql   : String := CT.trim_sql (sql);
+      nquery  : Natural := CT.count_queries (trsql);
+      aborted : constant AffectedRows := 0;
+      err1    : constant CT.Text :=
+                 CT.SUS ("ACK! Execution attempted on inactive connection");
+      err2    : constant String :=
+                         "Driver is configured to allow only one query at " &
+                         "time, but this SQL contains multiple queries: ";
    begin
-      --  TO BE IMPLEMENTED
-      return 0;
+      if not driver.connection_active then
+         --  Fatal attempt to query an unccnnected database
+         driver.log_problem (category => execution,
+                             message  => err1,
+                             break    => True);
+         return aborted;
+      end if;
 
---              declare
---           result : AffectedRows;
---        begin
---           for query_index in Positive range 1 .. nquery loop
---              result := 0;
---              if nquery = 1 then
---                 driver.connection.execute (trsql);
---              else
---                 driver.connection.execute (CT.subquery (trsql, query_index));
---              end if;
---              driver.log_nominal (execution, CT.SUS (sql));
---           end loop;
---           result := driver.connection.rows_affected_by_execution;
---           return result;
---        exception
---           when ACS.QUERY_FAIL =>
---              driver.log_problem (category   => execution,
---                                  message    => CT.SUS (sql),
---                                  pull_codes => True);
---              return aborted;
---        end;
+      if nquery > 1 and then not driver.trait_multiquery_enabled then
+         --  Fatal attempt to execute multiple queries when it's not permitted
+         driver.log_problem (category   => execution,
+                             message    => CT.SUS (err2 & trsql),
+                             break      => True);
+         return aborted;
+      end if;
 
+      declare
+         result : AffectedRows;
+      begin
+         for query_index in Positive range 1 .. nquery loop
+            result := 0;
+            if nquery = 1 then
+               driver.connection.execute (trsql);
+               driver.log_nominal (execution, CT.SUS (trsql));
+            else
+               declare
+                  SQ : constant String := CT.subquery (trsql, query_index);
+               begin
+                  driver.connection.execute (SQ);
+                  driver.log_nominal (execution, CT.SUS (SQ));
+               end;
+            end if;
+         end loop;
+         result := driver.connection.rows_affected_by_execution;
+         return result;
+      exception
+         when CON.QUERY_FAIL =>
+            driver.log_problem (category   => execution,
+                                message    => CT.SUS (sql),
+                                pull_codes => True);
+            return aborted;
+      end;
    end execute;
 
 end AdaBase.Driver.Base.PostgreSQL;

@@ -54,16 +54,6 @@ package AdaBase.Driver.Base.PostgreSQL is
                             port     : PosixPort);
 
    overriding
-   procedure query_drop_table  (driver      : PostgreSQL_Driver;
-                                tables      : String;
-                                when_exists : Boolean := False;
-                                cascade     : Boolean := False);
-
-   overriding
-   procedure query_clear_table (driver : PostgreSQL_Driver;
-                                table  : String);
-
-   overriding
    procedure set_trait_multiquery_enabled  (driver : PostgreSQL_Driver;
                                             trait  : Boolean);
 
