@@ -13,18 +13,6 @@ procedure MultiQuery is
    setting : Boolean;
    nextone : Boolean;
 
-   procedure followup (numrows : AdaBase.AffectedRows)
-   is
-      use type AdaBase.AffectedRows;
-   begin
-      if numrows = 0 then
-         TIO.Put_Line ("Query failed!");
-         TIO.Put_Line ("Driver Message: " & CON.DR.last_driver_message);
-      else
-         TIO.Put_Line ("Query succeeded");
-      end if;
-   end followup;
-
    SQL : constant String :=
          "DELETE FROM fruits WHERE color = 'red'; " &
          "DELETE FROM fruits WHERE color = 'orange'";
@@ -44,7 +32,7 @@ begin
    TIO.Put_Line ("--  Execution attempt #1  --");
    begin
       numrows := CON.DR.execute (SQL);
-      followup (numrows);
+      TIO.Put_Line ("Query succeeded");
       CON.DR.rollback;
    exception
       when ouch : others =>
@@ -58,7 +46,7 @@ begin
       CON.DR.set_trait_multiquery_enabled (nextone);
       TIO.Put_Line ("--  Execution attempt #2  --");
       numrows := CON.DR.execute (SQL);
-      followup (numrows);
+      TIO.Put_Line ("Query succeeded");
       CON.DR.rollback;
    exception
       when ouch : others =>
