@@ -20,8 +20,8 @@ in the result set.
     <li>{{ page.stmt_column_table }}</li>
     <li>{{ page.stmt_column_name }}</li>
     <li>{{ page.stmt_column_native_type }}</li>
+    <li>{{ page.stmt_execute }}</li>
     <li>{{ page.res_column }}</li>
-    <li>{{ page.stmt_query }}</li>
     <li>{{ page.query }}</li>
   </ul>
 </div>

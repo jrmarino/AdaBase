@@ -20,7 +20,7 @@ function returns True until it can be reset by the next query.
   <h3>See Also</h3>
   <ul>
     <li>{{ page.stmt_discard_rest }}</li>
-    <li>{{ page.stmt_query }}</li>
+    <li>{{ page.stmt_execute }}</li>
     <li>{{ page.query }}</li>
   </ul>
 </div>

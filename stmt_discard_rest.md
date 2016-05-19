@@ -103,8 +103,8 @@ Query successful: TRUE
   <h3>See Also</h3>
   <ul>
     <li>{{ page.stmt_successful }}</li>
+    <li>{{ page.stmt_execute }}</li>
     <li>{{ page.stmt_data_discarded }}</li>
-    <li>{{ page.stmt_query }}</li>
     <li>{{ page.stmt_driver_msg }}</li>
     <li>{{ page.stmt_driver_code }}</li>
     <li>{{ page.stmt_driver_state }}</li>

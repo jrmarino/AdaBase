@@ -128,9 +128,6 @@ defaults:
        res_column: '<a href="res_column.html">result column handler (x2)</a>'
        f_column: '<a href="res_column.html">func column (x2)</a>'
 
-       stmt_query: '<a href="stmt_query.html">stmt query</a>'
-       f_stmt_query: '<a href="stmt_query.html">func query</a>'
-
        stmt_discard_rest: '<a href="stmt_discard_rest.html">stmt discard rest</a>'
        p_discard_rest: '<a href="stmt_discard_rest.html">proc discard_rest</a>'
 

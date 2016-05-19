@@ -30,7 +30,7 @@ and get the length of the resultant array of all rows in the result set.
   <ul>
     <li>{{ page.trait_buffers }}</li>
     <li>{{ page.query }}</li>
-    <li>{{ page.stmt_query }}</li>
+    <li>{{ page.stmt_execute }}</li>
     <li>{{ page.fetch_all }}</li>
   </ul>
 </div>

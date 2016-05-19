@@ -35,9 +35,9 @@ of the column names.</p>
   <ul>
     <li>{{ page.stmt_column_count }}</li>
     <li>{{ page.stmt_column_name }}</li>
+    <li>{{ page.stmt_execute }}</li>
     <li>{{ page.res_count }}</li>
     <li>{{ page.fetch_next }}</li>
-    <li>{{ page.stmt_query }}</li>
     <li>{{ page.query }}</li>
   </ul>
 </div>

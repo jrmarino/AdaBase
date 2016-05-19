@@ -17,6 +17,6 @@ This function returns True if the last query was successfully executed.
   <h3>See Also</h3>
   <ul>
     <li>{{ page.query }}</li>
-    <li>{{ page.stmt_query }}</li>
+    <li>{{ page.stmt_execute }}</li>
   </ul>
 </div>
