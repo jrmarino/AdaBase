@@ -42,9 +42,15 @@ begin
 
    TIO.Put_Line ("Testing query with MultiQuery option set to " & setting'Img);
    TIO.Put_Line ("--  Execution attempt #1  --");
-   numrows := CON.DR.execute (SQL);
-   followup (numrows);
-   CON.DR.rollback;
+   begin
+      numrows := CON.DR.execute (SQL);
+      followup (numrows);
+      CON.DR.rollback;
+   exception
+      when ouch : others =>
+         TIO.Put_Line ("Exception: " & EX.Exception_Message (ouch));
+         TIO.Put_Line ("Failed to test this setting");
+   end;
 
    TIO.Put_Line ("");
    TIO.Put_Line ("Attempt to toggle MultiQuery setting to " & nextone'Img);
