@@ -278,7 +278,8 @@ package body AdaBase.Statement.Base.MySQL is
       Object.connection := ACB.Base_Connection_Access (Object.mysql_conn);
       case Object.type_of_statement is
          when direct_statement =>
-            Object.sql_final := new String'(Object.initial_sql.all);
+            Object.sql_final := new String'(CT.trim_sql
+                                            (Object.initial_sql.all));
             Object.internal_direct_post_exec;
          when prepared_statement =>
             declare

@@ -148,26 +148,48 @@ package body AdaBase.Driver.Base.SQLite is
    function execute (driver : SQLite_Driver; sql : String)
                      return AffectedRows
    is
-      result : AffectedRows := 0;
-      err1 : constant CT.Text :=
-        CT.SUS ("ACK! Execution attempted on inactive connection");
+      trsql   : String := CT.trim_sql (sql);
+      nquery  : Natural := CT.count_queries (trsql);
+      aborted : constant AffectedRows := 0;
+      err1    : constant CT.Text :=
+                 CT.SUS ("ACK! Execution attempted on inactive connection");
+      err2    : constant String :=
+                         "Driver is configured to allow only one query at " &
+                         "time, but this SQL contains multiple queries: ";
    begin
-      if driver.connection_active then
-         driver.connection.execute (sql => sql);
-         result := driver.connection.all.rows_affected_by_execution;
-         driver.log_nominal (category => execution, message => CT.SUS (sql));
-      else
-         --  Non-fatal attempt to query an unccnnected database
+      if not driver.connection_active then
+         --  Fatal attempt to query an unccnnected database
          driver.log_problem (category => execution,
-                             message  => err1);
+                             message  => err1,
+                             break    => True);
+         return aborted;
       end if;
-      return result;
-   exception
-      when ACS.QUERY_FAIL =>
+
+      if nquery > 1 and then not driver.trait_multiquery_enabled then
+         --  Fatal attempt to execute multiple queries when it's not permitted
          driver.log_problem (category   => execution,
-                             message    => CT.SUS (sql),
-                             pull_codes => True);
-         return 0;
+                             message    => CT.SUS (err2 & trsql),
+                             break      => True);
+         return aborted;
+      end if;
+
+      declare
+         result : AffectedRows;
+      begin
+         --  SQLITE3 execute supports multiquery in all cases, so it is not
+         --  necessary to loop through subqueries.  We send the trimmed
+         --  compound query as it was received.
+         driver.connection.execute (trsql);
+         driver.log_nominal (execution, CT.SUS (sql));
+         result := driver.connection.rows_affected_by_execution;
+         return result;
+      exception
+         when ACS.QUERY_FAIL =>
+            driver.log_problem (category   => execution,
+                                message    => CT.SUS (sql),
+                                pull_codes => True);
+            return aborted;
+      end;
    end execute;
 
 

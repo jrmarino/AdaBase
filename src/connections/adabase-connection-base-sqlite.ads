@@ -205,6 +205,7 @@ private
    type SQLite_Connection is new Base_Connection and AIC.iConnection
      with record
       info_description : String (1 .. 21) := "SQLite3 native driver";
+      prop_multiquery  : Boolean := False;
       dummy            : Boolean := False;
       handle           : aliased BND.sqlite3_Access := null;
    end record;

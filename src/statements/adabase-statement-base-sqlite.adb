@@ -122,7 +122,8 @@ package body AdaBase.Statement.Base.SQLite is
 
       case Object.type_of_statement is
          when direct_statement =>
-            Object.sql_final := new String'(Object.initial_sql.all);
+            Object.sql_final := new String'(CT.trim_sql
+                                            (Object.initial_sql.all));
             logcat := statement_execution;
          when prepared_statement =>
             Object.sql_final := new String'(Object.transform_sql

@@ -37,12 +37,10 @@ package body AdaBase.Connection.Base.SQLite is
    overriding
    procedure setMultiQuery (conn : out SQLite_Connection; multiple : Boolean)
    is
-      pragma Unreferenced (conn);
    begin
-      if not multiple then
-         raise UNSUPPORTED_BY_SQLITE
-           with "Multiple SQL statements cannot be disabled";
-      end if;
+      --  Multiquery=on is native behavior
+      --  Multiquery=off is caught at driver execute function
+      conn.prop_multiquery := multiple;
    end setMultiQuery;
 
 
@@ -52,7 +50,7 @@ package body AdaBase.Connection.Base.SQLite is
    overriding
    function multiquery (conn : SQLite_Connection) return Boolean is
    begin
-      return True;
+      return conn.prop_multiquery;
    end multiquery;
 
 
