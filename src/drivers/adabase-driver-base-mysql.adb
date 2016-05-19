@@ -339,18 +339,6 @@ package body AdaBase.Driver.Base.MySQL is
    end set_trait_protocol_compressed;
 
 
-   ------------------------------------
-   --  set_trait_multiquery_enabled  --
-   ------------------------------------
-   overriding
-   procedure set_trait_multiquery_enabled (driver : MySQL_Driver;
-                                           trait  : Boolean)
-   is
-   begin
-      driver.connection.setMultiQuery (multiple => trait);
-   end set_trait_multiquery_enabled;
-
-
    ------------------------------
    --  set_query_buffers_used  --
    ------------------------------

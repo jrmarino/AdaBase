@@ -80,17 +80,6 @@ package body AdaBase.Driver.Base.PostgreSQL is
    end rollback;
 
 
-   ------------------------------------
-   --  set_trait_multiquery_enabled  --
-   ------------------------------------
-   overriding
-   procedure set_trait_multiquery_enabled  (driver : PostgreSQL_Driver;
-                                            trait  : Boolean) is
-   begin
-      driver.connection.setMultiQuery (multiple => trait);
-   end set_trait_multiquery_enabled;
-
-
 --     -------------
 --     --  query  --
 --     -------------

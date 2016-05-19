@@ -53,10 +53,6 @@ package AdaBase.Driver.Base.PostgreSQL is
                             hostname : String := blankstring;
                             port     : PosixPort);
 
-   overriding
-   procedure set_trait_multiquery_enabled  (driver : PostgreSQL_Driver;
-                                            trait  : Boolean);
-
 --     function query          (driver     : PostgreSQL_Driver;
 --                              sql        : String)
 --                              return SMT.PostgreSQL_statement;

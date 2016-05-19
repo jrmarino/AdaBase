@@ -63,10 +63,6 @@ package AdaBase.Driver.Base.SQLite is
    procedure query_clear_table (driver : SQLite_Driver;
                                 table  : String);
 
-   overriding
-   procedure set_trait_multiquery_enabled  (driver : SQLite_Driver;
-                                            trait  : Boolean);
-
    function query          (driver     : SQLite_Driver;
                             sql        : String)
                             return ASS.SQLite_statement;

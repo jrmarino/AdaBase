@@ -76,6 +76,10 @@ package AdaBase.Driver.Base is
                                       return Boolean;
 
    overriding
+   procedure set_trait_multiquery_enabled (driver : Base_Driver;
+                                           trait  : Boolean);
+
+   overriding
    procedure set_trait_autocommit  (driver : Base_Driver;
                                     trait  : Boolean);
 

@@ -44,9 +44,7 @@ package AdaBase.Driver.Base.MySQL is
 
    procedure set_trait_protocol_compressed (driver : MySQL_Driver;
                                             trait  : Boolean);
-   overriding
-   procedure set_trait_multiquery_enabled  (driver : MySQL_Driver;
-                                            trait  : Boolean);
+
    procedure set_trait_query_buffers_used  (driver : MySQL_Driver;
                                             trait  : Boolean);
 
