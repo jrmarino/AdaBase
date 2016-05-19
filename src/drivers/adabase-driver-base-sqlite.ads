@@ -82,6 +82,18 @@ private
                                prepared : Boolean)
                                return ASS.SQLite_statement;
 
+   function sql_assemble (driver     : SQLite_Driver;
+                          distinct   : Boolean := False;
+                          tables     : String;
+                          columns    : String;
+                          conditions : String := blankstring;
+                          groupby    : String := blankstring;
+                          having     : String := blankstring;
+                          order      : String := blankstring;
+                          null_sort  : NullPriority := native;
+                          limit      : TraxID := 0;
+                          offset     : TraxID := 0) return String;
+
    overriding
    procedure initialize (Object : in out SQLite_Driver);
 

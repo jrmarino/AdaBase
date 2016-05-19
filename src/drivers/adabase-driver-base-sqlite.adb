@@ -94,29 +94,20 @@ package body AdaBase.Driver.Base.SQLite is
                           null_sort   : NullPriority := native;
                           limit       : TraxID := 0;
                           offset      : TraxID := 0)
-                          return ASS.SQLite_statement
-   is
-      vanilla : String := assembly_common_select
-        (distinct, tables, columns, conditions, groupby, having, order);
+                          return ASS.SQLite_statement is
    begin
-      if null_sort /= native then
-         driver.log_nominal
-           (category => execution,
-            message => CT.SUS ("Note that NULLS FIRST/LAST is not " &
-                "supported by MySQL so the null_sort setting is ignored"));
-      end if;
-      if limit > 0 then
-         if offset > 0 then
-            return driver.private_statement (vanilla &
-                                               " LIMIT" & limit'Img &
-                                               " OFFSET" & offset'Img,
-                                             False);
-         else
-            return driver.private_statement (vanilla & " LIMIT" & limit'Img,
-                                         False);
-         end if;
-      end if;
-      return driver.private_statement (vanilla, False);
+      return driver.private_statement
+        (prepared => False,
+         sql      => driver.sql_assemble (distinct   => distinct,
+                                          tables     => tables,
+                                          columns    => columns,
+                                          conditions => conditions,
+                                          groupby    => groupby,
+                                          having     => having,
+                                          order      => order,
+                                          null_sort  => null_sort,
+                                          limit      => limit,
+                                          offset     => offset));
    end query_select;
 
 
@@ -134,29 +125,20 @@ package body AdaBase.Driver.Base.SQLite is
                             null_sort   : NullPriority := native;
                             limit       : TraxID := 0;
                             offset      : TraxID := 0)
-                            return ASS.SQLite_statement
-   is
-      vanilla : String := assembly_common_select
-        (distinct, tables, columns, conditions, groupby, having, order);
+                            return ASS.SQLite_statement is
    begin
-      if null_sort /= native then
-         driver.log_nominal
-           (category => execution,
-            message => CT.SUS ("Note that NULLS FIRST/LAST is not " &
-                "supported by MySQL so the null_sort setting is ignored"));
-      end if;
-      if limit > 0 then
-         if offset > 0 then
-            return driver.private_statement (vanilla &
-                                               " LIMIT" & limit'Img &
-                                               " OFFSET" & offset'Img,
-                                             True);
-         else
-            return driver.private_statement (vanilla & " LIMIT" & limit'Img,
-                                             True);
-         end if;
-      end if;
-      return driver.private_statement (vanilla, True);
+      return driver.private_statement
+        (prepared => True,
+         sql      => driver.sql_assemble (distinct   => distinct,
+                                          tables     => tables,
+                                          columns    => columns,
+                                          conditions => conditions,
+                                          groupby    => groupby,
+                                          having     => having,
+                                          order      => order,
+                                          null_sort  => null_sort,
+                                          limit      => limit,
+                                          offset     => offset));
    end prepare_select;
 
    ------------------------------------------------------------------------
@@ -334,5 +316,39 @@ package body AdaBase.Driver.Base.SQLite is
                              pull_codes => True);
    end query_clear_table;
 
+
+   --------------------
+   --  sql_assemble  --
+   --------------------
+   function sql_assemble (driver     : SQLite_Driver;
+                          distinct   : Boolean := False;
+                          tables     : String;
+                          columns    : String;
+                          conditions : String := blankstring;
+                          groupby    : String := blankstring;
+                          having     : String := blankstring;
+                          order      : String := blankstring;
+                          null_sort  : NullPriority := native;
+                          limit      : TraxID := 0;
+                          offset     : TraxID := 0) return String
+   is
+      vanilla   : String := assembly_common_select
+        (distinct, tables, columns, conditions, groupby, having, order);
+   begin
+      if null_sort /= native then
+         driver.log_nominal
+           (category => execution,
+            message => CT.SUS ("Note that NULLS FIRST/LAST is not " &
+                "supported by SQLite so the null_sort setting is ignored"));
+      end if;
+      if limit > 0 then
+         if offset > 0 then
+            return vanilla & " LIMIT" & limit'Img & " OFFSET" & offset'Img;
+         else
+            return vanilla & " LIMIT" & limit'Img;
+         end if;
+      end if;
+      return vanilla;
+   end sql_assemble;
 
 end AdaBase.Driver.Base.SQLite;
