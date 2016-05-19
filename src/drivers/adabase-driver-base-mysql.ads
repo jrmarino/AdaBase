@@ -17,9 +17,6 @@ package AdaBase.Driver.Base.MySQL is
    procedure commit (driver : MySQL_Driver);
 
    overriding
-   procedure rollback (driver : MySQL_Driver);
-
-   overriding
    function last_insert_id (driver : MySQL_Driver) return TraxID;
 
    overriding

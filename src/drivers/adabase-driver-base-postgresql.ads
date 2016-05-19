@@ -17,9 +17,6 @@ package AdaBase.Driver.Base.PostgreSQL is
    procedure commit (driver : PostgreSQL_Driver);
 
    overriding
-   procedure rollback (driver : PostgreSQL_Driver);
-
-   overriding
    function last_insert_id (driver : PostgreSQL_Driver) return TraxID;
 
    overriding

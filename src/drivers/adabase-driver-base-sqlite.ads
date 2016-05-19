@@ -17,9 +17,6 @@ package AdaBase.Driver.Base.SQLite is
    procedure commit (driver : SQLite_Driver);
 
    overriding
-   procedure rollback (driver : SQLite_Driver);
-
-   overriding
    function last_insert_id (driver : SQLite_Driver) return TraxID;
 
    overriding

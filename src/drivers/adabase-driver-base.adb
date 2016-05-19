@@ -311,6 +311,41 @@ package body AdaBase.Driver.Base is
    end disconnect;
 
 
+   ----------------
+   --  rollback  --
+   ----------------
+   overriding
+   procedure rollback (driver : Base_Driver)
+   is
+      use type TransIsolation;
+      err1 : constant CT.Text :=
+             CT.SUS ("ACK! Rollback attempted on inactive connection");
+      err2 : constant CT.Text :=
+             CT.SUS ("ACK! Rollback attempted when autocommit mode set on");
+      err3 : constant CT.Text :=
+             CT.SUS ("Rollback attempt failed");
+   begin
+      if not driver.connection_active then
+         --  Non-fatal attempt to roll back when no database is connected
+         driver.log_problem (category => miscellaneous,
+                             message  => err1);
+         return;
+      end if;
+      if driver.connection.autoCommit then
+         --  Non-fatal attempt to roll back when autocommit is on
+         driver.log_problem (category => miscellaneous,
+                             message  => err2);
+         return;
+      end if;
+      driver.connection.rollback;
+   exception
+      when others =>
+         driver.log_problem (category   => miscellaneous,
+                             message    => err3,
+                             pull_codes => True);
+   end rollback;
+
+
    -----------------------------------------------------------------------
    --  PRIVATE ROUTINES NOT COVERED BY INTERFACES                        --
    ------------------------------------------------------------------------

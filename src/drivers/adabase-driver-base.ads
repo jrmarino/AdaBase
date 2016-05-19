@@ -35,6 +35,9 @@ package AdaBase.Driver.Base is
    procedure disconnect          (driver : out Base_Driver);
 
    overriding
+   procedure rollback            (driver : Base_Driver);
+
+   overriding
    function trait_autocommit     (driver : Base_Driver)
                                   return Boolean;
 
