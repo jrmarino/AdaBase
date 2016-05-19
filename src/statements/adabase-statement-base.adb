@@ -46,52 +46,6 @@ package body AdaBase.Statement.Base is
 
 
    ---------------------
-   --  redact_quotes  --
-   ---------------------
-   function redact_quotes (sql : String) return String
-   is
-      --  This block will mask anything between quotes (single or double)
-      --  These are considered to be literal and not suitable for binding
-      type seeking is (none, single, double);
-      redacted    : String := sql;
-      seek_status : seeking := none;
-      arrow       : Positive := 1;
-   begin
-      if CT.IsBlank (sql) then
-         return "";
-      end if;
-      loop
-         case sql (arrow) is
-            when ''' =>
-               case seek_status is
-                  when none =>
-                     seek_status := single;
-                     redacted (arrow) := '#';
-                  when single =>
-                     seek_status := none;
-                     redacted (arrow) := '#';
-                  when double => null;
-               end case;
-            when ASCII.Quotation =>
-               case seek_status is
-                  when none =>
-                     seek_status := double;
-                     redacted (arrow) := '#';
-                  when double =>
-                     seek_status := none;
-                     redacted (arrow) := '#';
-                  when single => null;
-               end case;
-            when others => null;
-         end case;
-         exit when arrow = sql'Length;
-         arrow := arrow + 1;
-      end loop;
-      return redacted;
-   end redact_quotes;
-
-
-   ---------------------
    --  transform_sql  --
    ---------------------
    function transform_sql (Stmt : out Base_Statement; sql : String)
@@ -99,7 +53,7 @@ package body AdaBase.Statement.Base is
    is
       procedure reserve_marker;
 
-      sql_mask : String := redact_quotes (sql);
+      sql_mask : String := CT.redact_quotes (sql);
 
       procedure reserve_marker
       is

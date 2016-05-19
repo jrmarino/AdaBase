@@ -588,8 +588,6 @@ private
 
    function Same_Strings (S, T : String) return Boolean;
 
-   function redact_quotes (sql : String) return String;
-
    function transform_sql (Stmt : out Base_Statement; sql : String)
                            return String;
 

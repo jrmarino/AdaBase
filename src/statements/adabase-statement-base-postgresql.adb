@@ -8,7 +8,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    ------------------------
    function reformat_markers (parameterized_sql : String) return String
    is
-      masked : String := redact_quotes (parameterized_sql);
+      masked : String := CT.redact_quotes (parameterized_sql);
       cvslen : Natural := masked'Length;
    begin
       for x in masked'Range loop

@@ -62,4 +62,8 @@ package CommonText is
    --  Returns number of instances of a given character in a given string
    function count_char (S : String; focus : Character) return Natural;
 
+   --  Provides a mask of the given sql string, all quoted text set to '#'
+   --  including the quote marks themselves.
+   function redact_quotes (sql : String) return String;
+
 end CommonText;
