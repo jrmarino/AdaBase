@@ -63,13 +63,13 @@ package AdaBase.Driver.Base.SQLite is
    procedure query_clear_table (driver : SQLite_Driver;
                                 table  : String);
 
-   function query          (driver     : SQLite_Driver;
-                            sql        : String)
-                            return ASS.SQLite_statement;
+   function query              (driver : SQLite_Driver;
+                                sql    : String)
+                                return ASS.SQLite_statement;
 
-   function prepare        (driver     : SQLite_Driver;
-                            sql        : String)
-                            return ASS.SQLite_statement;
+   function prepare            (driver : SQLite_Driver;
+                                sql    : String)
+                                return ASS.SQLite_statement;
 
    function query_select   (driver     : SQLite_Driver;
                             distinct   : Boolean := False;
