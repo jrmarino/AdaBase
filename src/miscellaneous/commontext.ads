@@ -66,4 +66,13 @@ package CommonText is
    --  including the quote marks themselves.
    function redact_quotes (sql : String) return String;
 
+   --  Removes leading and trailing whitespace, and any trailing semicolon
+   function trim_sql (sql : String) return String;
+
+   --  After masking, return number of queries separated by semicolons
+   function count_queries (trimmed_sql : String) return Natural;
+
+   --  Returns a single query given a multiquery and an index starting from 1
+   function subquery (trimmed_sql : String; index : Positive) return String;
+
 end CommonText;

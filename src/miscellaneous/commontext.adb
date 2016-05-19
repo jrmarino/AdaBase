@@ -306,4 +306,63 @@ package body CommonText is
    end redact_quotes;
 
 
+   ----------------
+   --  trim_sql  --
+   ----------------
+   function trim_sql (sql : String) return String is
+      pass1 : String := trim (sql);
+      pass2 : String (1 .. pass1'Length) := pass1;
+   begin
+      if pass2 (pass2'Last) = ASCII.Semicolon then
+         return pass2 (1 .. pass2'Length - 1);
+      else
+         return pass2;
+      end if;
+   end trim_sql;
+
+
+   ---------------------
+   --  count_queries  --
+   ---------------------
+   function count_queries (trimmed_sql : String) return Natural
+   is
+      mask : String := redact_quotes (trimmed_sql);
+   begin
+      return count_char (S => mask, focus => ASCII.Semicolon) + 1;
+   end count_queries;
+
+
+   ----------------
+   --  subquery  --
+   ----------------
+   function subquery (trimmed_sql : String; index : Positive) return String
+   is
+      mask     : String := redact_quotes (trimmed_sql);
+      start    : Natural := trimmed_sql'First;
+      segment  : Natural := 1;
+      scanning : Boolean := (index = segment);
+   begin
+      for x in mask'Range loop
+         if mask (x) = ASCII.Semicolon then
+            if scanning then
+               return trimmed_sql (start .. x - 1);
+            else
+               segment  := segment + 1;
+               start    := x + 1;
+               scanning := (index = segment);
+            end if;
+         end if;
+      end loop;
+
+      --  Here we're either scanning (return current segment) or we aren't,
+      --  meaning the index was too high, so return nothing.  (This should
+      --  never happen because caller knows how many segments there are and
+      --  thus would not request something impossible like this.)
+      if scanning then
+         return trimmed_sql (start .. trimmed_sql'Last);
+      else
+         return "";
+      end if;
+   end subquery;
+
 end CommonText;
