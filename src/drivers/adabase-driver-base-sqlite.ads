@@ -14,18 +14,6 @@ package AdaBase.Driver.Base.SQLite is
    type SQLite_Driver is new Base_Driver and AID.iDriver with private;
 
    overriding
-   function last_insert_id (driver : SQLite_Driver) return TraxID;
-
-   overriding
-   function last_sql_state (driver : SQLite_Driver) return TSqlState;
-
-   overriding
-   function last_driver_code (driver : SQLite_Driver) return DriverCodes;
-
-   overriding
-   function last_driver_message (driver : SQLite_Driver) return String;
-
-   overriding
    function execute (driver : SQLite_Driver; sql : String)
                      return AffectedRows;
 

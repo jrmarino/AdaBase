@@ -41,6 +41,18 @@ package AdaBase.Driver.Base is
    procedure commit              (driver : Base_Driver);
 
    overriding
+   function last_insert_id       (driver : Base_Driver) return TraxID;
+
+   overriding
+   function last_sql_state       (driver : Base_Driver) return TSqlState;
+
+   overriding
+   function last_driver_code     (driver : Base_Driver) return DriverCodes;
+
+   overriding
+   function last_driver_message  (driver : Base_Driver) return String;
+
+   overriding
    function trait_autocommit     (driver : Base_Driver)
                                   return Boolean;
 

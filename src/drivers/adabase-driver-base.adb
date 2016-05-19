@@ -380,6 +380,46 @@ package body AdaBase.Driver.Base is
    end commit;
 
 
+   ------------------------
+   --  last_driver_code  --
+   ------------------------
+   overriding
+   function last_sql_state (driver : Base_Driver) return TSqlState is
+   begin
+      return driver.connection.SqlState;
+   end last_sql_state;
+
+
+   ------------------------
+   --  last_driver_code  --
+   ------------------------
+   overriding
+   function last_driver_code (driver : Base_Driver) return DriverCodes is
+   begin
+      return driver.connection.driverCode;
+   end last_driver_code;
+
+
+   ---------------------------
+   --  last_driver_message  --
+   ---------------------------
+   overriding
+   function last_driver_message (driver : Base_Driver) return String is
+   begin
+      return driver.connection.driverMessage;
+   end last_driver_message;
+
+
+   ----------------------
+   --  last_insert_id  --
+   ----------------------
+   overriding
+   function last_insert_id (driver : Base_Driver) return TraxID is
+   begin
+      return driver.connection.lastInsertID;
+   end last_insert_id;
+
+
    -----------------------------------------------------------------------
    --  PRIVATE ROUTINES NOT COVERED BY INTERFACES                        --
    ------------------------------------------------------------------------

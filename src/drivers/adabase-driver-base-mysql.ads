@@ -14,18 +14,6 @@ package AdaBase.Driver.Base.MySQL is
    type MySQL_Driver is new Base_Driver and AID.iDriver with private;
 
    overriding
-   function last_insert_id (driver : MySQL_Driver) return TraxID;
-
-   overriding
-   function last_sql_state (driver : MySQL_Driver) return TSqlState;
-
-   overriding
-   function last_driver_code (driver : MySQL_Driver) return DriverCodes;
-
-   overriding
-   function last_driver_message (driver : MySQL_Driver) return String;
-
-   overriding
    function execute (driver : MySQL_Driver; sql : String)
                      return AffectedRows;
 
