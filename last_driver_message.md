@@ -79,6 +79,18 @@ Driver message: no such column: caloriesx
 </pre>
 <p class="caption">Output using SQLite Driver</p>
 <br/>
+<pre class="output">
+SQL: UPDATE fruits set caloriesx = 14 WHERE fruit = 'strawberry'
+Error!
+Driver message: ERROR:  column "caloriesx" of relation "fruits" does not exist
+LINE 1: UPDATE fruits set caloriesx = 14 WHERE fruit = 'strawberry'
+                          ^
+
+   Driver code:  2
+     SQL State: 42703
+</pre>
+<p class="caption">Output using PostgreSQL Driver</p>
+<br/>
 <p class="caption">See {{ page.stmt_discard_rest }}
 for another usage example.</p>
 <br/>

@@ -50,7 +50,7 @@ end Fruit1;
 SQL: DELETE FROM fruits WHERE color = 'red'
 Result: Deleted 5 rows
 </pre>
-<p class="caption">Output using MySQL Driver</p>
+<p class="caption">Output using any driver</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>
 </div>

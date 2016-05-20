@@ -128,10 +128,12 @@ SQL: INSERT INTO fruits (fruit, color, calories) VALUES ('date', 'brown', 66)
 Result: Inserted 1 rows
 ID of last inserted row: 39
 The custom logger has been attached.
+##    Phase: TRANSACTION
+##  message: END TRANSACTION (COMMIT)
 ##    Phase: DISCONNECTING
 ##  message: Disconnect From database
 </pre>
-<p class="caption">Output using MySQL Driver</p>
+<p class="caption">Output using any driver</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>
 </div>

@@ -84,14 +84,14 @@ Second execution:
 Result: Deleted 0 rows
 The /tmp/fruit3.test.log has been attached.
 </pre>
-<p class="caption">Output using MySQL Driver</p>
+<p class="caption">Output using any driver</p>
 <br/>
 <pre class="output">
 2016-04-24 11:05:04    mysql :       Connect : Connection to adabase_examples database succeeded.
 2016-04-24 11:05:04    mysql :       Execute : DELETE FROM fruits WHERE color = 'red'
 2016-04-24 11:05:04    mysql :    Disconnect : Disconnect From database
 </pre>
-<p class="caption">Contents of /tmp/fruit3.test.log</p>
+<p class="caption">Contents of /tmp/fruit3.test.log (MySQL driver)</p>
 <br/>
 <p class="caption">See {{ page.query_drop_table }} and {{ page.trait_compressed }}
 for other examples using the standard screen logger.</p>
