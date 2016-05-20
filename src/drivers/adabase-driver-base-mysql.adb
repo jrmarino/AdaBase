@@ -52,7 +52,7 @@ package body AdaBase.Driver.Base.MySQL is
       exception
          when ACM.QUERY_FAIL =>
             driver.log_problem (category   => execution,
-                                message    => CT.SUS (sql),
+                                message    => CT.SUS (trsql),
                                 pull_codes => True);
             return aborted;
       end;

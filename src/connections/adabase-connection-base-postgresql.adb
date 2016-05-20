@@ -715,16 +715,9 @@ package body AdaBase.Connection.Base.PostgreSQL is
    --  execute  --
    ---------------
    overriding
-   procedure execute (conn : out PostgreSQL_Connection; sql : String)
-   is
-      --  Do NOT use PQexec which requires escaping, but allows multiple
-      --  queries.  Instead, use PQexecParams in a loop (manually split
-      --  query into semicolon-separated queries first), but only if
-      --  multiquery option is enabled.  If option is disabled and multiple
-      --  queries are detected, throw an error.
+   procedure execute (conn : out PostgreSQL_Connection; sql : String) is
    begin
-      --  TO BE IMPLEMENTED
-      null;
+     conn.private_execute (sql);
    end execute;
 
 

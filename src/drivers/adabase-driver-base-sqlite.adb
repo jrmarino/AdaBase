@@ -48,7 +48,7 @@ package body AdaBase.Driver.Base.SQLite is
       exception
          when ACS.QUERY_FAIL =>
             driver.log_problem (category   => execution,
-                                message    => CT.SUS (sql),
+                                message    => CT.SUS (trsql),
                                 pull_codes => True);
             return aborted;
       end;

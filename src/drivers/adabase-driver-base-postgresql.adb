@@ -207,26 +207,17 @@ package body AdaBase.Driver.Base.PostgreSQL is
       declare
          result : AffectedRows;
       begin
-         for query_index in Positive range 1 .. nquery loop
-            result := 0;
-            if nquery = 1 then
-               driver.connection.execute (trsql);
-               driver.log_nominal (execution, CT.SUS (trsql));
-            else
-               declare
-                  SQ : constant String := CT.subquery (trsql, query_index);
-               begin
-                  driver.connection.execute (SQ);
-                  driver.log_nominal (execution, CT.SUS (SQ));
-               end;
-            end if;
-         end loop;
+         --  PostgreSQL execute supports multiquery in all cases, so it is not
+         --  necessary to loop through subqueries.  We send the trimmed
+         --  compound query as it was received.
+         driver.connection.execute (trsql);
+         driver.log_nominal (execution, CT.SUS (trsql));
          result := driver.connection.rows_affected_by_execution;
          return result;
       exception
          when CON.QUERY_FAIL =>
             driver.log_problem (category   => execution,
-                                message    => CT.SUS (sql),
+                                message    => CT.SUS (trsql),
                                 pull_codes => True);
             return aborted;
       end;
