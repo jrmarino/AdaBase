@@ -186,6 +186,45 @@ package body AdaBase.Connection.Base.PostgreSQL is
    end private_execute;
 
 
+   ----------------------
+   --  private_select  --
+   ----------------------
+   function private_select (conn : PostgreSQL_Connection; sql : String)
+                            return BND.PGresult_Access
+   is
+      use type BND.ExecStatusType;
+      pgres   : BND.PGresult_Access;
+      query   : BND.ICS.chars_ptr := BND.ICS.New_String (Str => sql);
+      selcmd  : Boolean := True;
+      success : Boolean;
+      msg     : CT.Text;
+   begin
+      pgres := BND.PQexec (conn => conn.handle, command => query);
+
+      BND.ICS.Free (query);
+      case BND.PQresultStatus (pgres) is
+         when BND.PGRES_TUPLES_OK =>
+            success := True;
+         when BND.PGRES_COMMAND_OK =>
+            success := False;
+            selcmd := False;
+         when others =>
+            success := False;
+            msg := CT.SUS (conn.driverMessage (pgres));
+      end case;
+
+      if not success then
+         if selcmd then
+            raise QUERY_FAIL with CT.USS (msg);
+         else
+            raise QUERY_FAIL with "Not a SELECT query: " & sql;
+         end if;
+      end if;
+
+      return pgres;
+   end private_select;
+
+
    ----------------------------------------------
    --  rows_affected_by_execution (interface)  --
    ----------------------------------------------
@@ -701,13 +740,48 @@ package body AdaBase.Connection.Base.PostgreSQL is
 
 
    --------------------
+   --  field_string  --
+   --------------------
+   function field_string  (conn : PostgreSQL_Connection;
+                           res  : BND.PGresult_Access;
+                           row_number    : Natural;
+                           column_number : Natural) return String
+   is
+      rownum : constant BND.IC.int := BND.IC.int (row_number);
+      colnum : constant BND.IC.int := BND.IC.int (column_number);
+      result : BND.ICS.chars_ptr := BND.PQgetvalue (res, rownum, colnum);
+   begin
+      return BND.ICS.Value (result);
+   end field_string;
+
+
+   --------------------
    --  lastInsertID  --
    --------------------
    overriding
-   function lastInsertID (conn : PostgreSQL_Connection) return TraxID is
+   function lastInsertID (conn : PostgreSQL_Connection) return TraxID
+   is
+      pgres   : BND.PGresult_Access;
+      product : TraxID := 0;
    begin
-      --  TO BE IMPLEMENTED (use SELECT lastval() ?)
-      return 0;
+      --  private_select can raise exception, but don't catch it
+      --  For lastval(), exceptions should not be thrown so don't mask it
+      pgres := conn.private_select ("SELECT lastval()");
+
+      if conn.field_is_null (pgres, 0, 0) then
+         BND.PQclear (pgres);
+         return 0;
+      end if;
+
+      declare
+         field : constant String := conn.field_string (pgres, 0, 0);
+      begin
+         product := TraxID (Integer'Value (field));
+      exception
+         when others => null;
+      end;
+      BND.PQclear (pgres);
+      return product;
    end lastInsertID;
 
 

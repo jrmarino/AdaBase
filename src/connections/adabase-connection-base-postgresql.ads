@@ -128,6 +128,11 @@ package AdaBase.Connection.Base.PostgreSQL is
                            res  : BND.PGresult_Access;
                            column_number : Natural) return String;
 
+   function field_string  (conn : PostgreSQL_Connection;
+                           res  : BND.PGresult_Access;
+                           row_number    : Natural;
+                           column_number : Natural) return String;
+
    function driverMessage (conn : PostgreSQL_Connection;
                            res  : BND.PGresult_Access) return String;
 
@@ -177,6 +182,8 @@ private
    function within_transaction (conn : PostgreSQL_Connection) return Boolean;
    function connection_attempt_succeeded (conn : PostgreSQL_Connection)
                                           return Boolean;
+   function private_select     (conn : PostgreSQL_Connection; sql : String)
+                                return BND.PGresult_Access;
 
    overriding
    procedure finalize (conn : in out PostgreSQL_Connection);
