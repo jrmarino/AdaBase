@@ -1,7 +1,11 @@
 --  This file is covered by the Internet Software Consortium (ISC) License
 --  Reference: ../../License.txt
 
+with Ada.Characters.Handling;
+
 package body AdaBase.Connection.Base.PostgreSQL is
+
+   package ACH renames Ada.Characters.Handling;
 
    ---------------------
    --  setCompressed  --
@@ -158,23 +162,47 @@ package body AdaBase.Connection.Base.PostgreSQL is
       query   : BND.ICS.chars_ptr := BND.ICS.New_String (Str => sql);
       success : Boolean;
       msg     : CT.Text;
+      ins_cmd : Boolean := False;
    begin
+      if sql'Length > 12 and then
+        ACH.To_Upper (sql (sql'First .. sql'First + 6)) = "INSERT "
+      then
+         ins_cmd := True;
+      end if;
+
       pgres := BND.PQexec (conn => conn.handle, command => query);
 
       BND.ICS.Free (query);
       case BND.PQresultStatus (pgres) is
-         when BND.PGRES_COMMAND_OK | BND.PGRES_TUPLES_OK =>
+         when BND.PGRES_COMMAND_OK =>
             success := True;
+            conn.cmd_insert_return := False;
+         when BND.PGRES_TUPLES_OK =>
+            success := True;
+            conn.cmd_insert_return := ins_cmd;
          when others =>
             success := False;
             msg := CT.SUS (conn.driverMessage (pgres));
       end case;
+      conn.insert_return_val := 0;
       conn.cmd_sql_state := conn.SqlState (pgres);
 
       if success then
          conn.cmd_rows_impact := conn.rows_impacted (pgres);
       else
          conn.cmd_rows_impact := 0;
+      end if;
+
+      if conn.cmd_insert_return then
+         if not conn.field_is_null (pgres, 0, 0) then
+            declare
+               field : constant String := conn.field_string (pgres, 0, 0);
+            begin
+               conn.insert_return_val := TraxID (Integer'Value (field));
+            exception
+               when others => null;
+            end;
+         end if;
       end if;
 
       BND.PQclear (pgres);
@@ -761,6 +789,25 @@ package body AdaBase.Connection.Base.PostgreSQL is
    overriding
    function lastInsertID (conn : PostgreSQL_Connection) return TraxID
    is
+      --  PostgreSQL has a non-standard extension to INSERT INTO called
+      --  RETURNING that is the most reliably method to get the last insert
+      --  ID on the primary key.  We use it (determined in private_execute)
+      --  if RETURNING was part of the INSERT query, otherwise we fall back
+      --  to the less reliable lastval() method.
+   begin
+      if conn.cmd_insert_return then
+         return conn.insert_return_val;
+      else
+         return conn.select_last_val;
+      end if;
+   end lastInsertID;
+
+
+   -----------------------
+   --  select_last_val  --
+   -----------------------
+   function select_last_val (conn : PostgreSQL_Connection) return TraxID
+   is
       pgres   : BND.PGresult_Access;
       product : TraxID := 0;
    begin
@@ -782,7 +829,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
       end;
       BND.PQclear (pgres);
       return product;
-   end lastInsertID;
+   end select_last_val;
 
 
    ---------------

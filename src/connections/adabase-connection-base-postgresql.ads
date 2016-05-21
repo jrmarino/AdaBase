@@ -168,6 +168,10 @@ private
       handle           : aliased BND.PGconn_Access := null;
       cmd_sql_state    : TSqlState := stateless;
       cmd_rows_impact  : AffectedRows := 0;
+
+      --  For last insert id support using INSERT INTO ... RETURNING
+      cmd_insert_return : Boolean := False;
+      insert_return_val : TraxID := 0;
    end record;
 
    function is_ipv4_or_ipv6 (teststr : String) return Boolean;
@@ -177,6 +181,7 @@ private
    procedure Initialize (conn : in out PostgreSQL_Connection);
    procedure private_execute (conn : out PostgreSQL_Connection; sql : String);
    procedure begin_transaction (conn : out PostgreSQL_Connection);
+   function select_last_val    (conn : PostgreSQL_Connection) return TraxID;
    function get_server_version (conn : PostgreSQL_Connection) return Natural;
    function get_server_info    (conn : PostgreSQL_Connection) return CT.Text;
    function within_transaction (conn : PostgreSQL_Connection) return Boolean;
