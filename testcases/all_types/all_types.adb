@@ -26,8 +26,8 @@ procedure All_Types is
 
    procedure dump_result;
    function halfbyte_to_hex (value : halfbyte) return Character;
-   function convert_chain (chain : AR.chain) return String;
-   function convert_set (set : AR.settype) return String;
+   function convert_chain (chain : AR.Chain) return String;
+   function convert_set (set : AR.Settype) return String;
    function pad (S : String; Slen : Natural) return String;
    function pad (S : String; Slen : Natural) return String
    is
@@ -49,11 +49,11 @@ procedure All_Types is
       end case;
    end halfbyte_to_hex;
 
-   function convert_chain (chain : AR.chain) return String
+   function convert_chain (chain : AR.Chain) return String
    is
-      use type AR.nbyte1;
+      use type AR.NByte1;
       blocks    : constant Natural := chain'Length;
-      mask_ones : constant AR.nbyte1 := 16#0F#;
+      mask_ones : constant AR.NByte1 := 16#0F#;
       work_4bit : halfbyte;
       result    : String (1 .. blocks * 3 - 1) := (others => ' ');
       index     : Natural := 0;
@@ -76,7 +76,7 @@ procedure All_Types is
       return result;
    end convert_chain;
 
-   function convert_set (set : AR.settype) return String
+   function convert_set (set : AR.Settype) return String
    is
       result : CT.Text;
    begin
@@ -93,7 +93,7 @@ procedure All_Types is
 
    procedure dump_result
    is
-      row     : ARS.DataRow;
+      row     : ARS.Datarow;
       numcols : constant Natural := stmt_acc.column_count;
    begin
       loop
@@ -171,40 +171,40 @@ begin
    end;
 
    declare
-      v_nbyte0 : aliased AR.nbyte0;
-      v_nbyte1 : aliased AR.nbyte1;
-      v_nbyte2 : aliased AR.nbyte2;
-      v_nbyte3 : aliased AR.nbyte3;
-      v_nbyte4 : aliased AR.nbyte4;
-      v_nbyte8 : aliased AR.nbyte8;
-      v_byte1  : aliased AR.byte1;
-      v_byte2  : aliased AR.byte2;
-      v_byte3  : aliased AR.byte3;
-      v_byte4  : aliased AR.byte4;
-      v_byte8  : aliased AR.byte8;
-      v_exact  : aliased AR.real9;
-      v_real9  : aliased AR.real9;
-      v_real18 : aliased AR.real18;
-      v_text1  : aliased AR.textual;
-      v_text2  : aliased AR.textual;
-      v_text3  : aliased AR.textual;
-      v_text4  : aliased AR.textual;
-      v_text5  : aliased AR.textual;
-      v_text6  : aliased AR.textual;
+      v_nbyte0 : aliased AR.NByte0;
+      v_nbyte1 : aliased AR.NByte1;
+      v_nbyte2 : aliased AR.NByte2;
+      v_nbyte3 : aliased AR.NByte3;
+      v_nbyte4 : aliased AR.NByte4;
+      v_nbyte8 : aliased AR.NByte8;
+      v_byte1  : aliased AR.Byte1;
+      v_byte2  : aliased AR.Byte2;
+      v_byte3  : aliased AR.Byte3;
+      v_byte4  : aliased AR.Byte4;
+      v_byte8  : aliased AR.Byte8;
+      v_exact  : aliased AR.Real9;
+      v_real9  : aliased AR.Real9;
+      v_real18 : aliased AR.Real18;
+      v_text1  : aliased AR.Textual;
+      v_text2  : aliased AR.Textual;
+      v_text3  : aliased AR.Textual;
+      v_text4  : aliased AR.Textual;
+      v_text5  : aliased AR.Textual;
+      v_text6  : aliased AR.Textual;
       v_time1  : aliased AR.AC.Time;
       v_time2  : aliased AR.AC.Time;
       v_time3  : aliased AR.AC.Time;
       v_time4  : aliased AR.AC.Time;
-      v_year   : aliased AR.nbyte2;
-      v_bit    : aliased AR.chain := (1 .. 2 => 0);
-      v_chain1 : aliased AR.chain := (1 .. 4 => 0);
-      v_chain2 : aliased AR.chain := (1 .. 6 => 0);
-      v_chain3 : aliased AR.chain := (1 .. 16 => 0);
-      v_chain4 : aliased AR.chain := (1 .. 16 => 0);
-      v_chain5 : aliased AR.chain := (1 .. 16 => 0);
-      v_chain6 : aliased AR.chain := (1 .. 16 => 0);
-      v_enum   : aliased AR.enumtype;
-      v_set    : aliased AR.settype := (1 .. 6 => (AR.PARAM_IS_ENUM));
+      v_year   : aliased AR.NByte2;
+      v_bit    : aliased AR.Chain := (1 .. 2 => 0);
+      v_chain1 : aliased AR.Chain := (1 .. 4 => 0);
+      v_chain2 : aliased AR.Chain := (1 .. 6 => 0);
+      v_chain3 : aliased AR.Chain := (1 .. 16 => 0);
+      v_chain4 : aliased AR.Chain := (1 .. 16 => 0);
+      v_chain5 : aliased AR.Chain := (1 .. 16 => 0);
+      v_chain6 : aliased AR.Chain := (1 .. 16 => 0);
+      v_enum   : aliased AR.Enumtype;
+      v_set    : aliased AR.Settype := (1 .. 6 => (AR.PARAM_IS_ENUM));
       stmt : CON.Stmt_Type := CON.DR.prepare (sql1);
    begin
       if stmt.execute then
@@ -284,53 +284,53 @@ begin
    end;
 
    declare
-      numrows : AdaBase.AffectedRows;
+      numrows : AdaBase.Affected_Rows;
    begin
       numrows := CON.DR.execute ("DELETE FROM all_types WHERE id_nbyte3 > 8");
       CON.DR.commit;
    end;
 
    declare
-      v_nbyte0 : aliased AR.nbyte0  := False;
-      v_nbyte1 : aliased AR.nbyte1  := 22;
-      v_nbyte2 : aliased AR.nbyte2  := 5800;
-      v_nbyte3 : aliased AR.nbyte3  := 9;
-      v_nbyte4 : aliased AR.nbyte4  := AR.nbyte4 (2 ** 20);
-      v_nbyte8 : aliased AR.nbyte8  := AR.nbyte8 (2 ** 24 + 1);
-      v_byte1  : aliased AR.byte1   := AR.byte1 (-2);
-      v_byte2  : aliased AR.byte2   := AR.byte2 (-132);
-      v_byte3  : aliased AR.byte3   := AR.byte3 (-8000000);
-      v_byte4  : aliased AR.byte4   := 24;
-      v_byte8  : aliased AR.byte8   := 128;
-      v_exact  : aliased AR.real9   := 7.32;
-      v_real9  : aliased AR.real9   := 999.01234;
-      v_real18 : aliased AR.real18  := 99999.01234567890123456789;
-      v_text1  : aliased AR.textual := CT.SUS ("Popeye");
-      v_text2  : aliased AR.textual := CT.SUS ("Daredevel");
-      v_text3  : aliased AR.textual := CT.SUS ("The Punisher");
-      v_text4  : aliased AR.textual := CT.SUS ("Electra");
-      v_text5  : aliased AR.textual := CT.SUS ("Iron Man");
-      v_text6  : aliased AR.textual := CT.SUS ("Bruce Banner");
+      v_nbyte0 : aliased AR.NByte0  := False;
+      v_nbyte1 : aliased AR.NByte1  := 22;
+      v_nbyte2 : aliased AR.NByte2  := 5800;
+      v_nbyte3 : aliased AR.NByte3  := 9;
+      v_nbyte4 : aliased AR.NByte4  := AR.NByte4 (2 ** 20);
+      v_nbyte8 : aliased AR.NByte8  := AR.NByte8 (2 ** 24 + 1);
+      v_byte1  : aliased AR.Byte1   := AR.Byte1 (-2);
+      v_byte2  : aliased AR.Byte2   := AR.Byte2 (-132);
+      v_byte3  : aliased AR.Byte3   := AR.Byte3 (-8000000);
+      v_byte4  : aliased AR.Byte4   := 24;
+      v_byte8  : aliased AR.Byte8   := 128;
+      v_exact  : aliased AR.Real9   := 7.32;
+      v_real9  : aliased AR.Real9   := 999.01234;
+      v_real18 : aliased AR.Real18  := 99999.01234567890123456789;
+      v_text1  : aliased AR.Textual := CT.SUS ("Popeye");
+      v_text2  : aliased AR.Textual := CT.SUS ("Daredevel");
+      v_text3  : aliased AR.Textual := CT.SUS ("The Punisher");
+      v_text4  : aliased AR.Textual := CT.SUS ("Electra");
+      v_text5  : aliased AR.Textual := CT.SUS ("Iron Man");
+      v_text6  : aliased AR.Textual := CT.SUS ("Bruce Banner");
       v_time1  : aliased AR.AC.Time := CFM.Time_Of (1995, 2, 14);
       v_time2  : aliased AR.AC.Time := CFM.Time_Of (1998, 3, 17, 6, 7, 8);
       v_time3  : aliased AR.AC.Time := CFM.Time_Of (2005, 4, 20, 1, 32, 0);
       v_time4  : aliased AR.AC.Time := CFM.Time_Of (1901, 1, 1, 4, 57, 50);
-      v_year   : aliased AR.nbyte2  := 1992;
-      v_bit    : aliased AR.chain   := (5, 127);
-      v_chain1 : aliased AR.chain   := (12, 44, 65, 240);
-      v_chain2 : aliased AR.chain   := (97, 99, 102);
-      v_chain3 : aliased AR.chain   := (1, 0, 20, 37, 10);
-      v_chain4 : aliased AR.chain   := (200, 232, 98, 100, 77, 82);
-      v_chain5 : aliased AR.chain   := (50, 12, 2, 4, 99, 255, 27);
-      v_chain6 : aliased AR.chain   := (0, 0, 0, 0, 1, 2, 3, 4);
-      v_enum   : aliased AR.enumtype := (enumeration => CT.SUS ("pink"));
-      v_set    : aliased AR.settype := ((enumeration => CT.SUS ("red")),
+      v_year   : aliased AR.NByte2  := 1992;
+      v_bit    : aliased AR.Chain   := (5, 127);
+      v_chain1 : aliased AR.Chain   := (12, 44, 65, 240);
+      v_chain2 : aliased AR.Chain   := (97, 99, 102);
+      v_chain3 : aliased AR.Chain   := (1, 0, 20, 37, 10);
+      v_chain4 : aliased AR.Chain   := (200, 232, 98, 100, 77, 82);
+      v_chain5 : aliased AR.Chain   := (50, 12, 2, 4, 99, 255, 27);
+      v_chain6 : aliased AR.Chain   := (0, 0, 0, 0, 1, 2, 3, 4);
+      v_enum   : aliased AR.Enumtype := (enumeration => CT.SUS ("pink"));
+      v_set    : aliased AR.Settype := ((enumeration => CT.SUS ("red")),
                                         (enumeration => CT.SUS ("green")));
-      v_set2   : AR.settype :=         ((enumeration => CT.SUS ("yellow")),
+      v_set2   : AR.Settype :=         ((enumeration => CT.SUS ("yellow")),
                                         (enumeration => CT.SUS ("white")),
                                         (enumeration => CT.SUS ("red")));
-      v_chain7 : AR.chain := (65, 66, 67, 68);
-      v_chain8 : AR.chain := (97, 98, 99, 100, 101);
+      v_chain7 : AR.Chain := (65, 66, 67, 68);
+      v_chain8 : AR.Chain := (97, 98, 99, 100, 101);
 
       stmt : CON.Stmt_Type := CON.DR.prepare (sql2);
    begin
