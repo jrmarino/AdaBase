@@ -9,7 +9,7 @@ procedure MultiQuery is
    package TIO renames Ada.Text_IO;
    package EX  renames Ada.Exceptions;
 
-   numrows : AdaBase.AffectedRows;
+   numrows : AdaBase.Affected_Rows;
    setting : Boolean;
    nextone : Boolean;
 
