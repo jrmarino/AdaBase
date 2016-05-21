@@ -619,7 +619,7 @@ package body AdaBase.Results.Field is
    ------------------------------
    --  CREATE STANDARD FIELDS  --
    ------------------------------
-   function spawn_field (data : variant; null_data : Boolean := False)
+   function spawn_field (data : Variant; null_data : Boolean := False)
                          return Std_Field
    is
       result : Std_Field;
@@ -646,7 +646,7 @@ package body AdaBase.Results.Field is
    end spawn_field;
 
 
-   procedure set (field : out Std_Field; data : variant; exnull : Boolean) is
+   procedure set (field : out Std_Field; data : Variant; exnull : Boolean) is
    begin
       case data.datatype is
          when ft_nbyte0    => field.native := (ft_nbyte0, data.v00);

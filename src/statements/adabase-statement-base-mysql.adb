@@ -728,7 +728,7 @@ package body AdaBase.Statement.Base.MySQL is
                sz : constant Natural := field_lengths (F);
                EN : constant Boolean := row (F) = null;
                ST : constant String  := db_convert (row (F), sz);
-               dvariant : ARF.variant;
+               dvariant : ARF.Variant;
             begin
                case Stmt.column_info.Element (Index => F).field_type is
                   when ft_nbyte0 =>
@@ -894,7 +894,7 @@ package body AdaBase.Statement.Base.MySQL is
             declare
                use type ABM.enum_field_types;
                cv       : mysql_canvas renames Stmt.bind_canvas (F);
-               dvariant : ARF.variant;
+               dvariant : ARF.Variant;
                field    : ARF.Std_Field;
                last_one : constant Boolean := (F = maxlen);
                datalen  : constant Natural := Natural (cv.length);

@@ -518,7 +518,7 @@ package body AdaBase.Statement.Base.SQLite is
          for F in 1 .. maxlen loop
             declare
                field    : ARF.Std_Field;
-               dvariant : ARF.variant;
+               dvariant : ARF.Variant;
                scol     : constant Natural := F - 1;
                last_one : constant Boolean := (F = maxlen);
                heading  : constant String := CT.USS
@@ -600,7 +600,7 @@ package body AdaBase.Statement.Base.SQLite is
                colinfo  : column_info renames Stmt.column_info.Element (F);
                Tout     : constant field_types := dossier.output_type;
                Tnative  : constant field_types := colinfo.field_type;
-               dvariant : ARF.variant;
+               dvariant : ARF.Variant;
                scol     : constant Natural := F - 1;
             begin
                if not dossier.bound then

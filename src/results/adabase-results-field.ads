@@ -4,9 +4,9 @@
 package AdaBase.Results.Field is
 
    type Std_Field is tagged private;
-   type field_access is access Std_Field;
+   type Field_Access is access Std_Field;
 
-   type variant (datatype : field_types := ft_nbyte8) is
+   type Variant (datatype : field_types := ft_nbyte8) is
       record
          case datatype is
             when ft_nbyte0    => v00 : Boolean;
@@ -60,7 +60,7 @@ package AdaBase.Results.Field is
    function is_null     (field : Std_Field) return Boolean;
    function native_type (field : Std_Field) return field_types;
 
-   function spawn_field (data : variant; null_data : Boolean := False)
+   function spawn_field (data : Variant; null_data : Boolean := False)
                          return Std_Field;
    function spawn_field (binob : chain) return Std_Field;
    function spawn_field (enumset : String) return Std_Field;
@@ -68,10 +68,10 @@ package AdaBase.Results.Field is
 private
 
    type Std_Field is tagged record
-      native        : variant;
+      native        : Variant;
       explicit_null : Boolean := False;
    end record;
 
-   procedure set (field : out Std_Field; data : variant; exnull : Boolean);
+   procedure set (field : out Std_Field; data : Variant; exnull : Boolean);
 
 end AdaBase.Results.Field;

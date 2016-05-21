@@ -1489,7 +1489,7 @@ package body AdaBase.Statement.Base is
       ST   : AR.textual;
       STW  : AR.textwide;
       STS  : AR.textsuper;
-      hold : ARF.variant;
+      hold : ARF.Variant;
    begin
       case zone.output_type is
          when ft_widetext =>
