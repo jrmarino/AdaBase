@@ -257,7 +257,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
       if driver.connection_active then
          declare
             statement : SMT.PostgreSQL_statement
-              (type_of_statement => AID.ASB.prepared_statement,
+              (type_of_statement => stype,
                log_handler       => logger'Access,
                pgsql_conn        => CON.PostgreSQL_Connection_Access
                                     (driver.connection),
@@ -265,7 +265,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
                con_error_mode    => driver.trait_error_mode,
                con_case_mode     => driver.trait_column_case,
                con_max_blob      => driver.trait_max_blob_size,
-               con_buffered      => True);
+               con_buffered      => True);  --  IMPLEMENT
          begin
             if not prepared then
                if statement.successful then

@@ -203,7 +203,8 @@ private
    function get_library_version return Natural;
 
    procedure Initialize (conn : in out PostgreSQL_Connection);
-   procedure private_execute (conn : out PostgreSQL_Connection; sql : String);
+   procedure private_execute   (conn : out PostgreSQL_Connection; sql : String;
+                                preserve_result : Boolean := False);
    procedure begin_transaction (conn : out PostgreSQL_Connection);
    procedure cache_table_names (conn : out PostgreSQL_Connection);
    function select_last_val    (conn : PostgreSQL_Connection) return Trax_ID;

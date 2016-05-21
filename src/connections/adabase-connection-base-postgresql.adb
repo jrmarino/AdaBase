@@ -155,7 +155,8 @@ package body AdaBase.Connection.Base.PostgreSQL is
    -----------------------
    --  private_execute  --
    -----------------------
-   procedure private_execute (conn : out PostgreSQL_Connection; sql : String)
+   procedure private_execute (conn : out PostgreSQL_Connection; sql : String;
+                              preserve_result : Boolean := False)
    is
       use type BND.ExecStatusType;
       pgres   : BND.PGresult_Access;
@@ -205,7 +206,9 @@ package body AdaBase.Connection.Base.PostgreSQL is
          end if;
       end if;
 
-      BND.PQclear (pgres);
+      if not preserve_result then
+         BND.PQclear (pgres);
+      end if;
 
       if not success then
          raise QUERY_FAIL with CT.USS (msg);
@@ -843,7 +846,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    overriding
    procedure execute (conn : out PostgreSQL_Connection; sql : String) is
    begin
-     conn.private_execute (sql);
+      conn.private_execute (sql => sql, preserve_result => True);
    end execute;
 
 

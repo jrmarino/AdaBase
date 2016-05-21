@@ -280,22 +280,21 @@ package body AdaBase.Statement.Base.PostgreSQL is
             logcat := statement_preparation;
       end case;
 
-      if conn.prepare_statement (stmt => Object.stmt_handle,
-                                 sql  => Object.sql_final.all)
-      then
-         Object.successful_execution := True;
-         Object.log_nominal (category => logcat,
-                             message  => Object.sql_final.all);
-      else
-         Object.log_problem
+      if Object.type_of_statement = prepared_statement then
+         if conn.prepare_statement (stmt => Object.stmt_handle,
+                                    sql  => Object.sql_final.all)
+         then
+            Object.successful_execution := True;
+            Object.log_nominal (category => logcat,
+                                message  => Object.sql_final.all);
+         else
+            Object.log_problem
               (category => statement_preparation,
-               message  => "Failed to parse a direct SQL query: '" &
+               message  => "Failed to parse SQL query: '" &
                             Object.sql_final.all & "'",
                pull_codes => True);
-         return;
-      end if;
-
-      if Object.type_of_statement = prepared_statement then
+            return;
+         end if;
          --  Check that we have as many markers as expected
 --           declare
 --              params : Natural := conn.prep_markers_found (Object.stmt_handle);
@@ -310,15 +309,12 @@ package body AdaBase.Statement.Base.PostgreSQL is
 --                 return;
 --              end if;
 --           end;
-         null;
       else
---           if not Object.private_execute then
---              Object.log_problem
---                (category => statement_preparation,
---                 message  => "Failed to execute a direct SQL query");
---              return;
---           end if;
-         null;
+         --  let HELL handler catch failed messages
+         conn.execute (Object.sql_final.all);
+         Object.successful_execution := True;
+         Object.log_nominal (category => logcat,
+                             message  => Object.sql_final.all);
       end if;
 
       Object.scan_column_information;
@@ -455,20 +451,15 @@ package body AdaBase.Statement.Base.PostgreSQL is
    procedure finalize (Object : in out PostgreSQL_statement)
    is
       use type BND.PGresult_Access;
+      conn : CON.PostgreSQL_Connection_Access renames Object.pgsql_conn;
    begin
       if Object.assign_counter /= 2 then
          return;
       end if;
 
       if Object.stmt_handle /= null then
-         --  IMPLEMENT
-         null;
---           if not Object.sqlite_conn.prep_finalize (Object.stmt_handle) then
---              Object.log_problem
---                (category   => statement_preparation,
---                 message    => "Deallocating statement resources",
---                 pull_codes => True);
---           end if;
+         conn.discard_pgresult (Object.stmt_handle);
+         Object.stmt_handle := null;
       end if;
 
       if Object.sql_final /= null then
