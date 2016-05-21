@@ -74,20 +74,20 @@ procedure Spawn_Fields is
    package AR  renames AdaBase.Results;
    package ARC renames AdaBase.Results.Converters;
 
-   SF : AR.Field.std_field :=
+   SF : AR.Field.Std_Field :=
         AR.Field.spawn_field (binob => (50, 15, 4, 8));
 
-   BR : AR.Field.std_field :=
+   BR : AR.Field.Std_Field :=
         AR.Field.spawn_field (data =>
         (datatype => AdaBase.ft_textual,
               v13 => SU.To_Unbounded_String ("Baltimore Ravens")));
 
-   myset : AR.settype (1 .. 3) :=
+   myset : AR.Settype (1 .. 3) :=
                ((enumeration => SU.To_Unbounded_String ("hockey")),
                 (enumeration => SU.To_Unbounded_String ("baseball")),
                 (enumeration => SU.To_Unbounded_String ("tennis")));
 
-   ST : AR.Field.std_field :=
+   ST : AR.Field.Std_Field :=
         AR.Field.spawn_field (enumset => ARC.convert (myset));
 
    chain_len : Natural := SF.as_chain'Length;
