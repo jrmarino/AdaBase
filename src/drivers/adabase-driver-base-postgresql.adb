@@ -207,11 +207,23 @@ package body AdaBase.Driver.Base.PostgreSQL is
       declare
          result : AffectedRows;
       begin
-         --  PostgreSQL execute supports multiquery in all cases, so it is not
-         --  necessary to loop through subqueries.  We send the trimmed
-         --  compound query as it was received.
-         driver.connection.execute (trsql);
-         driver.log_nominal (execution, CT.SUS (trsql));
+         --  In order to support INSERT INTO .. RETURNING, we have to execute
+         --  multiqueries individually because we are scanning the first 7
+         --  characters to be "INSERT " after converting to upper case.
+         for query_index in Positive range 1 .. nquery loop
+            result := 0;
+            if nquery = 1 then
+               driver.connection.execute (trsql);
+               driver.log_nominal (execution, CT.SUS (trsql));
+            else
+               declare
+                  SQ : constant String := CT.subquery (trsql, query_index);
+               begin
+                  driver.connection.execute (SQ);
+                  driver.log_nominal (execution, CT.SUS (SQ));
+               end;
+            end if;
+         end loop;
          result := driver.connection.rows_affected_by_execution;
          return result;
       exception
