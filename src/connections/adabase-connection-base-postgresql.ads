@@ -4,6 +4,7 @@
 with AdaBase.Interfaces.Connection;
 with AdaBase.Bindings.PostgreSQL;
 with AdaBase.Results;
+with Ada.Containers.Ordered_Maps;
 with Ada.Exceptions;
 
 package AdaBase.Connection.Base.PostgreSQL is
@@ -128,6 +129,14 @@ package AdaBase.Connection.Base.PostgreSQL is
                            res  : BND.PGresult_Access;
                            column_number : Natural) return String;
 
+   function field_type    (conn : PostgreSQL_Connection;
+                           res  : BND.PGresult_Access;
+                           column_number : Natural) return field_types;
+
+   function field_table   (conn : PostgreSQL_Connection;
+                           res  : BND.PGresult_Access;
+                           column_number : Natural) return String;
+
    function field_string  (conn : PostgreSQL_Connection;
                            res  : BND.PGresult_Access;
                            row_number    : Natural;
@@ -160,6 +169,14 @@ package AdaBase.Connection.Base.PostgreSQL is
 
 private
 
+   type table_cell is record
+      column_1 : CT.Text;
+   end record;
+
+   package table_map is new Ada.Containers.Ordered_Maps
+     (Key_Type     => Positive,
+      Element_Type => table_cell);
+
    type PostgreSQL_Connection is new Base_Connection and AIC.iConnection
      with record
       info_description : String (1 .. 29) := "PostgreSQL 9.1+ native driver";
@@ -172,6 +189,9 @@ private
       --  For last insert id support using INSERT INTO ... RETURNING
       cmd_insert_return : Boolean := False;
       insert_return_val : Trax_ID := 0;
+
+      --  Upon connection, dump tables and data types and store them
+      tables            : table_map.Map;
    end record;
 
    function is_ipv4_or_ipv6 (teststr : String) return Boolean;
@@ -181,6 +201,7 @@ private
    procedure Initialize (conn : in out PostgreSQL_Connection);
    procedure private_execute (conn : out PostgreSQL_Connection; sql : String);
    procedure begin_transaction (conn : out PostgreSQL_Connection);
+   procedure cache_table_names (conn : out PostgreSQL_Connection);
    function select_last_val    (conn : PostgreSQL_Connection) return Trax_ID;
    function get_server_version (conn : PostgreSQL_Connection) return Natural;
    function get_server_info    (conn : PostgreSQL_Connection) return CT.Text;

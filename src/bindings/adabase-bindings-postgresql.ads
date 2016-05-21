@@ -85,6 +85,8 @@ package AdaBase.Bindings.PostgreSQL is
    PG_DIAG_DATATYPE_NAME   : constant IC.int := IC.int (Character'Pos ('d'));
    PG_DIAG_CONSTRAINT_NAME : constant IC.int := IC.int (Character'Pos ('n'));
 
+   InvalidOid              : constant Oid := Oid (0);
+
    -----------------
    -- Subprograms --
    -----------------
@@ -134,6 +136,10 @@ package AdaBase.Bindings.PostgreSQL is
 
    function PQftype (res : PGresult_Access; column_number : IC.int) return Oid;
    pragma Import (C, PQftype, "PQftype");
+
+   function PQftable (res : PGresult_Access; column_number : IC.int)
+                      return Oid;
+   pragma Import (C, PQftable, "PQftable");
 
    function PQgetisnull (res           : PGresult_Access;
                          row_number    : IC.int;

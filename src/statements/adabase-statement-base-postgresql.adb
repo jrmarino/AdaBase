@@ -162,8 +162,9 @@ package body AdaBase.Statement.Base.PostgreSQL is
                          return String
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+      pndx : Natural := index - 1;
    begin
-      return conn.field_name (Stmt.result_handle, index);
+      return conn.field_name (Stmt.result_handle, pndx);
    end column_name;
 
 
@@ -175,9 +176,9 @@ package body AdaBase.Statement.Base.PostgreSQL is
                            return String
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+      pndx : Natural := index - 1;
    begin
-      --  TO BE IMPLEMENTED
-      return "";
+      return conn.field_table (Stmt.result_handle, pndx);
    end column_table;
 
 
@@ -189,9 +190,9 @@ package body AdaBase.Statement.Base.PostgreSQL is
                                 return field_types
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+      pndx : Natural := index - 1;
    begin
-      --  TO BE IMPLEMENTED
-      return ft_nbyte0;
+      return conn.field_type (Stmt.result_handle, pndx);
    end column_native_type;
 
 

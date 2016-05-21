@@ -708,6 +708,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
          use type BND.PGconn_Access;
          conninfo : BND.ICS.chars_ptr := BND.ICS.New_String (CT.USS (constr));
       begin
+         conn.tables.Clear;
          conn.handle := BND.PQconnectdb (conninfo);
          BND.ICS.Free (conninfo);
 
@@ -725,6 +726,9 @@ package body AdaBase.Connection.Base.PostgreSQL is
       if not conn.prop_auto_commit then
          conn.begin_transaction;
       end if;
+
+      --  dump all tables and data types
+      conn.cache_table_names;
 
    exception
       when NOT_WHILE_CONNECTED =>
@@ -841,6 +845,75 @@ package body AdaBase.Connection.Base.PostgreSQL is
    begin
      conn.private_execute (sql);
    end execute;
+
+
+   -------------------------
+   --  cache_table_names  --
+   -------------------------
+   procedure cache_table_names (conn : out PostgreSQL_Connection)
+   is
+      pgres : BND.PGresult_Access;
+      nrows : Affected_Rows;
+      sql   : constant String :=
+                "SELECT oid, relname FROM pg_class " &
+                "WHERE relkind = 'r' and relname !~ '^(pg|sql)_' " &
+                "ORDER BY oid";
+   begin
+      pgres := conn.private_select (sql);
+      nrows := conn.rows_in_result (pgres);
+      for x in Natural range 0 .. Natural (nrows) - 1 loop
+         declare
+            s_oid   : constant String := conn.field_string (pgres, x, 0);
+            s_table : constant String := conn.field_string (pgres, x, 1);
+            payload : table_cell := (column_1 => CT.SUS (s_table));
+         begin
+            conn.tables.Insert (Key      => Integer'Value (s_oid),
+                                New_Item => payload);
+         end;
+      end loop;
+      BND.PQclear (pgres);
+   end cache_table_names;
+
+
+   -------------------
+   --  field_table  --
+   -------------------
+   function field_table (conn : PostgreSQL_Connection;
+                         res  : BND.PGresult_Access;
+                         column_number : Natural) return String
+   is
+      use type BND.Oid;
+      colnum : constant BND.IC.int := BND.IC.int (column_number);
+      pg_oid : BND.Oid := BND.PQftable (res, colnum);
+      pg_key : Positive := Positive (pg_oid);
+   begin
+      if pg_oid = BND.InvalidOid then
+         return "INVALID COLUMN";
+      end if;
+      if conn.tables.Contains (Key => pg_key) then
+         return CT.USS (conn.tables.Element (pg_key).column_1);
+      else
+         return "INVALID OID" & pg_key'Img;
+      end if;
+   end field_table;
+
+
+   ------------------
+   --  field_type  --
+   ------------------
+   function field_type (conn : PostgreSQL_Connection;
+                        res  : BND.PGresult_Access;
+                        column_number : Natural) return field_types
+   is
+      colnum : constant BND.IC.int := BND.IC.int (column_number);
+      pg_oid : BND.Oid := BND.PQftype (res, colnum);
+      pg_key : Positive := Positive (pg_oid);
+   begin
+      if pg_key > 0 then
+         null;
+      end if;
+      return ft_nbyte0;
+   end field_type;
 
 
 end AdaBase.Connection.Base.PostgreSQL;
