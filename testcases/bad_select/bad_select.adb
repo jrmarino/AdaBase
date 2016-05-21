@@ -11,7 +11,7 @@ procedure Bad_Select is
    package ARS renames AdaBase.Results.Sets;
    package CT  renames CommonText;
 
-   row : ARS.DataRow;
+   row : ARS.Datarow;
    sql : String := "SELECT fruit, calories FROM froits " &
                    "WHERE color = 'red'";
 
