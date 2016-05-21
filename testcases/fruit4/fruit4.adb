@@ -10,7 +10,7 @@ procedure Fruit4 is
    package TIO renames Ada.Text_IO;
    package ALF renames AdaBase.Logger.Facility;
 
-   numrows : AdaBase.AffectedRows;
+   numrows : AdaBase.Affected_Rows;
 
    cmd1 : constant String := "INSERT INTO fruits (fruit, color, calories) " &
                              "VALUES ('blueberry', 'purple', 1)";

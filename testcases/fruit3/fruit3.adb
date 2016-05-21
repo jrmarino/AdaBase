@@ -9,7 +9,7 @@ procedure Fruit3 is
    package TIO renames Ada.Text_IO;
    package ALF renames AdaBase.Logger.Facility;
 
-   numrows : AdaBase.AffectedRows;
+   numrows : AdaBase.Affected_Rows;
 
    log : constant String := "/tmp/fruit3.test.log";
    cmd : constant String := "DELETE FROM fruits WHERE color = 'red'";

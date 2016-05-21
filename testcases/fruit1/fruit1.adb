@@ -7,7 +7,7 @@ procedure Fruit1 is
    package CON renames Connect;
    package TIO renames Ada.Text_IO;
 
-   numrows : AdaBase.AffectedRows;
+   numrows : AdaBase.Affected_Rows;
 
    cmd : constant String := "DELETE FROM fruits WHERE color = 'red'";
 
