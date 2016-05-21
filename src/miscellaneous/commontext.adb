@@ -359,7 +359,7 @@ package body CommonText is
       --  never happen because caller knows how many segments there are and
       --  thus would not request something impossible like this.)
       if scanning then
-         return trimmed_sql (start .. trimmed_sql'Last);
+         return trim (trimmed_sql (start .. trimmed_sql'Last));
       else
          return "";
       end if;
