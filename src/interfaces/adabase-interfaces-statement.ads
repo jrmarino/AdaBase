@@ -11,10 +11,10 @@ package AdaBase.Interfaces.Statement is
    function column_count  (Stmt : iStatement) return Natural is abstract;
 
    function last_driver_message (Stmt : iStatement) return String is abstract;
-   function last_insert_id      (Stmt : iStatement) return TraxID is abstract;
-   function last_sql_state      (Stmt : iStatement) return TSqlState
+   function last_insert_id      (Stmt : iStatement) return Trax_ID is abstract;
+   function last_sql_state      (Stmt : iStatement) return SQL_State
                                  is abstract;
-   function last_driver_code    (Stmt : iStatement) return DriverCodes
+   function last_driver_code    (Stmt : iStatement) return Driver_Codes
                                  is abstract;
 
    function data_discarded      (Stmt : iStatement) return Boolean is abstract;
@@ -28,10 +28,10 @@ package AdaBase.Interfaces.Statement is
                              return Boolean is abstract;
 
    function rows_affected   (Stmt : iStatement)
-                             return AffectedRows is abstract;
+                             return Affected_Rows is abstract;
 
    function rows_returned   (Stmt : iStatement)
-                             return AffectedRows is abstract;
+                             return Affected_Rows is abstract;
 
    function column_name     (Stmt : iStatement; index : Positive)
                              return String is abstract;

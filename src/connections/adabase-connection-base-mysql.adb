@@ -133,7 +133,7 @@ package body AdaBase.Connection.Base.MySQL is
    --  SqlState  --
    ----------------
    overriding
-   function SqlState (conn : MySQL_Connection) return TSqlState
+   function SqlState (conn : MySQL_Connection) return SQL_State
    is
       result : ABM.ICS.chars_ptr;
    begin
@@ -141,7 +141,7 @@ package body AdaBase.Connection.Base.MySQL is
       declare
          convstr : constant String := ABM.ICS.Value (Item => result);
       begin
-         return TSqlState (convstr (1 .. 5));
+         return SQL_State (convstr (1 .. 5));
       end;
    end SqlState;
 
@@ -164,12 +164,12 @@ package body AdaBase.Connection.Base.MySQL is
    --  driverCode  --
    ------------------
    overriding
-   function driverCode (conn : MySQL_Connection) return DriverCodes
+   function driverCode (conn : MySQL_Connection) return Driver_Codes
    is
       result : ABM.my_uint;
    begin
       result := ABM.mysql_errno (handle => conn.handle);
-      return DriverCodes (result);
+      return Driver_Codes (result);
    end driverCode;
 
 
@@ -177,12 +177,12 @@ package body AdaBase.Connection.Base.MySQL is
    --  lastInsertID  --
    --------------------
    overriding
-   function lastInsertID (conn : MySQL_Connection) return TraxID
+   function lastInsertID (conn : MySQL_Connection) return Trax_ID
    is
       result : ABM.my_ulonglong;
    begin
       result := ABM.mysql_insert_id (handle => conn.handle);
-      return TraxID (result);
+      return Trax_ID (result);
    end lastInsertID;
 
 
@@ -226,11 +226,11 @@ package body AdaBase.Connection.Base.MySQL is
    overriding
    procedure connect (conn     : out MySQL_Connection;
                       database : String;
-                      username : String := blankstring;
-                      password : String := blankstring;
-                      hostname : String := blankstring;
-                      socket   : String := blankstring;
-                      port     : PosixPort := portless)
+                      username : String     := blankstring;
+                      password : String     := blankstring;
+                      hostname : String     := blankstring;
+                      socket   : String     := blankstring;
+                      port     : Posix_Port := portless)
    is
       use type ABM.MYSQL_Access;
       options : Natural := 0;
@@ -389,11 +389,11 @@ package body AdaBase.Connection.Base.MySQL is
    -------------------------------
    overriding
    procedure setTransactionIsolation (conn      : out MySQL_Connection;
-                                      isolation :     TransIsolation)
+                                      isolation : Trax_Isolation)
    is
-      use type TransIsolation;
+      use type Trax_Isolation;
       sql : constant String := "SET SESSION TRANSACTION ISOLATION LEVEL " &
-                               IsoKeywords (isolation);
+                               Iso_Keywords (isolation);
    begin
       if conn.prop_active then
          conn.execute (sql);
@@ -465,12 +465,12 @@ package body AdaBase.Connection.Base.MySQL is
    ----------------------------------
    overriding
    function rows_affected_by_execution (conn : MySQL_Connection)
-                                        return AffectedRows
+                                        return Affected_Rows
    is
       result : ABM.my_ulonglong;
    begin
       result := ABM.mysql_affected_rows (handle => conn.handle);
-      return AffectedRows (result);
+      return Affected_Rows (result);
    end rows_affected_by_execution;
 
 
@@ -493,12 +493,12 @@ package body AdaBase.Connection.Base.MySQL is
    ----------------------
    function rows_in_result (conn : MySQL_Connection;
                             result_handle : ABM.MYSQL_RES_Access)
-                            return AffectedRows
+                            return Affected_Rows
    is
       result : ABM.my_ulonglong;
    begin
       result := ABM.mysql_num_rows (handle => result_handle);
-      return AffectedRows (result);
+      return Affected_Rows (result);
    end rows_in_result;
 
 
@@ -572,12 +572,12 @@ package body AdaBase.Connection.Base.MySQL is
       maxlen   : constant megasize := megasize (field.max_length);
       bestlen  : Natural;
    begin
-      if fieldlen > megasize (BLOB_maximum'Last) then
-         bestlen := Natural (BLOB_maximum'Last);
+      if fieldlen > megasize (BLOB_Maximum'Last) then
+         bestlen := Natural (BLOB_Maximum'Last);
       else
          bestlen := Natural (fieldlen);
       end if;
-      if maxlen /= 0 and then maxlen < megasize (BLOB_maximum'Last) then
+      if maxlen /= 0 and then maxlen < megasize (BLOB_Maximum'Last) then
          bestlen := Natural (maxlen);
       end if;
 
@@ -788,7 +788,7 @@ package body AdaBase.Connection.Base.MySQL is
    --  prep_LastInsertID  --
    -------------------------
    function prep_LastInsertID (conn : MySQL_Connection;
-                               stmt : ABM.MYSQL_STMT_Access) return TraxID
+                               stmt : ABM.MYSQL_STMT_Access) return Trax_ID
    is
       use type ABM.MYSQL_STMT_Access;
       result : ABM.my_ulonglong;
@@ -797,7 +797,7 @@ package body AdaBase.Connection.Base.MySQL is
          raise STMT_NOT_VALID with "PREP: Last Insert ID";
       end if;
       result := ABM.mysql_stmt_insert_id (handle => stmt);
-      return TraxID (result);
+      return Trax_ID (result);
    end prep_LastInsertID;
 
 
@@ -805,7 +805,7 @@ package body AdaBase.Connection.Base.MySQL is
    --  prep_SqlState  --
    ---------------------
    function prep_SqlState     (conn : MySQL_Connection;
-                               stmt : ABM.MYSQL_STMT_Access) return TSqlState
+                               stmt : ABM.MYSQL_STMT_Access) return SQL_State
    is
       result : ABM.ICS.chars_ptr;
    begin
@@ -813,7 +813,7 @@ package body AdaBase.Connection.Base.MySQL is
       declare
          convstr : constant String := ABM.ICS.Value (Item => result);
       begin
-         return TSqlState (convstr (1 .. 5));
+         return SQL_State (convstr (1 .. 5));
       end;
    end prep_SqlState;
 
@@ -822,12 +822,12 @@ package body AdaBase.Connection.Base.MySQL is
    --  prep_DriverCode  --
    -----------------------
    function prep_DriverCode (conn : MySQL_Connection;
-                             stmt : ABM.MYSQL_STMT_Access) return DriverCodes
+                             stmt : ABM.MYSQL_STMT_Access) return Driver_Codes
    is
       result : ABM.my_uint;
    begin
       result := ABM.mysql_stmt_errno (handle => stmt);
-      return DriverCodes (result);
+      return Driver_Codes (result);
    end prep_DriverCode;
 
 
@@ -985,12 +985,12 @@ package body AdaBase.Connection.Base.MySQL is
    ---------------------------
    function prep_rows_in_result (conn : MySQL_Connection;
                                  stmt : ABM.MYSQL_STMT_Access)
-                                 return AffectedRows
+                                 return Affected_Rows
    is
       result : ABM.my_ulonglong;
    begin
       result := ABM.mysql_stmt_num_rows (handle => stmt);
-      return AffectedRows (result);
+      return Affected_Rows (result);
    end prep_rows_in_result;
 
 
@@ -1024,12 +1024,12 @@ package body AdaBase.Connection.Base.MySQL is
    ---------------------------------------
    function prep_rows_affected_by_execution (conn : MySQL_Connection;
                                              stmt : ABM.MYSQL_STMT_Access)
-                                             return AffectedRows
+                                             return Affected_Rows
    is
       result : ABM.my_ulonglong;
    begin
       result := ABM.mysql_stmt_affected_rows (handle => stmt);
-      return AffectedRows (result);
+      return Affected_Rows (result);
    end prep_rows_affected_by_execution;
 
 

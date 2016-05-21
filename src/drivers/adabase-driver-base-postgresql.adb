@@ -34,9 +34,9 @@ package body AdaBase.Driver.Base.PostgreSQL is
                             groupby    : String := blankstring;
                             having     : String := blankstring;
                             order      : String := blankstring;
-                            null_sort  : NullPriority := native;
-                            limit      : TraxID := 0;
-                            offset     : TraxID := 0)
+                            null_sort  : Null_Priority := native;
+                            limit      : Trax_ID := 0;
+                            offset     : Trax_ID := 0)
                             return SMT.PostgreSQL_statement is
    begin
       return driver.private_statement
@@ -65,9 +65,9 @@ package body AdaBase.Driver.Base.PostgreSQL is
                             groupby    : String := blankstring;
                             having     : String := blankstring;
                             order      : String := blankstring;
-                            null_sort  : NullPriority := native;
-                            limit      : TraxID := 0;
-                            offset     : TraxID := 0)
+                            null_sort  : Null_Priority := native;
+                            limit      : Trax_ID := 0;
+                            offset     : Trax_ID := 0)
                             return SMT.PostgreSQL_statement is
    begin
       return driver.private_statement
@@ -95,9 +95,9 @@ package body AdaBase.Driver.Base.PostgreSQL is
                           groupby    : String := blankstring;
                           having     : String := blankstring;
                           order      : String := blankstring;
-                          null_sort  : NullPriority := native;
-                          limit      : TraxID := 0;
-                          offset     : TraxID := 0) return String
+                          null_sort  : Null_Priority := native;
+                          limit      : Trax_ID := 0;
+                          offset     : Trax_ID := 0) return String
    is
       rockyroad : CT.Text;
       vanilla   : String := assembly_common_select
@@ -141,7 +141,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
                               password : String;
                               hostname : String := blankstring;
                               socket   : String := blankstring;
-                              port     : PosixPort := portless)
+                              port     : Posix_Port := portless)
    is
       err1 : constant CT.Text :=
         CT.SUS ("ACK! Reconnection attempted on active connection");
@@ -177,11 +177,11 @@ package body AdaBase.Driver.Base.PostgreSQL is
    ---------------
    overriding
    function execute (driver : PostgreSQL_Driver; sql : String)
-                     return AffectedRows
+                     return Affected_Rows
    is
       trsql   : String := CT.trim_sql (sql);
       nquery  : Natural := CT.count_queries (trsql);
-      aborted : constant AffectedRows := 0;
+      aborted : constant Affected_Rows := 0;
       err1    : constant CT.Text :=
                  CT.SUS ("ACK! Execution attempted on inactive connection");
       err2    : constant String :=
@@ -205,7 +205,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
       end if;
 
       declare
-         result : AffectedRows;
+         result : Affected_Rows;
       begin
          --  In order to support INSERT INTO .. RETURNING, we have to execute
          --  multiqueries individually because we are scanning the first 7
@@ -245,7 +245,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
                                return SMT.PostgreSQL_statement
    is
       stype     : AID.ASB.stmt_type := AID.ASB.direct_statement;
-      logcat    : LogCategory       := execution;
+      logcat    : Log_Category       := execution;
       duplicate : aliased String    := sql;
       err1      : constant CT.Text  :=
                   CT.SUS ("ACK! Query attempted on inactive connection");

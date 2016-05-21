@@ -15,7 +15,7 @@ package AdaBase.Driver.Base.SQLite is
 
    overriding
    function execute (driver : SQLite_Driver; sql : String)
-                     return AffectedRows;
+                     return Affected_Rows;
 
    overriding
    procedure query_drop_table  (driver      : SQLite_Driver;
@@ -43,9 +43,9 @@ package AdaBase.Driver.Base.SQLite is
                             groupby    : String := blankstring;
                             having     : String := blankstring;
                             order      : String := blankstring;
-                            null_sort  : NullPriority := native;
-                            limit      : TraxID := 0;
-                            offset     : TraxID := 0)
+                            null_sort  : Null_Priority := native;
+                            limit      : Trax_ID := 0;
+                            offset     : Trax_ID := 0)
                             return ASS.SQLite_statement;
 
    function prepare_select (driver     : SQLite_Driver;
@@ -56,9 +56,9 @@ package AdaBase.Driver.Base.SQLite is
                             groupby    : String := blankstring;
                             having     : String := blankstring;
                             order      : String := blankstring;
-                            null_sort  : NullPriority := native;
-                            limit      : TraxID := 0;
-                            offset     : TraxID := 0)
+                            null_sort  : Null_Priority := native;
+                            limit      : Trax_ID := 0;
+                            offset     : Trax_ID := 0)
                             return ASS.SQLite_statement;
 
 private
@@ -73,9 +73,9 @@ private
                               database : String;
                               username : String;
                               password : String;
-                              hostname : String    := blankstring;
-                              socket   : String    := blankstring;
-                              port     : PosixPort := portless);
+                              hostname : String     := blankstring;
+                              socket   : String     := blankstring;
+                              port     : Posix_Port := portless);
 
    function private_statement (driver   : SQLite_Driver;
                                sql      : String;
@@ -90,9 +90,9 @@ private
                           groupby    : String := blankstring;
                           having     : String := blankstring;
                           order      : String := blankstring;
-                          null_sort  : NullPriority := native;
-                          limit      : TraxID := 0;
-                          offset     : TraxID := 0) return String;
+                          null_sort  : Null_Priority := native;
+                          limit      : Trax_ID := 0;
+                          offset     : Trax_ID := 0) return String;
 
    overriding
    procedure initialize (Object : in out SQLite_Driver);

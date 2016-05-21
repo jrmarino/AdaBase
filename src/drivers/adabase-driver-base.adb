@@ -19,7 +19,7 @@ package body AdaBase.Driver.Base is
    --  trait_column_case  --
    -------------------------
    overriding
-   function trait_column_case (driver : Base_Driver) return CaseMode
+   function trait_column_case (driver : Base_Driver) return Case_Modes
    is
    begin
       return driver.connection.getCaseMode;
@@ -30,7 +30,7 @@ package body AdaBase.Driver.Base is
    --  trait_error_mode  --
    ------------------------
    overriding
-   function trait_error_mode (driver : Base_Driver) return ErrorMode
+   function trait_error_mode (driver : Base_Driver) return Error_Modes
    is
    begin
       return logger.error_mode;
@@ -112,7 +112,7 @@ package body AdaBase.Driver.Base is
    ---------------------------
    overriding
    function trait_max_blob_size (driver : Base_Driver)
-                                 return BLOB_maximum
+                                 return BLOB_Maximum
    is
    begin
       return driver.connection.maxBlobSize;
@@ -136,7 +136,7 @@ package body AdaBase.Driver.Base is
    -----------------------------
    overriding
    procedure set_trait_column_case (driver : Base_Driver;
-                                    trait  : CaseMode)
+                                    trait  : Case_Modes)
    is
    begin
       driver.connection.setCaseMode (mode => trait);
@@ -148,7 +148,7 @@ package body AdaBase.Driver.Base is
    ----------------------------
    overriding
    procedure set_trait_error_mode  (driver : Base_Driver;
-                                    trait  : ErrorMode)
+                                    trait  : Error_Modes)
    is
    begin
       logger.set_error_mode (mode => trait);
@@ -160,7 +160,7 @@ package body AdaBase.Driver.Base is
    -------------------------------
    overriding
    procedure set_trait_max_blob_size (driver : Base_Driver;
-                                      trait  : BLOB_maximum)
+                                      trait  : BLOB_Maximum)
    is
    begin
       driver.connection.setMaxBlobSize (maxsize => trait);
@@ -245,7 +245,7 @@ package body AdaBase.Driver.Base is
                                 table  : String)
    is
       sql : constant String := "TRUNCATE " & table;
-      AR  : AffectedRows;
+      AR  : Affected_Rows;
    begin
       AR := execute (driver => Base_Driver'Class (driver), sql => sql);
    end query_clear_table;
@@ -261,13 +261,13 @@ package body AdaBase.Driver.Base is
                                cascade     : Boolean := False)
 
    is
-      use type TDriver;
+      use type Driver_Type;
       --  MySQL accepts CASCADE but ignores it
       --  MySQL and PostgreSQL can use this versions, but Firebird
       --  needs if_exists implementation and doesn't know CASCADE, so it
       --  needs an overriding implementation.
       sql : CT.Text;
-      AR  : AffectedRows;
+      AR  : Affected_Rows;
    begin
       if cascade and then driver.dialect = driver_mysql
       then
@@ -317,7 +317,7 @@ package body AdaBase.Driver.Base is
    overriding
    procedure rollback (driver : Base_Driver)
    is
-      use type TransIsolation;
+      use type Trax_Isolation;
       err1 : constant CT.Text :=
              CT.SUS ("ACK! Rollback attempted on inactive connection");
       err2 : constant CT.Text :=
@@ -352,7 +352,7 @@ package body AdaBase.Driver.Base is
    overriding
    procedure commit (driver : Base_Driver)
    is
-      use type TransIsolation;
+      use type Trax_Isolation;
       err1 : constant CT.Text :=
              CT.SUS ("ACK! Commit attempted on inactive connection");
       err2 : constant CT.Text :=
@@ -384,7 +384,7 @@ package body AdaBase.Driver.Base is
    --  last_driver_code  --
    ------------------------
    overriding
-   function last_sql_state (driver : Base_Driver) return TSqlState is
+   function last_sql_state (driver : Base_Driver) return SQL_State is
    begin
       return driver.connection.SqlState;
    end last_sql_state;
@@ -394,7 +394,7 @@ package body AdaBase.Driver.Base is
    --  last_driver_code  --
    ------------------------
    overriding
-   function last_driver_code (driver : Base_Driver) return DriverCodes is
+   function last_driver_code (driver : Base_Driver) return Driver_Codes is
    begin
       return driver.connection.driverCode;
    end last_driver_code;
@@ -414,7 +414,7 @@ package body AdaBase.Driver.Base is
    --  last_insert_id  --
    ----------------------
    overriding
-   function last_insert_id (driver : Base_Driver) return TraxID is
+   function last_insert_id (driver : Base_Driver) return Trax_ID is
    begin
       return driver.connection.lastInsertID;
    end last_insert_id;
@@ -452,7 +452,7 @@ package body AdaBase.Driver.Base is
                             username : String := blankstring;
                             password : String := blankstring;
                             hostname : String := blankstring;
-                            port     : PosixPort)
+                            port     : Posix_Port)
    is
    begin
       private_connect (driver   => Base_Driver'Class (driver),
@@ -472,7 +472,7 @@ package body AdaBase.Driver.Base is
    --  log_nominal --
    ------------------
    procedure log_nominal (driver    : Base_Driver;
-                          category  : LogCategory;
+                          category  : Log_Category;
                           message   : CT.Text)
    is
    begin
@@ -487,14 +487,14 @@ package body AdaBase.Driver.Base is
    ------------------
    procedure log_problem
      (driver     : Base_Driver;
-      category   : LogCategory;
+      category   : Log_Category;
       message    : CT.Text;
       pull_codes : Boolean := False;
       break      : Boolean := False)
    is
       error_msg  : CT.Text      := CT.blank;
-      error_code : DriverCodes  := 0;
-      sqlstate   : TSqlState    := stateless;
+      error_code : Driver_Codes := 0;
+      sqlstate   : SQL_State    := stateless;
    begin
       if pull_codes then
          error_msg  := CT.SUS (driver.connection.driverMessage);

@@ -31,14 +31,14 @@ package body AdaBase.Statement.Base.SQLite is
    -------------------
    procedure log_problem
      (statement  : SQLite_statement;
-      category   : LogCategory;
+      category   : Log_Category;
       message    : String;
       pull_codes : Boolean := False;
       break      : Boolean := False)
    is
-      error_msg  : CT.Text     := CT.blank;
-      error_code : DriverCodes := 0;
-      sqlstate   : TSqlState   := stateless;
+      error_msg  : CT.Text      := CT.blank;
+      error_code : Driver_Codes := 0;
+      sqlstate   : SQL_State    := stateless;
    begin
       if pull_codes then
          error_msg  := CT.SUS (statement.last_driver_message);
@@ -109,7 +109,7 @@ package body AdaBase.Statement.Base.SQLite is
    is
       use type ACS.SQLite_Connection_Access;
       conn   : ACS.SQLite_Connection_Access renames Object.sqlite_conn;
-      logcat : LogCategory;
+      logcat : Log_Category;
    begin
 
       if conn = null then
@@ -272,7 +272,7 @@ package body AdaBase.Statement.Base.SQLite is
    --  last_insert_id  --
    ----------------------
    overriding
-   function last_insert_id (Stmt : SQLite_statement) return TraxID
+   function last_insert_id (Stmt : SQLite_statement) return Trax_ID
    is
       conn : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
    begin
@@ -284,7 +284,7 @@ package body AdaBase.Statement.Base.SQLite is
    --  last_sql_state  --
    ----------------------
    overriding
-   function last_sql_state (Stmt : SQLite_statement) return TSqlState
+   function last_sql_state (Stmt : SQLite_statement) return SQL_State
    is
       conn : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
    begin
@@ -296,7 +296,7 @@ package body AdaBase.Statement.Base.SQLite is
    --  last_driver_code  --
    ------------------------
    overriding
-   function last_driver_code (Stmt : SQLite_statement) return DriverCodes
+   function last_driver_code (Stmt : SQLite_statement) return Driver_Codes
    is
       conn : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
    begin
@@ -320,7 +320,7 @@ package body AdaBase.Statement.Base.SQLite is
    --  rows_returned  --
    ---------------------
    overriding
-   function rows_returned (Stmt : SQLite_statement) return AffectedRows is
+   function rows_returned (Stmt : SQLite_statement) return Affected_Rows is
    begin
       --  Not supported by SQLite
       return 0;

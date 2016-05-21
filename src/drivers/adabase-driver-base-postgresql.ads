@@ -15,7 +15,7 @@ package AdaBase.Driver.Base.PostgreSQL is
 
    overriding
    function execute (driver : PostgreSQL_Driver; sql : String)
-                     return AffectedRows;
+                     return Affected_Rows;
 
 
    function query          (driver     : PostgreSQL_Driver;
@@ -34,9 +34,9 @@ package AdaBase.Driver.Base.PostgreSQL is
                             groupby    : String := blankstring;
                             having     : String := blankstring;
                             order      : String := blankstring;
-                            null_sort  : NullPriority := native;
-                            limit      : TraxID := 0;
-                            offset     : TraxID := 0)
+                            null_sort  : Null_Priority := native;
+                            limit      : Trax_ID := 0;
+                            offset     : Trax_ID := 0)
                             return SMT.PostgreSQL_statement;
 
    function prepare_select (driver     : PostgreSQL_Driver;
@@ -47,9 +47,9 @@ package AdaBase.Driver.Base.PostgreSQL is
                             groupby    : String := blankstring;
                             having     : String := blankstring;
                             order      : String := blankstring;
-                            null_sort  : NullPriority := native;
-                            limit      : TraxID := 0;
-                            offset     : TraxID := 0)
+                            null_sort  : Null_Priority := native;
+                            limit      : Trax_ID := 0;
+                            offset     : Trax_ID := 0)
                             return SMT.PostgreSQL_statement;
 
 private
@@ -64,9 +64,9 @@ private
                               database : String;
                               username : String;
                               password : String;
-                              hostname : String    := blankstring;
-                              socket   : String    := blankstring;
-                              port     : PosixPort := portless);
+                              hostname : String     := blankstring;
+                              socket   : String     := blankstring;
+                              port     : Posix_Port := portless);
 
    function sql_assemble (distinct   : Boolean := False;
                           tables     : String;
@@ -75,9 +75,9 @@ private
                           groupby    : String := blankstring;
                           having     : String := blankstring;
                           order      : String := blankstring;
-                          null_sort  : NullPriority := native;
-                          limit      : TraxID := 0;
-                          offset     : TraxID := 0) return String;
+                          null_sort  : Null_Priority := native;
+                          limit      : Trax_ID := 0;
+                          offset     : Trax_ID := 0) return String;
 
    function private_statement (driver   : PostgreSQL_Driver;
                                sql      : String;

@@ -56,7 +56,7 @@ package AdaBase.Statement.Base is
    MARKER_NOT_FOUND         : exception;
 
    overriding
-   function rows_affected (Stmt : Base_Statement) return AffectedRows;
+   function rows_affected (Stmt : Base_Statement) return Affected_Rows;
 
    overriding
    function successful (Stmt : Base_Statement) return Boolean;
@@ -592,7 +592,7 @@ private
                            return String;
 
    procedure log_nominal (statement : Base_Statement;
-                          category  : LogCategory;
+                          category  : Log_Category;
                           message   : String);
 
    procedure free_datarow is new Ada.Unchecked_Deallocation
@@ -690,11 +690,11 @@ private
 
    type Base_Statement is
      abstract new Base_Pure and AIS.iStatement with record
-      successful_execution : Boolean      := False;
-      result_present       : Boolean      := False;
-      rows_leftover        : Boolean      := False;
-      dialect              : TDriver      := foundation;
-      impacted             : AffectedRows := 0;
+      successful_execution : Boolean       := False;
+      result_present       : Boolean       := False;
+      rows_leftover        : Boolean       := False;
+      dialect              : Driver_Type   := foundation;
+      impacted             : Affected_Rows := 0;
       connection           : ACB.Base_Connection_Access;
       alpha_markers        : Markers.Map;
       headings_map         : Markers.Map;

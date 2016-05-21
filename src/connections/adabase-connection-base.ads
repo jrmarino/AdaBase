@@ -17,21 +17,21 @@ package AdaBase.Connection.Base is
    function autoCommit (conn : Base_Connection) return Boolean;
 
    overriding
-   procedure setCaseMode (conn : out Base_Connection; mode : CaseMode);
+   procedure setCaseMode (conn : out Base_Connection; mode : Case_Modes);
 
    overriding
-   function getCaseMode (conn : Base_Connection) return CaseMode;
+   function getCaseMode (conn : Base_Connection) return Case_Modes;
 
    overriding
    procedure setMaxBlobSize (conn : out Base_Connection;
-                             maxsize : BLOB_maximum);
+                             maxsize : BLOB_Maximum);
 
    overriding
-   function maxBlobSize (conn : Base_Connection) return BLOB_maximum;
+   function maxBlobSize (conn : Base_Connection) return BLOB_Maximum;
 
    overriding
    function transactionIsolation (conn : Base_Connection)
-                                  return TransIsolation;
+                                  return Trax_Isolation;
 
    overriding
    function serverVersion (conn : Base_Connection)
@@ -58,9 +58,9 @@ private
       record
          prop_auto_commit    : Boolean          := False;
          prop_active         : Boolean          := False;
-         prop_trax_isolation : TransIsolation   := repeatable_read;
-         prop_case_mode      : CaseMode         := natural_case;
-         prop_max_blob       : BLOB_maximum     := 2 ** 12;  -- 4kb
+         prop_trax_isolation : Trax_Isolation   := repeatable_read;
+         prop_case_mode      : Case_Modes       := natural_case;
+         prop_max_blob       : BLOB_Maximum     := 2 ** 12;  -- 4kb
 
          info_server         : CT.Text := CT.blank;
          info_server_version : CT.Text := CT.blank;

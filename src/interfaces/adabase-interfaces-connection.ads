@@ -15,8 +15,8 @@ package AdaBase.Interfaces.Connection is
 
 
    --  Column Header Case Mode
-   procedure setCaseMode (conn : out iConnection; mode : CaseMode) is null;
-   function  getCaseMode (conn : iConnection) return CaseMode is abstract;
+   procedure setCaseMode (conn : out iConnection; mode : Case_Modes) is null;
+   function  getCaseMode (conn : iConnection) return Case_Modes is abstract;
 
 
    --  Set Compression Mode (if supported)
@@ -39,15 +39,15 @@ package AdaBase.Interfaces.Connection is
 
    --  Set maximum size of result that buffer must accommodate (if supported)
    procedure setMaxBlobSize (conn    : out iConnection;
-                             maxsize :     BLOB_maximum) is null;
-   function     maxBlobSize (conn : iConnection) return BLOB_maximum
+                             maxsize :     BLOB_Maximum) is null;
+   function     maxBlobSize (conn : iConnection) return BLOB_Maximum
                              is abstract;
 
    --  Set transaction Isolation level
    procedure setTransactionIsolation (conn : out iConnection;
-                                      isolation : TransIsolation) is null;
+                                      isolation : Trax_Isolation) is null;
    function     transactionIsolation (conn : iConnection)
-                                      return TransIsolation is abstract;
+                                      return Trax_Isolation is abstract;
 
    --  properties
    function serverVersion (conn : iConnection) return String
@@ -64,19 +64,19 @@ package AdaBase.Interfaces.Connection is
                            is abstract;
 
    --  Error information associated with last query
-   function SqlState      (conn : iConnection) return TSqlState
+   function SqlState      (conn : iConnection) return SQL_State
                            is abstract;
    function driverMessage (conn : iConnection) return String
                           is abstract;
-   function driverCode    (conn : iConnection) return DriverCodes
+   function driverCode    (conn : iConnection) return Driver_Codes
                            is abstract;
 
    --  Information associated with previous successful query
-   function lastInsertID  (conn : iConnection) return TraxID
+   function lastInsertID  (conn : iConnection) return Trax_ID
                            is abstract;
 
    function rows_affected_by_execution (conn : iConnection)
-                                        return AffectedRows is abstract;
+                                        return Affected_Rows is abstract;
 
    --  Commands
    procedure commit       (conn : out iConnection) is null;
@@ -90,6 +90,6 @@ package AdaBase.Interfaces.Connection is
                       password : String := blankstring;
                       hostname : String := blankstring;
                       socket   : String := blankstring;
-                      port     : PosixPort := portless) is null;
+                      port     : Posix_Port := portless) is null;
 
 end AdaBase.Interfaces.Connection;

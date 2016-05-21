@@ -5,34 +5,34 @@ package AdaBase is
 
    pragma Pure;
 
-   type ErrorMode      is (silent, warning, raise_exception);
-   type CaseMode       is (lower_case, natural_case, upper_case);
-   type TransIsolation is (read_uncommitted, read_committed, repeatable_read,
-                           serializable);
-   type LogCategory    is (connecting, disconnecting, transaction, execution,
-                           statement_preparation, statement_execution,
-                           miscellaneous, note);
-   type TDriver        is (foundation, driver_mysql, driver_postgresql,
-                           driver_sqlite, driver_firebird);
-   type NullPriority   is (native, nulls_first, nulls_last);
-   type TIsoKeywords   is array (TransIsolation) of String (1 .. 16);
-   type TraxID         is mod 2 ** 64;
+   type Error_Modes      is (silent, warning, raise_exception);
+   type Case_Modes       is (lower_case, natural_case, upper_case);
+   type Trax_Isolation   is (read_uncommitted, read_committed, repeatable_read,
+                             serializable);
+   type Log_Category     is (connecting, disconnecting, transaction, execution,
+                             statement_preparation, statement_execution,
+                             miscellaneous, note);
+   type Driver_Type      is (foundation, driver_mysql, driver_postgresql,
+                             driver_sqlite, driver_firebird);
+   type Null_Priority    is (native, nulls_first, nulls_last);
+   type ISO_Keyword_List is array (Trax_Isolation) of String (1 .. 16);
+   type Trax_ID          is mod 2 ** 64;
 
-   subtype BLOB_maximum  is Positive range 2 ** 12 .. 2 ** 30;
-   subtype TSqlState     is String (1 .. 5);
-   subtype DriverCodes   is Integer range -999 .. 4999;
-   subtype PosixPort     is Natural range 0 .. 65535;
-   subtype AffectedRows  is TraxID;
+   subtype BLOB_Maximum  is Positive range 2 ** 12 .. 2 ** 30;
+   subtype SQL_State     is String (1 .. 5);
+   subtype Driver_Codes  is Integer range -999 .. 4999;
+   subtype Posix_Port    is Natural range 0 .. 65535;
+   subtype Affected_Rows is Trax_ID;
 
-   IsoKeywords : constant TIsoKeywords :=
+   Iso_Keywords : constant ISO_Keyword_List :=
      ("READ UNCOMMITTED",
       "READ COMMITTED  ",
       "REPEATABLE READ ",
       "SERIALIZABLE    ");
 
    blankstring : constant String      := "";
-   stateless   : constant TSqlState   := "     ";
-   portless    : constant PosixPort   := 0;
+   stateless   : constant SQL_State   := "     ";
+   portless    : constant Posix_Port  := 0;
 
    type field_types is (ft_nbyte0, ft_nbyte1, ft_nbyte2, ft_nbyte3, ft_nbyte4,
                         ft_nbyte8, ft_byte1, ft_byte2, ft_byte3, ft_byte4,

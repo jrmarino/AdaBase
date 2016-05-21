@@ -25,31 +25,32 @@ package AdaBase.Logger.Facility is
                               action   : TAction);
    procedure set_log_file    (facility : LogFacility;
                               filename : String);
-   procedure set_error_mode (facility : out LogFacility; mode : ErrorMode);
-   function  error_mode     (facility : LogFacility) return ErrorMode;
+   procedure set_error_mode (facility : out LogFacility;
+                             mode     : Error_Modes);
+   function  error_mode     (facility : LogFacility) return Error_Modes;
 
    procedure detach_custom_logger (facility : out LogFacility);
    procedure attach_custom_logger (facility : out LogFacility;
                                    logger_access : AL.BaseClass_Logger_access);
 
    procedure log_nominal (facility  : LogFacility;
-                          driver    : TDriver;
-                          category  : LogCategory;
+                          driver    : Driver_Type;
+                          category  : Log_Category;
                           message   : CT.Text);
 
    procedure log_problem
      (facility   : LogFacility;
-      driver     : TDriver;
-      category   : LogCategory;
+      driver     : Driver_Type;
+      category   : Log_Category;
       message    : CT.Text;
-      error_msg  : CT.Text     := CT.blank;
-      error_code : DriverCodes := 0;
-      sqlstate   : TSqlState   := stateless;
-      break      : Boolean     := False);
+      error_msg  : CT.Text      := CT.blank;
+      error_code : Driver_Codes := 0;
+      sqlstate   : SQL_State    := stateless;
+      break      : Boolean      := False);
 
 private
    type LogFacility is tagged record
-      prop_error_mode : ErrorMode := warning;
+      prop_error_mode : Error_Modes := warning;
       listener_file   : ALF.File_Logger_access := null;
       listener_screen : ALS.Screen_Logger_access := null;
       listener_custom : AL.BaseClass_Logger_access := null;

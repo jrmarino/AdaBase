@@ -121,7 +121,7 @@ package body AdaBase.Connection.Base.SQLite is
    --  SqlState  --
    ----------------
    overriding
-   function SqlState (conn : SQLite_Connection) return TSqlState
+   function SqlState (conn : SQLite_Connection) return SQL_State
    is
       --  Unsupported on SQLite, return constant HY000 (general error)
    begin
@@ -156,11 +156,11 @@ package body AdaBase.Connection.Base.SQLite is
    --  driverCode  --
    ------------------
    overriding
-   function driverCode (conn : SQLite_Connection) return DriverCodes
+   function driverCode (conn : SQLite_Connection) return Driver_Codes
    is
       result : BND.IC.int := BND.sqlite3_errcode (db => conn.handle);
    begin
-      return DriverCodes (result);
+      return Driver_Codes (result);
    end driverCode;
 
 
@@ -168,12 +168,12 @@ package body AdaBase.Connection.Base.SQLite is
    --  lastInsertID  --
    --------------------
    overriding
-   function lastInsertID (conn : SQLite_Connection) return TraxID
+   function lastInsertID (conn : SQLite_Connection) return Trax_ID
    is
       result : BND.sql64;
    begin
       result := BND.sqlite3_last_insert_rowid (db => conn.handle);
-      return TraxID (result);
+      return Trax_ID (result);
    end lastInsertID;
 
 
@@ -182,11 +182,11 @@ package body AdaBase.Connection.Base.SQLite is
    ----------------------------------
    overriding
    function rows_affected_by_execution (conn : SQLite_Connection)
-                                        return AffectedRows
+                                        return Affected_Rows
    is
       result : BND.IC.int := BND.sqlite3_changes (db => conn.handle);
    begin
-      return AffectedRows (result);
+      return Affected_Rows (result);
    end rows_affected_by_execution;
 
 
@@ -345,11 +345,11 @@ package body AdaBase.Connection.Base.SQLite is
    overriding
    procedure connect      (conn     : out SQLite_Connection;
                            database : String;
-                           username : String := blankstring;
-                           password : String := blankstring;
-                           hostname : String := blankstring;
-                           socket   : String := blankstring;
-                           port     : PosixPort := portless)
+                           username : String     := blankstring;
+                           password : String     := blankstring;
+                           hostname : String     := blankstring;
+                           socket   : String     := blankstring;
+                           port     : Posix_Port := portless)
    is
       pragma Unreferenced (username, password, hostname, socket, port);
       use type BND.IC.int;
@@ -407,7 +407,7 @@ package body AdaBase.Connection.Base.SQLite is
    -------------------------------
    overriding
    procedure setTransactionIsolation (conn : out SQLite_Connection;
-                                      isolation : TransIsolation)
+                                      isolation : Trax_Isolation)
    is
       sql : constant String := "PRAGMA read_uncommitted = ";
       TL  : constant String := "Transaction Level ";

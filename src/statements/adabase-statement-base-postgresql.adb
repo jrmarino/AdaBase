@@ -60,7 +60,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    --  last_insert_id  --
    ----------------------
    overriding
-   function last_insert_id (Stmt : PostgreSQL_statement) return TraxID
+   function last_insert_id (Stmt : PostgreSQL_statement) return Trax_ID
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
    begin
@@ -74,7 +74,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    --  last_sql_state  --
    ----------------------
    overriding
-   function last_sql_state (Stmt : PostgreSQL_statement) return TSqlState
+   function last_sql_state (Stmt : PostgreSQL_statement) return SQL_State
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
    begin
@@ -86,7 +86,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    --  last_driver_code  --
    ------------------------
    overriding
-   function last_driver_code (Stmt : PostgreSQL_statement) return DriverCodes
+   function last_driver_code (Stmt : PostgreSQL_statement) return Driver_Codes
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
    begin
@@ -146,7 +146,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    --  rows_returned  --
    ---------------------
    overriding
-   function rows_returned (Stmt : PostgreSQL_statement) return AffectedRows
+   function rows_returned (Stmt : PostgreSQL_statement) return Affected_Rows
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
    begin

@@ -42,22 +42,22 @@ package AdaBase.Connection.Base.MySQL is
 
    overriding
    procedure setTransactionIsolation (conn      : out MySQL_Connection;
-                                      isolation :     TransIsolation);
+                                      isolation :     Trax_Isolation);
 
    overriding
    function description   (conn : MySQL_Connection) return String;
 
    overriding
-   function SqlState      (conn : MySQL_Connection) return TSqlState;
+   function SqlState      (conn : MySQL_Connection) return SQL_State;
 
    overriding
    function driverMessage (conn : MySQL_Connection) return String;
 
    overriding
-   function driverCode    (conn : MySQL_Connection) return DriverCodes;
+   function driverCode    (conn : MySQL_Connection) return Driver_Codes;
 
    overriding
-   function lastInsertID  (conn : MySQL_Connection) return TraxID;
+   function lastInsertID  (conn : MySQL_Connection) return Trax_ID;
 
    overriding
    procedure commit       (conn : out MySQL_Connection);
@@ -78,11 +78,11 @@ package AdaBase.Connection.Base.MySQL is
                            password : String := blankstring;
                            hostname : String := blankstring;
                            socket   : String := blankstring;
-                           port     : PosixPort := portless);
+                           port     : Posix_Port := portless);
 
    overriding
    function rows_affected_by_execution (conn : MySQL_Connection)
-                                        return AffectedRows;
+                                        return Affected_Rows;
 
    procedure use_result   (conn : MySQL_Connection;
                            result_handle : out ABM.MYSQL_RES_Access);
@@ -101,7 +101,7 @@ package AdaBase.Connection.Base.MySQL is
 
    function rows_in_result (conn : MySQL_Connection;
                             result_handle : ABM.MYSQL_RES_Access)
-                            return AffectedRows;
+                            return Affected_Rows;
 
    function fetch_field    (conn : MySQL_Connection;
                             result_handle : ABM.MYSQL_RES_Access)
@@ -142,14 +142,14 @@ package AdaBase.Connection.Base.MySQL is
    -----------------------------------------------------------------------
 
    function prep_LastInsertID  (conn : MySQL_Connection;
-                                stmt : ABM.MYSQL_STMT_Access) return TraxID;
+                                stmt : ABM.MYSQL_STMT_Access) return Trax_ID;
 
    function prep_SqlState      (conn : MySQL_Connection;
-                                stmt : ABM.MYSQL_STMT_Access) return TSqlState;
+                                stmt : ABM.MYSQL_STMT_Access) return SQL_State;
 
    function prep_DriverCode    (conn : MySQL_Connection;
                                 stmt : ABM.MYSQL_STMT_Access)
-                                return DriverCodes;
+                                return Driver_Codes;
 
    function prep_DriverMessage (conn : MySQL_Connection;
                                 stmt : ABM.MYSQL_STMT_Access) return String;
@@ -188,7 +188,7 @@ package AdaBase.Connection.Base.MySQL is
 
    function prep_rows_in_result  (conn : MySQL_Connection;
                                   stmt : ABM.MYSQL_STMT_Access)
-                                  return AffectedRows;
+                                  return Affected_Rows;
 
    function prep_fetch_bound     (conn : MySQL_Connection;
                                   stmt : ABM.MYSQL_STMT_Access)
@@ -200,7 +200,7 @@ package AdaBase.Connection.Base.MySQL is
 
    function prep_rows_affected_by_execution (conn : MySQL_Connection;
                                              stmt : ABM.MYSQL_STMT_Access)
-                                             return AffectedRows;
+                                             return Affected_Rows;
 
    NOT_WHILE_CONNECTED : exception;
    AUTOCOMMIT_FAIL     : exception;

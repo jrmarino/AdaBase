@@ -13,12 +13,12 @@ package body AdaBase.Logger.Base is
    -----------------------
    procedure set_information
                (listener   : out Base_Logger;
-                category   : LogCategory;
-                driver     : TDriver;
+                category   : Log_Category;
+                driver     : Driver_Type;
                 message    : CT.Text;
-                error_msg  : CT.Text     := CT.blank;
-                error_code : DriverCodes := 0;
-                sqlstate   : TSqlState   := stateless)
+                error_msg  : CT.Text      := CT.blank;
+                error_code : Driver_Codes := 0;
+                sqlstate   : SQL_State    := stateless)
    is
       prefix    : String (1 .. 17);
       drv       : String (1 .. 11);
@@ -83,7 +83,7 @@ package body AdaBase.Logger.Base is
    ----------------
    --  category  --
    ----------------
-   function category   (listener : Base_Logger) return LogCategory
+   function category   (listener : Base_Logger) return Log_Category
    is
    begin
       return listener.prop_category;
@@ -93,7 +93,7 @@ package body AdaBase.Logger.Base is
    --------------
    --  driver  --
    --------------
-   function driver (listener : Base_Logger) return TDriver
+   function driver (listener : Base_Logger) return Driver_Type
    is
    begin
       return listener.prop_driver;
@@ -133,7 +133,7 @@ package body AdaBase.Logger.Base is
    ------------------
    --  error_code  --
    ------------------
-   function error_code (listener : Base_Logger) return DriverCodes
+   function error_code (listener : Base_Logger) return Driver_Codes
    is
    begin
       return listener.prop_error_code;
@@ -143,7 +143,7 @@ package body AdaBase.Logger.Base is
    ----------------
    --  sqlstate  --
    ----------------
-   function sqlstate (listener : Base_Logger) return TSqlState is
+   function sqlstate (listener : Base_Logger) return SQL_State is
    begin
       return listener.prop_sqlstate;
    end sqlstate;

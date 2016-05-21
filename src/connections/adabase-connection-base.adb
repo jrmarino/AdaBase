@@ -18,7 +18,7 @@ package body AdaBase.Connection.Base is
    --  setCaseMode  --
    -------------------
    overriding
-   procedure setCaseMode (conn : out Base_Connection; mode : CaseMode)
+   procedure setCaseMode (conn : out Base_Connection; mode : Case_Modes)
    is
    begin
       conn.prop_case_mode := mode;
@@ -29,7 +29,7 @@ package body AdaBase.Connection.Base is
    --  caseMode  --
    ----------------
    overriding
-   function getCaseMode (conn : Base_Connection) return CaseMode
+   function getCaseMode (conn : Base_Connection) return Case_Modes
    is
    begin
       return conn.prop_case_mode;
@@ -41,7 +41,7 @@ package body AdaBase.Connection.Base is
    --------------------
    overriding
    procedure setMaxBlobSize (conn    : out Base_Connection;
-                             maxsize :     BLOB_maximum)
+                             maxsize :     BLOB_Maximum)
    is
    begin
       conn.prop_max_blob := maxsize;
@@ -52,7 +52,7 @@ package body AdaBase.Connection.Base is
    --  maxBlobSize  --
    -------------------
    overriding
-   function maxBlobSize (conn : Base_Connection) return BLOB_maximum
+   function maxBlobSize (conn : Base_Connection) return BLOB_Maximum
    is
    begin
       return conn.prop_max_blob;
@@ -64,7 +64,7 @@ package body AdaBase.Connection.Base is
    ----------------------------
    overriding
    function transactionIsolation (conn : Base_Connection)
-                                  return TransIsolation
+                                  return Trax_Isolation
    is
    begin
       return conn.prop_trax_isolation;

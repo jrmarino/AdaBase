@@ -28,7 +28,7 @@ package AdaBase.Connection.Base.SQLite is
                            password : String := blankstring;
                            hostname : String := blankstring;
                            socket   : String := blankstring;
-                           port     : PosixPort := portless);
+                           port     : Posix_Port := portless);
 
    overriding
    procedure setCompressed (conn : out SQLite_Connection; compressed : Boolean);
@@ -55,16 +55,16 @@ package AdaBase.Connection.Base.SQLite is
    function description    (conn : SQLite_Connection) return String;
 
    overriding
-   function SqlState       (conn : SQLite_Connection) return TSqlState;
+   function SqlState       (conn : SQLite_Connection) return SQL_State;
 
    overriding
    function driverMessage  (conn : SQLite_Connection) return String;
 
    overriding
-   function driverCode     (conn : SQLite_Connection) return DriverCodes;
+   function driverCode     (conn : SQLite_Connection) return Driver_Codes;
 
    overriding
-   function lastInsertID   (conn : SQLite_Connection) return TraxID;
+   function lastInsertID   (conn : SQLite_Connection) return Trax_ID;
 
    overriding
    procedure commit        (conn : out SQLite_Connection);
@@ -80,11 +80,11 @@ package AdaBase.Connection.Base.SQLite is
 
    overriding
    function rows_affected_by_execution (conn : SQLite_Connection)
-                                        return AffectedRows;
+                                        return Affected_Rows;
 
    overriding
    procedure setTransactionIsolation (conn : out SQLite_Connection;
-                                      isolation : TransIsolation);
+                                      isolation : Trax_Isolation);
 
    -----------------------------------------------
    --  SUBROUTINES PARTICULAR TO SQLITE DRIVER  --

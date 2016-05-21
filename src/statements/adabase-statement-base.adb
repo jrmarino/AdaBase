@@ -29,7 +29,7 @@ package body AdaBase.Statement.Base is
    --  rows_affected  --
    ---------------------
    overriding
-   function rows_affected (Stmt : Base_Statement) return AffectedRows
+   function rows_affected (Stmt : Base_Statement) return Affected_Rows
    is
    begin
       if not Stmt.successful_execution then
@@ -182,7 +182,7 @@ package body AdaBase.Statement.Base is
    --  log_nominal  --
    -------------------
    procedure log_nominal (statement : Base_Statement;
-                          category  : LogCategory;
+                          category  : Log_Category;
                           message   : String)
    is
    begin

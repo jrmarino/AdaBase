@@ -69,7 +69,7 @@ package body AdaBase.Statement.Base.MySQL is
    --  last_insert_id  --
    ----------------------
    overriding
-   function last_insert_id (Stmt : MySQL_statement) return TraxID is
+   function last_insert_id (Stmt : MySQL_statement) return Trax_ID is
    begin
       case Stmt.type_of_statement is
          when direct_statement   =>
@@ -85,7 +85,7 @@ package body AdaBase.Statement.Base.MySQL is
    --  last_sql_state  --
    ----------------------
    overriding
-   function last_sql_state (Stmt : MySQL_statement) return TSqlState is
+   function last_sql_state (Stmt : MySQL_statement) return SQL_State is
    begin
       case Stmt.type_of_statement is
          when direct_statement   =>
@@ -101,7 +101,7 @@ package body AdaBase.Statement.Base.MySQL is
    --  last_driver_code  --
    ------------------------
    overriding
-   function last_driver_code (Stmt : MySQL_statement) return DriverCodes is
+   function last_driver_code (Stmt : MySQL_statement) return Driver_Codes is
    begin
       case Stmt.type_of_statement is
          when direct_statement   =>
@@ -391,7 +391,7 @@ package body AdaBase.Statement.Base.MySQL is
    --  rows_returned  --
    ---------------------
    overriding
-   function rows_returned (Stmt : MySQL_statement) return AffectedRows is
+   function rows_returned (Stmt : MySQL_statement) return Affected_Rows is
    begin
       if not Stmt.successful_execution then
          raise PRIOR_EXECUTION_FAILED
@@ -1778,14 +1778,14 @@ package body AdaBase.Statement.Base.MySQL is
    -------------------
    procedure log_problem
      (statement  : MySQL_statement;
-      category   : LogCategory;
+      category   : Log_Category;
       message    : String;
       pull_codes : Boolean := False;
       break      : Boolean := False)
    is
-      error_msg  : CT.Text     := CT.blank;
-      error_code : DriverCodes := 0;
-      sqlstate   : TSqlState   := stateless;
+      error_msg  : CT.Text      := CT.blank;
+      error_code : Driver_Codes := 0;
+      sqlstate   : SQL_State    := stateless;
    begin
       if pull_codes then
          error_msg  := CT.SUS (statement.last_driver_message);

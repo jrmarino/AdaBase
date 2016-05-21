@@ -7,7 +7,7 @@ package body AdaBase.Logger.Facility is
    ------------------
    --  error_mode  --
    ------------------
-   function error_mode (facility : LogFacility) return ErrorMode
+   function error_mode (facility : LogFacility) return Error_Modes
    is
    begin
       return facility.prop_error_mode;
@@ -17,7 +17,7 @@ package body AdaBase.Logger.Facility is
    ----------------------
    --  set_error_mode  --
    ----------------------
-   procedure set_error_mode (facility : out LogFacility; mode : ErrorMode)
+   procedure set_error_mode (facility : out LogFacility; mode : Error_Modes)
    is
    begin
       facility.prop_error_mode := mode;
@@ -113,8 +113,8 @@ package body AdaBase.Logger.Facility is
    --  log_nominal  --
    -------------------
    procedure log_nominal (facility  : LogFacility;
-                          driver    : TDriver;
-                          category  : LogCategory;
+                          driver    : Driver_Type;
+                          category  : Log_Category;
                           message   : CT.Text)
    is
       use type AL.Screen.Screen_Logger_access;
@@ -154,15 +154,15 @@ package body AdaBase.Logger.Facility is
    -------------------
    procedure log_problem
      (facility   : LogFacility;
-      driver     : TDriver;
-      category   : LogCategory;
+      driver     : Driver_Type;
+      category   : Log_Category;
       message    : CT.Text;
-      error_msg  : CT.Text      := CT.blank;
-      error_code : DriverCodes  := 0;
-      sqlstate   : TSqlState    := stateless;
-      break      : Boolean      := False)
+      error_msg  : CT.Text       := CT.blank;
+      error_code : Driver_Codes  := 0;
+      sqlstate   : SQL_State     := stateless;
+      break      : Boolean       := False)
    is
-      use type ErrorMode;
+      use type Error_Modes;
       use type AL.Screen.Screen_Logger_access;
       use type AL.File.File_Logger_access;
       use type AL.BaseClass_Logger_access;

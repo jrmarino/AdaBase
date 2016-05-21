@@ -41,13 +41,13 @@ package AdaBase.Driver.Base is
    procedure commit              (driver : Base_Driver);
 
    overriding
-   function last_insert_id       (driver : Base_Driver) return TraxID;
+   function last_insert_id       (driver : Base_Driver) return Trax_ID;
 
    overriding
-   function last_sql_state       (driver : Base_Driver) return TSqlState;
+   function last_sql_state       (driver : Base_Driver) return SQL_State;
 
    overriding
-   function last_driver_code     (driver : Base_Driver) return DriverCodes;
+   function last_driver_code     (driver : Base_Driver) return Driver_Codes;
 
    overriding
    function last_driver_message  (driver : Base_Driver) return String;
@@ -65,7 +65,7 @@ package AdaBase.Driver.Base is
                                   username : String := blankstring;
                                   password : String := blankstring;
                                   hostname : String := blankstring;
-                                  port     : PosixPort);
+                                  port     : Posix_Port);
 
    overriding
    function trait_autocommit     (driver : Base_Driver)
@@ -73,11 +73,11 @@ package AdaBase.Driver.Base is
 
    overriding
    function trait_column_case    (driver : Base_Driver)
-                                  return CaseMode;
+                                  return Case_Modes;
 
    overriding
    function trait_error_mode     (driver : Base_Driver)
-                                  return ErrorMode;
+                                  return Error_Modes;
 
    overriding
    function trait_connected      (driver : Base_Driver)
@@ -105,7 +105,7 @@ package AdaBase.Driver.Base is
 
    overriding
    function trait_max_blob_size    (driver : Base_Driver)
-                                    return BLOB_maximum;
+                                    return BLOB_Maximum;
 
    overriding
    function trait_multiquery_enabled (driver : Base_Driver)
@@ -121,15 +121,15 @@ package AdaBase.Driver.Base is
 
    overriding
    procedure set_trait_column_case (driver : Base_Driver;
-                                    trait  : CaseMode);
+                                    trait  : Case_Modes);
 
    overriding
    procedure set_trait_error_mode  (driver : Base_Driver;
-                                    trait  : ErrorMode);
+                                    trait  : Error_Modes);
 
    overriding
    procedure set_trait_max_blob_size (driver : Base_Driver;
-                                      trait  : BLOB_maximum);
+                                      trait  : BLOB_Maximum);
 
    overriding
    procedure query_clear_table       (driver : Base_Driver;
@@ -148,18 +148,18 @@ private
    type Base_Driver is abstract new Base_Pure and AID.iDriver with
       record
          connection        : ACB.Base_Connection_Access;
-         connection_active : Boolean := False;
-         dialect           : TDriver := foundation;
-         database          : CT.Text := CT.blank;
+         connection_active : Boolean     := False;
+         dialect           : Driver_Type := foundation;
+         database          : CT.Text     := CT.blank;
       end record;
 
    procedure log_nominal (driver   : Base_Driver;
-                          category : LogCategory;
+                          category : Log_Category;
                           message  : CT.Text);
 
    procedure log_problem
      (driver     : Base_Driver;
-      category   : LogCategory;
+      category   : Log_Category;
       message    : CT.Text;
       pull_codes : Boolean := False;
       break      : Boolean := False);
@@ -179,8 +179,8 @@ private
                               database : String;
                               username : String;
                               password : String;
-                              hostname : String    := blankstring;
-                              socket   : String    := blankstring;
-                              port     : PosixPort := portless) is null;
+                              hostname : String     := blankstring;
+                              socket   : String     := blankstring;
+                              port     : Posix_Port := portless) is null;
 
 end AdaBase.Driver.Base;

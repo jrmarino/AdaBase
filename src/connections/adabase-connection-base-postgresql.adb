@@ -77,7 +77,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    --  driverCode (interface)  --
    ------------------------------
    overriding
-   function driverCode (conn : PostgreSQL_Connection) return DriverCodes is
+   function driverCode (conn : PostgreSQL_Connection) return Driver_Codes is
    begin
       if conn.cmd_sql_state = stateless or else
         conn.cmd_sql_state = "00000"
@@ -95,9 +95,9 @@ package body AdaBase.Connection.Base.PostgreSQL is
    --  driverCode #2  --
    ---------------------
    function driverCode (conn : PostgreSQL_Connection;
-                        res  : BND.PGresult_Access) return DriverCodes
+                        res  : BND.PGresult_Access) return Driver_Codes
    is
-      SS : constant TSqlState := conn.SqlState (res);
+      SS : constant SQL_State := conn.SqlState (res);
    begin
       if SS = stateless or else SS = "00000" then
          return 0;
@@ -113,7 +113,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    --  SqlState (interface)  --
    ----------------------------
    overriding
-   function SqlState (conn : PostgreSQL_Connection) return TSqlState is
+   function SqlState (conn : PostgreSQL_Connection) return SQL_State is
    begin
       return conn.cmd_sql_state;
    end SqlState;
@@ -123,7 +123,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    --  SqlState #2  --
    -------------------
    function SqlState (conn : PostgreSQL_Connection; res : BND.PGresult_Access)
-                      return TSqlState
+                      return SQL_State
    is
       use type BND.ICS.chars_ptr;
       fieldcode : constant BND.IC.int := BND.PG_DIAG_SQLSTATE;
@@ -136,7 +136,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
       declare
          SS : String := BND.ICS.Value (detail);
       begin
-         return TSqlState (SS);
+         return SQL_State (SS);
       end;
    end SqlState;
 
@@ -198,7 +198,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
             declare
                field : constant String := conn.field_string (pgres, 0, 0);
             begin
-               conn.insert_return_val := TraxID (Integer'Value (field));
+               conn.insert_return_val := Trax_ID (Integer'Value (field));
             exception
                when others => null;
             end;
@@ -258,7 +258,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    ----------------------------------------------
    overriding
    function rows_affected_by_execution (conn : PostgreSQL_Connection)
-                                        return AffectedRows is
+                                        return Affected_Rows is
    begin
       return conn.cmd_rows_impact;
    end rows_affected_by_execution;
@@ -269,16 +269,16 @@ package body AdaBase.Connection.Base.PostgreSQL is
    ----------------------
    function rows_in_result (conn : PostgreSQL_Connection;
                             res  : BND.PGresult_Access)
-                            return AffectedRows
+                            return Affected_Rows
    is
       use type BND.IC.int;
       result : BND.IC.int := BND.PQntuples (res);
    begin
       if result < 0 then
          --  overflowed (e.g. > 2 ** 31 on 32-bit system)
-         return AffectedRows'Last;
+         return Affected_Rows'Last;
       end if;
-      return AffectedRows (result);
+      return Affected_Rows (result);
    end rows_in_result;
 
 
@@ -287,7 +287,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    ---------------------
    function rows_impacted (conn : PostgreSQL_Connection;
                            res  : BND.PGresult_Access)
-                           return AffectedRows
+                           return Affected_Rows
    is
       result  : BND.ICS.chars_ptr := BND.PQcmdTuples (res);
       resstr  : constant String := BND.ICS.Value (result);
@@ -296,7 +296,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
          return 0;
       end if;
       begin
-         return AffectedRows (Integer'Value (resstr));
+         return Affected_Rows (Integer'Value (resstr));
       exception
          when others => return 0;
       end;
@@ -509,11 +509,12 @@ package body AdaBase.Connection.Base.PostgreSQL is
    -------------------------------
    overriding
    procedure setTransactionIsolation (conn : out PostgreSQL_Connection;
-                                      isolation : TransIsolation)
+                                      isolation : Trax_Isolation)
    is
-      use type TransIsolation;
-      sql : constant String := "SET SESSION CHARACTERISTICS AS TRANSACTION " &
-                               "ISOLATION LEVEL " & IsoKeywords (isolation);
+      use type Trax_Isolation;
+      sql : constant String :=
+        "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL " &
+        Iso_Keywords (isolation);
    begin
       if conn.prop_active then
          conn.private_execute (sql);
@@ -670,11 +671,11 @@ package body AdaBase.Connection.Base.PostgreSQL is
    overriding
    procedure connect (conn     : out PostgreSQL_Connection;
                       database : String;
-                      username : String := blankstring;
-                      password : String := blankstring;
-                      hostname : String := blankstring;
-                      socket   : String := blankstring;
-                      port     : PosixPort := portless)
+                      username : String     := blankstring;
+                      password : String     := blankstring;
+                      hostname : String     := blankstring;
+                      socket   : String     := blankstring;
+                      port     : Posix_Port := portless)
    is
       constr : CT.Text := CT.SUS ("dbname=" & database);
    begin
@@ -787,7 +788,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    --  lastInsertID  --
    --------------------
    overriding
-   function lastInsertID (conn : PostgreSQL_Connection) return TraxID
+   function lastInsertID (conn : PostgreSQL_Connection) return Trax_ID
    is
       --  PostgreSQL has a non-standard extension to INSERT INTO called
       --  RETURNING that is the most reliably method to get the last insert
@@ -806,10 +807,10 @@ package body AdaBase.Connection.Base.PostgreSQL is
    -----------------------
    --  select_last_val  --
    -----------------------
-   function select_last_val (conn : PostgreSQL_Connection) return TraxID
+   function select_last_val (conn : PostgreSQL_Connection) return Trax_ID
    is
       pgres   : BND.PGresult_Access;
-      product : TraxID := 0;
+      product : Trax_ID := 0;
    begin
       --  private_select can raise exception, but don't catch it
       --  For lastval(), exceptions should not be thrown so don't mask it
@@ -823,7 +824,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
       declare
          field : constant String := conn.field_string (pgres, 0, 0);
       begin
-         product := TraxID (Integer'Value (field));
+         product := Trax_ID (Integer'Value (field));
       exception
          when others => null;
       end;

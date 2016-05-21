@@ -21,13 +21,13 @@ package AdaBase.Interfaces.Driver is
    function trait_autocommit     (driver : iDriver)
                                   return Boolean is abstract;
    function trait_column_case    (driver : iDriver)
-                                  return CaseMode is abstract;
+                                  return Case_Modes is abstract;
    function trait_error_mode     (driver : iDriver)
-                                  return ErrorMode is abstract;
+                                  return Error_Modes is abstract;
    function trait_connected      (driver : iDriver)
                                   return Boolean is abstract;
    function trait_max_blob_size  (driver : iDriver)
-                                  return BLOB_maximum is abstract;
+                                  return BLOB_Maximum is abstract;
    function trait_driver         (driver : iDriver)
                                   return String is abstract;
    function trait_client_info    (driver : iDriver)
@@ -42,11 +42,11 @@ package AdaBase.Interfaces.Driver is
    procedure set_trait_autocommit    (driver : iDriver;
                                       trait  : Boolean) is null;
    procedure set_trait_column_case   (driver : iDriver;
-                                      trait  : CaseMode) is null;
+                                      trait  : Case_Modes) is null;
    procedure set_trait_error_mode    (driver : iDriver;
-                                      trait  : ErrorMode) is null;
+                                      trait  : Error_Modes) is null;
    procedure set_trait_max_blob_size (driver : iDriver;
-                                      trait  : BLOB_maximum) is null;
+                                      trait  : BLOB_Maximum) is null;
 
    function trait_multiquery_enabled       (driver : iDriver)
                                             return Boolean is abstract;
@@ -55,20 +55,20 @@ package AdaBase.Interfaces.Driver is
                                             trait  : Boolean) is null;
 
    function last_insert_id       (driver : iDriver)
-                                  return TraxID is abstract;
+                                  return Trax_ID is abstract;
 
    function last_sql_state       (driver : iDriver)
-                                  return TSqlState is abstract;
+                                  return SQL_State is abstract;
 
    function last_driver_code     (driver : iDriver)
-                                  return DriverCodes is abstract;
+                                  return Driver_Codes is abstract;
 
    function last_driver_message  (driver : iDriver)
                                   return String is abstract;
 
    function execute              (driver : iDriver;
                                   sql    : String)
-                                  return AffectedRows is abstract;
+                                  return Affected_Rows is abstract;
 
    procedure command_standard_logger (driver : iDriver;
                                       device : ALF.TLogger;
@@ -138,6 +138,6 @@ package AdaBase.Interfaces.Driver is
                             username : String := blankstring;
                             password : String := blankstring;
                             hostname : String := blankstring;
-                            port     : PosixPort) is null;
+                            port     : Posix_Port) is null;
 
 end AdaBase.Interfaces.Driver;

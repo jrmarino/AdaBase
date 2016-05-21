@@ -28,7 +28,7 @@ package AdaBase.Connection.Base.PostgreSQL is
                            password : String := blankstring;
                            hostname : String := blankstring;
                            socket   : String := blankstring;
-                           port     : PosixPort := portless);
+                           port     : Posix_Port := portless);
 
    overriding
    procedure setCompressed (conn : out PostgreSQL_Connection;
@@ -58,16 +58,16 @@ package AdaBase.Connection.Base.PostgreSQL is
    function description    (conn : PostgreSQL_Connection) return String;
 
    overriding
-   function SqlState       (conn : PostgreSQL_Connection) return TSqlState;
+   function SqlState       (conn : PostgreSQL_Connection) return SQL_State;
 
    overriding
    function driverMessage  (conn : PostgreSQL_Connection) return String;
 
    overriding
-   function driverCode     (conn : PostgreSQL_Connection) return DriverCodes;
+   function driverCode     (conn : PostgreSQL_Connection) return Driver_Codes;
 
    overriding
-   function lastInsertID   (conn : PostgreSQL_Connection) return TraxID;
+   function lastInsertID   (conn : PostgreSQL_Connection) return Trax_ID;
 
    overriding
    procedure commit        (conn : out PostgreSQL_Connection);
@@ -83,29 +83,29 @@ package AdaBase.Connection.Base.PostgreSQL is
 
    overriding
    function rows_affected_by_execution (conn : PostgreSQL_Connection)
-                                        return AffectedRows;
+                                        return Affected_Rows;
 
    overriding
    procedure setTransactionIsolation (conn : out PostgreSQL_Connection;
-                                      isolation : TransIsolation);
+                                      isolation : Trax_Isolation);
 
 
    ---------------------------------------------------
    --  SUBROUTINES PARTICULAR TO POSTGRESQL DRIVER  --
    ---------------------------------------------------
    function SqlState (conn : PostgreSQL_Connection; res : BND.PGresult_Access)
-                      return TSqlState;
+                      return SQL_State;
 
    procedure discard_pgresult    (conn : PostgreSQL_Connection;
                                   res  : BND.PGresult_Access);
 
    function rows_in_result       (conn : PostgreSQL_Connection;
                                   res  : BND.PGresult_Access)
-                                  return AffectedRows;
+                                  return Affected_Rows;
 
    function rows_impacted        (conn : PostgreSQL_Connection;
                                   res  : BND.PGresult_Access)
-                                  return AffectedRows;
+                                  return Affected_Rows;
 
    function field_data_is_binary (conn : PostgreSQL_Connection;
                                   res  : BND.PGresult_Access;
@@ -137,7 +137,7 @@ package AdaBase.Connection.Base.PostgreSQL is
                            res  : BND.PGresult_Access) return String;
 
    function driverCode    (conn : PostgreSQL_Connection;
-                           res  : BND.PGresult_Access) return DriverCodes;
+                           res  : BND.PGresult_Access) return Driver_Codes;
 
    ------------------
    --  EXCEPTIONS  --
@@ -166,12 +166,12 @@ private
       prop_multiquery  : Boolean := False;
       dummy            : Boolean := False;
       handle           : aliased BND.PGconn_Access := null;
-      cmd_sql_state    : TSqlState := stateless;
-      cmd_rows_impact  : AffectedRows := 0;
+      cmd_sql_state    : SQL_State := stateless;
+      cmd_rows_impact  : Affected_Rows := 0;
 
       --  For last insert id support using INSERT INTO ... RETURNING
       cmd_insert_return : Boolean := False;
-      insert_return_val : TraxID := 0;
+      insert_return_val : Trax_ID := 0;
    end record;
 
    function is_ipv4_or_ipv6 (teststr : String) return Boolean;
@@ -181,7 +181,7 @@ private
    procedure Initialize (conn : in out PostgreSQL_Connection);
    procedure private_execute (conn : out PostgreSQL_Connection; sql : String);
    procedure begin_transaction (conn : out PostgreSQL_Connection);
-   function select_last_val    (conn : PostgreSQL_Connection) return TraxID;
+   function select_last_val    (conn : PostgreSQL_Connection) return Trax_ID;
    function get_server_version (conn : PostgreSQL_Connection) return Natural;
    function get_server_info    (conn : PostgreSQL_Connection) return CT.Text;
    function within_transaction (conn : PostgreSQL_Connection) return Boolean;

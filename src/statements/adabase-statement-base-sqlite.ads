@@ -15,9 +15,9 @@ package AdaBase.Statement.Base.SQLite is
                           log_handler       : ALF.LogFacility_access;
                           sqlite_conn       : ACS.SQLite_Connection_Access;
                           initial_sql       : SQL_access;
-                          con_error_mode    : ErrorMode;
-                          con_case_mode     : CaseMode;
-                          con_max_blob      : BLOB_maximum)
+                          con_error_mode    : Error_Modes;
+                          con_case_mode     : Case_Modes;
+                          con_max_blob      : BLOB_Maximum)
    is new Base_Statement and AIS.iStatement with private;
    type SQLite_statement_access is access all SQLite_statement;
 
@@ -25,13 +25,13 @@ package AdaBase.Statement.Base.SQLite is
    function column_count (Stmt : SQLite_statement) return Natural;
 
    overriding
-   function last_insert_id (Stmt : SQLite_statement) return TraxID;
+   function last_insert_id (Stmt : SQLite_statement) return Trax_ID;
 
    overriding
-   function last_sql_state (Stmt : SQLite_statement) return TSqlState;
+   function last_sql_state (Stmt : SQLite_statement) return SQL_State;
 
    overriding
-   function last_driver_code (Stmt : SQLite_statement) return DriverCodes;
+   function last_driver_code (Stmt : SQLite_statement) return Driver_Codes;
 
    overriding
    function last_driver_message (Stmt : SQLite_statement) return String;
@@ -47,7 +47,7 @@ package AdaBase.Statement.Base.SQLite is
                              delimiter  : Character := '|') return Boolean;
 
    overriding
-   function rows_returned   (Stmt : SQLite_statement) return AffectedRows;
+   function rows_returned   (Stmt : SQLite_statement) return Affected_Rows;
 
    overriding
    function column_name     (Stmt : SQLite_statement; index : Positive)
@@ -102,9 +102,9 @@ private
                           log_handler       : ALF.LogFacility_access;
                           sqlite_conn       : ACS.SQLite_Connection_Access;
                           initial_sql       : SQL_access;
-                          con_error_mode    : ErrorMode;
-                          con_case_mode     : CaseMode;
-                          con_max_blob      : BLOB_maximum)
+                          con_error_mode    : Error_Modes;
+                          con_case_mode     : Case_Modes;
+                          con_max_blob      : BLOB_Maximum)
    is new Base_Statement and AIS.iStatement with
       record
          stmt_handle    : aliased BND.sqlite3_stmt_Access := null;
@@ -118,7 +118,7 @@ private
 
    procedure log_problem
      (statement  : SQLite_statement;
-      category   : LogCategory;
+      category   : Log_Category;
       message    : String;
       pull_codes : Boolean := False;
       break      : Boolean := False);
