@@ -94,8 +94,8 @@ procedure Execute_Dynabound is
 
    procedure dump_result;
    function halfbyte_to_hex (value : halfbyte) return Character;
-   function convert_chain (chain : AR.chain) return String;
-   function convert_set (set : AR.settype) return String;
+   function convert_chain (chain : AR.Chain) return String;
+   function convert_set (set : AR.Settype) return String;
    function pad (S : String; Slen : Natural) return String;
    function pad (S : String; Slen : Natural) return String
    is
@@ -117,11 +117,11 @@ procedure Execute_Dynabound is
       end case;
    end halfbyte_to_hex;
 
-   function convert_chain (chain : AR.chain) return String
+   function convert_chain (chain : AR.Chain) return String
    is
-      use type AR.nbyte1;
+      use type AR.NByte1;
       blocks    : constant Natural := chain'Length;
-      mask_ones : constant AR.nbyte1 := 16#0F#;
+      mask_ones : constant AR.NByte1 := 16#0F#;
       work_4bit : halfbyte;
       result    : String (1 .. blocks * 3 - 1) := (others => ' ');
       index     : Natural := 0;
@@ -144,7 +144,7 @@ procedure Execute_Dynabound is
       return result;
    end convert_chain;
 
-   function convert_set (set : AR.settype) return String
+   function convert_set (set : AR.Settype) return String
    is
       result : CT.Text;
    begin
@@ -161,7 +161,7 @@ procedure Execute_Dynabound is
 
    procedure dump_result
    is
-      row     : ARS.DataRow;
+      row     : ARS.Datarow;
       numcols : constant Natural := stmt_acc.column_count;
    begin
       loop
@@ -198,7 +198,7 @@ begin
    CON.connect_database;
 
    declare
-      numrows : AdaBase.AffectedRows;
+      numrows : AdaBase.Affected_Rows;
    begin
       numrows := CON.DR.execute ("DELETE FROM all_types WHERE id_nbyte3 > 8");
       if Natural (numrows) > 0 then
