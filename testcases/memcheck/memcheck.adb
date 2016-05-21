@@ -13,8 +13,8 @@ procedure Memcheck is
    package CT  renames CommonText;
 
    procedure list_hockey_teams3;
-   procedure list_hockey_teams (row : AR.Sets.DataRow);
-   procedure list_hockey_teams (row : AR.Sets.DataRow) is
+   procedure list_hockey_teams (row : AR.Sets.Datarow);
+   procedure list_hockey_teams (row : AR.Sets.Datarow) is
    begin
       TIO.Put_Line (row.column ("city").as_string & " " &
                     row.column ("mascot").as_string & " (" &
@@ -25,7 +25,7 @@ procedure Memcheck is
    cycles : Integer;
    Ch : Character;
 
-   city, mascot, abbr : aliased AR.textual;
+   city, mascot, abbr : aliased AR.Textual;
    procedure list_hockey_teams3 is
    begin
       TIO.Put_Line (CT.USS (abbr) & ": " & CT.USS (city) & " " &
