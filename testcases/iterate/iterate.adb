@@ -10,13 +10,13 @@ procedure Iterate is
    package AR  renames AdaBase.Results;
    package CT  renames CommonText;
 
-   fruit    : aliased AR.textual;
-   color    : aliased AR.textual;
-   calories : aliased AR.nbyte2;
+   fruit    : aliased AR.Textual;
+   color    : aliased AR.Textual;
+   calories : aliased AR.NByte2;
    dashes   : String (1 .. 50) := (others => '=');
 
    procedure list_fruit;
-   procedure list_hockey_teams (row : AR.Sets.DataRow);
+   procedure list_hockey_teams (row : AR.Sets.Datarow);
 
    procedure list_fruit
    is
@@ -28,7 +28,7 @@ procedure Iterate is
       TIO.Put_Line (zone & " contains" & calories'Img & " calories");
    end list_fruit;
 
-   procedure list_hockey_teams (row : AR.Sets.DataRow) is
+   procedure list_hockey_teams (row : AR.Sets.Datarow) is
    begin
       TIO.Put_Line (row.column ("city").as_string & " " &
                     row.column ("mascot").as_string & " (" &
