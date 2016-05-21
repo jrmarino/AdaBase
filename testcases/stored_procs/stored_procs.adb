@@ -24,7 +24,7 @@ procedure Stored_Procs is
          return field;
       end pad;
 
-      row     : ARS.DataRow;
+      row     : ARS.Datarow;
       numcols : constant Natural := stmt_acc.column_count;
    begin
       for c in Natural range 1 .. numcols loop
