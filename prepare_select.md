@@ -69,9 +69,9 @@ begin
    CON.connect_database;
 
    declare
-      max_calories : aliased AR.byte2 := 200;
-      min_calories : constant AR.byte2 := 5;
-      row          : ARS.DataRow;
+      max_calories : aliased AR.Byte2 := 200;
+      min_calories : constant AR.Byte2 := 5;
+      row          : ARS.Datarow;
       stmt : CON.Stmt_Type := CON.DR.prepare_select
         (tables     => "fruits",
          columns    => "*",
