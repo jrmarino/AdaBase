@@ -31,7 +31,7 @@ procedure Fruit2 is
    package CON renames Connect;
    package TIO renames Ada.Text_IO;
 
-   numrows : AdaBase.AffectedRows;
+   numrows : AdaBase.Affected_Rows;
 
    --  Intentionally broken UPDATE command (calories misspelled)
    cmd : constant String := "UPDATE fruits set caloriesx = 14 " &
