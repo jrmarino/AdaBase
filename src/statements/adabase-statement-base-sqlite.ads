@@ -62,10 +62,10 @@ package AdaBase.Statement.Base.SQLite is
                                 return field_types;
 
    overriding
-   function fetch_next (Stmt : out SQLite_statement) return ARS.DataRow;
+   function fetch_next (Stmt : out SQLite_statement) return ARS.Datarow;
 
    overriding
-   function fetch_all  (Stmt : out SQLite_statement) return ARS.DataRowSet;
+   function fetch_all  (Stmt : out SQLite_statement) return ARS.Datarow_Set;
 
    overriding
    function fetch_bound (Stmt : out SQLite_statement) return Boolean;

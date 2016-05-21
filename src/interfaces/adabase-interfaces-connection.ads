@@ -11,7 +11,7 @@ package AdaBase.Interfaces.Connection is
 
    --  Autocommit
    procedure setAutoCommit (conn : out iConnection; auto : Boolean) is null;
-   function     autoCommit (conn : iConnection) return Boolean  is abstract;
+   function     autoCommit (conn : iConnection) return Boolean is abstract;
 
 
    --  Column Header Case Mode

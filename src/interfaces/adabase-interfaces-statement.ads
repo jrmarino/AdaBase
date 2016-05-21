@@ -43,10 +43,10 @@ package AdaBase.Interfaces.Statement is
                                 return field_types is abstract;
 
    function fetch_next      (Stmt    : out iStatement)
-                             return AdaBase.Results.Sets.DataRow is abstract;
+                             return AdaBase.Results.Sets.Datarow is abstract;
 
    function fetch_all       (Stmt : out iStatement)
-                             return AdaBase.Results.Sets.DataRowSet
+                             return AdaBase.Results.Sets.Datarow_Set
                              is abstract;
 
    function fetch_bound     (Stmt : out iStatement) return Boolean is abstract;
@@ -60,7 +60,7 @@ package AdaBase.Interfaces.Statement is
 
    procedure iterate (Stmt    : out iStatement;
                       process : not null access procedure
-                        (row : AdaBase.Results.Sets.DataRow)) is null;
+                        (row : AdaBase.Results.Sets.Datarow)) is null;
 
    ------------------------------------------------------------------------
    --  Technically there should be 18-20 of each listed.  They are all

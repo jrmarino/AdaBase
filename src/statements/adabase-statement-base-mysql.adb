@@ -566,10 +566,10 @@ package body AdaBase.Statement.Base.MySQL is
    --  fetch_next  --
    ------------------
    overriding
-   function fetch_next (Stmt : out MySQL_statement) return ARS.DataRow is
+   function fetch_next (Stmt : out MySQL_statement) return ARS.Datarow is
    begin
       if Stmt.delivery = completed then
-         return ARS.Empty_DataRow;
+         return ARS.Empty_Datarow;
       end if;
       case Stmt.type_of_statement is
          when prepared_statement =>
@@ -602,13 +602,13 @@ package body AdaBase.Statement.Base.MySQL is
    --  fetch_all  --
    -----------------
    overriding
-   function fetch_all (Stmt : out MySQL_statement) return ARS.DataRowSet
+   function fetch_all (Stmt : out MySQL_statement) return ARS.Datarow_Set
    is
       maxrows : Natural := Natural (Stmt.rows_returned);
-      tmpset  : ARS.DataRowSet (1 .. maxrows + 1);
-      nullset : ARS.DataRowSet (1 .. 0);
+      tmpset  : ARS.Datarow_Set (1 .. maxrows + 1);
+      nullset : ARS.Datarow_Set (1 .. 0);
       index   : Natural := 1;
-      row     : ARS.DataRow;
+      row     : ARS.Datarow;
    begin
       if (Stmt.delivery = completed) or else (maxrows = 0) then
          return nullset;
@@ -667,7 +667,7 @@ package body AdaBase.Statement.Base.MySQL is
    --  internal_fetch_row  --
    --------------------------
    function internal_fetch_row (Stmt : out MySQL_statement)
-                                return ARS.DataRow
+                                return ARS.Datarow
    is
       use type ABM.ICS.chars_ptr;
       use type ABM.MYSQL_ROW_access;
@@ -678,7 +678,7 @@ package body AdaBase.Statement.Base.MySQL is
          Stmt.delivery := completed;
          Stmt.mysql_conn.free_result (Stmt.result_handle);
          Stmt.clear_column_information;
-         return ARS.Empty_DataRow;
+         return ARS.Empty_Datarow;
       end if;
       Stmt.delivery := progressing;
 
@@ -691,7 +691,7 @@ package body AdaBase.Statement.Base.MySQL is
          type rowtype_access is access all rowtype;
 
          row    : rowtype_access;
-         result : ARS.DataRow;
+         result : ARS.Datarow;
 
          field_lengths : constant ACM.fldlen := Stmt.mysql_conn.fetch_lengths
            (result_handle => Stmt.result_handle,
@@ -859,7 +859,7 @@ package body AdaBase.Statement.Base.MySQL is
    --  internal_ps_fetch_row  --
    -----------------------------
    function internal_ps_fetch_row (Stmt : out MySQL_statement)
-                                   return ARS.DataRow
+                                   return ARS.Datarow
    is
       use type ABM.ICS.chars_ptr;
       use type ABM.MYSQL_ROW_access;
@@ -883,12 +883,12 @@ package body AdaBase.Statement.Base.MySQL is
          Stmt.delivery := progressing;
       end if;
       if Stmt.delivery = completed then
-         return ARS.Empty_DataRow;
+         return ARS.Empty_Datarow;
       end if;
 
       declare
          maxlen : constant Natural := Stmt.num_columns;
-         result : ARS.DataRow;
+         result : ARS.Datarow;
       begin
          for F in 1 .. maxlen loop
             declare

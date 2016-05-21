@@ -199,9 +199,9 @@ package body AdaBase.Statement.Base.PostgreSQL is
    --  fetch_next  --
    ------------------
    overriding
-   function fetch_next (Stmt : out PostgreSQL_statement) return ARS.DataRow
+   function fetch_next (Stmt : out PostgreSQL_statement) return ARS.Datarow
    is
-      dummy : ARS.DataRow := ARS.Empty_DataRow;
+      dummy : ARS.Datarow := ARS.Empty_Datarow;
    begin
       --  TO BE IMPLEMENTED
       Stmt.delivery := completed;
@@ -213,9 +213,9 @@ package body AdaBase.Statement.Base.PostgreSQL is
    --  fetch_all  --
    -----------------
    overriding
-   function fetch_all (Stmt : out PostgreSQL_statement) return ARS.DataRowSet
+   function fetch_all (Stmt : out PostgreSQL_statement) return ARS.Datarow_Set
    is
-      dummy : ARS.DataRowSet (1 .. 0);
+      dummy : ARS.Datarow_Set (1 .. 0);
    begin
       --  TO BE IMPLEMENTED
       Stmt.delivery := completed;

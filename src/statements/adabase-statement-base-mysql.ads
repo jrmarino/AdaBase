@@ -63,10 +63,10 @@ package AdaBase.Statement.Base.MySQL is
                                 return field_types;
 
    overriding
-   function fetch_next (Stmt : out MySQL_statement) return ARS.DataRow;
+   function fetch_next (Stmt : out MySQL_statement) return ARS.Datarow;
 
    overriding
-   function fetch_all  (Stmt : out MySQL_statement) return ARS.DataRowSet;
+   function fetch_all  (Stmt : out MySQL_statement) return ARS.Datarow_Set;
 
    overriding
    function fetch_bound (Stmt : out MySQL_statement) return Boolean;
@@ -95,10 +95,10 @@ private
                                   marker : Positive);
    function internal_fetch_bound (Stmt : out MySQL_statement) return Boolean;
    function internal_fetch_row   (Stmt : out MySQL_statement)
-                                  return ARS.DataRow;
+                                  return ARS.Datarow;
 
    function internal_ps_fetch_row (Stmt : out MySQL_statement)
-                                   return ARS.DataRow;
+                                   return ARS.Datarow;
 
    function internal_ps_fetch_bound (Stmt : out MySQL_statement)
                                      return Boolean;

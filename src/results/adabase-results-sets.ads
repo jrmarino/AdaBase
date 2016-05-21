@@ -10,16 +10,16 @@ package AdaBase.Results.Sets is
 
    package ARF renames AdaBase.Results.Field;
 
-   type DataRow is tagged private;
-   type DataRow_Access is access all DataRow;
-   type DataRowSet is array (Positive range <>) of DataRow;
+   type Datarow is tagged private;
+   type Datarow_Access is access all Datarow;
+   type Datarow_Set is array (Positive range <>) of Datarow;
 
-   Empty_DataRow : constant DataRow;
+   Empty_Datarow : constant Datarow;
 
-   function column (row : DataRow; index : Positive) return ARF.std_field;
-   function column (row : DataRow; heading : String) return ARF.std_field;
-   function count  (row : DataRow) return Natural;
-   function data_exhausted (row : DataRow) return Boolean;
+   function column (row : Datarow; index : Positive) return ARF.std_field;
+   function column (row : Datarow; heading : String) return ARF.std_field;
+   function count  (row : Datarow) return Natural;
+   function data_exhausted (row : Datarow) return Boolean;
 
    --  Since it doesn't seem to be possible to construct this type with
    --  descriminates, it needs to be created first and populated with data,
@@ -27,7 +27,7 @@ package AdaBase.Results.Sets is
    --  or driver's statement, but when pushing is done, the record is locked
    --  to block any attempt by user to push more data onto this.
 
-   procedure push (row        : out DataRow;
+   procedure push (row        : out Datarow;
                    heading    : String;
                    field      : ARF.std_field;
                    last_field : Boolean := False);
@@ -48,7 +48,7 @@ private
       Equivalent_Keys => Same_Strings,
       Hash            => Ada.Strings.Hash);
 
-   type DataRow is tagged
+   type Datarow is tagged
       record
          crate  : field_crate.Vector;
          map    : heading_map.Map;
@@ -56,7 +56,7 @@ private
          done   : Boolean := False;
       end record;
 
-   Empty_DataRow : constant DataRow := (field_crate.Empty_Vector,
+   Empty_Datarow : constant Datarow := (field_crate.Empty_Vector,
                                         heading_map.Empty_Map,
                                         True, True);
 

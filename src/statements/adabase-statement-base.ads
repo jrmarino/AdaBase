@@ -70,7 +70,7 @@ package AdaBase.Statement.Base is
 
    overriding
    procedure iterate (Stmt    : out Base_Statement;
-                      process : not null access procedure (row : ARS.DataRow));
+                      process : not null access procedure (row : ARS.Datarow));
 
    -------------------------------------------
    --      20 bind using integer index      --
@@ -596,7 +596,7 @@ private
                           message   : String);
 
    procedure free_datarow is new Ada.Unchecked_Deallocation
-     (AR.Sets.DataRow, AR.Sets.DataRow_Access);
+     (AR.Sets.Datarow, AR.Sets.Datarow_Access);
 
    procedure check_bound_column_access (absent : Boolean);
 

@@ -1464,12 +1464,12 @@ package body AdaBase.Statement.Base is
    ------------------
    overriding
    procedure iterate (Stmt    : out Base_Statement;
-                      process : not null access procedure (row : ARS.DataRow))
+                      process : not null access procedure (row : ARS.Datarow))
    is
    begin
       loop
          declare
-            local_row : ARS.DataRow :=
+            local_row : ARS.Datarow :=
                         fetch_next (Stmt => Base_Statement'Class (Stmt));
          begin
             exit when local_row.data_exhausted;

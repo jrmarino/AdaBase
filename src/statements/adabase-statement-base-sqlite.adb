@@ -503,16 +503,16 @@ package body AdaBase.Statement.Base.SQLite is
    --  fetch_next  --
    ------------------
    overriding
-   function fetch_next (Stmt : out SQLite_statement) return ARS.DataRow
+   function fetch_next (Stmt : out SQLite_statement) return ARS.Datarow
    is
       conn   : ACS.SQLite_Connection_Access renames Stmt.sqlite_conn;
    begin
       if Stmt.step_result /= data_pulled then
-         return ARS.Empty_DataRow;
+         return ARS.Empty_Datarow;
       end if;
       declare
          maxlen : constant Natural := Natural (Stmt.column_info.Length);
-         result : ARS.DataRow;
+         result : ARS.Datarow;
       begin
 
          for F in 1 .. maxlen loop
@@ -756,14 +756,14 @@ package body AdaBase.Statement.Base.SQLite is
    --  fetch_all  --
    -----------------
    overriding
-   function fetch_all (Stmt : out SQLite_statement) return ARS.DataRowSet
+   function fetch_all (Stmt : out SQLite_statement) return ARS.Datarow_Set
    is
       subtype rack_range is Positive range 1 .. 20000;
       dataset_size : Natural    := 0;
       arrow        : rack_range := rack_range'First;
-      rack         : ARS.DataRowSet (rack_range);
-      nullset      : constant ARS.DataRowSet (1 .. 0) :=
-                     (others => ARS.Empty_DataRow);
+      rack         : ARS.Datarow_Set (rack_range);
+      nullset      : constant ARS.Datarow_Set (1 .. 0) :=
+                     (others => ARS.Empty_Datarow);
    begin
       if Stmt.step_result /= data_pulled then
          return nullset;
