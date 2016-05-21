@@ -11,10 +11,10 @@ package AdaBase.Statement.Base.MySQL is
    package ABM renames AdaBase.Bindings.MySQL;
    package AC  renames Ada.Containers;
 
-   type MySQL_statement (type_of_statement : stmt_type;
+   type MySQL_statement (type_of_statement : Stmt_Type;
                          log_handler       : ALF.LogFacility_access;
                          mysql_conn        : ACM.MySQL_Connection_Access;
-                         initial_sql       : SQL_access;
+                         initial_sql       : SQL_Access;
                          con_error_mode    : Error_Modes;
                          con_case_mode     : Case_Modes;
                          con_max_blob      : BLOB_Maximum;
@@ -161,13 +161,13 @@ private
    procedure free_binary is new Ada.Unchecked_Deallocation
      (ABM.IC.char_array, ABM.ICS.char_array_access);
    procedure free_sql is new Ada.Unchecked_Deallocation
-     (String, SQL_access);
+     (String, SQL_Access);
    procedure reclaim_canvas (Stmt : out MySQL_statement);
 
-   type MySQL_statement (type_of_statement : stmt_type;
+   type MySQL_statement (type_of_statement : Stmt_Type;
                          log_handler       : ALF.LogFacility_access;
                          mysql_conn        : ACM.MySQL_Connection_Access;
-                         initial_sql       : SQL_access;
+                         initial_sql       : SQL_Access;
                          con_error_mode    : Error_Modes;
                          con_case_mode     : Case_Modes;
                          con_max_blob      : BLOB_Maximum;
@@ -182,7 +182,7 @@ private
          num_columns    : Natural               := 0;
          size_of_rowset : Trax_ID               := 0;
          column_info    : VColumns.Vector;
-         sql_final      : SQL_access;
+         sql_final      : SQL_Access;
       end record;
 
 end AdaBase.Statement.Base.MySQL;

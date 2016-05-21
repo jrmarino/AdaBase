@@ -16,8 +16,8 @@ package AdaBase.Results.Sets is
 
    Empty_Datarow : constant Datarow;
 
-   function column (row : Datarow; index : Positive) return ARF.std_field;
-   function column (row : Datarow; heading : String) return ARF.std_field;
+   function column (row : Datarow; index : Positive) return ARF.Std_Field;
+   function column (row : Datarow; heading : String) return ARF.Std_Field;
    function count  (row : Datarow) return Natural;
    function data_exhausted (row : Datarow) return Boolean;
 
@@ -29,18 +29,18 @@ package AdaBase.Results.Sets is
 
    procedure push (row        : out Datarow;
                    heading    : String;
-                   field      : ARF.std_field;
+                   field      : ARF.Std_Field;
                    last_field : Boolean := False);
 
 private
 
-   use type ARF.std_field;
+   use type ARF.Std_Field;
 
    function Same_Strings (S, T : String) return Boolean;
 
    package field_crate is new Ada.Containers.Vectors
      (Index_Type   => Positive,
-      Element_Type => ARF.std_field);
+      Element_Type => ARF.Std_Field);
 
    package heading_map is new Ada.Containers.Indefinite_Hashed_Maps
      (Key_Type        => String,

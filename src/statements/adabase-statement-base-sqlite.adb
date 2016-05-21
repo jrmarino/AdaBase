@@ -517,7 +517,7 @@ package body AdaBase.Statement.Base.SQLite is
 
          for F in 1 .. maxlen loop
             declare
-               field    : ARF.std_field;
+               field    : ARF.Std_Field;
                dvariant : ARF.variant;
                scol     : constant Natural := F - 1;
                last_one : constant Boolean := (F = maxlen);

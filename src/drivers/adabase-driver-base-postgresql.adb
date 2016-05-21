@@ -244,7 +244,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
                                prepared : Boolean)
                                return SMT.PostgreSQL_statement
    is
-      stype     : AID.ASB.stmt_type := AID.ASB.direct_statement;
+      stype     : AID.ASB.Stmt_Type := AID.ASB.direct_statement;
       logcat    : Log_Category       := execution;
       duplicate : aliased String    := sql;
       err1      : constant CT.Text  :=

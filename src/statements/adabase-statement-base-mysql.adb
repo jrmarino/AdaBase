@@ -721,7 +721,7 @@ package body AdaBase.Statement.Base.MySQL is
          row := convert (rptr);
          for F in 1 .. maxlen loop
             declare
-               field    : ARF.std_field;
+               field    : ARF.Std_Field;
                last_one : constant Boolean := (F = maxlen);
                heading  : constant String := CT.USS
                  (Stmt.column_info.Element (Index => F).field_name);
@@ -895,7 +895,7 @@ package body AdaBase.Statement.Base.MySQL is
                use type ABM.enum_field_types;
                cv       : mysql_canvas renames Stmt.bind_canvas (F);
                dvariant : ARF.variant;
-               field    : ARF.std_field;
+               field    : ARF.Std_Field;
                last_one : constant Boolean := (F = maxlen);
                datalen  : constant Natural := Natural (cv.length);
                heading  : constant String := CT.USS

@@ -10,7 +10,7 @@ package body AdaBase.Results.Sets is
    --------------
    --  column  --
    --------------
-   function column (row : Datarow; index : Positive) return ARF.std_field is
+   function column (row : Datarow; index : Positive) return ARF.Std_Field is
    begin
       if index > Natural (row.crate.Length) then
          raise COLUMN_DOES_NOT_EXIST with "Column" & index'Img &
@@ -23,7 +23,7 @@ package body AdaBase.Results.Sets is
    --------------
    --  column  --
    --------------
-   function column (row : Datarow; heading : String) return ARF.std_field
+   function column (row : Datarow; heading : String) return ARF.Std_Field
    is
       use type heading_map.Cursor;
       cursor : heading_map.Cursor;
@@ -72,7 +72,7 @@ package body AdaBase.Results.Sets is
    ------------
    procedure push (row        : out Datarow;
                    heading    : String;
-                   field      : ARF.std_field;
+                   field      : ARF.Std_Field;
                    last_field : Boolean := False)
    is
    begin

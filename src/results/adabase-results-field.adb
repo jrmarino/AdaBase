@@ -11,7 +11,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte0  --
    -----------------
-   function as_nbyte0 (field : std_field) return nbyte0
+   function as_nbyte0 (field : Std_Field) return nbyte0
    is
    begin
       case field.native.datatype is
@@ -46,7 +46,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte1  --
    -----------------
-   function as_nbyte1 (field : std_field) return nbyte1
+   function as_nbyte1 (field : Std_Field) return nbyte1
    is
    begin
       case field.native.datatype is
@@ -82,7 +82,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte2  --
    -----------------
-   function as_nbyte2 (field : std_field) return nbyte2
+   function as_nbyte2 (field : Std_Field) return nbyte2
    is
    begin
       case field.native.datatype is
@@ -118,7 +118,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte3  --
    -----------------
-   function as_nbyte3 (field : std_field) return nbyte3
+   function as_nbyte3 (field : Std_Field) return nbyte3
    is
    begin
       case field.native.datatype is
@@ -154,7 +154,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte4  --
    -----------------
-   function as_nbyte4 (field : std_field) return nbyte4
+   function as_nbyte4 (field : Std_Field) return nbyte4
    is
    begin
       case field.native.datatype is
@@ -190,7 +190,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte8  --
    -----------------
-   function as_nbyte8 (field : std_field) return nbyte8
+   function as_nbyte8 (field : Std_Field) return nbyte8
    is
    begin
       case field.native.datatype is
@@ -226,7 +226,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte1  --
    ----------------
-   function as_byte1 (field : std_field) return byte1
+   function as_byte1 (field : Std_Field) return byte1
    is
    begin
       case field.native.datatype is
@@ -257,7 +257,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte2  --
    ----------------
-   function as_byte2 (field : std_field) return byte2
+   function as_byte2 (field : Std_Field) return byte2
    is
    begin
       case field.native.datatype is
@@ -288,7 +288,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte3  --
    ----------------
-   function as_byte3 (field : std_field) return byte3
+   function as_byte3 (field : Std_Field) return byte3
    is
    begin
       case field.native.datatype is
@@ -319,7 +319,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte4  --
    ----------------
-   function as_byte4 (field : std_field) return byte4
+   function as_byte4 (field : Std_Field) return byte4
    is
    begin
       case field.native.datatype is
@@ -350,7 +350,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte8  --
    ----------------
-   function as_byte8 (field : std_field) return byte8
+   function as_byte8 (field : Std_Field) return byte8
    is
    begin
       case field.native.datatype is
@@ -381,7 +381,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_real9  --
    ----------------
-   function as_real9 (field : std_field) return real9
+   function as_real9 (field : Std_Field) return real9
    is
    begin
       case field.native.datatype is
@@ -412,7 +412,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_real18  --
    -----------------
-   function as_real18 (field : std_field) return real18
+   function as_real18 (field : Std_Field) return real18
    is
    begin
       case field.native.datatype is
@@ -443,7 +443,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_string  --
    -----------------
-   function as_string (field : std_field) return String
+   function as_string (field : Std_Field) return String
    is
    begin
       case field.native.datatype is
@@ -474,7 +474,7 @@ package body AdaBase.Results.Field is
    ------------------
    --  as_wstring  --
    ------------------
-   function as_wstring (field : std_field) return Wide_String
+   function as_wstring (field : Std_Field) return Wide_String
    is
    begin
       case field.native.datatype is
@@ -505,7 +505,7 @@ package body AdaBase.Results.Field is
    -------------------
    --  as_wwstring  --
    -------------------
-   function as_wwstring (field : std_field) return Wide_Wide_String
+   function as_wwstring (field : Std_Field) return Wide_Wide_String
    is
    begin
       case field.native.datatype is
@@ -536,7 +536,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_time  --
    -----------------
-   function as_time (field : std_field) return AC.Time
+   function as_time (field : Std_Field) return AC.Time
    is
       --  Looks like nothing can be converted to a time type so far
    begin
@@ -550,7 +550,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_chain  --
    ----------------
-   function as_chain (field : std_field) return chain
+   function as_chain (field : Std_Field) return chain
    is
    begin
       case field.native.datatype is
@@ -572,7 +572,7 @@ package body AdaBase.Results.Field is
    -------------------
    --  as_enumtype  --
    -------------------
-   function as_enumtype (field : std_field) return enumtype
+   function as_enumtype (field : Std_Field) return enumtype
    is
    begin
       case field.native.datatype is
@@ -588,7 +588,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_settype  --
    -----------------
-   function as_settype (field : std_field) return settype
+   function as_settype (field : Std_Field) return settype
    is
    begin
       case field.native.datatype is
@@ -601,7 +601,7 @@ package body AdaBase.Results.Field is
    ---------------
    --  is_null  --
    ---------------
-   function is_null (field : std_field) return Boolean is
+   function is_null (field : Std_Field) return Boolean is
    begin
       return field.explicit_null;
    end is_null;
@@ -610,7 +610,7 @@ package body AdaBase.Results.Field is
    -------------------
    --  native_type  --
    -------------------
-   function native_type (field : std_field) return field_types is
+   function native_type (field : Std_Field) return field_types is
    begin
       return field.native.datatype;
    end native_type;
@@ -620,33 +620,33 @@ package body AdaBase.Results.Field is
    --  CREATE STANDARD FIELDS  --
    ------------------------------
    function spawn_field (data : variant; null_data : Boolean := False)
-                         return std_field
+                         return Std_Field
    is
-      result : std_field;
+      result : Std_Field;
    begin
       result.set (data => data, exnull => null_data);
       return result;
    end spawn_field;
 
-   function spawn_field (binob : chain) return std_field
+   function spawn_field (binob : chain) return Std_Field
    is
-      result  : std_field;
+      result  : Std_Field;
       chainstr : constant String := ARC.convert (binob);
    begin
       result.set (data => (ft_chain, CT.SUS (chainstr)), exnull => False);
       return result;
    end spawn_field;
 
-   function spawn_field (enumset : String) return std_field
+   function spawn_field (enumset : String) return Std_Field
    is
-      result  : std_field;
+      result  : Std_Field;
    begin
       result.set (data => (ft_settype, CT.SUS (enumset)), exnull => False);
       return result;
    end spawn_field;
 
 
-   procedure set (field : out std_field; data : variant; exnull : Boolean) is
+   procedure set (field : out Std_Field; data : variant; exnull : Boolean) is
    begin
       case data.datatype is
          when ft_nbyte0    => field.native := (ft_nbyte0, data.v00);

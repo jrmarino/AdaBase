@@ -12,10 +12,10 @@ package AdaBase.Statement.Base.PostgreSQL is
    package AC  renames Ada.Containers;
 
    type PostgreSQL_statement
-     (type_of_statement : stmt_type;
+     (type_of_statement : Stmt_Type;
       log_handler       : ALF.LogFacility_access;
       pgsql_conn        : CON.PostgreSQL_Connection_Access;
-      initial_sql       : SQL_access;
+      initial_sql       : SQL_Access;
       con_error_mode    : Error_Modes;
       con_case_mode     : Case_Modes;
       con_max_blob      : BLOB_Maximum;
@@ -96,10 +96,10 @@ private
                                        Element_Type => column_info);
 
    type PostgreSQL_statement
-     (type_of_statement : stmt_type;
+     (type_of_statement : Stmt_Type;
       log_handler       : ALF.LogFacility_access;
       pgsql_conn        : CON.PostgreSQL_Connection_Access;
-      initial_sql       : SQL_access;
+      initial_sql       : SQL_Access;
       con_error_mode    : Error_Modes;
       con_case_mode     : Case_Modes;
       con_max_blob      : BLOB_Maximum;
@@ -112,7 +112,7 @@ private
          num_columns    : Natural               := 0;
          size_of_rowset : Trax_ID               := 0;
          column_info    : VColumns.Vector;
-         sql_final      : SQL_access;
+         sql_final      : SQL_Access;
       end record;
 
    function reformat_markers (parameterized_sql : String) return String;
