@@ -14,7 +14,7 @@ package body AdaBase.Results.Generic_Converters is
    --------------------------
    --  GENERIC convertstr  --
    --------------------------
-   function convertstr (nv : textual) return IntType
+   function convertstr (nv : Textual) return IntType
    is
       nverr : constant String := CT.USS (nv);
    begin
@@ -28,7 +28,7 @@ package body AdaBase.Results.Generic_Converters is
    --------------------------
    --  GENERIC convertst2  --
    --------------------------
-   function convertst2 (nv : textual) return RealType
+   function convertst2 (nv : Textual) return RealType
    is
       nverr : constant String := CT.USS (nv);
    begin
@@ -42,7 +42,7 @@ package body AdaBase.Results.Generic_Converters is
    --------------------------
    --  GENERIC convertst3  --
    --------------------------
-   function convertst3 (nv : textwide) return IntType
+   function convertst3 (nv : Textwide) return IntType
    is
       wstr : constant Wide_String := SUW.To_Wide_String (Source => nv);
       str  : constant String := ACC.To_String (Item => wstr);
@@ -57,7 +57,7 @@ package body AdaBase.Results.Generic_Converters is
    --------------------------
    --  GENERIC convertst4  --
    --------------------------
-   function convertst4 (nv : textwide) return RealType
+   function convertst4 (nv : Textwide) return RealType
    is
       wstr : constant Wide_String := SUW.To_Wide_String (Source => nv);
       str  : constant String := ACC.To_String (Item => wstr);
@@ -72,7 +72,7 @@ package body AdaBase.Results.Generic_Converters is
    --------------------------
    --  GENERIC convertst5  --
    --------------------------
-   function convertst5 (nv : textsuper) return IntType
+   function convertst5 (nv : Textsuper) return IntType
    is
       wwstr : constant Wide_Wide_String := SUWW.To_Wide_Wide_String (nv);
       str   : constant String := ACC.To_String (Item => wwstr);
@@ -87,7 +87,7 @@ package body AdaBase.Results.Generic_Converters is
    --------------------------
    --  GENERIC convertst6  --
    --------------------------
-   function convertst6 (nv : textsuper) return RealType
+   function convertst6 (nv : Textsuper) return RealType
    is
       wwstr : constant Wide_Wide_String := SUWW.To_Wide_Wide_String (nv);
       str   : constant String := ACC.To_String (Item => wwstr);

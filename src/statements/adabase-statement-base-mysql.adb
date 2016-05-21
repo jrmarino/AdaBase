@@ -829,7 +829,7 @@ package body AdaBase.Statement.Base.MySQL is
    ------------------
    function bincopy (data : ABM.ICS.char_array_access;
                      datalen, max_size : Natural;
-                     hard_limit : Natural := 0) return AR.chain
+                     hard_limit : Natural := 0) return AR.Chain
    is
       reslen   : Natural := datalen;
       chainlen : Natural := data.all'Length;
@@ -843,12 +843,12 @@ package body AdaBase.Statement.Base.MySQL is
          chainlen := reslen;
       end if;
       declare
-         result : AR.chain (1 .. chainlen) := (others => 0);
+         result : AR.Chain (1 .. chainlen) := (others => 0);
          jimmy : Character;
       begin
          for x in Natural range 1 .. reslen loop
             jimmy := Character (data.all (ABM.IC.size_t (x)));
-            result (x) := AR.nbyte1 (Character'Pos (jimmy));
+            result (x) := AR.NByte1 (Character'Pos (jimmy));
          end loop;
          return result;
       end;
@@ -909,34 +909,34 @@ package body AdaBase.Statement.Base.MySQL is
                                   v00 => Natural (cv.buffer_uint8) = 1);
                   when ft_nbyte1 =>
                      dvariant := (datatype => ft_nbyte1,
-                                  v01 => AR.nbyte1 (cv.buffer_uint8));
+                                  v01 => AR.NByte1 (cv.buffer_uint8));
                   when ft_nbyte2 =>
                      dvariant := (datatype => ft_nbyte2,
-                                  v02 => AR.nbyte2 (cv.buffer_uint16));
+                                  v02 => AR.NByte2 (cv.buffer_uint16));
                   when ft_nbyte3 =>
                      dvariant := (datatype => ft_nbyte3,
-                                  v03 => AR.nbyte3 (cv.buffer_uint32));
+                                  v03 => AR.NByte3 (cv.buffer_uint32));
                   when ft_nbyte4 =>
                      dvariant := (datatype => ft_nbyte4,
-                                  v04 => AR.nbyte4 (cv.buffer_uint32));
+                                  v04 => AR.NByte4 (cv.buffer_uint32));
                   when ft_nbyte8 =>
                      dvariant := (datatype => ft_nbyte8,
-                                  v05 => AR.nbyte8 (cv.buffer_uint64));
+                                  v05 => AR.NByte8 (cv.buffer_uint64));
                   when ft_byte1  =>
                      dvariant := (datatype => ft_byte1,
-                                  v06 => AR.byte1 (cv.buffer_int8));
+                                  v06 => AR.Byte1 (cv.buffer_int8));
                   when ft_byte2  =>
                      dvariant := (datatype => ft_byte2,
-                                  v07 => AR.byte2 (cv.buffer_int16));
+                                  v07 => AR.Byte2 (cv.buffer_int16));
                   when ft_byte3  =>
                      dvariant := (datatype => ft_byte3,
-                                  v08 => AR.byte3 (cv.buffer_int32));
+                                  v08 => AR.Byte3 (cv.buffer_int32));
                   when ft_byte4  =>
                      dvariant := (datatype => ft_byte4,
-                                  v09 => AR.byte4 (cv.buffer_int32));
+                                  v09 => AR.Byte4 (cv.buffer_int32));
                   when ft_byte8  =>
                      dvariant := (datatype => ft_byte8,
-                                  v10 => AR.byte8 (cv.buffer_int64));
+                                  v10 => AR.Byte8 (cv.buffer_int64));
                   when ft_real9  =>
                      if mtype = ABM.MYSQL_TYPE_NEWDECIMAL or else
                        mtype = ABM.MYSQL_TYPE_DECIMAL
@@ -946,7 +946,7 @@ package body AdaBase.Statement.Base.MySQL is
                                        datalen, Stmt.con_max_blob)));
                      else
                         dvariant := (datatype => ft_real9,
-                                     v11 => AR.real9 (cv.buffer_float));
+                                     v11 => AR.Real9 (cv.buffer_float));
                      end if;
                   when ft_real18 =>
                      if mtype = ABM.MYSQL_TYPE_NEWDECIMAL or else
@@ -957,7 +957,7 @@ package body AdaBase.Statement.Base.MySQL is
                                        datalen, Stmt.con_max_blob)));
                      else
                         dvariant := (datatype => ft_real18,
-                                     v12 => AR.real18 (cv.buffer_double));
+                                     v12 => AR.Real18 (cv.buffer_double));
                      end if;
                   when ft_textual =>
                      dvariant := (datatype => ft_textual,
@@ -1096,25 +1096,25 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_nbyte0 => Stmt.crate.Element (F).a00.all :=
                        (Natural (cv.buffer_uint8) = 1);
                   when ft_nbyte1 => Stmt.crate.Element (F).a01.all :=
-                       AR.nbyte1 (cv.buffer_uint8);
+                       AR.NByte1 (cv.buffer_uint8);
                   when ft_nbyte2 => Stmt.crate.Element (F).a02.all :=
-                       AR.nbyte2 (cv.buffer_uint16);
+                       AR.NByte2 (cv.buffer_uint16);
                   when ft_nbyte3 => Stmt.crate.Element (F).a03.all :=
-                       AR.nbyte3 (cv.buffer_uint32);
+                       AR.NByte3 (cv.buffer_uint32);
                   when ft_nbyte4 => Stmt.crate.Element (F).a04.all :=
-                       AR.nbyte4 (cv.buffer_uint32);
+                       AR.NByte4 (cv.buffer_uint32);
                   when ft_nbyte8 => Stmt.crate.Element (F).a05.all :=
-                       AR.nbyte8 (cv.buffer_uint64);
+                       AR.NByte8 (cv.buffer_uint64);
                   when ft_byte1 => Stmt.crate.Element (F).a06.all :=
-                       AR.byte1 (cv.buffer_int8);
+                       AR.Byte1 (cv.buffer_int8);
                   when ft_byte2 => Stmt.crate.Element (F).a07.all :=
-                       AR.byte2 (cv.buffer_int16);
+                       AR.Byte2 (cv.buffer_int16);
                   when ft_byte3 => Stmt.crate.Element (F).a08.all :=
-                       AR.byte3 (cv.buffer_int32);
+                       AR.Byte3 (cv.buffer_int32);
                   when ft_byte4 => Stmt.crate.Element (F).a09.all :=
-                       AR.byte4 (cv.buffer_int32);
+                       AR.Byte4 (cv.buffer_int32);
                   when ft_byte8 => Stmt.crate.Element (F).a10.all :=
-                       AR.byte8 (cv.buffer_int64);
+                       AR.Byte8 (cv.buffer_int64);
                   when ft_real9 =>
                      if mtype = ABM.MYSQL_TYPE_NEWDECIMAL or else
                        mtype = ABM.MYSQL_TYPE_DECIMAL
@@ -1124,7 +1124,7 @@ package body AdaBase.Statement.Base.MySQL is
                                    Stmt.con_max_blob));
                      else
                         Stmt.crate.Element (F).a11.all :=
-                          AR.real9 (cv.buffer_float);
+                          AR.Real9 (cv.buffer_float);
                      end if;
                   when ft_real18 =>
                      if mtype = ABM.MYSQL_TYPE_NEWDECIMAL or else
@@ -1135,7 +1135,7 @@ package body AdaBase.Statement.Base.MySQL is
                                    Stmt.con_max_blob));
                      else
                         Stmt.crate.Element (F).a12.all :=
-                          AR.real18 (cv.buffer_double);
+                          AR.Real18 (cv.buffer_double);
                      end if;
                   when ft_textual => Stmt.crate.Element (F).a13.all :=
                        CT.SUS (bincopy (cv.buffer_binary, datalen,
@@ -1544,26 +1544,26 @@ package body AdaBase.Statement.Base.MySQL is
       zone    : bindrec renames Stmt.realmccoy.Element (marker);
       vartype : constant field_types := zone.output_type;
 
-      use type AR.nbyte0_access;
-      use type AR.nbyte1_access;
-      use type AR.nbyte2_access;
-      use type AR.nbyte3_access;
-      use type AR.nbyte4_access;
-      use type AR.nbyte8_access;
-      use type AR.byte1_access;
-      use type AR.byte2_access;
-      use type AR.byte3_access;
-      use type AR.byte4_access;
-      use type AR.byte8_access;
-      use type AR.real9_access;
-      use type AR.real18_access;
-      use type AR.str1_access;
-      use type AR.str2_access;
-      use type AR.str4_access;
-      use type AR.time_access;
-      use type AR.enum_access;
-      use type AR.chain_access;
-      use type AR.settype_access;
+      use type AR.NByte0_Access;
+      use type AR.NByte1_Access;
+      use type AR.NByte2_Access;
+      use type AR.NByte3_Access;
+      use type AR.NByte4_Access;
+      use type AR.NByte8_Access;
+      use type AR.Byte1_Access;
+      use type AR.Byte2_Access;
+      use type AR.Byte3_Access;
+      use type AR.Byte4_Access;
+      use type AR.Byte8_Access;
+      use type AR.Real9_Access;
+      use type AR.Real18_Access;
+      use type AR.Str1_Access;
+      use type AR.Str2_Access;
+      use type AR.Str4_Access;
+      use type AR.Time_Access;
+      use type AR.Enum_Access;
+      use type AR.Chain_Access;
+      use type AR.Settype_Access;
 
       procedure set_binary_buffer (Str : String)
       is

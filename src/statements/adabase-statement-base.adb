@@ -154,7 +154,7 @@ package body AdaBase.Statement.Base is
    ----------------------------------
    --  convert string to textwide  --
    ----------------------------------
-   function convert (nv : String) return AR.textwide is
+   function convert (nv : String) return AR.Textwide is
    begin
       return SUW.To_Unbounded_Wide_String (ACC.To_Wide_String (nv));
    end convert;
@@ -163,7 +163,7 @@ package body AdaBase.Statement.Base is
    -----------------------------------
    --  convert string to textsuper  --
    -----------------------------------
-   function convert (nv : String) return AR.textsuper is
+   function convert (nv : String) return AR.Textsuper is
    begin
       return SWW.To_Unbounded_Wide_Wide_String (ACC.To_Wide_Wide_String (nv));
    end convert;
@@ -247,9 +247,9 @@ package body AdaBase.Statement.Base is
    ------------------------------------------------------
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.nbyte0_access)
+                   vaxx  : AR.NByte0_Access)
    is
-      use type AR.nbyte0_access;
+      use type AR.NByte0_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
@@ -262,9 +262,9 @@ package body AdaBase.Statement.Base is
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.nbyte1_access)
+                   vaxx  : AR.NByte1_Access)
    is
-      use type AR.nbyte1_access;
+      use type AR.NByte1_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
@@ -277,9 +277,9 @@ package body AdaBase.Statement.Base is
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.nbyte2_access)
+                   vaxx  : AR.NByte2_Access)
    is
-      use type AR.nbyte2_access;
+      use type AR.NByte2_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
@@ -292,9 +292,9 @@ package body AdaBase.Statement.Base is
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.nbyte3_access)
+                   vaxx  : AR.NByte3_Access)
    is
-      use type AR.nbyte3_access;
+      use type AR.NByte3_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
@@ -307,9 +307,9 @@ package body AdaBase.Statement.Base is
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.nbyte4_access)
+                   vaxx  : AR.NByte4_Access)
    is
-      use type AR.nbyte4_access;
+      use type AR.NByte4_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
@@ -322,9 +322,9 @@ package body AdaBase.Statement.Base is
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.nbyte8_access)
+                   vaxx  : AR.NByte8_Access)
    is
-      use type AR.nbyte8_access;
+      use type AR.NByte8_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
@@ -337,9 +337,9 @@ package body AdaBase.Statement.Base is
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.byte1_access)
+                   vaxx  : AR.Byte1_Access)
    is
-      use type AR.byte1_access;
+      use type AR.Byte1_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
@@ -352,9 +352,9 @@ package body AdaBase.Statement.Base is
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.byte2_access)
+                   vaxx  : AR.Byte2_Access)
    is
-      use type AR.byte2_access;
+      use type AR.Byte2_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
@@ -367,9 +367,9 @@ package body AdaBase.Statement.Base is
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.byte3_access)
+                   vaxx  : AR.Byte3_Access)
    is
-      use type AR.byte3_access;
+      use type AR.Byte3_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
@@ -382,9 +382,9 @@ package body AdaBase.Statement.Base is
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.byte4_access)
+                   vaxx  : AR.Byte4_Access)
    is
-      use type AR.byte4_access;
+      use type AR.Byte4_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
@@ -397,9 +397,9 @@ package body AdaBase.Statement.Base is
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.byte8_access)
+                   vaxx  : AR.Byte8_Access)
    is
-      use type AR.byte8_access;
+      use type AR.Byte8_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
@@ -412,9 +412,9 @@ package body AdaBase.Statement.Base is
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.real9_access)
+                   vaxx  : AR.Real9_Access)
    is
-      use type AR.real9_access;
+      use type AR.Real9_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
@@ -427,9 +427,9 @@ package body AdaBase.Statement.Base is
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.real18_access)
+                   vaxx  : AR.Real18_Access)
    is
-      use type AR.real18_access;
+      use type AR.Real18_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
@@ -442,9 +442,9 @@ package body AdaBase.Statement.Base is
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.str1_access)
+                   vaxx  : AR.Str1_Access)
    is
-      use type AR.str1_access;
+      use type AR.Str1_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
@@ -457,39 +457,39 @@ package body AdaBase.Statement.Base is
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.str2_access)
+                   vaxx  : AR.Str2_Access)
    is
-      use type AR.str2_access;
+      use type AR.Str2_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_widetext, a14 => vaxx, bound => True,
-                    v14 => AR.blank_wstring, null_data => False));
+                    v14 => AR.Blank_WString, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.str4_access)
+                   vaxx  : AR.Str4_Access)
    is
-      use type AR.str4_access;
+      use type AR.Str4_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_supertext, a15 => vaxx, bound => True,
-                    v15 => AR.blank_wwstring, null_data => False));
+                    v15 => AR.Blank_WWString, null_data => False));
       end if;
    end bind;
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.time_access)
+                   vaxx  : AR.Time_Access)
    is
-      use type AR.time_access;
+      use type AR.Time_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
@@ -502,9 +502,9 @@ package body AdaBase.Statement.Base is
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.chain_access)
+                   vaxx  : AR.Chain_Access)
    is
-      use type AR.chain_access;
+      use type AR.Chain_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
@@ -517,9 +517,9 @@ package body AdaBase.Statement.Base is
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.enum_access)
+                   vaxx  : AR.Enum_Access)
    is
-      use type AR.enum_access;
+      use type AR.Enum_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
@@ -532,9 +532,9 @@ package body AdaBase.Statement.Base is
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.settype_access)
+                   vaxx  : AR.Settype_Access)
    is
-      use type AR.settype_access;
+      use type AR.Settype_Access;
       absent : Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
@@ -551,140 +551,140 @@ package body AdaBase.Statement.Base is
    ------------------------------------------------------------------
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.nbyte0_access) is
+                   vaxx    : AR.NByte0_Access) is
    begin
       Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.nbyte1_access) is
+                   vaxx    : AR.NByte1_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.nbyte2_access) is
+                   vaxx    : AR.NByte2_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.nbyte3_access) is
+                   vaxx    : AR.NByte3_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.nbyte4_access) is
+                   vaxx    : AR.NByte4_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.nbyte8_access) is
+                   vaxx    : AR.NByte8_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.byte1_access) is
+                   vaxx    : AR.Byte1_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.byte2_access) is
+                   vaxx    : AR.Byte2_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.byte3_access) is
+                   vaxx    : AR.Byte3_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.byte4_access) is
+                   vaxx    : AR.Byte4_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.byte8_access) is
+                   vaxx    : AR.Byte8_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.real9_access) is
+                   vaxx    : AR.Real9_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.real18_access) is
+                   vaxx    : AR.Real18_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.str1_access) is
+                   vaxx    : AR.Str1_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.str2_access) is
+                   vaxx    : AR.Str2_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.str4_access) is
+                   vaxx    : AR.Str4_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.time_access) is
+                   vaxx    : AR.Time_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.chain_access) is
+                   vaxx    : AR.Chain_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.enum_access) is
+                   vaxx    : AR.Enum_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.settype_access) is
+                   vaxx    : AR.Settype_Access) is
    begin
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
@@ -713,140 +713,140 @@ package body AdaBase.Statement.Base is
    ------------------------------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte0_access) is
+                     vaxx    : AR.NByte0_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte1_access) is
+                     vaxx    : AR.NByte1_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte2_access) is
+                     vaxx    : AR.NByte2_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte3_access) is
+                     vaxx    : AR.NByte3_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte4_access) is
+                     vaxx    : AR.NByte4_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte8_access) is
+                     vaxx    : AR.NByte8_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte1_access) is
+                     vaxx    : AR.Byte1_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte2_access) is
+                     vaxx    : AR.Byte2_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte3_access) is
+                     vaxx    : AR.Byte3_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte4_access) is
+                     vaxx    : AR.Byte4_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte8_access) is
+                     vaxx    : AR.Byte8_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.real9_access) is
+                     vaxx    : AR.Real9_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.real18_access) is
+                     vaxx    : AR.Real18_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.str1_access) is
+                     vaxx    : AR.Str1_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.str2_access) is
+                     vaxx    : AR.Str2_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.str4_access) is
+                     vaxx    : AR.Str4_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.time_access) is
+                     vaxx    : AR.Time_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.chain_access) is
+                     vaxx    : AR.Chain_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.enum_access) is
+                     vaxx    : AR.Enum_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.settype_access) is
+                     vaxx    : AR.Settype_Access) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
@@ -857,91 +857,91 @@ package body AdaBase.Statement.Base is
    ------------------------------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte0) is
+                     vaxx    : AR.NByte0) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte1) is
+                     vaxx    : AR.NByte1) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte2) is
+                     vaxx    : AR.NByte2) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte3) is
+                     vaxx    : AR.NByte3) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte4) is
+                     vaxx    : AR.NByte4) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte8) is
+                     vaxx    : AR.NByte8) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte1) is
+                     vaxx    : AR.Byte1) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte2) is
+                     vaxx    : AR.Byte2) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte3) is
+                     vaxx    : AR.Byte3) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte4) is
+                     vaxx    : AR.Byte4) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte8) is
+                     vaxx    : AR.Byte8) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.real9) is
+                     vaxx    : AR.Real9) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.real18) is
+                     vaxx    : AR.Real18) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
@@ -955,21 +955,21 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.textual) is
+                     vaxx    : AR.Textual) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.textwide) is
+                     vaxx    : AR.Textwide) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.textsuper) is
+                     vaxx    : AR.Textsuper) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
@@ -983,21 +983,21 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.chain) is
+                     vaxx    : AR.Chain) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.enumtype) is
+                     vaxx    : AR.Enumtype) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.settype) is
+                     vaxx    : AR.Settype) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
@@ -1007,9 +1007,9 @@ package body AdaBase.Statement.Base is
    ------------------------------------------------------
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte0_access)
+                     vaxx  : AR.NByte0_Access)
    is
-      use type AR.nbyte0_access;
+      use type AR.NByte0_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
@@ -1019,7 +1019,7 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte0) is
+                     vaxx  : AR.NByte0) is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte0, a00 => null, v00 => vaxx,
@@ -1028,9 +1028,9 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte1_access)
+                     vaxx  : AR.NByte1_Access)
    is
-      use type AR.nbyte1_access;
+      use type AR.NByte1_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
@@ -1040,7 +1040,7 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte1) is
+                     vaxx  : AR.NByte1) is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte1, a01 => null, v01 => vaxx,
@@ -1049,9 +1049,9 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte2_access)
+                     vaxx  : AR.NByte2_Access)
    is
-      use type AR.nbyte2_access;
+      use type AR.NByte2_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
@@ -1061,7 +1061,7 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte2) is
+                     vaxx  : AR.NByte2) is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte2, a02 => null, v02 => vaxx,
@@ -1070,9 +1070,9 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte3_access)
+                     vaxx  : AR.NByte3_Access)
    is
-      use type AR.nbyte3_access;
+      use type AR.NByte3_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
@@ -1082,7 +1082,7 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte3) is
+                     vaxx  : AR.NByte3) is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte3, a03 => null, v03 => vaxx,
@@ -1091,9 +1091,9 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte4_access)
+                     vaxx  : AR.NByte4_Access)
    is
-      use type AR.nbyte4_access;
+      use type AR.NByte4_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
@@ -1103,7 +1103,7 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte4) is
+                     vaxx  : AR.NByte4) is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte4, a04 => null, v04 => vaxx,
@@ -1112,9 +1112,9 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte8_access)
+                     vaxx  : AR.NByte8_Access)
    is
-      use type AR.nbyte8_access;
+      use type AR.NByte8_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
@@ -1124,7 +1124,7 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte8) is
+                     vaxx  : AR.NByte8) is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte8, a05 => null, v05 => vaxx,
@@ -1133,9 +1133,9 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte1_access)
+                     vaxx  : AR.Byte1_Access)
    is
-      use type AR.byte1_access;
+      use type AR.Byte1_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
@@ -1145,7 +1145,7 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte1) is
+                     vaxx  : AR.Byte1) is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte1, a06 => null, v06 => vaxx,
@@ -1154,9 +1154,9 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte2_access)
+                     vaxx  : AR.Byte2_Access)
    is
-      use type AR.byte2_access;
+      use type AR.Byte2_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
@@ -1166,7 +1166,7 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte2) is
+                     vaxx  : AR.Byte2) is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte2, a07 => null, v07 => vaxx,
@@ -1175,9 +1175,9 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte3_access)
+                     vaxx  : AR.Byte3_Access)
    is
-      use type AR.byte3_access;
+      use type AR.Byte3_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
@@ -1187,7 +1187,7 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte3) is
+                     vaxx  : AR.Byte3) is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte3, a08 => null, v08 => vaxx,
@@ -1196,9 +1196,9 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte4_access)
+                     vaxx  : AR.Byte4_Access)
    is
-      use type AR.byte4_access;
+      use type AR.Byte4_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
@@ -1208,7 +1208,7 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte4) is
+                     vaxx  : AR.Byte4) is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte4, a09 => null,  v09 => vaxx,
@@ -1217,9 +1217,9 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte8_access)
+                     vaxx  : AR.Byte8_Access)
    is
-      use type AR.byte8_access;
+      use type AR.Byte8_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
@@ -1229,7 +1229,7 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte8) is
+                     vaxx  : AR.Byte8) is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte8, a10 => null,  v10 => vaxx,
@@ -1238,9 +1238,9 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.real9_access)
+                     vaxx  : AR.Real9_Access)
    is
-      use type AR.real9_access;
+      use type AR.Real9_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
@@ -1250,7 +1250,7 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.real9) is
+                     vaxx  : AR.Real9) is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_real9, a11 => null, v11 => vaxx,
@@ -1259,9 +1259,9 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.real18_access)
+                     vaxx  : AR.Real18_Access)
    is
-      use type AR.real18_access;
+      use type AR.Real18_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
@@ -1271,7 +1271,7 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.real18) is
+                     vaxx  : AR.Real18) is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_real18, a12 => null, v12 => vaxx,
@@ -1280,9 +1280,9 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.str1_access)
+                     vaxx  : AR.Str1_Access)
    is
-      use type AR.str1_access;
+      use type AR.Str1_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
@@ -1301,7 +1301,7 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.textual) is
+                     vaxx  : AR.Textual) is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_textual, a13 => null, v13 => vaxx,
@@ -1310,19 +1310,19 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.str2_access)
+                     vaxx  : AR.Str2_Access)
    is
-      use type AR.str2_access;
+      use type AR.Str2_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_widetext, a14 => vaxx,
-                 v14 => AR.blank_wstring, bound => True, null_data => absent));
+                 v14 => AR.Blank_WString, bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.textwide) is
+                     vaxx  : AR.Textwide) is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_widetext, a14 => null, v14 => vaxx,
@@ -1331,19 +1331,19 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.str4_access)
+                     vaxx  : AR.Str4_Access)
    is
-      use type AR.str4_access;
+      use type AR.Str4_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_supertext, a15 => vaxx, bound => True,
-                 v15 => AR.blank_wwstring, null_data => absent));
+                 v15 => AR.Blank_WWString, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.textsuper) is
+                     vaxx  : AR.Textsuper) is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_supertext, a15 => null, v15 => vaxx,
@@ -1352,9 +1352,9 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.time_access)
+                     vaxx  : AR.Time_Access)
    is
-      use type AR.time_access;
+      use type AR.Time_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
@@ -1373,9 +1373,9 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.chain_access)
+                     vaxx  : AR.Chain_Access)
    is
-      use type AR.chain_access;
+      use type AR.Chain_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
@@ -1385,7 +1385,7 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.chain)
+                     vaxx  : AR.Chain)
    is
       payload : constant String := ARC.convert (vaxx);
    begin
@@ -1396,9 +1396,9 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.enum_access)
+                     vaxx  : AR.Enum_Access)
    is
-      use type AR.enum_access;
+      use type AR.Enum_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
@@ -1408,7 +1408,7 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.enumtype) is
+                     vaxx  : AR.Enumtype) is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_enumtype, a18 => null, v18 => vaxx,
@@ -1417,9 +1417,9 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.settype_access)
+                     vaxx  : AR.Settype_Access)
    is
-      use type AR.settype_access;
+      use type AR.Settype_Access;
       absent : Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
@@ -1429,9 +1429,9 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.settype)
+                     vaxx  : AR.Settype)
    is
-      payload : AR.textual := CT.blank;
+      payload : AR.Textual := CT.blank;
    begin
       for x in vaxx'Range loop
          if x /= vaxx'First then
@@ -1486,9 +1486,9 @@ package body AdaBase.Statement.Base is
                           value : String)
    is
       zone : bindrec renames Stmt.realmccoy.Element (index);
-      ST   : AR.textual;
-      STW  : AR.textwide;
-      STS  : AR.textsuper;
+      ST   : AR.Textual;
+      STW  : AR.Textwide;
+      STS  : AR.Textsuper;
       hold : ARF.Variant;
    begin
       case zone.output_type is
@@ -1546,13 +1546,13 @@ package body AdaBase.Statement.Base is
          when ft_enumtype  => Stmt.assign (index, hold.v18);
          when ft_chain     =>
             declare
-               my_chain : AR.chain := ARC.convert (value);
+               my_chain : AR.Chain := ARC.convert (value);
             begin
                Stmt.assign (index, my_chain);
             end;
          when ft_settype   =>
             declare
-               set : AR.settype := ARC.convert (value);
+               set : AR.Settype := ARC.convert (value);
             begin
                Stmt.assign (index, set);
             end;

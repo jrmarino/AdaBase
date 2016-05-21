@@ -8,325 +8,325 @@ package AdaBase.Results.Converters is
    package GEN renames AdaBase.Results.Generic_Converters;
 
    -------------
-   -- nbyte 0 --
+   -- NByte 0 --
    -------------
-   function convert (nv : nbyte0) return nbyte1;
-   function convert (nv : nbyte0) return nbyte2;
-   function convert (nv : nbyte0) return nbyte3;
-   function convert (nv : nbyte0) return nbyte4;
-   function convert (nv : nbyte0) return nbyte8;
-   function convert (nv : nbyte0) return byte1;
-   function convert (nv : nbyte0) return byte2;
-   function convert (nv : nbyte0) return byte3;
-   function convert (nv : nbyte0) return byte4;
-   function convert (nv : nbyte0) return byte8;
-   function convert (nv : nbyte0) return real9;
-   function convert (nv : nbyte0) return real18;
-   function convert (nv : nbyte0) return String;
-   function convert (nv : nbyte0) return Wide_String;
-   function convert (nv : nbyte0) return Wide_Wide_String;
-   function convert (nv : nbyte0) return chain;
+   function convert (nv : NByte0) return NByte1;
+   function convert (nv : NByte0) return NByte2;
+   function convert (nv : NByte0) return NByte3;
+   function convert (nv : NByte0) return NByte4;
+   function convert (nv : NByte0) return NByte8;
+   function convert (nv : NByte0) return Byte1;
+   function convert (nv : NByte0) return Byte2;
+   function convert (nv : NByte0) return Byte3;
+   function convert (nv : NByte0) return Byte4;
+   function convert (nv : NByte0) return Byte8;
+   function convert (nv : NByte0) return Real9;
+   function convert (nv : NByte0) return Real18;
+   function convert (nv : NByte0) return String;
+   function convert (nv : NByte0) return Wide_String;
+   function convert (nv : NByte0) return Wide_Wide_String;
+   function convert (nv : NByte0) return Chain;
 
 
    -------------
-   -- nbyte 1 --
+   -- NByte 1 --
    -------------
-   function convert (nv : nbyte1) return nbyte0;
-   function convert (nv : nbyte1) return nbyte2;
-   function convert (nv : nbyte1) return nbyte3;
-   function convert (nv : nbyte1) return nbyte4;
-   function convert (nv : nbyte1) return nbyte8;
-   function convert (nv : nbyte1) return byte1;
-   function convert (nv : nbyte1) return byte2;
-   function convert (nv : nbyte1) return byte3;
-   function convert (nv : nbyte1) return byte4;
-   function convert (nv : nbyte1) return byte8;
-   function convert (nv : nbyte1) return real9;
-   function convert (nv : nbyte1) return real18;
-   function convert is new GEN.convert2str1 (IntType => nbyte1);
-   function convert is new GEN.convert2str2 (IntType => nbyte1);
-   function convert is new GEN.convert2str3 (IntType => nbyte1);
-   function convert (nv : nbyte1) return chain;
+   function convert (nv : NByte1) return NByte0;
+   function convert (nv : NByte1) return NByte2;
+   function convert (nv : NByte1) return NByte3;
+   function convert (nv : NByte1) return NByte4;
+   function convert (nv : NByte1) return NByte8;
+   function convert (nv : NByte1) return Byte1;
+   function convert (nv : NByte1) return Byte2;
+   function convert (nv : NByte1) return Byte3;
+   function convert (nv : NByte1) return Byte4;
+   function convert (nv : NByte1) return Byte8;
+   function convert (nv : NByte1) return Real9;
+   function convert (nv : NByte1) return Real18;
+   function convert is new GEN.convert2str1 (IntType => NByte1);
+   function convert is new GEN.convert2str2 (IntType => NByte1);
+   function convert is new GEN.convert2str3 (IntType => NByte1);
+   function convert (nv : NByte1) return Chain;
 
 
    -------------
-   -- nbyte 2 --
+   -- NByte 2 --
    -------------
-   function convert (nv : nbyte2) return nbyte0;
-   function convert (nv : nbyte2) return nbyte1;
-   function convert (nv : nbyte2) return nbyte3;
-   function convert (nv : nbyte2) return nbyte4;
-   function convert (nv : nbyte2) return nbyte8;
-   function convert (nv : nbyte2) return byte1;
-   function convert (nv : nbyte2) return byte2;
-   function convert (nv : nbyte2) return byte3;
-   function convert (nv : nbyte2) return byte4;
-   function convert (nv : nbyte2) return byte8;
-   function convert (nv : nbyte2) return real9;
-   function convert (nv : nbyte2) return real18;
-   function convert is new GEN.convert2str1 (IntType => nbyte2);
-   function convert is new GEN.convert2str2 (IntType => nbyte2);
-   function convert is new GEN.convert2str3 (IntType => nbyte2);
-   function convert (nv : nbyte2) return chain;
+   function convert (nv : NByte2) return NByte0;
+   function convert (nv : NByte2) return NByte1;
+   function convert (nv : NByte2) return NByte3;
+   function convert (nv : NByte2) return NByte4;
+   function convert (nv : NByte2) return NByte8;
+   function convert (nv : NByte2) return Byte1;
+   function convert (nv : NByte2) return Byte2;
+   function convert (nv : NByte2) return Byte3;
+   function convert (nv : NByte2) return Byte4;
+   function convert (nv : NByte2) return Byte8;
+   function convert (nv : NByte2) return Real9;
+   function convert (nv : NByte2) return Real18;
+   function convert is new GEN.convert2str1 (IntType => NByte2);
+   function convert is new GEN.convert2str2 (IntType => NByte2);
+   function convert is new GEN.convert2str3 (IntType => NByte2);
+   function convert (nv : NByte2) return Chain;
 
 
    -------------
-   -- nbyte 3 --
+   -- NByte 3 --
    -------------
-   function convert (nv : nbyte3) return nbyte0;
-   function convert (nv : nbyte3) return nbyte1;
-   function convert (nv : nbyte3) return nbyte2;
-   function convert (nv : nbyte3) return nbyte4;
-   function convert (nv : nbyte3) return nbyte8;
-   function convert (nv : nbyte3) return byte1;
-   function convert (nv : nbyte3) return byte2;
-   function convert (nv : nbyte3) return byte3;
-   function convert (nv : nbyte3) return byte4;
-   function convert (nv : nbyte3) return byte8;
-   function convert (nv : nbyte3) return real9;
-   function convert (nv : nbyte3) return real18;
-   function convert is new GEN.convert2str1 (IntType => nbyte3);
-   function convert is new GEN.convert2str2 (IntType => nbyte3);
-   function convert is new GEN.convert2str3 (IntType => nbyte3);
-   function convert (nv : nbyte3) return chain;
+   function convert (nv : NByte3) return NByte0;
+   function convert (nv : NByte3) return NByte1;
+   function convert (nv : NByte3) return NByte2;
+   function convert (nv : NByte3) return NByte4;
+   function convert (nv : NByte3) return NByte8;
+   function convert (nv : NByte3) return Byte1;
+   function convert (nv : NByte3) return Byte2;
+   function convert (nv : NByte3) return Byte3;
+   function convert (nv : NByte3) return Byte4;
+   function convert (nv : NByte3) return Byte8;
+   function convert (nv : NByte3) return Real9;
+   function convert (nv : NByte3) return Real18;
+   function convert is new GEN.convert2str1 (IntType => NByte3);
+   function convert is new GEN.convert2str2 (IntType => NByte3);
+   function convert is new GEN.convert2str3 (IntType => NByte3);
+   function convert (nv : NByte3) return Chain;
 
 
    -------------
-   -- nbyte 4 --
+   -- NByte 4 --
    -------------
-   function convert (nv : nbyte4) return nbyte0;
-   function convert (nv : nbyte4) return nbyte1;
-   function convert (nv : nbyte4) return nbyte2;
-   function convert (nv : nbyte4) return nbyte3;
-   function convert (nv : nbyte4) return nbyte8;
-   function convert (nv : nbyte4) return byte1;
-   function convert (nv : nbyte4) return byte2;
-   function convert (nv : nbyte4) return byte3;
-   function convert (nv : nbyte4) return byte4;
-   function convert (nv : nbyte4) return byte8;
-   function convert (nv : nbyte4) return real9;
-   function convert (nv : nbyte4) return real18;
-   function convert is new GEN.convert2str1 (IntType => nbyte4);
-   function convert is new GEN.convert2str2 (IntType => nbyte4);
-   function convert is new GEN.convert2str3 (IntType => nbyte4);
-   function convert (nv : nbyte4) return chain;
+   function convert (nv : NByte4) return NByte0;
+   function convert (nv : NByte4) return NByte1;
+   function convert (nv : NByte4) return NByte2;
+   function convert (nv : NByte4) return NByte3;
+   function convert (nv : NByte4) return NByte8;
+   function convert (nv : NByte4) return Byte1;
+   function convert (nv : NByte4) return Byte2;
+   function convert (nv : NByte4) return Byte3;
+   function convert (nv : NByte4) return Byte4;
+   function convert (nv : NByte4) return Byte8;
+   function convert (nv : NByte4) return Real9;
+   function convert (nv : NByte4) return Real18;
+   function convert is new GEN.convert2str1 (IntType => NByte4);
+   function convert is new GEN.convert2str2 (IntType => NByte4);
+   function convert is new GEN.convert2str3 (IntType => NByte4);
+   function convert (nv : NByte4) return Chain;
 
 
    -------------
-   -- nbyte 8 --
+   -- NByte 8 --
    -------------
-   function convert (nv : nbyte8) return nbyte0;
-   function convert (nv : nbyte8) return nbyte1;
-   function convert (nv : nbyte8) return nbyte2;
-   function convert (nv : nbyte8) return nbyte3;
-   function convert (nv : nbyte8) return nbyte4;
-   function convert (nv : nbyte8) return byte1;
-   function convert (nv : nbyte8) return byte2;
-   function convert (nv : nbyte8) return byte3;
-   function convert (nv : nbyte8) return byte4;
-   function convert (nv : nbyte8) return byte8;
-   function convert (nv : nbyte8) return real9;
-   function convert (nv : nbyte8) return real18;
-   function convert is new GEN.convert2str1 (IntType => nbyte8);
-   function convert is new GEN.convert2str2 (IntType => nbyte8);
-   function convert is new GEN.convert2str3 (IntType => nbyte8);
-   function convert (nv : nbyte8) return chain;
+   function convert (nv : NByte8) return NByte0;
+   function convert (nv : NByte8) return NByte1;
+   function convert (nv : NByte8) return NByte2;
+   function convert (nv : NByte8) return NByte3;
+   function convert (nv : NByte8) return NByte4;
+   function convert (nv : NByte8) return Byte1;
+   function convert (nv : NByte8) return Byte2;
+   function convert (nv : NByte8) return Byte3;
+   function convert (nv : NByte8) return Byte4;
+   function convert (nv : NByte8) return Byte8;
+   function convert (nv : NByte8) return Real9;
+   function convert (nv : NByte8) return Real18;
+   function convert is new GEN.convert2str1 (IntType => NByte8);
+   function convert is new GEN.convert2str2 (IntType => NByte8);
+   function convert is new GEN.convert2str3 (IntType => NByte8);
+   function convert (nv : NByte8) return Chain;
 
 
    ------------
-   -- byte 1 --
+   -- Byte 1 --
    ------------
-   function convert (nv : byte1) return nbyte0;
-   function convert (nv : byte1) return nbyte1;
-   function convert (nv : byte1) return nbyte2;
-   function convert (nv : byte1) return nbyte3;
-   function convert (nv : byte1) return nbyte4;
-   function convert (nv : byte1) return nbyte8;
-   function convert (nv : byte1) return byte2;
-   function convert (nv : byte1) return byte3;
-   function convert (nv : byte1) return byte4;
-   function convert (nv : byte1) return byte8;
-   function convert (nv : byte1) return real9;
-   function convert (nv : byte1) return real18;
-   function convert is new GEN.convert2str1 (IntType => byte1);
-   function convert is new GEN.convert2str2 (IntType => byte1);
-   function convert is new GEN.convert2str3 (IntType => byte1);
+   function convert (nv : Byte1) return NByte0;
+   function convert (nv : Byte1) return NByte1;
+   function convert (nv : Byte1) return NByte2;
+   function convert (nv : Byte1) return NByte3;
+   function convert (nv : Byte1) return NByte4;
+   function convert (nv : Byte1) return NByte8;
+   function convert (nv : Byte1) return Byte2;
+   function convert (nv : Byte1) return Byte3;
+   function convert (nv : Byte1) return Byte4;
+   function convert (nv : Byte1) return Byte8;
+   function convert (nv : Byte1) return Real9;
+   function convert (nv : Byte1) return Real18;
+   function convert is new GEN.convert2str1 (IntType => Byte1);
+   function convert is new GEN.convert2str2 (IntType => Byte1);
+   function convert is new GEN.convert2str3 (IntType => Byte1);
 
 
    -----------
-   -- byte2 --
+   -- Byte2 --
    -----------
-   function convert (nv : byte2) return nbyte0;
-   function convert (nv : byte2) return nbyte1;
-   function convert (nv : byte2) return nbyte2;
-   function convert (nv : byte2) return nbyte3;
-   function convert (nv : byte2) return nbyte4;
-   function convert (nv : byte2) return nbyte8;
-   function convert (nv : byte2) return byte1;
-   function convert (nv : byte2) return byte3;
-   function convert (nv : byte2) return byte4;
-   function convert (nv : byte2) return byte8;
-   function convert (nv : byte2) return real9;
-   function convert (nv : byte2) return real18;
-   function convert is new GEN.convert2str1 (IntType => byte2);
-   function convert is new GEN.convert2str2 (IntType => byte2);
-   function convert is new GEN.convert2str3 (IntType => byte2);
+   function convert (nv : Byte2) return NByte0;
+   function convert (nv : Byte2) return NByte1;
+   function convert (nv : Byte2) return NByte2;
+   function convert (nv : Byte2) return NByte3;
+   function convert (nv : Byte2) return NByte4;
+   function convert (nv : Byte2) return NByte8;
+   function convert (nv : Byte2) return Byte1;
+   function convert (nv : Byte2) return Byte3;
+   function convert (nv : Byte2) return Byte4;
+   function convert (nv : Byte2) return Byte8;
+   function convert (nv : Byte2) return Real9;
+   function convert (nv : Byte2) return Real18;
+   function convert is new GEN.convert2str1 (IntType => Byte2);
+   function convert is new GEN.convert2str2 (IntType => Byte2);
+   function convert is new GEN.convert2str3 (IntType => Byte2);
 
 
    -----------
-   -- byte3 --
+   -- Byte3 --
    -----------
-   function convert (nv : byte3) return nbyte0;
-   function convert (nv : byte3) return nbyte1;
-   function convert (nv : byte3) return nbyte2;
-   function convert (nv : byte3) return nbyte3;
-   function convert (nv : byte3) return nbyte4;
-   function convert (nv : byte3) return nbyte8;
-   function convert (nv : byte3) return byte1;
-   function convert (nv : byte3) return byte2;
-   function convert (nv : byte3) return byte4;
-   function convert (nv : byte3) return byte8;
-   function convert (nv : byte3) return real9;
-   function convert (nv : byte3) return real18;
-   function convert is new GEN.convert2str1 (IntType => byte3);
-   function convert is new GEN.convert2str2 (IntType => byte3);
-   function convert is new GEN.convert2str3 (IntType => byte3);
+   function convert (nv : Byte3) return NByte0;
+   function convert (nv : Byte3) return NByte1;
+   function convert (nv : Byte3) return NByte2;
+   function convert (nv : Byte3) return NByte3;
+   function convert (nv : Byte3) return NByte4;
+   function convert (nv : Byte3) return NByte8;
+   function convert (nv : Byte3) return Byte1;
+   function convert (nv : Byte3) return Byte2;
+   function convert (nv : Byte3) return Byte4;
+   function convert (nv : Byte3) return Byte8;
+   function convert (nv : Byte3) return Real9;
+   function convert (nv : Byte3) return Real18;
+   function convert is new GEN.convert2str1 (IntType => Byte3);
+   function convert is new GEN.convert2str2 (IntType => Byte3);
+   function convert is new GEN.convert2str3 (IntType => Byte3);
 
 
    -----------
-   -- byte4 --
+   -- Byte4 --
    -----------
-   function convert (nv : byte4) return nbyte0;
-   function convert (nv : byte4) return nbyte1;
-   function convert (nv : byte4) return nbyte2;
-   function convert (nv : byte4) return nbyte3;
-   function convert (nv : byte4) return nbyte4;
-   function convert (nv : byte4) return nbyte8;
-   function convert (nv : byte4) return byte1;
-   function convert (nv : byte4) return byte2;
-   function convert (nv : byte4) return byte3;
-   function convert (nv : byte4) return byte8;
-   function convert (nv : byte4) return real9;
-   function convert (nv : byte4) return real18;
-   function convert is new GEN.convert2str1 (IntType => byte4);
-   function convert is new GEN.convert2str2 (IntType => byte4);
-   function convert is new GEN.convert2str3 (IntType => byte4);
+   function convert (nv : Byte4) return NByte0;
+   function convert (nv : Byte4) return NByte1;
+   function convert (nv : Byte4) return NByte2;
+   function convert (nv : Byte4) return NByte3;
+   function convert (nv : Byte4) return NByte4;
+   function convert (nv : Byte4) return NByte8;
+   function convert (nv : Byte4) return Byte1;
+   function convert (nv : Byte4) return Byte2;
+   function convert (nv : Byte4) return Byte3;
+   function convert (nv : Byte4) return Byte8;
+   function convert (nv : Byte4) return Real9;
+   function convert (nv : Byte4) return Real18;
+   function convert is new GEN.convert2str1 (IntType => Byte4);
+   function convert is new GEN.convert2str2 (IntType => Byte4);
+   function convert is new GEN.convert2str3 (IntType => Byte4);
 
 
    -----------
-   -- byte8 --
+   -- Byte8 --
    -----------
-   function convert (nv : byte8) return nbyte0;
-   function convert (nv : byte8) return nbyte1;
-   function convert (nv : byte8) return nbyte2;
-   function convert (nv : byte8) return nbyte3;
-   function convert (nv : byte8) return nbyte4;
-   function convert (nv : byte8) return nbyte8;
-   function convert (nv : byte8) return byte1;
-   function convert (nv : byte8) return byte2;
-   function convert (nv : byte8) return byte3;
-   function convert (nv : byte8) return byte4;
-   function convert (nv : byte8) return real9;
-   function convert (nv : byte8) return real18;
-   function convert is new GEN.convert2str1 (IntType => byte8);
-   function convert is new GEN.convert2str2 (IntType => byte8);
-   function convert is new GEN.convert2str3 (IntType => byte8);
+   function convert (nv : Byte8) return NByte0;
+   function convert (nv : Byte8) return NByte1;
+   function convert (nv : Byte8) return NByte2;
+   function convert (nv : Byte8) return NByte3;
+   function convert (nv : Byte8) return NByte4;
+   function convert (nv : Byte8) return NByte8;
+   function convert (nv : Byte8) return Byte1;
+   function convert (nv : Byte8) return Byte2;
+   function convert (nv : Byte8) return Byte3;
+   function convert (nv : Byte8) return Byte4;
+   function convert (nv : Byte8) return Real9;
+   function convert (nv : Byte8) return Real18;
+   function convert is new GEN.convert2str1 (IntType => Byte8);
+   function convert is new GEN.convert2str2 (IntType => Byte8);
+   function convert is new GEN.convert2str3 (IntType => Byte8);
 
 
    -----------
-   -- real9 --
+   -- Real9 --
    -----------
-   function convert (nv : real9) return real18;
-   function convert is new GEN.convert3str1 (RealType => real9);
-   function convert is new GEN.convert3str2 (RealType => real9);
-   function convert is new GEN.convert3str3 (RealType => real9);
+   function convert (nv : Real9) return Real18;
+   function convert is new GEN.convert3str1 (RealType => Real9);
+   function convert is new GEN.convert3str2 (RealType => Real9);
+   function convert is new GEN.convert3str3 (RealType => Real9);
 
 
    ------------
-   -- real18 --
+   -- Real18 --
    ------------
-   function convert (nv : real18) return real9;
-   function convert is new GEN.convert3str1 (RealType => real18);
-   function convert is new GEN.convert3str2 (RealType => real18);
-   function convert is new GEN.convert3str3 (RealType => real18);
+   function convert (nv : Real18) return Real9;
+   function convert is new GEN.convert3str1 (RealType => Real18);
+   function convert is new GEN.convert3str2 (RealType => Real18);
+   function convert is new GEN.convert3str3 (RealType => Real18);
 
 
    ------------
    -- String --
    ------------
-   function convert (nv : textual) return nbyte0;
-   function convert is new GEN.convertstr (IntType => nbyte1);
-   function convert is new GEN.convertstr (IntType => nbyte2);
-   function convert is new GEN.convertstr (IntType => nbyte3);
-   function convert is new GEN.convertstr (IntType => nbyte4);
-   function convert is new GEN.convertstr (IntType => nbyte8);
-   function convert is new GEN.convertstr (IntType => byte1);
-   function convert is new GEN.convertstr (IntType => byte2);
-   function convert is new GEN.convertstr (IntType => byte3);
-   function convert is new GEN.convertstr (IntType => byte4);
-   function convert is new GEN.convertstr (IntType => byte8);
-   function convert is new GEN.convertst2 (RealType => real9);
-   function convert is new GEN.convertst2 (RealType => real18);
-   function convert (nv : textual) return String;
-   function convert (nv : textual) return Wide_String;
-   function convert (nv : textual) return Wide_Wide_String;
-   function convert (nv : textual) return AC.Time;
-   function convert (nv : textual) return chain;
-   function convert (nv : textual) return enumtype;
-   function convert (nv : textual) return settype;
+   function convert (nv : Textual) return NByte0;
+   function convert is new GEN.convertstr (IntType => NByte1);
+   function convert is new GEN.convertstr (IntType => NByte2);
+   function convert is new GEN.convertstr (IntType => NByte3);
+   function convert is new GEN.convertstr (IntType => NByte4);
+   function convert is new GEN.convertstr (IntType => NByte8);
+   function convert is new GEN.convertstr (IntType => Byte1);
+   function convert is new GEN.convertstr (IntType => Byte2);
+   function convert is new GEN.convertstr (IntType => Byte3);
+   function convert is new GEN.convertstr (IntType => Byte4);
+   function convert is new GEN.convertstr (IntType => Byte8);
+   function convert is new GEN.convertst2 (RealType => Real9);
+   function convert is new GEN.convertst2 (RealType => Real18);
+   function convert (nv : Textual) return String;
+   function convert (nv : Textual) return Wide_String;
+   function convert (nv : Textual) return Wide_Wide_String;
+   function convert (nv : Textual) return AC.Time;
+   function convert (nv : Textual) return Chain;
+   function convert (nv : Textual) return Enumtype;
+   function convert (nv : Textual) return Settype;
    function convert (nv : String) return AC.Time;
-   function convert (nv : String; fixed : Natural := 0) return chain;
-   function convert (nv : String; fixed : Natural := 0) return settype;
+   function convert (nv : String; fixed : Natural := 0) return Chain;
+   function convert (nv : String; fixed : Natural := 0) return Settype;
 
 
    -----------------
    -- Wide_String --
    -----------------
-   function convert (nv : textwide) return nbyte0;
-   function convert is new GEN.convertst3 (IntType => nbyte1);
-   function convert is new GEN.convertst3 (IntType => nbyte2);
-   function convert is new GEN.convertst3 (IntType => nbyte3);
-   function convert is new GEN.convertst3 (IntType => nbyte4);
-   function convert is new GEN.convertst3 (IntType => nbyte8);
-   function convert is new GEN.convertst3 (IntType => byte1);
-   function convert is new GEN.convertst3 (IntType => byte2);
-   function convert is new GEN.convertst3 (IntType => byte3);
-   function convert is new GEN.convertst3 (IntType => byte4);
-   function convert is new GEN.convertst3 (IntType => byte8);
-   function convert is new GEN.convertst4 (RealType => real9);
-   function convert is new GEN.convertst4 (RealType => real18);
-   function convert (nv : textwide) return String;
-   function convert (nv : textwide) return Wide_String;
-   function convert (nv : textwide) return Wide_Wide_String;
-   function convert (nv : textwide) return AC.Time;
-   function convert (nv : textwide) return chain;
-   function convert (nv : textwide) return enumtype;
-   function convert (nv : textwide) return settype;
+   function convert (nv : Textwide) return NByte0;
+   function convert is new GEN.convertst3 (IntType => NByte1);
+   function convert is new GEN.convertst3 (IntType => NByte2);
+   function convert is new GEN.convertst3 (IntType => NByte3);
+   function convert is new GEN.convertst3 (IntType => NByte4);
+   function convert is new GEN.convertst3 (IntType => NByte8);
+   function convert is new GEN.convertst3 (IntType => Byte1);
+   function convert is new GEN.convertst3 (IntType => Byte2);
+   function convert is new GEN.convertst3 (IntType => Byte3);
+   function convert is new GEN.convertst3 (IntType => Byte4);
+   function convert is new GEN.convertst3 (IntType => Byte8);
+   function convert is new GEN.convertst4 (RealType => Real9);
+   function convert is new GEN.convertst4 (RealType => Real18);
+   function convert (nv : Textwide) return String;
+   function convert (nv : Textwide) return Wide_String;
+   function convert (nv : Textwide) return Wide_Wide_String;
+   function convert (nv : Textwide) return AC.Time;
+   function convert (nv : Textwide) return Chain;
+   function convert (nv : Textwide) return Enumtype;
+   function convert (nv : Textwide) return Settype;
 
 
    ----------------------
    -- Wide_Wide_String --
    ----------------------
-   function convert (nv : textsuper) return nbyte0;
-   function convert is new GEN.convertst5 (IntType => nbyte1);
-   function convert is new GEN.convertst5 (IntType => nbyte2);
-   function convert is new GEN.convertst5 (IntType => nbyte3);
-   function convert is new GEN.convertst5 (IntType => nbyte4);
-   function convert is new GEN.convertst5 (IntType => nbyte8);
-   function convert is new GEN.convertst5 (IntType => byte1);
-   function convert is new GEN.convertst5 (IntType => byte2);
-   function convert is new GEN.convertst5 (IntType => byte3);
-   function convert is new GEN.convertst5 (IntType => byte4);
-   function convert is new GEN.convertst5 (IntType => byte8);
-   function convert is new GEN.convertst6 (RealType => real9);
-   function convert is new GEN.convertst6 (RealType => real18);
-   function convert (nv : textsuper) return String;
-   function convert (nv : textsuper) return Wide_String;
-   function convert (nv : textsuper) return Wide_Wide_String;
-   function convert (nv : textsuper) return AC.Time;
-   function convert (nv : textsuper) return chain;
-   function convert (nv : textsuper) return enumtype;
-   function convert (nv : textsuper) return settype;
+   function convert (nv : Textsuper) return NByte0;
+   function convert is new GEN.convertst5 (IntType => NByte1);
+   function convert is new GEN.convertst5 (IntType => NByte2);
+   function convert is new GEN.convertst5 (IntType => NByte3);
+   function convert is new GEN.convertst5 (IntType => NByte4);
+   function convert is new GEN.convertst5 (IntType => NByte8);
+   function convert is new GEN.convertst5 (IntType => Byte1);
+   function convert is new GEN.convertst5 (IntType => Byte2);
+   function convert is new GEN.convertst5 (IntType => Byte3);
+   function convert is new GEN.convertst5 (IntType => Byte4);
+   function convert is new GEN.convertst5 (IntType => Byte8);
+   function convert is new GEN.convertst6 (RealType => Real9);
+   function convert is new GEN.convertst6 (RealType => Real18);
+   function convert (nv : Textsuper) return String;
+   function convert (nv : Textsuper) return Wide_String;
+   function convert (nv : Textsuper) return Wide_Wide_String;
+   function convert (nv : Textsuper) return AC.Time;
+   function convert (nv : Textsuper) return Chain;
+   function convert (nv : Textsuper) return Enumtype;
+   function convert (nv : Textsuper) return Settype;
 
 
    ----------
@@ -340,31 +340,31 @@ package AdaBase.Results.Converters is
    -----------------
    -- ENUMERATION --
    -----------------
-   function convert (nv : enumtype) return String;
-   function convert (nv : enumtype) return Wide_String;
-   function convert (nv : enumtype) return Wide_Wide_String;
+   function convert (nv : Enumtype) return String;
+   function convert (nv : Enumtype) return Wide_String;
+   function convert (nv : Enumtype) return Wide_Wide_String;
 
 
    ------------------------
    --  CHAIN (OF BYTES)  --
    ------------------------
-   function convert (nv : chain) return nbyte0;
-   function convert (nv : chain) return nbyte1;
-   function convert (nv : chain) return nbyte2;
-   function convert (nv : chain) return nbyte3;
-   function convert (nv : chain) return nbyte4;
-   function convert (nv : chain) return nbyte8;
-   function convert (nv : chain) return String;
-   function convert (nv : chain) return Wide_String;
-   function convert (nv : chain) return Wide_Wide_String;
+   function convert (nv : Chain) return NByte0;
+   function convert (nv : Chain) return NByte1;
+   function convert (nv : Chain) return NByte2;
+   function convert (nv : Chain) return NByte3;
+   function convert (nv : Chain) return NByte4;
+   function convert (nv : Chain) return NByte8;
+   function convert (nv : Chain) return String;
+   function convert (nv : Chain) return Wide_String;
+   function convert (nv : Chain) return Wide_Wide_String;
 
 
    ---------------
    -- SET TYPE  --
    ---------------
-   function convert (nv : settype) return String;
-   function convert (nv : settype) return Wide_String;
-   function convert (nv : settype) return Wide_Wide_String;
+   function convert (nv : Settype) return String;
+   function convert (nv : Settype) return Wide_String;
+   function convert (nv : Settype) return Wide_Wide_String;
 
 
 end AdaBase.Results.Converters;

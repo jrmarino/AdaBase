@@ -77,83 +77,83 @@ package AdaBase.Statement.Base is
    -------------------------------------------
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.nbyte0_access);
+                   vaxx  : AR.NByte0_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.nbyte1_access);
+                   vaxx  : AR.NByte1_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.nbyte2_access);
+                   vaxx  : AR.NByte2_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.nbyte3_access);
+                   vaxx  : AR.NByte3_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.nbyte4_access);
+                   vaxx  : AR.NByte4_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.nbyte8_access);
+                   vaxx  : AR.NByte8_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.byte1_access);
+                   vaxx  : AR.Byte1_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.byte2_access);
+                   vaxx  : AR.Byte2_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.byte3_access);
+                   vaxx  : AR.Byte3_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.byte4_access);
+                   vaxx  : AR.Byte4_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.byte8_access);
+                   vaxx  : AR.Byte8_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.real9_access);
+                   vaxx  : AR.Real9_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.real18_access);
+                   vaxx  : AR.Real18_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.str1_access);
+                   vaxx  : AR.Str1_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.str2_access);
+                   vaxx  : AR.Str2_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.str4_access);
+                   vaxx  : AR.Str4_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.time_access);
+                   vaxx  : AR.Time_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.chain_access);
+                   vaxx  : AR.Chain_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.enum_access);
+                   vaxx  : AR.Enum_Access);
 
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
-                   vaxx  : AR.settype_access);
+                   vaxx  : AR.Settype_Access);
 
 
    -------------------------------------------
@@ -161,83 +161,83 @@ package AdaBase.Statement.Base is
    -------------------------------------------
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.nbyte0_access);
+                   vaxx    : AR.NByte0_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.nbyte1_access);
+                   vaxx    : AR.NByte1_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.nbyte2_access);
+                   vaxx    : AR.NByte2_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.nbyte3_access);
+                   vaxx    : AR.NByte3_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.nbyte4_access);
+                   vaxx    : AR.NByte4_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.nbyte8_access);
+                   vaxx    : AR.NByte8_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.byte1_access);
+                   vaxx    : AR.Byte1_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.byte2_access);
+                   vaxx    : AR.Byte2_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.byte3_access);
+                   vaxx    : AR.Byte3_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.byte4_access);
+                   vaxx    : AR.Byte4_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.byte8_access);
+                   vaxx    : AR.Byte8_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.real9_access);
+                   vaxx    : AR.Real9_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.real18_access);
+                   vaxx    : AR.Real18_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.str1_access);
+                   vaxx    : AR.Str1_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.str2_access);
+                   vaxx    : AR.Str2_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.str4_access);
+                   vaxx    : AR.Str4_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.time_access);
+                   vaxx    : AR.Time_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.chain_access);
+                   vaxx    : AR.Chain_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.enum_access);
+                   vaxx    : AR.Enum_Access);
 
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
-                   vaxx    : AR.settype_access);
+                   vaxx    : AR.Settype_Access);
 
 
    --------------------------------------------
@@ -245,166 +245,166 @@ package AdaBase.Statement.Base is
    --------------------------------------------
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte0_access);
+                     vaxx  : AR.NByte0_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte1_access);
+                     vaxx  : AR.NByte1_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte2_access);
+                     vaxx  : AR.NByte2_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte3_access);
+                     vaxx  : AR.NByte3_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte4_access);
+                     vaxx  : AR.NByte4_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte8_access);
+                     vaxx  : AR.NByte8_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte1_access);
+                     vaxx  : AR.Byte1_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte2_access);
+                     vaxx  : AR.Byte2_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte3_access);
+                     vaxx  : AR.Byte3_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte4_access);
+                     vaxx  : AR.Byte4_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte8_access);
+                     vaxx  : AR.Byte8_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.real9_access);
+                     vaxx  : AR.Real9_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.real18_access);
+                     vaxx  : AR.Real18_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.str1_access);
+                     vaxx  : AR.Str1_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.str2_access);
+                     vaxx  : AR.Str2_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.str4_access);
+                     vaxx  : AR.Str4_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.time_access);
+                     vaxx  : AR.Time_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.chain_access);
+                     vaxx  : AR.Chain_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.enum_access);
+                     vaxx  : AR.Enum_Access);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.settype_access);
+                     vaxx  : AR.Settype_Access);
 
    ------------------------------------------------
    --  20 assign/access using moniker for index  --
    ------------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte0_access);
+                     vaxx    : AR.NByte0_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte1_access);
+                     vaxx    : AR.NByte1_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte2_access);
+                     vaxx    : AR.NByte2_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte3_access);
+                     vaxx    : AR.NByte3_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte4_access);
+                     vaxx    : AR.NByte4_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte8_access);
+                     vaxx    : AR.NByte8_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte1_access);
+                     vaxx    : AR.Byte1_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte2_access);
+                     vaxx    : AR.Byte2_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte3_access);
+                     vaxx    : AR.Byte3_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte4_access);
+                     vaxx    : AR.Byte4_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte8_access);
+                     vaxx    : AR.Byte8_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.real9_access);
+                     vaxx    : AR.Real9_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.real18_access);
+                     vaxx    : AR.Real18_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.str1_access);
+                     vaxx    : AR.Str1_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.str2_access);
+                     vaxx    : AR.Str2_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.str4_access);
+                     vaxx    : AR.Str4_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.time_access);
+                     vaxx    : AR.Time_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.chain_access);
+                     vaxx    : AR.Chain_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.enum_access);
+                     vaxx    : AR.Enum_Access);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.settype_access);
+                     vaxx    : AR.Settype_Access);
 
 
    -------------------------------------------
@@ -412,55 +412,55 @@ package AdaBase.Statement.Base is
    -------------------------------------------
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte0);
+                     vaxx  : AR.NByte0);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte1);
+                     vaxx  : AR.NByte1);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte2);
+                     vaxx  : AR.NByte2);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte3);
+                     vaxx  : AR.NByte3);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte4);
+                     vaxx  : AR.NByte4);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.nbyte8);
+                     vaxx  : AR.NByte8);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte1);
+                     vaxx  : AR.Byte1);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte2);
+                     vaxx  : AR.Byte2);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte3);
+                     vaxx  : AR.Byte3);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte4);
+                     vaxx  : AR.Byte4);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.byte8);
+                     vaxx  : AR.Byte8);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.real9);
+                     vaxx  : AR.Real9);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.real18);
+                     vaxx  : AR.Real18);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
@@ -468,15 +468,15 @@ package AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.textual);
+                     vaxx  : AR.Textual);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.textwide);
+                     vaxx  : AR.Textwide);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.textsuper);
+                     vaxx  : AR.Textsuper);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
@@ -484,15 +484,15 @@ package AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.chain);
+                     vaxx  : AR.Chain);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.enumtype);
+                     vaxx  : AR.Enumtype);
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : AR.settype);
+                     vaxx  : AR.Settype);
 
 
    -----------------------------------------------
@@ -500,55 +500,55 @@ package AdaBase.Statement.Base is
    -----------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte0);
+                     vaxx    : AR.NByte0);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte1);
+                     vaxx    : AR.NByte1);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte2);
+                     vaxx    : AR.NByte2);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte3);
+                     vaxx    : AR.NByte3);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte4);
+                     vaxx    : AR.NByte4);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.nbyte8);
+                     vaxx    : AR.NByte8);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte1);
+                     vaxx    : AR.Byte1);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte2);
+                     vaxx    : AR.Byte2);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte3);
+                     vaxx    : AR.Byte3);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte4);
+                     vaxx    : AR.Byte4);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.byte8);
+                     vaxx    : AR.Byte8);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.real9);
+                     vaxx    : AR.Real9);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.real18);
+                     vaxx    : AR.Real18);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
@@ -556,15 +556,15 @@ package AdaBase.Statement.Base is
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.textual);
+                     vaxx    : AR.Textual);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.textwide);
+                     vaxx    : AR.Textwide);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.textsuper);
+                     vaxx    : AR.Textsuper);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
@@ -572,15 +572,15 @@ package AdaBase.Statement.Base is
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.chain);
+                     vaxx    : AR.Chain);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.enumtype);
+                     vaxx    : AR.Enumtype);
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : AR.settype);
+                     vaxx    : AR.Settype);
 
 private
 
@@ -606,66 +606,66 @@ private
       Equivalent_Keys => Same_Strings,
       Hash            => Ada.Strings.Hash);
 
-   function convert is new RGC.convert4str (IntType => AR.nbyte1);
-   function convert is new RGC.convert4str (IntType => AR.nbyte2);
-   function convert is new RGC.convert4str (IntType => AR.nbyte3);
-   function convert is new RGC.convert4str (IntType => AR.nbyte4);
-   function convert is new RGC.convert4str (IntType => AR.nbyte8);
-   function convert is new RGC.convert4str (IntType => AR.byte1);
-   function convert is new RGC.convert4str (IntType => AR.byte2);
-   function convert is new RGC.convert4str (IntType => AR.byte3);
-   function convert is new RGC.convert4str (IntType => AR.byte4);
-   function convert is new RGC.convert4str (IntType => AR.byte8);
-   function convert is new RGC.convert4st2 (RealType => AR.real9);
-   function convert is new RGC.convert4st2 (RealType => AR.real18);
-   function convert (nv : String) return AR.textwide;
-   function convert (nv : String) return AR.textsuper;
+   function convert is new RGC.convert4str (IntType => AR.NByte1);
+   function convert is new RGC.convert4str (IntType => AR.NByte2);
+   function convert is new RGC.convert4str (IntType => AR.NByte3);
+   function convert is new RGC.convert4str (IntType => AR.NByte4);
+   function convert is new RGC.convert4str (IntType => AR.NByte8);
+   function convert is new RGC.convert4str (IntType => AR.Byte1);
+   function convert is new RGC.convert4str (IntType => AR.Byte2);
+   function convert is new RGC.convert4str (IntType => AR.Byte3);
+   function convert is new RGC.convert4str (IntType => AR.Byte4);
+   function convert is new RGC.convert4str (IntType => AR.Byte8);
+   function convert is new RGC.convert4st2 (RealType => AR.Real9);
+   function convert is new RGC.convert4st2 (RealType => AR.Real18);
+   function convert (nv : String) return AR.Textwide;
+   function convert (nv : String) return AR.Textsuper;
 
    type bindrec (output_type : field_types := ft_nbyte0)
    is record
       bound     : Boolean := False;
       null_data : Boolean := False;
       case output_type is
-         when ft_nbyte0    => a00 : AR.nbyte0_access;
-                              v00 : AR.nbyte0;
-         when ft_nbyte1    => a01 : AR.nbyte1_access;
-                              v01 : AR.nbyte1;
-         when ft_nbyte2    => a02 : AR.nbyte2_access;
-                              v02 : AR.nbyte2;
-         when ft_nbyte3    => a03 : AR.nbyte3_access;
-                              v03 : AR.nbyte3;
-         when ft_nbyte4    => a04 : AR.nbyte4_access;
-                              v04 : AR.nbyte4;
-         when ft_nbyte8    => a05 : AR.nbyte8_access;
-                              v05 : AR.nbyte8;
-         when ft_byte1     => a06 : AR.byte1_access;
-                              v06 : AR.byte1;
-         when ft_byte2     => a07 : AR.byte2_access;
-                              v07 : AR.byte2;
-         when ft_byte3     => a08 : AR.byte3_access;
-                              v08 : AR.byte3;
-         when ft_byte4     => a09 : AR.byte4_access;
-                              v09 : AR.byte4;
-         when ft_byte8     => a10 : AR.byte8_access;
-                              v10 : AR.byte8;
-         when ft_real9     => a11 : AR.real9_access;
-                              v11 : AR.real9;
-         when ft_real18    => a12 : AR.real18_access;
-                              v12 : AR.real18;
-         when ft_textual   => a13 : AR.str1_access;
-                              v13 : AR.textual;
-         when ft_widetext  => a14 : AR.str2_access;
-                              v14 : AR.textwide;
-         when ft_supertext => a15 : AR.str4_access;
-                              v15 : AR.textsuper;
-         when ft_timestamp => a16 : AR.time_access;
+         when ft_nbyte0    => a00 : AR.NByte0_Access;
+                              v00 : AR.NByte0;
+         when ft_nbyte1    => a01 : AR.NByte1_Access;
+                              v01 : AR.NByte1;
+         when ft_nbyte2    => a02 : AR.NByte2_Access;
+                              v02 : AR.NByte2;
+         when ft_nbyte3    => a03 : AR.NByte3_Access;
+                              v03 : AR.NByte3;
+         when ft_nbyte4    => a04 : AR.NByte4_Access;
+                              v04 : AR.NByte4;
+         when ft_nbyte8    => a05 : AR.NByte8_Access;
+                              v05 : AR.NByte8;
+         when ft_byte1     => a06 : AR.Byte1_Access;
+                              v06 : AR.Byte1;
+         when ft_byte2     => a07 : AR.Byte2_Access;
+                              v07 : AR.Byte2;
+         when ft_byte3     => a08 : AR.Byte3_Access;
+                              v08 : AR.Byte3;
+         when ft_byte4     => a09 : AR.Byte4_Access;
+                              v09 : AR.Byte4;
+         when ft_byte8     => a10 : AR.Byte8_Access;
+                              v10 : AR.Byte8;
+         when ft_real9     => a11 : AR.Real9_Access;
+                              v11 : AR.Real9;
+         when ft_real18    => a12 : AR.Real18_Access;
+                              v12 : AR.Real18;
+         when ft_textual   => a13 : AR.Str1_Access;
+                              v13 : AR.Textual;
+         when ft_widetext  => a14 : AR.Str2_Access;
+                              v14 : AR.Textwide;
+         when ft_supertext => a15 : AR.Str4_Access;
+                              v15 : AR.Textsuper;
+         when ft_timestamp => a16 : AR.Time_Access;
                               v16 : CAL.Time;
-         when ft_chain     => a17 : AR.chain_access;
-                              v17 : AR.textual;
-         when ft_enumtype  => a18 : AR.enum_access;
-                              v18 : AR.enumtype;
-         when ft_settype   => a19 : AR.settype_access;
-                              v19 : AR.textual;
+         when ft_chain     => a17 : AR.Chain_Access;
+                              v17 : AR.Textual;
+         when ft_enumtype  => a18 : AR.Enum_Access;
+                              v18 : AR.Enumtype;
+         when ft_settype   => a19 : AR.Settype_Access;
+                              v19 : AR.Textual;
       end case;
    end record;
 

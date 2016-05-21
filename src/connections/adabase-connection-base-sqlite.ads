@@ -102,15 +102,15 @@ package AdaBase.Connection.Base.SQLite is
 
    function retrieve_integer (conn  : SQLite_Connection;
                               stmt  : BND.sqlite3_stmt_Access;
-                              index : Natural) return AR.byte8;
+                              index : Natural) return AR.Byte8;
 
    function retrieve_double  (conn  : SQLite_Connection;
                               stmt  : BND.sqlite3_stmt_Access;
-                              index : Natural) return AR.real18;
+                              index : Natural) return AR.Real18;
 
    function retrieve_text    (conn  : SQLite_Connection;
                               stmt  : BND.sqlite3_stmt_Access;
-                              index : Natural) return AR.textual;
+                              index : Natural) return AR.Textual;
 
    function retrieve_blob    (conn  : SQLite_Connection;
                               stmt  : BND.sqlite3_stmt_Access;
@@ -161,12 +161,12 @@ package AdaBase.Connection.Base.SQLite is
    function marker_is_integer (conn  : SQLite_Connection;
                                stmt  : BND.sqlite3_stmt_Access;
                                index : Natural;
-                               value : AR.byte8) return Boolean;
+                               value : AR.Byte8) return Boolean;
 
    function marker_is_double  (conn  : SQLite_Connection;
                                stmt  : BND.sqlite3_stmt_Access;
                                index : Natural;
-                               value : AR.real18) return Boolean;
+                               value : AR.Real18) return Boolean;
 
    function marker_is_text    (conn  : SQLite_Connection;
                                stmt  : BND.sqlite3_stmt_Access;

@@ -11,7 +11,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte0  --
    -----------------
-   function as_nbyte0 (field : Std_Field) return nbyte0
+   function as_nbyte0 (field : Std_Field) return NByte0
    is
    begin
       case field.native.datatype is
@@ -31,7 +31,7 @@ package body AdaBase.Results.Field is
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_chain     =>
             declare
-               cadena : chain := ARC.convert (field.native.v17);
+               cadena : Chain := ARC.convert (field.native.v17);
             begin
                return ARC.convert (cadena);
             end;
@@ -46,7 +46,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte1  --
    -----------------
-   function as_nbyte1 (field : Std_Field) return nbyte1
+   function as_nbyte1 (field : Std_Field) return NByte1
    is
    begin
       case field.native.datatype is
@@ -66,7 +66,7 @@ package body AdaBase.Results.Field is
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_chain     =>
             declare
-               cadena : chain := ARC.convert (field.native.v17);
+               cadena : Chain := ARC.convert (field.native.v17);
             begin
                return ARC.convert (cadena);
             end;
@@ -82,7 +82,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte2  --
    -----------------
-   function as_nbyte2 (field : Std_Field) return nbyte2
+   function as_nbyte2 (field : Std_Field) return NByte2
    is
    begin
       case field.native.datatype is
@@ -102,7 +102,7 @@ package body AdaBase.Results.Field is
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_chain     =>
             declare
-               cadena : chain := ARC.convert (field.native.v17);
+               cadena : Chain := ARC.convert (field.native.v17);
             begin
                return ARC.convert (cadena);
             end;
@@ -118,7 +118,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte3  --
    -----------------
-   function as_nbyte3 (field : Std_Field) return nbyte3
+   function as_nbyte3 (field : Std_Field) return NByte3
    is
    begin
       case field.native.datatype is
@@ -138,7 +138,7 @@ package body AdaBase.Results.Field is
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_chain     =>
             declare
-               cadena : chain := ARC.convert (field.native.v17);
+               cadena : Chain := ARC.convert (field.native.v17);
             begin
                return ARC.convert (cadena);
             end;
@@ -154,7 +154,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte4  --
    -----------------
-   function as_nbyte4 (field : Std_Field) return nbyte4
+   function as_nbyte4 (field : Std_Field) return NByte4
    is
    begin
       case field.native.datatype is
@@ -174,7 +174,7 @@ package body AdaBase.Results.Field is
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_chain     =>
             declare
-               cadena : chain := ARC.convert (field.native.v17);
+               cadena : Chain := ARC.convert (field.native.v17);
             begin
                return ARC.convert (cadena);
             end;
@@ -190,7 +190,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_nbyte8  --
    -----------------
-   function as_nbyte8 (field : Std_Field) return nbyte8
+   function as_nbyte8 (field : Std_Field) return NByte8
    is
    begin
       case field.native.datatype is
@@ -210,7 +210,7 @@ package body AdaBase.Results.Field is
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_chain     =>
             declare
-               cadena : chain := ARC.convert (field.native.v17);
+               cadena : Chain := ARC.convert (field.native.v17);
             begin
                return ARC.convert (cadena);
             end;
@@ -226,7 +226,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte1  --
    ----------------
-   function as_byte1 (field : Std_Field) return byte1
+   function as_byte1 (field : Std_Field) return Byte1
    is
    begin
       case field.native.datatype is
@@ -257,7 +257,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte2  --
    ----------------
-   function as_byte2 (field : Std_Field) return byte2
+   function as_byte2 (field : Std_Field) return Byte2
    is
    begin
       case field.native.datatype is
@@ -288,7 +288,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte3  --
    ----------------
-   function as_byte3 (field : Std_Field) return byte3
+   function as_byte3 (field : Std_Field) return Byte3
    is
    begin
       case field.native.datatype is
@@ -319,7 +319,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte4  --
    ----------------
-   function as_byte4 (field : Std_Field) return byte4
+   function as_byte4 (field : Std_Field) return Byte4
    is
    begin
       case field.native.datatype is
@@ -350,7 +350,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_byte8  --
    ----------------
-   function as_byte8 (field : Std_Field) return byte8
+   function as_byte8 (field : Std_Field) return Byte8
    is
    begin
       case field.native.datatype is
@@ -381,7 +381,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_real9  --
    ----------------
-   function as_real9 (field : Std_Field) return real9
+   function as_real9 (field : Std_Field) return Real9
    is
    begin
       case field.native.datatype is
@@ -412,7 +412,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_real18  --
    -----------------
-   function as_real18 (field : Std_Field) return real18
+   function as_real18 (field : Std_Field) return Real18
    is
    begin
       case field.native.datatype is
@@ -550,7 +550,7 @@ package body AdaBase.Results.Field is
    ----------------
    --  as_chain  --
    ----------------
-   function as_chain (field : Std_Field) return chain
+   function as_chain (field : Std_Field) return Chain
    is
    begin
       case field.native.datatype is
@@ -572,7 +572,7 @@ package body AdaBase.Results.Field is
    -------------------
    --  as_enumtype  --
    -------------------
-   function as_enumtype (field : Std_Field) return enumtype
+   function as_enumtype (field : Std_Field) return Enumtype
    is
    begin
       case field.native.datatype is
@@ -588,7 +588,7 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_settype  --
    -----------------
-   function as_settype (field : Std_Field) return settype
+   function as_settype (field : Std_Field) return Settype
    is
    begin
       case field.native.datatype is
@@ -628,7 +628,7 @@ package body AdaBase.Results.Field is
       return result;
    end spawn_field;
 
-   function spawn_field (binob : chain) return Std_Field
+   function spawn_field (binob : Chain) return Std_Field
    is
       result  : Std_Field;
       chainstr : constant String := ARC.convert (binob);

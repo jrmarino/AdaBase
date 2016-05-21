@@ -628,13 +628,13 @@ package body AdaBase.Connection.Base.SQLite is
    ------------------------
    function retrieve_integer (conn  : SQLite_Connection;
                               stmt  : BND.sqlite3_stmt_Access;
-                              index : Natural) return AR.byte8
+                              index : Natural) return AR.Byte8
    is
       result : BND.sql64;
       col_index : constant BND.IC.int := BND.IC.int (index);
    begin
       result := BND.sqlite3_column_int64 (stmt, col_index);
-      return AR.byte8 (result);
+      return AR.Byte8 (result);
    end retrieve_integer;
 
 
@@ -643,13 +643,13 @@ package body AdaBase.Connection.Base.SQLite is
    -----------------------
    function retrieve_double (conn  : SQLite_Connection;
                              stmt  : BND.sqlite3_stmt_Access;
-                             index : Natural) return AR.real18
+                             index : Natural) return AR.Real18
    is
       result : BND.IC.double;
       col_index : constant BND.IC.int := BND.IC.int (index);
    begin
       result := BND.sqlite3_column_double (stmt, col_index);
-      return AR.real18 (result);
+      return AR.Real18 (result);
    end retrieve_double;
 
 
@@ -676,7 +676,7 @@ package body AdaBase.Connection.Base.SQLite is
    ---------------------
    function retrieve_text (conn  : SQLite_Connection;
                            stmt  : BND.sqlite3_stmt_Access;
-                           index : Natural) return AR.textual
+                           index : Natural) return AR.Textual
    is
       result : BND.ICS.chars_ptr;
       col_index : constant BND.IC.int := BND.IC.int (index);
@@ -802,7 +802,7 @@ package body AdaBase.Connection.Base.SQLite is
    function marker_is_integer (conn  : SQLite_Connection;
                                stmt  : BND.sqlite3_stmt_Access;
                                index : Natural;
-                               value : AR.byte8) return Boolean
+                               value : AR.Byte8) return Boolean
    is
       use type BND.IC.int;
       result    : BND.IC.int;
@@ -820,7 +820,7 @@ package body AdaBase.Connection.Base.SQLite is
    function marker_is_double (conn  : SQLite_Connection;
                               stmt  : BND.sqlite3_stmt_Access;
                               index : Natural;
-                              value : AR.real18) return Boolean
+                              value : AR.Real18) return Boolean
    is
       use type BND.IC.int;
       result    : BND.IC.int;

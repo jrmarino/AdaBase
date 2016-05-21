@@ -13,9 +13,9 @@ package AdaBase.Results is
    package SUW  renames Ada.Strings.Wide_Unbounded;
    package SUWW renames Ada.Strings.Wide_Wide_Unbounded;
 
-   subtype textual   is CT.Text;
-   subtype textwide  is SUW.Unbounded_Wide_String;
-   subtype textsuper is SUWW.Unbounded_Wide_Wide_String;
+   subtype Textual   is CT.Text;
+   subtype Textwide  is SUW.Unbounded_Wide_String;
+   subtype Textsuper is SUWW.Unbounded_Wide_Wide_String;
 
    TARGET_TYPE_TOO_NARROW : exception;
    CONVERSION_FAILED      : exception;
@@ -27,73 +27,73 @@ package AdaBase.Results is
    --  Supported Field Types (Standardized) --
    -------------------------------------------
 
-   type nbyte1 is mod 2 ** 8;
-   type nbyte2 is mod 2 ** 16;
-   type nbyte3 is mod 2 ** 24;
-   type nbyte4 is mod 2 ** 32;
-   type nbyte8 is mod 2 ** 64;
-   type byte8  is range -2 ** 63 .. 2 ** 63 - 1;
-   type byte4  is range -2 ** 31 .. 2 ** 31 - 1;
-   type byte3  is range -2 ** 23 .. 2 ** 23 - 1;
-   type byte2  is range -2 ** 15 .. 2 ** 15 - 1;
-   type byte1  is range -2 **  7 .. 2 **  7 - 1;
-   type real9  is digits 9;
-   type real18 is digits 18;
+   type NByte1 is mod 2 ** 8;
+   type NByte2 is mod 2 ** 16;
+   type NByte3 is mod 2 ** 24;
+   type NByte4 is mod 2 ** 32;
+   type NByte8 is mod 2 ** 64;
+   type Byte8  is range -2 ** 63 .. 2 ** 63 - 1;
+   type Byte4  is range -2 ** 31 .. 2 ** 31 - 1;
+   type Byte3  is range -2 ** 23 .. 2 ** 23 - 1;
+   type Byte2  is range -2 ** 15 .. 2 ** 15 - 1;
+   type Byte1  is range -2 **  7 .. 2 **  7 - 1;
+   type Real9  is digits 9;
+   type Real18 is digits 18;
 
-   subtype nbyte0 is Boolean;
+   subtype NByte0 is Boolean;
 
-   type enumtype is record enumeration : textual; end record;
-   type settype is array (Positive range <>) of enumtype;
-   type chain is array (Positive range <>) of nbyte1;
+   type Enumtype is record enumeration : Textual; end record;
+   type Settype is array (Positive range <>) of Enumtype;
+   type Chain is array (Positive range <>) of NByte1;
 
-   type nbyte0_access  is access all nbyte0;
-   type nbyte1_access  is access all nbyte1;
-   type nbyte2_access  is access all nbyte2;
-   type nbyte3_access  is access all nbyte3;
-   type nbyte4_access  is access all nbyte4;
-   type nbyte8_access  is access all nbyte8;
-   type byte1_access   is access all byte1;
-   type byte2_access   is access all byte2;
-   type byte3_access   is access all byte3;
-   type byte4_access   is access all byte4;
-   type byte8_access   is access all byte8;
-   type real9_access   is access all real9;
-   type real18_access  is access all real18;
-   type str1_access    is access all textual;
-   type str2_access    is access all textwide;
-   type str4_access    is access all textsuper;
-   type time_access    is access all AC.Time;
-   type chain_access   is access all chain;     --  stored as access
-   type enum_access    is access all enumtype;
-   type settype_access is access all settype;   --  stored as access
+   type NByte0_Access  is access all NByte0;
+   type NByte1_Access  is access all NByte1;
+   type NByte2_Access  is access all NByte2;
+   type NByte3_Access  is access all NByte3;
+   type NByte4_Access  is access all NByte4;
+   type NByte8_Access  is access all NByte8;
+   type Byte1_Access   is access all Byte1;
+   type Byte2_Access   is access all Byte2;
+   type Byte3_Access   is access all Byte3;
+   type Byte4_Access   is access all Byte4;
+   type Byte8_Access   is access all Byte8;
+   type Real9_Access   is access all Real9;
+   type Real18_Access  is access all Real18;
+   type Str1_Access    is access all Textual;
+   type Str2_Access    is access all Textwide;
+   type Str4_Access    is access all Textsuper;
+   type Time_Access    is access all AC.Time;
+   type Chain_Access   is access all Chain;     --  stored as access
+   type Enum_Access    is access all Enumtype;
+   type Settype_Access is access all Settype;   --  stored as access
 
-   blank_string   : constant textual   := CT.blank;
-   blank_wstring  : constant textwide  := SUW.Null_Unbounded_Wide_String;
-   blank_wwstring : constant textsuper :=
+   Blank_String   : constant Textual   := CT.blank;
+   Blank_WString  : constant Textwide  := SUW.Null_Unbounded_Wide_String;
+   Blank_WWString : constant Textsuper :=
                        SUWW.Null_Unbounded_Wide_Wide_String;
 
    ------------------------------------------------
    --  CONSTANTS FOR PARAMETER TYPE DEFINITIONS  --
    ------------------------------------------------
-   PARAM_IS_BOOLEAN   : constant nbyte0 := False;
-   PARAM_IS_NBYTE_1   : constant nbyte1 := 0;
-   PARAM_IS_NBYTE_2   : constant nbyte2 := 0;
-   PARAM_IS_NBYTE_3   : constant nbyte3 := 0;
-   PARAM_IS_NBYTE_4   : constant nbyte4 := 0;
-   PARAM_IS_NBYTE_8   : constant nbyte8 := 0;
-   PARAM_IS_BYTE_1    : constant byte1 := 0;
-   PARAM_IS_BYTE_2    : constant byte2 := 0;
-   PARAM_IS_BYTE_3    : constant byte3 := 0;
-   PARAM_IS_BYTE_4    : constant byte4 := 0;
-   PARAM_IS_BYTE_8    : constant byte8 := 0;
-   PARAM_IS_REAL_9    : constant real9  := 0.0;
-   PARAM_IS_REAL_18   : constant real18 := 0.0;
-   PARAM_IS_CHAIN     : constant chain := (1 .. 1 => 0);
-   PARAM_IS_ENUM      : constant enumtype := (enumeration => blank_string);
-   PARAM_IS_SET       : constant settype := (1 .. 1 => (PARAM_IS_ENUM));
-   PARAM_IS_TEXTUAL   : constant textual := blank_string;
-   PARAM_IS_TEXTWIDE  : constant textwide := blank_wstring;
-   PARAM_IS_TEXTSUPER : constant textsuper := blank_wwstring;
+   PARAM_IS_BOOLEAN   : constant NByte0 := False;
+   PARAM_IS_NBYTE_1   : constant NByte1 := 0;
+   PARAM_IS_NBYTE_2   : constant NByte2 := 0;
+   PARAM_IS_NBYTE_3   : constant NByte3 := 0;
+   PARAM_IS_NBYTE_4   : constant NByte4 := 0;
+   PARAM_IS_NBYTE_8   : constant NByte8 := 0;
+   PARAM_IS_BYTE_1    : constant Byte1 := 0;
+   PARAM_IS_BYTE_2    : constant Byte2 := 0;
+   PARAM_IS_BYTE_3    : constant Byte3 := 0;
+   PARAM_IS_BYTE_4    : constant Byte4 := 0;
+   PARAM_IS_BYTE_8    : constant Byte8 := 0;
+   PARAM_IS_REAL_9    : constant Real9  := 0.0;
+   PARAM_IS_REAL_18   : constant Real18 := 0.0;
+   PARAM_IS_CHAIN     : constant Chain := (1 .. 1 => 0);
+   PARAM_IS_ENUM      : constant Enumtype := (enumeration => Blank_String);
+   PARAM_IS_SET       : constant Settype := (1 .. 1 => (PARAM_IS_ENUM));
+   PARAM_IS_TEXTUAL   : constant Textual := Blank_String;
+   PARAM_IS_TEXTWIDE  : constant Textwide := Blank_WString;
+   PARAM_IS_TEXTSUPER : constant Textsuper := Blank_WWString;
    PARAM_IS_TIMESTAMP : constant AC.Time := AC.Time_Of (AC.Year_Number'First,
                                                         AC.Month_Number'First,
                                                         AC.Day_Number'First);

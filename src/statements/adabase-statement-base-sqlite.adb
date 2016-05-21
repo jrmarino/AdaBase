@@ -870,26 +870,26 @@ package body AdaBase.Statement.Base.SQLite is
       BT      : BND.ICS.chars_ptr         renames product.buffer_text;
       BB      : BND.ICS.char_array_access renames product.buffer_binary;
 
-      use type AR.nbyte0_access;
-      use type AR.nbyte1_access;
-      use type AR.nbyte2_access;
-      use type AR.nbyte3_access;
-      use type AR.nbyte4_access;
-      use type AR.nbyte8_access;
-      use type AR.byte1_access;
-      use type AR.byte2_access;
-      use type AR.byte3_access;
-      use type AR.byte4_access;
-      use type AR.byte8_access;
-      use type AR.real9_access;
-      use type AR.real18_access;
-      use type AR.str1_access;
-      use type AR.str2_access;
-      use type AR.str4_access;
-      use type AR.time_access;
-      use type AR.enum_access;
-      use type AR.chain_access;
-      use type AR.settype_access;
+      use type AR.NByte0_Access;
+      use type AR.NByte1_Access;
+      use type AR.NByte2_Access;
+      use type AR.NByte3_Access;
+      use type AR.NByte4_Access;
+      use type AR.NByte8_Access;
+      use type AR.Byte1_Access;
+      use type AR.Byte2_Access;
+      use type AR.Byte3_Access;
+      use type AR.Byte4_Access;
+      use type AR.Byte8_Access;
+      use type AR.Real9_Access;
+      use type AR.Real18_Access;
+      use type AR.Str1_Access;
+      use type AR.Str2_Access;
+      use type AR.Str4_Access;
+      use type AR.Time_Access;
+      use type AR.Enum_Access;
+      use type AR.Chain_Access;
+      use type AR.Settype_Access;
    begin
       if zone.null_data then
          if not conn.marker_is_null (Stmt.stmt_handle, marker) then
@@ -902,7 +902,7 @@ package body AdaBase.Statement.Base.SQLite is
                  ft_nbyte8 | ft_byte1  | ft_byte2  | ft_byte3  | ft_byte4  |
                  ft_byte8 =>
                declare
-                  hold : AR.byte8;
+                  hold : AR.Byte8;
                begin
                   case vartype is
                      when ft_nbyte0 =>
@@ -978,7 +978,7 @@ package body AdaBase.Statement.Base.SQLite is
                end;
             when ft_real9 | ft_real18 =>
                declare
-                  hold : AR.real18;
+                  hold : AR.Real18;
                begin
                   if vartype = ft_real18 then
                      if zone.a12 = null then
