@@ -11,10 +11,10 @@ package AdaBase.Statement.Base.SQLite is
    package BND renames AdaBase.Bindings.SQLite;
    package AC  renames Ada.Containers;
 
-   type SQLite_statement (type_of_statement : stmt_type;
+   type SQLite_statement (type_of_statement : Stmt_Type;
                           log_handler       : ALF.LogFacility_access;
                           sqlite_conn       : ACS.SQLite_Connection_Access;
-                          initial_sql       : SQL_access;
+                          initial_sql       : SQL_Access;
                           con_error_mode    : Error_Modes;
                           con_case_mode     : Case_Modes;
                           con_max_blob      : BLOB_Maximum)
@@ -98,10 +98,10 @@ private
    package VCanvas  is new AC.Vectors (Index_Type   => Positive,
                                        Element_Type => sqlite_canvas);
 
-   type SQLite_statement (type_of_statement : stmt_type;
+   type SQLite_statement (type_of_statement : Stmt_Type;
                           log_handler       : ALF.LogFacility_access;
                           sqlite_conn       : ACS.SQLite_Connection_Access;
-                          initial_sql       : SQL_access;
+                          initial_sql       : SQL_Access;
                           con_error_mode    : Error_Modes;
                           con_case_mode     : Case_Modes;
                           con_max_blob      : BLOB_Maximum)
@@ -113,7 +113,7 @@ private
          num_columns    : Natural          := 0;
          column_info    : VColumns.Vector;
          bind_canvas    : VCanvas.Vector;
-         sql_final      : SQL_access;
+         sql_final      : SQL_Access;
       end record;
 
    procedure log_problem
@@ -134,7 +134,7 @@ private
                                  return sqlite_canvas;
 
    procedure free_sql is new Ada.Unchecked_Deallocation
-     (String, SQL_access);
+     (String, SQL_Access);
 
    procedure free_binary is new Ada.Unchecked_Deallocation
      (BND.IC.char_array, BND.ICS.char_array_access);

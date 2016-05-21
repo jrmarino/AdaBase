@@ -35,13 +35,13 @@ package AdaBase.Statement.Base is
    package ARF renames AdaBase.Results.Field;
    package ARS renames AdaBase.Results.Sets;
 
-   type SQL_access is access all String;
+   type SQL_Access is access all String;
 
    type Base_Statement is
      abstract new Base_Pure and AIS.iStatement with private;
-   type basic_statement is access all Base_Statement'Class;
+   type Basic_Statement is access all Base_Statement'Class;
 
-   type stmt_type is (direct_statement, prepared_statement);
+   type Stmt_Type is (direct_statement, prepared_statement);
 
    ILLEGAL_BIND_SQL         : exception;
    INVALID_FOR_DIRECT_QUERY : exception;

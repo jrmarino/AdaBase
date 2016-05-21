@@ -206,7 +206,7 @@ package body AdaBase.Driver.Base.SQLite is
                                prepared : Boolean)
                                return ASS.SQLite_statement
    is
-      stype  : AID.ASB.stmt_type := AID.ASB.direct_statement;
+      stype  : AID.ASB.Stmt_Type := AID.ASB.direct_statement;
       logcat : Log_Category      := execution;
       err1   : constant CT.Text  :=
                CT.SUS ("ACK! Query attempted on inactive connection");
