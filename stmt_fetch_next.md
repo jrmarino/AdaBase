@@ -39,7 +39,7 @@ begin
    declare
       sql  : constant String := "SELECT * FROM fruits WHERE color = 'orange'";
       stmt : CON.Stmt_Type := CON.DR.query (sql);
-      row  : ARS.DataRow;
+      row  : ARS.Datarow;
    begin
       TIO.Put_Line (" Query successful: " & stmt.successful'Img);
       TIO.Put_Line ("   Data Discarded: " & stmt.data_discarded'Img);
