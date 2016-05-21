@@ -16,55 +16,53 @@ package AdaBase.Results is
    package SUW  renames Ada.Strings.Wide_Unbounded;
    package SUWW renames Ada.Strings.Wide_Wide_Unbounded;
 
-   subtype textual   is CT.Text;
-   subtype textwide  is SUW.Unbounded_Wide_String;
-   subtype textsuper is SUWW.Unbounded_Wide_Wide_String;
+   subtype Textual   is CT.Text;
+   subtype Textwide  is SUW.Unbounded_Wide_String;
+   subtype Textsuper is SUWW.Unbounded_Wide_Wide_String;
 
    -------------------------------------------
    --  Supported Field Types (Standardized) --
    -------------------------------------------
 
-   type nbyte1 is mod 2 ** 8;
-   type nbyte2 is mod 2 ** 16;
-   type nbyte3 is mod 2 ** 24;
-   type nbyte4 is mod 2 ** 32;
-   type nbyte8 is mod 2 ** 64;
-   type byte8  is range -2 ** 63 .. 2 ** 63 - 1;
-   type byte4  is range -2 ** 31 .. 2 ** 31 - 1;
-   type byte3  is range -2 ** 23 .. 2 ** 23 - 1;
-   type byte2  is range -2 ** 15 .. 2 ** 15 - 1;
-   type byte1  is range -2 **  7 .. 2 **  7 - 1;
-   type real9  is digits 9;
-   type real18 is digits 18;
+   type NByte1 is mod 2 ** 8;
+   type NByte2 is mod 2 ** 16;
+   type NByte3 is mod 2 ** 24;
+   type NByte4 is mod 2 ** 32;
+   type NByte8 is mod 2 ** 64;
+   type Byte8  is range -2 ** 63 .. 2 ** 63 - 1;
+   type Byte4  is range -2 ** 31 .. 2 ** 31 - 1;
+   type Byte3  is range -2 ** 23 .. 2 ** 23 - 1;
+   type Byte2  is range -2 ** 15 .. 2 ** 15 - 1;
+   type Byte1  is range -2 **  7 .. 2 **  7 - 1;
+   type Real9  is digits 9;
+   type Real18 is digits 18;
 
-   subtype nbyte0 is Boolean;
+   subtype NByte0 is Boolean;
 
-   type chain is array (Positive range <>) of nbyte1;
-   type enumtype is record
-      enumeration : textual;
-   end record;
-   type settype is array (Positive range <>) of enumtype;
+   type Enumtype is record enumeration : Textual; end record;
+   type Settype is array (Positive range <>) of Enumtype;
+   type Chain is array (Positive range <>) of NByte1;
 
-   type nbyte0_access  is access all nbyte0;
-   type nbyte1_access  is access all nbyte1;
-   type nbyte2_access  is access all nbyte2;
-   type nbyte3_access  is access all nbyte3;
-   type nbyte4_access  is access all nbyte4;
-   type nbyte8_access  is access all nbyte8;
-   type byte1_access   is access all byte1;
-   type byte2_access   is access all byte2;
-   type byte3_access   is access all byte3;
-   type byte4_access   is access all byte4;
-   type byte8_access   is access all byte8;
-   type real9_access   is access all real9;
-   type real18_access  is access all real18;
-   type str1_access    is access all textual;
-   type str2_access    is access all textwide;
-   type str4_access    is access all textsuper;
-   type time_access    is access all AC.Time;
-   type chain_access   is access all chain;
-   type enum_access    is access all enumtype;
-   type settype_access is access all settype;
+   type NByte0_Access  is access all NByte0;
+   type NByte1_Access  is access all NByte1;
+   type NByte2_Access  is access all NByte2;
+   type NByte3_Access  is access all NByte3;
+   type NByte4_Access  is access all NByte4;
+   type NByte8_Access  is access all NByte8;
+   type Byte1_Access   is access all Byte1;
+   type Byte2_Access   is access all Byte2;
+   type Byte3_Access   is access all Byte3;
+   type Byte4_Access   is access all Byte4;
+   type Byte8_Access   is access all Byte8;
+   type Real9_Access   is access all Real9;
+   type Real18_Access  is access all Real18;
+   type Str1_Access    is access all Textual;
+   type Str2_Access    is access all Textwide;
+   type Str4_Access    is access all Textsuper;
+   type Time_Access    is access all AC.Time;
+   type Chain_Access   is access all Chain;
+   type Enum_Access    is access all Enumtype;
+   type Settype_Access is access all Settype;
 
 end AdaBase.Results;
 </pre>
@@ -88,45 +86,45 @@ value with a constant of the same data type of the marker.  The final 21
 functions are similar, but reference the marker by their names.
 </p>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.nbyte0_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.NByte0_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.nbyte1_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.NByte1_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.nbyte2_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.NByte2_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.nbyte3_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.NByte3_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.nbyte4_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.NByte4_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.nbyte8_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.NByte8_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.byte1_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Byte1_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.byte2_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Byte2_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.byte3_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Byte3_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.byte4_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Byte4_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.byte8_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Byte8_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.real9_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Real9_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.real18_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Real18_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.str1_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Str1_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.str2_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Str2_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.str4_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Str4_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.time_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Time_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.chain_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Chain_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.enum_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Enum_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.settype_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Settype_Access)</h3>
 <p>
 Prior to issuing the <b>execute</b> command of the statement object, the values of
 the markers must be defined.  One method is to pass access to a variable of the same
@@ -143,45 +141,45 @@ be required over the safer Access to avoid a "non-local pointer cannot point to 
 object" error.
 </p>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.nbyte0_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.NByte0_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.nbyte1_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.NByte1_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.nbyte2_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.NByte2_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.nbyte3_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.NByte3_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.nbyte4_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.NByte4_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.nbyte8_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.NByte8_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.byte1_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Byte1_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.byte2_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Byte2_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.byte3_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Byte3_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.byte4_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Byte4_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.byte8_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Byte8_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.real9_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Real9_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.real18_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Real18_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.str1_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Str1_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.str2_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Str2_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.str4_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Str4_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.time_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Time_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.chain_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Chain_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.enum_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Enum_Access)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.settype_access)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Settype_Access)</h3>
 <p>
 The next set of 21 functions are similar, but rather than referring to the marker
 position with a numeric index, it accepts a String which must match of the name of the
@@ -190,93 +188,93 @@ parameter defined in the original SQL string.  For example, if the SQL given to 
 of the marker is "color".  It can be referred to by an index of 1 or its moniker "color".
 </p>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.nbyte0)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.NByte0)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.nbyte1)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.NByte1)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.nbyte2)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.NByte2)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.nbyte3)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.NByte3)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.nbyte4)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.NByte4)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.nbyte8)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.NByte8)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.byte1)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Byte1)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.byte2)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Byte2)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.byte3)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Byte3)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.byte4)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Byte4)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.byte8)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Byte8)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.real9)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Real9)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.real18)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Real18)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : String)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.textual)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Textual)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.textwide)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Textwide)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.textsuper)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Textsuper)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.time)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : CAL.Time)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.chain)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Chain)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.enum)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Enum)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.settype)</h3>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Settype)</h3>
 <p>
 These 21 functions assign values immediately to markers referenced by their
 numeric index.
 </p>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.nbyte0)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.NByte0)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.nbyte1)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.NByte1)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.nbyte2)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.NByte2)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.nbyte3)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.NByte3)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.nbyte4)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.NByte4)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.nbyte8)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.NByte8)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.byte1)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Byte1)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.byte2)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Byte2)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.byte3)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Byte3)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.byte4)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Byte4)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.byte8)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Byte8)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.real9)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Real9)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.real18)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Real18)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : String)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.textual)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Textual)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.textwide)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Textwide)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.textsuper)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Textsuper)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.time)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : CAL.Time)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.chain)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Chain)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.enum)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Enum)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.settype)</h3>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Settype)</h3>
 <p>
 These 20 functions assign values immediately to markers referenced by their
 names.

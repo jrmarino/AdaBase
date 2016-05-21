@@ -14,47 +14,47 @@ end AdaBase;
 
 package AdaBase.Results.Field is
 
-   type std_field is tagged private;
-   type field_access is access std_field;
+   type Std_Field is tagged private;
+   type Field_Access is access Std_Field;
 
-   type variant (datatype : field_types := ft_nbyte8) is
+   type Variant (datatype : field_types := ft_nbyte8) is
       record
          case datatype is
             when ft_nbyte0    => v00 : Boolean;
-            when ft_nbyte1    => v01 : nbyte1;
-            when ft_nbyte2    => v02 : nbyte2;
-            when ft_nbyte3    => v03 : nbyte3;
-            when ft_nbyte4    => v04 : nbyte4;
-            when ft_nbyte8    => v05 : nbyte8;
-            when ft_byte1     => v06 : byte1;
-            when ft_byte2     => v07 : byte2;
-            when ft_byte3     => v08 : byte3;
-            when ft_byte4     => v09 : byte4;
-            when ft_byte8     => v10 : byte8;
-            when ft_real9     => v11 : real9;
-            when ft_real18    => v12 : real18;
-            when ft_textual   => v13 : textual;
-            when ft_widetext  => v14 : textwide;
-            when ft_supertext => v15 : textsuper;
+            when ft_nbyte1    => v01 : NByte1;
+            when ft_nbyte2    => v02 : NByte2;
+            when ft_nbyte3    => v03 : NByte3;
+            when ft_nbyte4    => v04 : NByte4;
+            when ft_nbyte8    => v05 : NByte8;
+            when ft_byte1     => v06 : Byte1;
+            when ft_byte2     => v07 : Byte2;
+            when ft_byte3     => v08 : Byte3;
+            when ft_byte4     => v09 : Byte4;
+            when ft_byte8     => v10 : Byte8;
+            when ft_real9     => v11 : Real9;
+            when ft_real18    => v12 : Real18;
+            when ft_textual   => v13 : Textual;
+            when ft_widetext  => v14 : Textwide;
+            when ft_supertext => v15 : Textsuper;
             when ft_timestamp => v16 : AC.Time;
-            when ft_chain     => v17 : textual;
-            when ft_enumtype  => v18 : enumtype;
-            when ft_settype   => v19 : textual;
+            when ft_chain     => v17 : Textual;
+            when ft_enumtype  => v18 : Enumtype;
+            when ft_settype   => v19 : Textual;
          end case;
       end record;
 
-   function spawn_field (data : variant; null_data : Boolean := False)
-                         return std_field;
-   function spawn_field (binob : chain) return std_field;
-   function spawn_field (enumset : String) return std_field;
+   function spawn_field (data : Variant; null_data : Boolean := False)
+                         return Std_Field;
+   function spawn_field (binob : Chain) return Std_Field;
+   function spawn_field (enumset : String) return Std_Field;
 
 end AdaBase.Results.Field;
 </pre>
-<h3>AdaBase.Results.Field.std_field function <br/>
+<h3>AdaBase.Results.Field.Std_Field function <br/>
 spawn_field (see package, x3)</h3>
 <p>
 The spawn_field functions are low-level functions that are not typically
-used in normal applicatons.  They create std_field variables dynamically and
+used in normal applicatons.  They create Std_Field variables dynamically and
 are more typically used for testing.
 </p>
 

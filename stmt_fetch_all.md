@@ -5,16 +5,16 @@ title: Fetch entire result set at once
 <div class="leftside">
 <pre class="code">
 package AdaBase.Results.Sets is
-   type DataRow        is tagged limited private;
-   type DataRow_Access is access all DataRow;
-   type DataRowSet     is array (Positive range <>) of DataRow_Access;
+   type Datarow        is tagged limited private;
+   type Datarow_Access is access all Datarow;
+   type Datarow_Set    is array (Positive range <>) of Datarow_Access;
 end AdaBase.Results.Sets;
 </pre>
-<h3>AdaBase.Results.Sets.DataRowSet function<br/>
+<h3>AdaBase.Results.Sets.Datarow_Set function<br/>
 AdaBase.Statement.Base.[STMT].fetch_all ()</h3>
 <p>
 This function retrieves the entire result set from a query at once (or the
-remaining rows of data if some data has already been fetched).  The DataRowSet
+remaining rows of data if some data has already been fetched).  The Datarow_Set
 is an array of rows that is indexed started from 1, and the number of rows is
 easily determined by the standard Length attribute of Ada arrays.
 </p>

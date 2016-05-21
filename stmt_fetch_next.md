@@ -5,17 +5,17 @@ title: Fetch next row of data
 <div class="leftside">
 <pre class="code">
 package AdaBase.Results.Sets is
-   type DataRow is tagged private;
-   Empty_DataRow : constant DataRow;
+   type Datarow is tagged private;
+   Empty_Datarow : constant Datarow;
 end AdaBase.Results.Sets;
 </pre>
-<h3>AdaBase.Results.Sets.DataRow function<br/>
+<h3>AdaBase.Results.Sets.Datarow function<br/>
 AdaBase.Statement.Base.[STMT].fetch_next ()</h3>
 <p>
 This function attempts to fetch the next row of data from a query's result
-set.  If there is not another row of data available, the Empty_DataRow
+set.  If there is not another row of data available, the Empty_Datarow
 constant is returned, and the row's data_exhausted method returns False.
-If more data are available, the function returns a populated DataRow 
+If more data are available, the function returns a populated Datarow 
 while the client library advances the cursor.
 </p>
 <pre class="code">

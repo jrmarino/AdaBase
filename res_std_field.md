@@ -18,19 +18,19 @@ package AdaBase.Results is
    --  Supported Field Types (Standardized) --
    -------------------------------------------
 
-   subtype nbyte0 is Boolean;
-   type nbyte1 is mod 2 ** 8;
-   type nbyte2 is mod 2 ** 16;
-   type nbyte3 is mod 2 ** 24;
-   type nbyte4 is mod 2 ** 32;
-   type nbyte8 is mod 2 ** 64;
-   type byte8  is range -2 ** 63 .. 2 ** 63 - 1;
-   type byte4  is range -2 ** 31 .. 2 ** 31 - 1;
-   type byte3  is range -2 ** 23 .. 2 ** 23 - 1;
-   type byte2  is range -2 ** 15 .. 2 ** 15 - 1;
-   type byte1  is range -2 **  7 .. 2 **  7 - 1;
-   type real9  is digits 9;
-   type real18 is digits 18;
+   subtype NByte0 is Boolean;
+   type NByte1 is mod 2 ** 8;
+   type NByte2 is mod 2 ** 16;
+   type NByte3 is mod 2 ** 24;
+   type NByte4 is mod 2 ** 32;
+   type NByte8 is mod 2 ** 64;
+   type Byte8  is range -2 ** 63 .. 2 ** 63 - 1;
+   type Byte4  is range -2 ** 31 .. 2 ** 31 - 1;
+   type Byte3  is range -2 ** 23 .. 2 ** 23 - 1;
+   type Byte2  is range -2 ** 15 .. 2 ** 15 - 1;
+   type Byte1  is range -2 **  7 .. 2 **  7 - 1;
+   type Real9  is digits 9;
+   type Real18 is digits 18;
 
    --  Also #14 String 
    --  Also #15 Wide_String
@@ -38,20 +38,18 @@ package AdaBase.Results is
    --  Also #17 Time (from Ada.Calendar)
 
    --  #18 chain
-   type chain is array (Positive range <>) of nbyte1;
+   type Chain is array (Positive range <>) of NByte1;
 
    --  #19 enumeration type
-   type enumtype is record
-      enumeration : Ada.Strings.Unbounded_String;
-   end record;
+   type Enumtype is record enumeration : Textual; end record;
 
    --  #20 set type (array of enumerations)
-   type settype is array (Positive range <>) of enumtype;
+   type Settype is array (Positive range <>) of Enumtype;
 
 end AdaBase.Results;
 
 package AdaBase.Results.Field is
-   type std_field is tagged private;
+   type Std_Field is tagged private;
 end AdaBase.Results.Field;
 </pre>
 <p>
@@ -67,9 +65,9 @@ integer types.  The conversion is sensitive to the Endian setting of the host
 machine.
 </p>
 
-<h3>Type AdaBase.Results.std_field</h3>
+<h3>Type AdaBase.Results.Std_Field</h3>
 <p>
-The std_field object holds the result in its format type, and also allows
+The Std_Field object holds the result in its format type, and also allows
 conversions to other types.  There are currently 20 data types, and the result
 often can be retrieved as multiple types.  The "is_null" function will
 indicate if the value is marked as "null" in the database and the
@@ -79,35 +77,35 @@ indicate the data type stored in the database.
 <pre class="code">
 package AdaBase.Results.Field is
 
-   type std_field is tagged private;
+   type Std_Field is tagged private;
 
-   function as_nbyte0   (field : std_field) return nbyte0;
-   function as_nbyte1   (field : std_field) return nbyte1;
-   function as_nbyte2   (field : std_field) return nbyte2;
-   function as_nbyte3   (field : std_field) return nbyte3;
-   function as_nbyte4   (field : std_field) return nbyte4;
-   function as_nbyte8   (field : std_field) return nbyte8;
+   function as_nbyte0   (field : Std_Field) return NByte0;
+   function as_nbyte1   (field : Std_Field) return NByte1;
+   function as_nbyte2   (field : Std_Field) return NByte2;
+   function as_nbyte3   (field : Std_Field) return NByte3;
+   function as_nbyte4   (field : Std_Field) return NByte4;
+   function as_nbyte8   (field : Std_Field) return NByte8;
 
-   function as_byte1    (field : std_field) return byte1;
-   function as_byte2    (field : std_field) return byte2;
-   function as_byte3    (field : std_field) return byte3;
-   function as_byte4    (field : std_field) return byte4;
-   function as_byte8    (field : std_field) return byte8;
+   function as_byte1    (field : Std_Field) return Byte1;
+   function as_byte2    (field : Std_Field) return Byte2;
+   function as_byte3    (field : Std_Field) return Byte3;
+   function as_byte4    (field : Std_Field) return Byte4;
+   function as_byte8    (field : Std_Field) return Byte8;
 
-   function as_real9    (field : std_field) return real9;
-   function as_real18   (field : std_field) return real18;
+   function as_real9    (field : Std_Field) return Real9;
+   function as_real18   (field : Std_Field) return Real18;
 
-   function as_string   (field : std_field) return String;
-   function as_wstring  (field : std_field) return Wide_String;
-   function as_wwstring (field : std_field) return Wide_Wide_String;
+   function as_string   (field : Std_Field) return String;
+   function as_wstring  (field : Std_Field) return Wide_String;
+   function as_wwstring (field : Std_Field) return Wide_Wide_String;
 
-   function as_time     (field : std_field) return AC.Time;
-   function as_chain    (field : std_field) return chain;
-   function as_enumtype (field : std_field) return enumtype;
-   function as_settype  (field : std_field) return settype;
+   function as_time     (field : Std_Field) return AC.Time;
+   function as_chain    (field : Std_Field) return Chain;
+   function as_enumtype (field : Std_Field) return Enumtype;
+   function as_settype  (field : Std_Field) return Settype;
 
-   function is_null     (field : std_field) return Boolean;
-   function native_type (field : std_field) return field_types;
+   function is_null     (field : Std_Field) return Boolean;
+   function native_type (field : Std_Field) return field_types;
 
 end AdaBase.Results.Field;
 </pre>
