@@ -160,8 +160,6 @@ private
      (mysql_canvases, mysql_canvases_Access);
    procedure free_binary is new Ada.Unchecked_Deallocation
      (ABM.IC.char_array, ABM.ICS.char_array_access);
-   procedure free_sql is new Ada.Unchecked_Deallocation
-     (String, SQL_Access);
    procedure reclaim_canvas (Stmt : out MySQL_statement);
 
    type MySQL_statement (type_of_statement : Stmt_Type;

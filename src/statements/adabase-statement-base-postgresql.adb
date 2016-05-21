@@ -52,7 +52,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
    begin
-      return conn.fields_count (Stmt.result_handle);
+      return conn.fields_count (Stmt.stmt_handle);
    end column_count;
 
 
@@ -78,7 +78,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
    begin
-      return conn.SqlState (Stmt.result_handle);
+      return conn.SqlState (Stmt.stmt_handle);
    end last_sql_state;
 
 
@@ -90,7 +90,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
    begin
-      return conn.driverCode (Stmt.result_handle);
+      return conn.driverCode (Stmt.stmt_handle);
    end last_driver_code;
 
 
@@ -102,7 +102,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
    begin
-      return conn.driverMessage (Stmt.result_handle);
+      return conn.driverMessage (Stmt.stmt_handle);
    end last_driver_message;
 
 
@@ -150,7 +150,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
    begin
-      return conn.rows_impacted (Stmt.result_handle);
+      return conn.rows_impacted (Stmt.stmt_handle);
    end rows_returned;
 
 
@@ -164,7 +164,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
       pndx : Natural := index - 1;
    begin
-      return conn.field_name (Stmt.result_handle, pndx);
+      return conn.field_name (Stmt.stmt_handle, pndx);
    end column_name;
 
 
@@ -178,7 +178,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
       pndx : Natural := index - 1;
    begin
-      return conn.field_table (Stmt.result_handle, pndx);
+      return conn.field_table (Stmt.stmt_handle, pndx);
    end column_table;
 
 
@@ -192,7 +192,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
       pndx : Natural := index - 1;
    begin
-      return conn.field_type (Stmt.result_handle, pndx);
+      return conn.field_type (Stmt.stmt_handle, pndx);
    end column_native_type;
 
 
@@ -248,5 +248,232 @@ package body AdaBase.Statement.Base.PostgreSQL is
       null;
    end fetch_next_set;
 
+
+   ------------------
+   --  initialize  --
+   ------------------
+   overriding
+   procedure initialize (Object : in out PostgreSQL_statement)
+   is
+      use type CON.PostgreSQL_Connection_Access;
+      conn   : CON.PostgreSQL_Connection_Access renames Object.pgsql_conn;
+      logcat : Log_Category;
+   begin
+
+      if conn = null then
+         return;
+      end if;
+
+      logger_access     := Object.log_handler;
+      Object.dialect    := driver_postgresql;
+      Object.connection := ACB.Base_Connection_Access (conn);
+
+      case Object.type_of_statement is
+         when direct_statement =>
+            Object.sql_final := new String'(CT.trim_sql
+                                            (Object.initial_sql.all));
+            logcat := statement_execution;
+         when prepared_statement =>
+            Object.sql_final :=
+              new String'(reformat_markers (Object.transform_sql
+                          (Object.initial_sql.all)));
+            logcat := statement_preparation;
+      end case;
+
+      if conn.prepare_statement (stmt => Object.stmt_handle,
+                                 sql  => Object.sql_final.all)
+      then
+         Object.successful_execution := True;
+         Object.log_nominal (category => logcat,
+                             message  => Object.sql_final.all);
+      else
+         Object.log_problem
+              (category => statement_preparation,
+               message  => "Failed to parse a direct SQL query: '" &
+                            Object.sql_final.all & "'",
+               pull_codes => True);
+         return;
+      end if;
+
+      if Object.type_of_statement = prepared_statement then
+         --  Check that we have as many markers as expected
+--           declare
+--              params : Natural := conn.prep_markers_found (Object.stmt_handle);
+--              errmsg : String := "marker mismatch," &
+--                Object.realmccoy.Length'Img & " expected but" &
+--                params'Img & " found by SQLite";
+--           begin
+--              if params /= Natural (Object.realmccoy.Length) then
+--                 Object.log_problem
+--                   (category => statement_preparation,
+--                    message  => errmsg);
+--                 return;
+--              end if;
+--           end;
+         null;
+      else
+--           if not Object.private_execute then
+--              Object.log_problem
+--                (category => statement_preparation,
+--                 message  => "Failed to execute a direct SQL query");
+--              return;
+--           end if;
+         null;
+      end if;
+
+      Object.scan_column_information;
+
+   exception
+      when HELL : others =>
+         Object.log_problem
+           (category => statement_preparation,
+            message  => CON.EX.Exception_Message (HELL));
+   end initialize;
+
+
+   -------------------------------
+   --  scan_column_information  --
+   -------------------------------
+   procedure scan_column_information (Stmt : out PostgreSQL_statement)
+   is
+      function fn (raw : String) return CT.Text;
+      function sn (raw : String) return String;
+      function fn (raw : String) return CT.Text is
+      begin
+         case Stmt.con_case_mode is
+            when upper_case =>
+               return CT.SUS (ACH.To_Upper (raw));
+            when lower_case =>
+               return CT.SUS (ACH.To_Lower (raw));
+            when natural_case =>
+               return CT.SUS (raw);
+         end case;
+      end fn;
+      function sn (raw : String) return String is
+      begin
+         case Stmt.con_case_mode is
+            when upper_case =>
+               return ACH.To_Upper (raw);
+            when lower_case =>
+               return ACH.To_Lower (raw);
+            when natural_case =>
+               return raw;
+         end case;
+      end sn;
+
+      conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+   begin
+      Stmt.num_columns := conn.fields_count (Stmt.stmt_handle);
+      for index in Natural range 0 .. Stmt.num_columns - 1 loop
+         declare
+            info  : column_info;
+            brec  : bindrec;
+            name  : String := conn.field_name (Stmt.stmt_handle, index);
+            table : String := conn.field_table (Stmt.stmt_handle, index);
+         begin
+            brec.v00          := False;   --  placeholder
+            info.field_name   := fn (name);
+            info.table        := fn (table);
+            info.field_type   := conn.field_type (Stmt.stmt_handle, index);
+
+
+            --  IMPLEMENT
+            info.null_possible := False;
+
+
+            Stmt.column_info.Append (New_Item => info);
+            --  The following pre-populates for bind support
+            Stmt.crate.Append (New_Item => brec);
+            Stmt.headings_map.Insert (Key      => sn (name),
+                                      New_Item => Stmt.crate.Last_Index);
+         end;
+      end loop;
+   end scan_column_information;
+
+
+   -------------------
+   --  log_problem  --
+   -------------------
+   procedure log_problem
+     (statement  : PostgreSQL_statement;
+      category   : Log_Category;
+      message    : String;
+      pull_codes : Boolean := False;
+      break      : Boolean := False)
+   is
+      error_msg  : CT.Text      := CT.blank;
+      error_code : Driver_Codes := 0;
+      sqlstate   : SQL_State    := stateless;
+   begin
+      if pull_codes then
+         error_msg  := CT.SUS (statement.last_driver_message);
+         error_code := statement.last_driver_code;
+         sqlstate   := statement.last_sql_state;
+      end if;
+
+      logger_access.all.log_problem
+          (driver     => statement.dialect,
+           category   => category,
+           message    => CT.SUS (message),
+           error_msg  => error_msg,
+           error_code => error_code,
+           sqlstate   => sqlstate,
+           break      => break);
+   end log_problem;
+
+
+   --------------
+   --  Adjust  --
+   --------------
+   overriding
+   procedure Adjust (Object : in out PostgreSQL_statement) is
+   begin
+      --  The stmt object goes through this evolution:
+      --  A) created in private_prepare()
+      --  B) copied to new object in prepare(), A) destroyed
+      --  C) copied to new object in program, B) destroyed
+      --  We don't want to take any action until C) is destroyed, so add a
+      --  reference counter upon each assignment.  When finalize sees a
+      --  value of "2", it knows it is the program-level statement and then
+      --  it can release memory releases, but not before!
+      Object.assign_counter := Object.assign_counter + 1;
+
+      --  Since the finalization is looking for a specific reference
+      --  counter, any further assignments would fail finalization, so
+      --  just prohibit them outright.
+      if Object.assign_counter > 2 then
+         raise STMT_PREPARATION
+           with "Statement objects cannot be re-assigned.";
+      end if;
+   end Adjust;
+
+
+   ----------------
+   --  finalize  --
+   ----------------
+   overriding
+   procedure finalize (Object : in out PostgreSQL_statement)
+   is
+      use type BND.PGresult_Access;
+   begin
+      if Object.assign_counter /= 2 then
+         return;
+      end if;
+
+      if Object.stmt_handle /= null then
+         --  IMPLEMENT
+         null;
+--           if not Object.sqlite_conn.prep_finalize (Object.stmt_handle) then
+--              Object.log_problem
+--                (category   => statement_preparation,
+--                 message    => "Deallocating statement resources",
+--                 pull_codes => True);
+--           end if;
+      end if;
+
+      if Object.sql_final /= null then
+         free_sql (Object.sql_final);
+      end if;
+   end finalize;
 
 end AdaBase.Statement.Base.PostgreSQL;

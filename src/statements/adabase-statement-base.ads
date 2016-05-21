@@ -10,6 +10,7 @@ with AdaBase.Results.Field;
 with AdaBase.Results.Converters;
 with AdaBase.Results.Generic_Converters;
 with Ada.Calendar.Formatting;
+with Ada.Characters.Handling;
 with Ada.Containers.Indefinite_Hashed_Maps;
 with Ada.Containers.Vectors;
 with Ada.Strings.Hash;
@@ -34,6 +35,8 @@ package AdaBase.Statement.Base is
    package RGC renames AdaBase.Results.Generic_Converters;
    package ARF renames AdaBase.Results.Field;
    package ARS renames AdaBase.Results.Sets;
+   package ACH renames Ada.Characters.Handling;
+
 
    type SQL_Access is access all String;
 
@@ -597,6 +600,9 @@ private
 
    procedure free_datarow is new Ada.Unchecked_Deallocation
      (AR.Sets.Datarow, AR.Sets.Datarow_Access);
+
+   procedure free_sql is new Ada.Unchecked_Deallocation
+     (String, SQL_Access);
 
    procedure check_bound_column_access (absent : Boolean);
 

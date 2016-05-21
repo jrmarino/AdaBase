@@ -133,9 +133,6 @@ private
    function construct_bind_slot (Stmt : SQLite_statement; marker : Positive)
                                  return sqlite_canvas;
 
-   procedure free_sql is new Ada.Unchecked_Deallocation
-     (String, SQL_Access);
-
    procedure free_binary is new Ada.Unchecked_Deallocation
      (BND.IC.char_array, BND.ICS.char_array_access);
 

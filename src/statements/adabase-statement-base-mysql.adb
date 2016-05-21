@@ -2,7 +2,6 @@
 --  Reference: ../../License.txt
 
 with Ada.Exceptions;
-with Ada.Characters.Handling;
 with Ada.Calendar.Time_Zones;
 with Ada.Unchecked_Conversion;
 
@@ -10,7 +9,6 @@ package body AdaBase.Statement.Base.MySQL is
 
    package EX  renames Ada.Exceptions;
    package CTZ renames Ada.Calendar.Time_Zones;
-   package ACH renames Ada.Characters.Handling;
 
    --------------------
    --  discard_rest  --

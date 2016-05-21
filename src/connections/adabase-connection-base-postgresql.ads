@@ -112,6 +112,10 @@ package AdaBase.Connection.Base.PostgreSQL is
                                   res  : BND.PGresult_Access;
                                   column_number : Natural) return Boolean;
 
+   function prepare_statement (conn : out PostgreSQL_Connection;
+                               stmt : aliased out BND.PGresult_Access;
+                               sql  : String) return Boolean;
+
    function fields_count  (conn : PostgreSQL_Connection;
                            res  : BND.PGresult_Access) return Natural;
 

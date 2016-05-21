@@ -1,11 +1,7 @@
 --  This file is covered by the Internet Software Consortium (ISC) License
 --  Reference: ../../License.txt
 
-with Ada.Characters.Handling;
-
 package body AdaBase.Statement.Base.SQLite is
-
-   package ACH renames Ada.Characters.Handling;
 
    ---------------------
    --  num_set_items  --

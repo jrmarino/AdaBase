@@ -106,15 +106,26 @@ private
       con_buffered      : Boolean)
    is new Base_Statement and AIS.iStatement with
       record
-         delivery       : fetch_status          := completed;
-         result_handle  : BND.PGresult_Access   := null;
-         assign_counter : Natural               := 0;
-         num_columns    : Natural               := 0;
-         size_of_rowset : Trax_ID               := 0;
+         delivery       : fetch_status                := completed;
+         stmt_handle    : aliased BND.PGresult_Access := null;
+         assign_counter : Natural                     := 0;
+         num_columns    : Natural                     := 0;
+         size_of_rowset : Trax_ID                     := 0;
          column_info    : VColumns.Vector;
          sql_final      : SQL_Access;
       end record;
 
+   procedure log_problem
+     (statement  : PostgreSQL_statement;
+      category   : Log_Category;
+      message    : String;
+      pull_codes : Boolean := False;
+      break      : Boolean := False);
+
+   procedure initialize (Object : in out PostgreSQL_statement);
+   procedure Adjust     (Object : in out PostgreSQL_statement);
+   procedure finalize   (Object : in out PostgreSQL_statement);
    function reformat_markers (parameterized_sql : String) return String;
+   procedure scan_column_information (Stmt : out PostgreSQL_statement);
 
 end AdaBase.Statement.Base.PostgreSQL;

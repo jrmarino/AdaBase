@@ -916,4 +916,18 @@ package body AdaBase.Connection.Base.PostgreSQL is
    end field_type;
 
 
+   -------------------------
+   --  prepare_statement  --
+   -------------------------
+   function prepare_statement (conn : out PostgreSQL_Connection;
+                               stmt : aliased out BND.PGresult_Access;
+                               sql  : String) return Boolean
+   is
+      pragma Unreferenced (conn, stmt, sql);
+   begin
+      return False;
+   end prepare_statement;
+
+
+
 end AdaBase.Connection.Base.PostgreSQL;
