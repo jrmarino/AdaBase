@@ -290,7 +290,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
          else
             Object.log_problem
               (category => statement_preparation,
-               message  => "Failed to parse SQL query: '" &
+               message  => "Failed to prepare SQL query: '" &
                             Object.sql_final.all & "'",
                pull_codes => True);
             return;
@@ -310,11 +310,18 @@ package body AdaBase.Statement.Base.PostgreSQL is
 --              end if;
 --           end;
       else
-         --  let HELL handler catch failed messages
-         conn.execute (Object.sql_final.all);
-         Object.successful_execution := True;
-         Object.log_nominal (category => logcat,
-                             message  => Object.sql_final.all);
+         if conn.direct_stmt_exec (stmt => Object.stmt_handle,
+                                   sql => Object.sql_final.all)
+         then
+            Object.successful_execution := True;
+            Object.log_nominal (category => logcat,
+                                message  => Object.sql_final.all);
+         else
+            Object.log_problem
+              (category => statement_execution,
+               message  => "Failed to execute a direct SQL query");
+            return;
+         end if;
       end if;
 
       Object.scan_column_information;

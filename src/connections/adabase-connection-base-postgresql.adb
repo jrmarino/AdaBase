@@ -155,8 +155,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    -----------------------
    --  private_execute  --
    -----------------------
-   procedure private_execute (conn : out PostgreSQL_Connection; sql : String;
-                              preserve_result : Boolean := False)
+   procedure private_execute (conn : out PostgreSQL_Connection; sql : String)
    is
       use type BND.ExecStatusType;
       pgres   : BND.PGresult_Access;
@@ -206,9 +205,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
          end if;
       end if;
 
-      if not preserve_result then
-         BND.PQclear (pgres);
-      end if;
+      BND.PQclear (pgres);
 
       if not success then
          raise QUERY_FAIL with CT.USS (msg);
@@ -846,7 +843,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    overriding
    procedure execute (conn : out PostgreSQL_Connection; sql : String) is
    begin
-      conn.private_execute (sql => sql, preserve_result => True);
+      conn.private_execute (sql => sql);
    end execute;
 
 
@@ -930,6 +927,63 @@ package body AdaBase.Connection.Base.PostgreSQL is
    begin
       return False;
    end prepare_statement;
+
+
+   ------------------------
+   --  direst_stmt_exec  --
+   ------------------------
+   function direct_stmt_exec  (conn : out PostgreSQL_Connection;
+                               stmt : aliased out BND.PGresult_Access;
+                               sql  : String) return Boolean
+   is
+      use type BND.ExecStatusType;
+      query   : BND.ICS.chars_ptr := BND.ICS.New_String (Str => sql);
+      success : Boolean;
+      msg     : CT.Text;
+      ins_cmd : Boolean := False;
+   begin
+      if sql'Length > 12 and then
+        ACH.To_Upper (sql (sql'First .. sql'First + 6)) = "INSERT "
+      then
+         ins_cmd := True;
+      end if;
+
+      stmt := BND.PQexec (conn => conn.handle, command => query);
+
+      BND.ICS.Free (query);
+      case BND.PQresultStatus (stmt) is
+         when BND.PGRES_COMMAND_OK =>
+            success := True;
+            conn.cmd_insert_return := False;
+         when BND.PGRES_TUPLES_OK =>
+            success := True;
+            conn.cmd_insert_return := ins_cmd;
+         when others =>
+            success := False;
+            msg := CT.SUS (conn.driverMessage (stmt));
+      end case;
+      conn.insert_return_val := 0;
+      conn.cmd_sql_state := conn.SqlState (stmt);
+
+      if success then
+         conn.cmd_rows_impact := conn.rows_impacted (stmt);
+      else
+         conn.cmd_rows_impact := 0;
+      end if;
+
+      if conn.cmd_insert_return then
+         if not conn.field_is_null (stmt, 0, 0) then
+            declare
+               field : constant String := conn.field_string (stmt, 0, 0);
+            begin
+               conn.insert_return_val := Trax_ID (Integer'Value (field));
+            exception
+               when others => null;
+            end;
+         end if;
+      end if;
+      return success;
+   end direct_stmt_exec;
 
 
 

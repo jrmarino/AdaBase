@@ -94,8 +94,9 @@ package AdaBase.Connection.Base.PostgreSQL is
    ---------------------------------------------------
    --  SUBROUTINES PARTICULAR TO POSTGRESQL DRIVER  --
    ---------------------------------------------------
-   function SqlState (conn : PostgreSQL_Connection; res : BND.PGresult_Access)
-                      return SQL_State;
+   function SqlState             (conn : PostgreSQL_Connection;
+                                  res  : BND.PGresult_Access)
+                                 return SQL_State;
 
    procedure discard_pgresult    (conn : PostgreSQL_Connection;
                                   res  : BND.PGresult_Access);
@@ -113,6 +114,10 @@ package AdaBase.Connection.Base.PostgreSQL is
                                   column_number : Natural) return Boolean;
 
    function prepare_statement (conn : out PostgreSQL_Connection;
+                               stmt : aliased out BND.PGresult_Access;
+                               sql  : String) return Boolean;
+
+   function direct_stmt_exec  (conn : out PostgreSQL_Connection;
                                stmt : aliased out BND.PGresult_Access;
                                sql  : String) return Boolean;
 
@@ -203,8 +208,7 @@ private
    function get_library_version return Natural;
 
    procedure Initialize (conn : in out PostgreSQL_Connection);
-   procedure private_execute   (conn : out PostgreSQL_Connection; sql : String;
-                                preserve_result : Boolean := False);
+   procedure private_execute (conn : out PostgreSQL_Connection; sql : String);
    procedure begin_transaction (conn : out PostgreSQL_Connection);
    procedure cache_table_names (conn : out PostgreSQL_Connection);
    function select_last_val    (conn : PostgreSQL_Connection) return Trax_ID;
