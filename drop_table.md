@@ -25,7 +25,7 @@ procedure Wipe_Out is
    package TIO renames Ada.Text_IO;
    package ALF renames AdaBase.Logger.Facility;
 
-   numrows : AdaBase.AffectedRows;
+   numrows : AdaBase.Affected_Rows;
 
    bfast : constant String := "breakfast";
    cmd1  : constant String := "CREATE TABLE " & bfast &
