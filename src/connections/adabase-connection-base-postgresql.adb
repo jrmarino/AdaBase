@@ -514,7 +514,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
       use type Trax_Isolation;
       sql : constant String :=
         "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL " &
-        Iso_Keywords (isolation);
+        ISO_Keywords (isolation);
    begin
       if conn.prop_active then
          conn.private_execute (sql);

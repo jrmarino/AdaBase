@@ -24,7 +24,7 @@ package AdaBase is
    subtype Posix_Port    is Natural range 0 .. 65535;
    subtype Affected_Rows is Trax_ID;
 
-   Iso_Keywords : constant ISO_Keyword_List :=
+   ISO_Keywords : constant ISO_Keyword_List :=
      ("READ UNCOMMITTED",
       "READ COMMITTED  ",
       "REPEATABLE READ ",

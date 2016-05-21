@@ -393,7 +393,7 @@ package body AdaBase.Connection.Base.MySQL is
    is
       use type Trax_Isolation;
       sql : constant String := "SET SESSION TRANSACTION ISOLATION LEVEL " &
-                               Iso_Keywords (isolation);
+                               ISO_Keywords (isolation);
    begin
       if conn.prop_active then
          conn.execute (sql);
