@@ -62,7 +62,7 @@ procedure Autocommit is
       CON.connect_database;
       declare
          stmt : CON.Stmt_Type := CON.DR.query (sel);
-         row  : ARS.DataRow;
+         row  : ARS.Datarow;
          NR   : Natural := 0;
       begin
          loop
@@ -76,7 +76,7 @@ procedure Autocommit is
    end show_results;
 
    procedure test_uno (expected : Natural; version2 : Boolean) is
-      AR : AdaBase.AffectedRows;
+      AR : AdaBase.Affected_Rows;
    begin
       CON.connect_database;
       AR := CON.DR.execute (ins1);
@@ -90,7 +90,7 @@ procedure Autocommit is
 
    procedure test_dos (expected : Natural; version2 : Boolean)
    is
-      AR : AdaBase.AffectedRows;
+      AR : AdaBase.Affected_Rows;
    begin
       CON.connect_database;
       AR := CON.DR.execute (ins1);
@@ -107,7 +107,7 @@ procedure Autocommit is
 
    procedure test_tres (expected : Natural)
    is
-      AR : AdaBase.AffectedRows;
+      AR : AdaBase.Affected_Rows;
    begin
       CON.connect_database;
       AR := CON.DR.execute (ins1);
@@ -118,7 +118,7 @@ procedure Autocommit is
 
    procedure clear_table
    is
-      AR : AdaBase.AffectedRows;
+      AR : AdaBase.Affected_Rows;
    begin
       CON.connect_database;
       AR := CON.DR.execute (del);
