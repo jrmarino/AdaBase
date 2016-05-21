@@ -5,7 +5,7 @@ title: Connect to database
 <div class="leftside">
 <pre class="code">
 package AdaBase is
-   subtype PosixPort is Natural range 0 .. 65535;
+   subtype Posix_Port is Natural range 0 .. 65535;
 end AdaBase;
 </pre>
 <h3>Procedure<br/>

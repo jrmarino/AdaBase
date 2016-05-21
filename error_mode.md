@@ -5,11 +5,11 @@ title: Error Mode Settings
 <div class="leftside">
 <pre class="code">
 package AdaBase is
-   type ErrorMode is (silent, warning, raise_exception);
+   type Error_Modes is (silent, warning, raise_exception);
    ERRMODE_EXCEPTION : exception;
 end AdaBase;
 </pre>
-<h3>ErrorMode function<br/>
+<h3>Error_Modes function<br/>
 AdaBase.Driver.Base.[DB].trait_error_mode ()</h3>
 <p>This is a connection attribute.  It returns the driver setting
 dictating how errors are handled when encountered.  The default is
@@ -23,7 +23,7 @@ AdaBase.ERRMODE_EXCEPTION exception to be raised whenever an error is
 encountered.</p>
 <br/>
 <h3>Procedure<br/>
-AdaBase.Driver.Base.[DB].set_trait_error_mode (trait : ErrorMode)</h3>
+AdaBase.Driver.Base.[DB].set_trait_error_mode (trait : Error_Modes)</h3>
 <p>This procedure is used to set the error mode.  It can be set
 anytime.</p>
 <br/>

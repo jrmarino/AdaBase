@@ -5,11 +5,11 @@ title: Last Driver Message
 <div class="leftside">
 <pre class="code">
 package AdaBase is
-   type ErrorMode       is (silent, warning, raise_exception);
-   subtype TSqlState    is String (1 .. 5);
-   subtype DriverCodes  is Integer range -999 .. 1999;
-   type TraxID          is mod 2 ** 64;
-   subtype AffectedRows is TraxID;
+   type Error_Modes      is (silent, warning, raise_exception);
+   subtype SQL_State     is String (1 .. 5);
+   subtype Driver_Codes  is Integer range -999 .. 4999;
+   type Trax_ID          is mod 2 ** 64;
+   subtype Affected_Rows is Trax_ID;
 end AdaBase;
 </pre>
 <h3>String function<br/>

@@ -5,7 +5,7 @@ title: Query_select (Abstract SQL)
 <div class="leftside">
 <pre class="code">
 package AdaBase is
-   type NullPriority is (native, nulls_first, nulls_last);
+   type Null_Priority is (native, nulls_first, nulls_last);
 end AdaBase;
 </pre>
 <h3>AdaBase.Statement.Base.[STMT] function<br/>
@@ -17,9 +17,9 @@ AdaBase.Driver.Base.[DB].query_select  (
                           groupby     : String := "";
                           having      : String := "";
                           order       : String := "";
-                          null_sort   : NullPriority := native;
-                          limit       : TraxID := 0;
-                          offset      : TraxID := 0)</h3>
+                          null_sort   : Null_Priority := native;
+                          limit       : Trax_ID := 0;
+                          offset      : Trax_ID := 0)</h3>
 
 <p>This function assembles a driver-specific (SQL dialect-specific)
 SELECT query based on which arguments are provided.  Generally the

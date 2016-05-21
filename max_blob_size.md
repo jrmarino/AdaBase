@@ -5,10 +5,10 @@ title: Maximum BLOB Size Settings
 <div class="leftside">
 <pre class="code">
 package AdaBase is
-   subtype BLOB_maximum is Positive range 2 ** 12 .. 2 ** 30;
+   subtype BLOB_Maximum is Positive range 2 ** 12 .. 2 ** 30;
 end AdaBase;
 </pre>
-<h3>BLOB_maximum function<br/>
+<h3>BLOB_Maximum function<br/>
 AdaBase.Driver.Base.[DB].trait_max_blob_size ()</h3>
 <p>This is a connection attribute.  It returns the driver setting limiting
 the maximum size of Binary Large OBjects (BLOB).  If the contents of a binary
@@ -18,7 +18,7 @@ data can possibly be larger this this.  Currently the maximum BLOB that AdaBase
 can handle is one gigabyte.</p>
 <br/>
 <h3>Procedure<br/>
-AdaBase.Driver.Base.[DB].set_trait_max_blob_size (trait : BLOB_maximum)</h3>
+AdaBase.Driver.Base.[DB].set_trait_max_blob_size (trait : BLOB_Maximum)</h3>
 <p>This procedure is used to set the maximum BLOB size. It can be set
 anytime.</p>
 <br/>

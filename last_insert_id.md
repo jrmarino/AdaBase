@@ -5,10 +5,10 @@ title: Last Insert ID (driver)
 <div class="leftside">
 <pre class="code">
 package AdaBase is
-   type TraxID is mod 2 ** 64;
+   type Trax_ID is mod 2 ** 64;
 end AdaBase;
 </pre>
-<h3>TraxID function<br/>
+<h3>Trax_ID function<br/>
 AdaBase.Driver.Base.[DB].last_insert_id ()</h3>
 <p>This function returns the ID of the last inserted row.  If the
 driver does not support the concept of auto-increment fields, the

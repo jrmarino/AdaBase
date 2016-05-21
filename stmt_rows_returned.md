@@ -5,11 +5,11 @@ title: Rows returned with query
 <div class="leftside">
 <pre class="code">
 package AdaBase is
-   type TraxID          is mod 2 ** 64;
-   subtype AffectedRows is TraxID;
+   type Trax_ID          is mod 2 ** 64;
+   subtype Affected_Rows is Trax_ID;
 end AdaBase;
 </pre>
-<h3>AffectedRows function<br/>
+<h3>Affected_Rows function<br/>
 AdaBase.Statement.Base.[STMT].rows_returned ()</h3>
 <p>
 This function returns the number of rows in the result set. Support may vary
