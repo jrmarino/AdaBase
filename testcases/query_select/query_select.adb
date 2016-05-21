@@ -52,10 +52,10 @@ begin
 
       --  Demonstrate bind/fetch_bound
       declare
-         event_code : aliased AR.nbyte2;
-         home_town, home_mascot  : aliased AR.textual;
-         away_town, away_mascot  : aliased AR.textual;
-         home_score, away_score  : aliased AR.nbyte1;
+         event_code : aliased AR.NByte2;
+         home_town, home_mascot  : aliased AR.Textual;
+         away_town, away_mascot  : aliased AR.Textual;
+         home_score, away_score  : aliased AR.NByte1;
       begin
          stmt.bind (1, event_code'Unchecked_Access);
          stmt.bind ("HOME_CITY", home_town'Unchecked_Access);
@@ -95,7 +95,7 @@ begin
                order      => "calories",
                limit      => 10);
 
-      rowset : ARS.DataRowSet := stmt.fetch_all;
+      rowset : ARS.Datarow_Set := stmt.fetch_all;
    begin
       for row in Natural range 1 .. rowset'Length loop
          TIO.Put_Line (rowset (row).column (1).as_string & ":" &
