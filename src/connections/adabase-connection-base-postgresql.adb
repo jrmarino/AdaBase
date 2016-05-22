@@ -1015,12 +1015,16 @@ package body AdaBase.Connection.Base.PostgreSQL is
    function refined_byte_type (byteX : field_types; constraint : String)
                                return field_types
    is
+      --  This routine is not used!
       --  by policy, byteX is ft_byte2, ft_byte3, ft_byte4 or ft_byte8
 
       subtype max_range is Positive range 1 .. 4;
       zero_required : constant String := "(VALUE >= 0)";
       max_size      : max_range;
    begin
+      if CT.IsBlank (constraint) then
+         return byteX;
+      end if;
       if not CT.contains (S => constraint, fragment => zero_required) then
          return byteX;
       end if;
@@ -1040,15 +1044,17 @@ package body AdaBase.Connection.Base.PostgreSQL is
             check1 : constant String := "(VALUE <" & limit1'Img & ")";
             check2 : constant String := "(VALUE <=" & limit2'Img & ")";
          begin
-            if CT.contains (S => constraint, fragment => check1) or else
-              CT.contains (S => constraint, fragment => check2)
-            then
-               case x is
-                  when 1 => return ft_nbyte1;
-                  when 2 => return ft_nbyte2;
-                  when 3 => return ft_nbyte3;
-                  when 4 => return ft_nbyte4;
-               end case;
+            if x <= max_size then
+               if CT.contains (S => constraint, fragment => check1) or else
+                 CT.contains (S => constraint, fragment => check2)
+               then
+                  case x is
+                     when 1 => return ft_nbyte1;
+                     when 2 => return ft_nbyte2;
+                     when 3 => return ft_nbyte3;
+                     when 4 => return ft_nbyte4;
+                  end case;
+               end if;
             end if;
          end;
       end loop;
@@ -1060,7 +1066,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    --  convert_data_type  --
    -------------------------
    function convert_data_type (pg_type : String; category : Character;
-                               typelen : Integer; constraint : String)
+                               typelen : Integer)
                                return field_types
    is
       --  Code Category (typcategory)
@@ -1080,7 +1086,6 @@ package body AdaBase.Connection.Base.PostgreSQL is
       --  X     unknown type
 
       desc : constant String := pg_type & " (" & category & ")";
-      temp : field_types;
    begin
       --  One User-defined type, bytea, is a chain.  Check for this one first
       --  and treat the reast as strings
@@ -1130,25 +1135,20 @@ package body AdaBase.Connection.Base.PostgreSQL is
          return ft_real18;
       end if;
 
-      --  The rest are signed numbers that could be constrained, but this
-      --  only applies to ft_byte2 .. ft_byte8
-
       if typelen = 1 then
          return ft_byte1;
       elsif typelen = 2 then
-         temp := ft_byte2;
+         return ft_byte2;
       elsif typelen = 3 then
-         temp := ft_byte3;
+         return ft_byte3;
       elsif typelen = 4 then
-         temp := ft_byte4;
+         return ft_byte4;
       elsif typelen = 8 then
-         temp := ft_byte8;
+         return ft_byte8;
       else
          raise METADATA_FAIL
            with "Unknown numeric type encountered: " & desc;
       end if;
-
-      return refined_byte_type (temp, constraint);
 
    end convert_data_type;
 
@@ -1162,10 +1162,8 @@ package body AdaBase.Connection.Base.PostgreSQL is
       nrows  : Affected_Rows;
       tables : constant String := conn.piped_tables;
       sql    : constant String :=
-               "SELECT DISTINCT a.atttypid, t.typname, t.typlen, " &
-                               "t.typcategory, con.consrc " &
+               "SELECT DISTINCT a.atttypid,t.typname,t.typlen,t.typcategory " &
                "FROM pg_class c, pg_attribute a, pg_type t " &
-               "LEFT JOIN pg_constraint con on t.oid = con.contypid " &
                "WHERE c.relname ~ '^(" & tables & ")$' " &
                "AND a.attnum > 0 AND a.attrelid = c.oid " &
                "AND a.atttypid = t.oid " &
@@ -1179,11 +1177,11 @@ package body AdaBase.Connection.Base.PostgreSQL is
             s_name  : constant String := conn.field_string (pgres, x, 1);
             s_tlen  : constant String := conn.field_string (pgres, x, 2);
             s_cat   : constant String := conn.field_string (pgres, x, 3);
-            s_cons  : constant String := conn.field_string (pgres, x, 4);
+            s_cons  : constant String := "";
             typcat  : constant Character := s_cat (s_cat'First);
             typelen : constant Integer := Integer'Value (s_tlen);
             payload : data_type_rec := (data_type => convert_data_type
-                                        (s_name, typcat, typelen, s_cons));
+                                        (s_name, typcat, typelen));
          begin
             conn.data_types.Insert (Key      => Integer'Value (s_oid),
                                     New_Item => payload);

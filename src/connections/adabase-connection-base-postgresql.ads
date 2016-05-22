@@ -222,8 +222,7 @@ private
    function convert_version (pgsql_version : Natural) return CT.Text;
    function get_library_version return Natural;
    function convert_data_type (pg_type : String; category : Character;
-                               typelen : Integer; constraint : String)
-                               return field_types;
+                               typelen : Integer) return field_types;
    function refined_byte_type (byteX : field_types; constraint : String)
                                return field_types;
 
