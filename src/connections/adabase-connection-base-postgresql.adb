@@ -1148,5 +1148,47 @@ package body AdaBase.Connection.Base.PostgreSQL is
    end cache_data_types;
 
 
+   --------------------
+   --  field_binary  --
+   --------------------
+   function field_binary  (conn : PostgreSQL_Connection;
+                           res  : BND.PGresult_Access;
+                           row_number    : Natural;
+                           column_number : Natural;
+                           max_length    : Natural) return String
+   is
+      rownum : constant BND.IC.int := BND.IC.int (row_number);
+      colnum : constant BND.IC.int := BND.IC.int (column_number);
+      result : BND.ICS.chars_ptr := BND.PQgetvalue (res, rownum, colnum);
+      len    : Natural := conn.field_length (res, row_number, column_number);
+   begin
+      declare
+         bufmax : constant BND.IC.size_t := BND.IC.size_t (max_length);
+         subtype data_buffer is BND.IC.char_array (1 .. bufmax);
+         type db_access is access all data_buffer;
+         buffer : aliased data_buffer;
+
+         function db_convert (dba : db_access; size : Natural) return String;
+         function db_convert (dba : db_access; size : Natural) return String
+         is
+            max : Natural := size;
+         begin
+            if max > max_length then
+               max := max_length;
+            end if;
+            declare
+               result : String (1 .. max);
+            begin
+               for x in result'Range loop
+                  result (x) := Character (dba.all (BND.IC.size_t (x)));
+               end loop;
+               return result;
+            end;
+         end db_convert;
+      begin
+         return db_convert (buffer'Access, len);
+      end;
+   end field_binary;
+
 
 end AdaBase.Connection.Base.PostgreSQL;

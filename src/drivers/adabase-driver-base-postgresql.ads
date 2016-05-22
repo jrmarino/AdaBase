@@ -52,11 +52,18 @@ package AdaBase.Driver.Base.PostgreSQL is
                             offset     : Trax_ID := 0)
                             return SMT.PostgreSQL_statement;
 
+   function trait_query_buffers_used       (driver : PostgreSQL_Driver)
+                                            return Boolean;
+
+   procedure set_trait_query_buffers_used  (driver : PostgreSQL_Driver;
+                                            trait  : Boolean);
+
 private
 
    type PostgreSQL_Driver is new Base_Driver and AID.iDriver with
       record
          local_connection : aliased CON.PostgreSQL_Connection;
+         async_cmd_mode   : Boolean := False;
       end record;
 
    overriding

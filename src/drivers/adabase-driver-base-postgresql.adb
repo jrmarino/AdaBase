@@ -256,6 +256,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
       end if;
       if driver.connection_active then
          declare
+            buffered_mode : constant Boolean := not driver.async_cmd_mode;
             statement : SMT.PostgreSQL_statement
               (type_of_statement => stype,
                log_handler       => logger'Access,
@@ -265,7 +266,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
                con_error_mode    => driver.trait_error_mode,
                con_case_mode     => driver.trait_column_case,
                con_max_blob      => driver.trait_max_blob_size,
-               con_buffered      => True);  --  IMPLEMENT
+               con_buffered      => buffered_mode);
          begin
             if not prepared then
                if statement.successful then
@@ -297,5 +298,31 @@ package body AdaBase.Driver.Base.PostgreSQL is
         with "failed to return SQLite statement";
 
    end private_statement;
+
+
+   --------------------------------
+   --  trait_query_buffers_used  --
+   --------------------------------
+   function trait_query_buffers_used  (driver : PostgreSQL_Driver)
+                                       return Boolean is
+   begin
+      return not (driver.async_cmd_mode);
+   end trait_query_buffers_used;
+
+
+   ------------------------------
+   --  set_query_buffers_used  --
+   ------------------------------
+   procedure set_trait_query_buffers_used (driver : PostgreSQL_Driver;
+                                           trait  : Boolean)
+   is
+      --  Once the asynchronous command mode is supported (meaning that the
+      --  driver has to manually coordinate sending the queries and fetching
+      --  the rows one by one), then this procedure just changes
+      --  driver.async_cmd_mode => False.
+   begin
+      raise CON.UNSUPPORTED_BY_PGSQL
+        with "Single row mode is not currently supported";
+   end set_trait_query_buffers_used;
 
 end AdaBase.Driver.Base.PostgreSQL;

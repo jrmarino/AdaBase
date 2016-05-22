@@ -81,14 +81,13 @@ package AdaBase.Statement.Base.PostgreSQL is
 
 private
 
-   type fetch_status is (pending, progressing, completed);
-
    type column_info is record
       table         : CT.Text;
       field_name    : CT.Text;
       field_type    : field_types;
       field_size    : Natural;
       null_possible : Boolean;
+      binary_format : Boolean;
       --  mysql_type    : ABM.enum_field_types;
    end record;
 
@@ -106,11 +105,11 @@ private
       con_buffered      : Boolean)
    is new Base_Statement and AIS.iStatement with
       record
-         delivery       : fetch_status                := completed;
          stmt_handle    : aliased BND.PGresult_Access := null;
          assign_counter : Natural                     := 0;
          num_columns    : Natural                     := 0;
          size_of_rowset : Trax_ID                     := 0;
+         result_arrow   : Trax_ID                     := 0;
          column_info    : VColumns.Vector;
          sql_final      : SQL_Access;
       end record;
@@ -127,5 +126,8 @@ private
    procedure finalize   (Object : in out PostgreSQL_statement);
    function reformat_markers (parameterized_sql : String) return String;
    procedure scan_column_information (Stmt : out PostgreSQL_statement);
+
+   function assemble_datarow (Stmt : PostgreSQL_statement;
+                              row_number : Trax_ID) return ARS.Datarow;
 
 end AdaBase.Statement.Base.PostgreSQL;

@@ -110,10 +110,15 @@ package body AdaBase.Statement.Base.PostgreSQL is
    --  discard_rest  --
    --------------------
    overriding
-   procedure discard_rest (Stmt : out PostgreSQL_statement) is
+   procedure discard_rest (Stmt : out PostgreSQL_statement)
+   is
+      --  When asynchronous command mode becomes supported, this procedure
+      --  would free the pgres object and indicate data exhausted somehow.
+      --  In the standard buffered mode, we can only simulate it.
    begin
-      --  TO BE IMPLEMENTED
-      null;
+      if Stmt.result_arrow < Stmt.size_of_rowset then
+         Stmt.result_arrow := Stmt.size_of_rowset;
+      end if;
    end discard_rest;
 
 
@@ -124,7 +129,6 @@ package body AdaBase.Statement.Base.PostgreSQL is
    function execute (Stmt : out PostgreSQL_statement) return Boolean is
    begin
       --  TO BE IMPLEMENTED
-      Stmt.delivery := completed;
       return False;
    end execute;
 
@@ -134,11 +138,66 @@ package body AdaBase.Statement.Base.PostgreSQL is
    ------------------
    overriding
    function execute (Stmt : out PostgreSQL_statement; parameters : String;
-                     delimiter  : Character := '|') return Boolean is
+                     delimiter  : Character := '|') return Boolean
+   is
+      function parameters_given return Natural;
+      num_markers : constant Natural := Natural (Stmt.realmccoy.Length);
+
+      function parameters_given return Natural
+      is
+         result : Natural := 1;
+      begin
+         for x in parameters'Range loop
+            if parameters (x) = delimiter then
+               result := result + 1;
+            end if;
+         end loop;
+         return result;
+      end parameters_given;
    begin
-      --  TO BE IMPLEMENTED
-      Stmt.delivery := completed;
-      return False;
+      if Stmt.type_of_statement = direct_statement then
+         raise INVALID_FOR_DIRECT_QUERY
+           with "The execute command is for prepared statements only";
+      end if;
+
+      if num_markers /= parameters_given then
+         raise STMT_PREPARATION
+           with "Parameter number mismatch, " & num_markers'Img &
+           " expected, but" & parameters_given'Img & " provided.";
+      end if;
+
+      declare
+         index : Natural := 1;
+         arrow : Natural := parameters'First;
+         scans : Boolean := False;
+         start : Natural := 1;
+         stop  : Natural := 0;
+      begin
+         for x in parameters'Range loop
+            if parameters (x) = delimiter then
+               if not scans then
+                  Stmt.auto_assign (index, "");
+               else
+                  Stmt.auto_assign (index, parameters (start .. stop));
+                  scans := False;
+               end if;
+               index := index + 1;
+            else
+               stop := x;
+               if not scans then
+                  start := x;
+                  scans := True;
+               end if;
+            end if;
+         end loop;
+         if not scans then
+            Stmt.auto_assign (index, "");
+         else
+            Stmt.auto_assign (index, parameters (start .. stop));
+         end if;
+      end;
+
+      return Stmt.execute;
    end execute;
 
 
@@ -200,13 +259,13 @@ package body AdaBase.Statement.Base.PostgreSQL is
    --  fetch_next  --
    ------------------
    overriding
-   function fetch_next (Stmt : out PostgreSQL_statement) return ARS.Datarow
-   is
-      dummy : ARS.Datarow := ARS.Empty_Datarow;
+   function fetch_next (Stmt : out PostgreSQL_statement) return ARS.Datarow is
    begin
-      --  TO BE IMPLEMENTED
-      Stmt.delivery := completed;
-      return dummy;
+      if Stmt.result_arrow >= Stmt.size_of_rowset then
+         return ARS.Empty_Datarow;
+      end if;
+      Stmt.result_arrow := Stmt.result_arrow + 1;
+      return Stmt.assemble_datarow (row_number => Stmt.result_arrow);
    end fetch_next;
 
 
@@ -216,11 +275,26 @@ package body AdaBase.Statement.Base.PostgreSQL is
    overriding
    function fetch_all (Stmt : out PostgreSQL_statement) return ARS.Datarow_Set
    is
-      dummy : ARS.Datarow_Set (1 .. 0);
+      maxrows : Natural := Natural (Stmt.rows_returned);
+      tmpset  : ARS.Datarow_Set (1 .. maxrows + 1);
+      nullset : ARS.Datarow_Set (1 .. 0);
+      index   : Natural := 1;
+      row     : ARS.Datarow;
    begin
-      --  TO BE IMPLEMENTED
-      Stmt.delivery := completed;
-      return dummy;
+      if Stmt.result_arrow >= Stmt.size_of_rowset then
+         return nullset;
+      end if;
+
+      declare
+         remaining_rows : Trax_ID := Stmt.size_of_rowset - Stmt.result_arrow;
+         return_set     : ARS.Datarow_Set (1 .. Natural (remaining_rows));
+      begin
+         for index in return_set'Range loop
+            Stmt.result_arrow := Stmt.result_arrow + 1;
+            return_set (index) := Stmt.assemble_datarow (Stmt.result_arrow);
+         end loop;
+         return return_set;
+      end;
    end fetch_all;
 
 
@@ -231,7 +305,6 @@ package body AdaBase.Statement.Base.PostgreSQL is
    function fetch_bound (Stmt : out PostgreSQL_statement) return Boolean is
    begin
       --  TO BE IMPLEMENTED
-      Stmt.delivery := completed;
       return False;
    end fetch_bound;
 
@@ -374,11 +447,12 @@ package body AdaBase.Statement.Base.PostgreSQL is
             name  : String := conn.field_name (Stmt.stmt_handle, index);
             table : String := conn.field_table (Stmt.stmt_handle, index);
          begin
-            brec.v00          := False;   --  placeholder
-            info.field_name   := fn (name);
-            info.table        := fn (table);
-            info.field_type   := conn.field_type (Stmt.stmt_handle, index);
-
+            brec.v00           := False;   --  placeholder
+            info.field_name    := fn (name);
+            info.table         := fn (table);
+            info.field_type    := conn.field_type (Stmt.stmt_handle, index);
+            info.binary_format := conn.field_data_is_binary (Stmt.stmt_handle,
+                                                             index);
 
             --  IMPLEMENT
             info.null_possible := False;
@@ -473,5 +547,111 @@ package body AdaBase.Statement.Base.PostgreSQL is
          free_sql (Object.sql_final);
       end if;
    end finalize;
+
+
+   ------------------------
+   --  assembly_datarow  --
+   ------------------------
+   function assemble_datarow (Stmt : PostgreSQL_statement;
+                              row_number : Trax_ID) return ARS.Datarow
+   is
+      function string_equivalent (column : Natural; binary : Boolean)
+                                  return String;
+      result : ARS.Datarow;
+      conn   : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+      maxlen : constant Natural := Natural (Stmt.column_info.Length);
+
+      function string_equivalent (column : Natural; binary : Boolean)
+                                  return String
+      is
+         row_num  : constant Natural := Natural (row_number);
+      begin
+         if binary then
+            return conn.field_binary (Stmt.stmt_handle, row_num, column,
+                                      Stmt.con_max_blob);
+         else
+            return conn.field_string (Stmt.stmt_handle, row_num, column);
+         end if;
+      end string_equivalent;
+   begin
+      for F in 1 .. maxlen loop
+         declare
+            colinfo : column_info renames Stmt.column_info.Element (F);
+            field    : ARF.Std_Field;
+            dvariant : ARF.Variant;
+            last_one : constant Boolean := (F = maxlen);
+            isnull   : constant Boolean := conn.field_is_null
+                       (Stmt.stmt_handle, Natural (row_number), F);
+            heading  : constant String := CT.USS (colinfo.field_name);
+            ST       : constant String :=
+                       string_equivalent (F, colinfo.binary_format);
+         begin
+            case colinfo.field_type is
+               when ft_nbyte0 =>
+                  dvariant := (datatype => ft_nbyte0, v00 => ST = "1");
+               when ft_nbyte1 =>
+                  dvariant := (datatype => ft_nbyte1, v01 => convert (ST));
+               when ft_nbyte2 =>
+                  dvariant := (datatype => ft_nbyte2, v02 => convert (ST));
+               when ft_nbyte3 =>
+                  dvariant := (datatype => ft_nbyte3, v03 => convert (ST));
+               when ft_nbyte4 =>
+                  dvariant := (datatype => ft_nbyte4, v04 => convert (ST));
+               when ft_nbyte8 =>
+                  dvariant := (datatype => ft_nbyte8, v05 => convert (ST));
+               when ft_byte1  =>
+                  dvariant := (datatype => ft_byte1, v06 => convert (ST));
+               when ft_byte2  =>
+                  dvariant := (datatype => ft_byte2, v07 => convert (ST));
+               when ft_byte3  =>
+                  dvariant := (datatype => ft_byte3, v08 => convert (ST));
+               when ft_byte4  =>
+                  dvariant := (datatype => ft_byte4, v09 => convert (ST));
+               when ft_byte8  =>
+                  dvariant := (datatype => ft_byte8, v10 => convert (ST));
+               when ft_real9  =>
+                  dvariant := (datatype => ft_real9, v11 => convert (ST));
+               when ft_real18 =>
+                  dvariant := (datatype => ft_real18, v12 => convert (ST));
+               when ft_textual =>
+                  dvariant := (datatype => ft_textual, v13 => CT.SUS (ST));
+               when ft_widetext =>
+                  dvariant := (datatype => ft_widetext, v14 => convert (ST));
+               when ft_supertext =>
+                  dvariant := (datatype => ft_supertext, v15 => convert (ST));
+               when ft_timestamp =>
+                  begin
+                     dvariant := (datatype => ft_timestamp,
+                                  v16 => ARC.convert (ST));
+                  exception
+                     when CAL.Time_Error =>
+                        dvariant := (datatype => ft_textual,
+                                     v13 => CT.SUS (ST));
+                  end;
+               when ft_enumtype =>
+                  dvariant := (datatype => ft_enumtype,
+                               V18 => ARC.convert (CT.SUS (ST)));
+               when others =>
+                  null;
+
+            end case;
+            case colinfo.field_type is
+               when ft_chain =>
+                  field := ARF.spawn_field (binob => ARC.convert (ST));
+               when ft_settype =>
+                  field := ARF.spawn_field (enumset => ST);
+               when others =>
+                  field := ARF.spawn_field (data => dvariant,
+                                            null_data => isnull);
+            end case;
+
+            result.push (heading    => heading,
+                         field      => field,
+                         last_field => last_one);
+         end;
+      end loop;
+      return result;
+   end assemble_datarow;
+
 
 end AdaBase.Statement.Base.PostgreSQL;

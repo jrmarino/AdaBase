@@ -151,6 +151,12 @@ package AdaBase.Connection.Base.PostgreSQL is
                            row_number    : Natural;
                            column_number : Natural) return String;
 
+   function field_binary  (conn : PostgreSQL_Connection;
+                           res  : BND.PGresult_Access;
+                           row_number    : Natural;
+                           column_number : Natural;
+                           max_length    : Natural) return String;
+
    function driverMessage (conn : PostgreSQL_Connection;
                            res  : BND.PGresult_Access) return String;
 
