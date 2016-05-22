@@ -221,7 +221,11 @@ private
    function is_ipv4_or_ipv6 (teststr : String) return Boolean;
    function convert_version (pgsql_version : Natural) return CT.Text;
    function get_library_version return Natural;
-   function convert_data_type (pg_type : String) return field_types;
+   function convert_data_type (pg_type : String; category : Character;
+                               typelen : Integer; constraint : String)
+                               return field_types;
+   function refined_byte_type (byteX : field_types; constraint : String)
+                               return field_types;
 
    procedure Initialize (conn : in out PostgreSQL_Connection);
    procedure private_execute (conn : out PostgreSQL_Connection; sql : String);

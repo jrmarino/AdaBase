@@ -1010,107 +1010,145 @@ package body AdaBase.Connection.Base.PostgreSQL is
 
 
    -------------------------
+   --  refined_byte_type  --
+   -------------------------
+   function refined_byte_type (byteX : field_types; constraint : String)
+                               return field_types
+   is
+      --  by policy, byteX is ft_byte2, ft_byte3, ft_byte4 or ft_byte8
+
+      subtype max_range is Positive range 1 .. 4;
+      zero_required : constant String := "(VALUE >= 0)";
+      max_size      : max_range;
+   begin
+      if not CT.contains (S => constraint, fragment => zero_required) then
+         return byteX;
+      end if;
+
+      case byteX is
+         when ft_byte8 => max_size := 4;  -- NByte4
+         when ft_byte4 => max_size := 3;  -- NByte3
+         when ft_byte3 => max_size := 2;  -- NByte2
+         when others   => max_size := 1;  -- NByte1;
+      end case;
+
+      for x in max_range loop
+         declare
+            bits   : constant Positive := x * 8;
+            limit1 : constant Positive := 2 ** bits;
+            limit2 : constant Positive := limit1 - 1;
+            check1 : constant String := "(VALUE <" & limit1'Img & ")";
+            check2 : constant String := "(VALUE <=" & limit2'Img & ")";
+         begin
+            if CT.contains (S => constraint, fragment => check1) or else
+              CT.contains (S => constraint, fragment => check2)
+            then
+               case x is
+                  when 1 => return ft_nbyte1;
+                  when 2 => return ft_nbyte2;
+                  when 3 => return ft_nbyte3;
+                  when 4 => return ft_nbyte4;
+               end case;
+            end if;
+         end;
+      end loop;
+      return byteX;
+   end refined_byte_type;
+
+
+   -------------------------
    --  convert_data_type  --
    -------------------------
-   function convert_data_type (pg_type : String) return field_types
+   function convert_data_type (pg_type : String; category : Character;
+                               typelen : Integer; constraint : String)
+                               return field_types
    is
-      len : Natural := pg_type'Length;
+      --  Code Category (typcategory)
+      --  A     Array types
+      --  B     Boolean types
+      --  C     Composite types
+      --  D     Date/time types
+      --  E     Enum types
+      --  G     Geometric types
+      --  I     Network address types
+      --  N     Numeric types
+      --  P     Pseudo-types
+      --  S     String types
+      --  T     Timespan types
+      --  U     User-defined types
+      --  V     Bit-string types
+      --  X     unknown type
+
+      desc : constant String := pg_type & " (" & category & ")";
+      temp : field_types;
    begin
-      if len >= 3 then
-         declare
-            y : Natural := pg_type'First;
-            test : String (1 .. 3) := pg_type (y .. y + 2);
-         begin
-            if pg_type = "bit" then
-               --  bit / bit varying
-               return ft_chain;
-            else
-               null;
-            end if;
-         end;
+      --  One User-defined type, bytea, is a chain.  Check for this one first
+      --  and treat the reast as strings
+
+      if pg_type = "bytea" then
+         return ft_chain;
       end if;
 
-      if len >= 4 then
-         declare
-            y : Natural := pg_type'First;
-            test : String (1 .. 4) := pg_type (y .. y + 3);
-         begin
-            if test = "time" then
-               --  time / timetz
-               --  time stamp
-               --  timestamp / timestamptz
-               return ft_timestamp;
-            elsif test = "char" then
-               --  char / character varying
-               return ft_textual;
-            elsif test = "bool" then
-               --  bool / boolean
-               return ft_nbyte0;
-            elsif test = "int2" then
-               return ft_byte2;
-            elsif test = "int4" then
-               return ft_byte4;
-            elsif test = "int8" then
-               return ft_byte8;
-            elsif test = "real" then
-               return ft_real9;
-            elsif test = "date" then
-               return ft_timestamp;
-            elsif test = "text" then
-               return ft_textual;
-            elsif test = "deci" then
-               --  decimal / decimal (x,y)
-               return ft_real18;
-            elsif test = "nume" then
-               --  numeric / numeric (x,y)
-               return ft_real18;
-            elsif test = "doub" then
-               --  double /  double precision
-               return ft_real18;
-            else
-               null;
-            end if;
-         end;
-      end if;
+      case category is
+         when 'A' => return ft_textual;  --  No support for arrays yet
+         when 'B' => return ft_nbyte0;
+         when 'C' => return ft_textual;  --  No support for composites yet
+         when 'D' => return ft_timestamp;
+         when 'E' => return ft_enumtype;
+         when 'G' => return ft_textual;  --  IMPLEMENT GEOMETRY LATER
+         when 'I' => return ft_textual;
+         when 'N' => null;               --  Let numerics fall through
+         when 'S' => return ft_textual;
+         when 'T' => return ft_textual;  --  Huge, 4/12/16 bytes
+         when 'U' => return ft_textual;
+         when 'V' => return ft_textual;  --  String of 1/0 for now
 
-      if pg_type = "int" then
-         return ft_byte4;
-      elsif pg_type = "smallint" then
-         return ft_byte2;
-      elsif pg_type = "integer" then
-         return ft_byte4;
-      elsif pg_type = "bigint" then
-         return ft_byte8;
-      elsif pg_type = "money" then
-         return ft_real18;
-      elsif pg_type = "float8" then
-         return ft_real18;
+         when 'X' => raise METADATA_FAIL
+                     with "Unknown type encountered: " & desc;
+         when 'P' => raise METADATA_FAIL
+                     with "Pseudo-type encountered: " & desc;
+         when others => null;
+      end case;
+
+      --  Pick out standard float/double types from the remaining (numerics)
+
+      if pg_type = "real" then
+         return ft_real9;
       elsif pg_type = "float4" then
          return ft_real9;
-      elsif pg_type = "smallserial" then
-         return ft_nbyte2;
-      elsif pg_type = "serial2" then
-         return ft_nbyte2;
-      elsif pg_type = "serial" then
-         return ft_nbyte4;
-      elsif pg_type = "serial4" then
-         return ft_nbyte4;
-      elsif pg_type = "bigserial" then
-         return ft_nbyte8;
-      elsif pg_type = "serial8" then
-         return ft_nbyte8;
-      elsif pg_type = "varchar" then
-         return ft_textual;
-      elsif pg_type = "bytea" then
-         return ft_chain;
-      elsif pg_type = "varbit" then
-         return ft_chain;
-      elsif pg_type = "interval" then
-         return ft_textual;  --  16 bytes!
-      else
-         --  everything else
-         return ft_textual;
+      elsif pg_type = "float8" then
+         return ft_real18;
+      elsif pg_type = "money" then
+         return ft_real18;
+      elsif pg_type = "decimal" then
+         return ft_real18;
+      elsif pg_type = "numeric" then
+         return ft_real18;
+      elsif pg_type = "double precision" then
+         return ft_real18;
+      elsif typelen = -1 then
+         return ft_real18;
       end if;
+
+      --  The rest are signed numbers that could be constrained, but this
+      --  only applies to ft_byte2 .. ft_byte8
+
+      if typelen = 1 then
+         return ft_byte1;
+      elsif typelen = 2 then
+         temp := ft_byte2;
+      elsif typelen = 3 then
+         temp := ft_byte3;
+      elsif typelen = 4 then
+         temp := ft_byte4;
+      elsif typelen = 8 then
+         temp := ft_byte8;
+      else
+         raise METADATA_FAIL
+           with "Unknown numeric type encountered: " & desc;
+      end if;
+
+      return refined_byte_type (temp, constraint);
 
    end convert_data_type;
 
@@ -1124,8 +1162,10 @@ package body AdaBase.Connection.Base.PostgreSQL is
       nrows  : Affected_Rows;
       tables : constant String := conn.piped_tables;
       sql    : constant String :=
-               "SELECT DISTINCT a.atttypid, t.typname, t.typlen " &
+               "SELECT DISTINCT a.atttypid, t.typname, t.typlen, " &
+                               "t.typcategory, con.consrc " &
                "FROM pg_class c, pg_attribute a, pg_type t " &
+               "LEFT JOIN pg_constraint con on t.oid = con.contypid " &
                "WHERE c.relname ~ '^(" & tables & ")$' " &
                "AND a.attnum > 0 AND a.attrelid = c.oid " &
                "AND a.atttypid = t.oid " &
@@ -1137,8 +1177,13 @@ package body AdaBase.Connection.Base.PostgreSQL is
          declare
             s_oid   : constant String := conn.field_string (pgres, x, 0);
             s_name  : constant String := conn.field_string (pgres, x, 1);
-            payload : data_type_rec :=
-                      (data_type => convert_data_type (s_name));
+            s_tlen  : constant String := conn.field_string (pgres, x, 2);
+            s_cat   : constant String := conn.field_string (pgres, x, 3);
+            s_cons  : constant String := conn.field_string (pgres, x, 4);
+            typcat  : constant Character := s_cat (s_cat'First);
+            typelen : constant Integer := Integer'Value (s_tlen);
+            payload : data_type_rec := (data_type => convert_data_type
+                                        (s_name, typcat, typelen, s_cons));
          begin
             conn.data_types.Insert (Key      => Integer'Value (s_oid),
                                     New_Item => payload);
