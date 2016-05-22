@@ -378,6 +378,7 @@ package body AdaBase.Statement.Base.SQLite is
       conn.reset_prep_stmt (Stmt.stmt_handle);
       Stmt.reclaim_canvas;
       Stmt.step_result := unset;
+      Stmt.rows_leftover := False;
 
       if num_markers > 0 then
          --  Check to make sure all prepared markers are bound

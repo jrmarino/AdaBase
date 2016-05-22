@@ -118,6 +118,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    begin
       if Stmt.result_arrow < Stmt.size_of_rowset then
          Stmt.result_arrow := Stmt.size_of_rowset;
+         Stmt.rows_leftover := True;
       end if;
    end discard_rest;
 
@@ -129,6 +130,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    function execute (Stmt : out PostgreSQL_statement) return Boolean is
    begin
       --  TO BE IMPLEMENTED
+      Stmt.rows_leftover := False;
       return False;
    end execute;
 
@@ -386,9 +388,11 @@ package body AdaBase.Statement.Base.PostgreSQL is
          if conn.direct_stmt_exec (stmt => Object.stmt_handle,
                                    sql => Object.sql_final.all)
          then
-            Object.successful_execution := True;
             Object.log_nominal (category => logcat,
                                 message  => Object.sql_final.all);
+            Object.successful_execution := True;
+            Object.result_arrow := 0;
+            Object.size_of_rowset := conn.rows_in_result (Object.stmt_handle);
          else
             Object.log_problem
               (category => statement_execution,
@@ -555,6 +559,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    function assemble_datarow (Stmt : PostgreSQL_statement;
                               row_number : Trax_ID) return ARS.Datarow
    is
+      function null_value (column : Natural) return Boolean;
       function string_equivalent (column : Natural; binary : Boolean)
                                   return String;
       result : ARS.Datarow;
@@ -564,15 +569,27 @@ package body AdaBase.Statement.Base.PostgreSQL is
       function string_equivalent (column : Natural; binary : Boolean)
                                   return String
       is
-         row_num  : constant Natural := Natural (row_number);
+         --  PostgreSQL result set is zero-indexed
+         row_num : constant Natural := Natural (row_number) - 1;
+         col_num : constant Natural := column - 1;
       begin
          if binary then
-            return conn.field_binary (Stmt.stmt_handle, row_num, column,
+            return conn.field_binary (Stmt.stmt_handle, row_num, col_num,
                                       Stmt.con_max_blob);
          else
-            return conn.field_string (Stmt.stmt_handle, row_num, column);
+            return conn.field_string (Stmt.stmt_handle, row_num, col_num);
          end if;
       end string_equivalent;
+
+      function null_value (column : Natural) return Boolean
+      is
+         --  PostgreSQL result set is zero-indexed
+         row_num : constant Natural := Natural (row_number) - 1;
+         col_num : constant Natural := column - 1;
+      begin
+         return conn.field_is_null (Stmt.stmt_handle, row_num, col_num);
+      end null_value;
+
    begin
       for F in 1 .. maxlen loop
          declare
@@ -580,10 +597,9 @@ package body AdaBase.Statement.Base.PostgreSQL is
             field    : ARF.Std_Field;
             dvariant : ARF.Variant;
             last_one : constant Boolean := (F = maxlen);
-            isnull   : constant Boolean := conn.field_is_null
-                       (Stmt.stmt_handle, Natural (row_number), F);
-            heading  : constant String := CT.USS (colinfo.field_name);
-            ST       : constant String :=
+            isnull   : constant Boolean := null_value (F);
+            heading  : constant String  := CT.USS (colinfo.field_name);
+            ST       : constant String  :=
                        string_equivalent (F, colinfo.binary_format);
          begin
             case colinfo.field_type is

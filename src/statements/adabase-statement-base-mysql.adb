@@ -125,6 +125,7 @@ package body AdaBase.Statement.Base.MySQL is
            with "The execute command is for prepared statements only";
       end if;
       Stmt.successful_execution := False;
+      Stmt.rows_leftover := False;
       if num_markers > 0 then
          --  Check to make sure all prepared markers are bound
          for sx in Natural range 1 .. num_markers loop
