@@ -143,6 +143,39 @@ Column 4:
 </pre>
 <p class="caption">Output using SQLite Driver</p>
 <br/>
+<pre class="output">
+ Query successful: TRUE
+   Data Discarded: FALSE
+Number of columns: 4
+   Number of rows: 7
+
+Column 1:
+   TABLE: fruits
+    NAME: id
+    TYPE: FT_BYTE4
+Column 2:
+   TABLE: fruits
+    NAME: fruit
+    TYPE: FT_TEXTUAL
+Column 3:
+   TABLE: fruits
+    NAME: color
+    TYPE: FT_TEXTUAL
+Column 4:
+   TABLE: fruits
+    NAME: calories
+    TYPE: FT_BYTE4
+
+02      apricot (orange) calories = 30
+07   clementine (orange) calories = 24
+13        mango (orange) calories = 40
+15   cantaloupe (orange) calories = 25
+16    nectarine (orange) calories = 25
+18       orange (orange) calories = 65
+27    tangerine (orange) calories = 26
+</pre>
+<p class="caption">Output using PostgreSQL Driver</p>
+<br/>
 <p>{{ page.supported_stmts }}</p>
 </div>
 <div class="sidenav">
