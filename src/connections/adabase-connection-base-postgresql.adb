@@ -396,6 +396,8 @@ package body AdaBase.Connection.Base.PostgreSQL is
          BND.PQfinish (conn => conn.handle);
          conn.handle := null;
       end if;
+      conn.tables.Clear;
+      conn.data_types.Clear;
       conn.prop_active := False;
    end disconnect;
 
