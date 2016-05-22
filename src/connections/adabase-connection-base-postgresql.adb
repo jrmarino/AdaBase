@@ -729,6 +729,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
 
       --  dump all tables and data types
       conn.cache_table_names;
+      conn.cache_data_types;
 
    exception
       when NOT_WHILE_CONNECTED =>
@@ -909,10 +910,12 @@ package body AdaBase.Connection.Base.PostgreSQL is
       pg_oid : BND.Oid := BND.PQftype (res, colnum);
       pg_key : Positive := Positive (pg_oid);
    begin
-      if pg_key > 0 then
-         null;
+      if conn.data_types.Contains (Key => pg_key) then
+         return conn.data_types.Element (pg_key).data_type;
+      else
+         --  Not in container, fall back to text tupe
+         return ft_textual;
       end if;
-      return ft_nbyte0;
    end field_type;
 
 
@@ -984,6 +987,165 @@ package body AdaBase.Connection.Base.PostgreSQL is
       end if;
       return success;
    end direct_stmt_exec;
+
+
+   --------------------
+   --  piped_tables  --
+   --------------------
+   function piped_tables (conn : PostgreSQL_Connection) return String
+   is
+      result : CT.Text := CT.blank;
+      procedure add (position : table_map.Cursor);
+      procedure add (position : table_map.Cursor) is
+      begin
+         if not CT.IsBlank (result) then
+            CT.SU.Append (result, '|');
+         end if;
+         CT.SU.Append (result, table_map.Element (position).column_1);
+      end add;
+   begin
+      conn.tables.Iterate (Process => add'Access);
+      return CT.USS (result);
+   end piped_tables;
+
+
+   -------------------------
+   --  convert_data_type  --
+   -------------------------
+   function convert_data_type (pg_type : String) return field_types
+   is
+      len : Natural := pg_type'Length;
+   begin
+      if len >= 3 then
+         declare
+            y : Natural := pg_type'First;
+            test : String (1 .. 3) := pg_type (y .. y + 2);
+         begin
+            if pg_type = "bit" then
+               --  bit / bit varying
+               return ft_chain;
+            else
+               null;
+            end if;
+         end;
+      end if;
+
+      if len >= 4 then
+         declare
+            y : Natural := pg_type'First;
+            test : String (1 .. 4) := pg_type (y .. y + 3);
+         begin
+            if test = "time" then
+               --  time / timetz
+               --  time stamp
+               --  timestamp / timestamptz
+               return ft_timestamp;
+            elsif test = "char" then
+               --  char / character varying
+               return ft_textual;
+            elsif test = "bool" then
+               --  bool / boolean
+               return ft_nbyte0;
+            elsif test = "int2" then
+               return ft_byte2;
+            elsif test = "int4" then
+               return ft_byte4;
+            elsif test = "int8" then
+               return ft_byte8;
+            elsif test = "real" then
+               return ft_real9;
+            elsif test = "date" then
+               return ft_timestamp;
+            elsif test = "text" then
+               return ft_textual;
+            elsif test = "deci" then
+               --  decimal / decimal (x,y)
+               return ft_real18;
+            elsif test = "nume" then
+               --  numeric / numeric (x,y)
+               return ft_real18;
+            elsif test = "doub" then
+               --  double /  double precision
+               return ft_real18;
+            else
+               null;
+            end if;
+         end;
+      end if;
+
+      if pg_type = "int" then
+         return ft_byte4;
+      elsif pg_type = "smallint" then
+         return ft_byte2;
+      elsif pg_type = "integer" then
+         return ft_byte4;
+      elsif pg_type = "bigint" then
+         return ft_byte8;
+      elsif pg_type = "money" then
+         return ft_real18;
+      elsif pg_type = "float8" then
+         return ft_real18;
+      elsif pg_type = "float4" then
+         return ft_real9;
+      elsif pg_type = "smallserial" then
+         return ft_nbyte2;
+      elsif pg_type = "serial2" then
+         return ft_nbyte2;
+      elsif pg_type = "serial" then
+         return ft_nbyte4;
+      elsif pg_type = "serial4" then
+         return ft_nbyte4;
+      elsif pg_type = "bigserial" then
+         return ft_nbyte8;
+      elsif pg_type = "serial8" then
+         return ft_nbyte8;
+      elsif pg_type = "varchar" then
+         return ft_textual;
+      elsif pg_type = "bytea" then
+         return ft_chain;
+      elsif pg_type = "varbit" then
+         return ft_chain;
+      elsif pg_type = "interval" then
+         return ft_textual;  --  16 bytes!
+      else
+         --  everything else
+         return ft_textual;
+      end if;
+
+   end convert_data_type;
+
+
+   ------------------------
+   --  cache_data_types  --
+   ------------------------
+   procedure cache_data_types  (conn : out PostgreSQL_Connection)
+   is
+      pgres  : BND.PGresult_Access;
+      nrows  : Affected_Rows;
+      tables : constant String := conn.piped_tables;
+      sql    : constant String :=
+               "SELECT DISTINCT a.atttypid, t.typname, t.typlen " &
+               "FROM pg_class c, pg_attribute a, pg_type t " &
+               "WHERE c.relname ~ '^(" & tables & ")$' " &
+               "AND a.attnum > 0 AND a.attrelid = c.oid " &
+               "AND a.atttypid = t.oid " &
+               "ORDER BY a.atttypid";
+   begin
+      pgres := conn.private_select (sql);
+      nrows := conn.rows_in_result (pgres);
+      for x in Natural range 0 .. Natural (nrows) - 1 loop
+         declare
+            s_oid   : constant String := conn.field_string (pgres, x, 0);
+            s_name  : constant String := conn.field_string (pgres, x, 1);
+            payload : data_type_rec :=
+                      (data_type => convert_data_type (s_name));
+         begin
+            conn.data_types.Insert (Key      => Integer'Value (s_oid),
+                                    New_Item => payload);
+         end;
+      end loop;
+      BND.PQclear (pgres);
+   end cache_data_types;
 
 
 

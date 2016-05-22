@@ -182,9 +182,17 @@ private
       column_1 : CT.Text;
    end record;
 
+   type data_type_rec is record
+      data_type : field_types;
+   end record;
+
    package table_map is new Ada.Containers.Ordered_Maps
      (Key_Type     => Positive,
       Element_Type => table_cell);
+
+   package type_map is new Ada.Containers.Ordered_Maps
+     (Key_Type     => Positive,
+      Element_Type => data_type_rec);
 
    type PostgreSQL_Connection is new Base_Connection and AIC.iConnection
      with record
@@ -201,16 +209,20 @@ private
 
       --  Upon connection, dump tables and data types and store them
       tables            : table_map.Map;
+      data_types        : type_map.Map;
    end record;
 
    function is_ipv4_or_ipv6 (teststr : String) return Boolean;
    function convert_version (pgsql_version : Natural) return CT.Text;
    function get_library_version return Natural;
+   function convert_data_type (pg_type : String) return field_types;
 
    procedure Initialize (conn : in out PostgreSQL_Connection);
    procedure private_execute (conn : out PostgreSQL_Connection; sql : String);
    procedure begin_transaction (conn : out PostgreSQL_Connection);
    procedure cache_table_names (conn : out PostgreSQL_Connection);
+   procedure cache_data_types  (conn : out PostgreSQL_Connection);
+   function piped_tables       (conn : PostgreSQL_Connection) return String;
    function select_last_val    (conn : PostgreSQL_Connection) return Trax_ID;
    function get_server_version (conn : PostgreSQL_Connection) return Natural;
    function get_server_info    (conn : PostgreSQL_Connection) return CT.Text;
