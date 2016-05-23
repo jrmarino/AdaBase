@@ -113,9 +113,13 @@ package AdaBase.Connection.Base.PostgreSQL is
                                   res  : BND.PGresult_Access;
                                   column_number : Natural) return Boolean;
 
-   function prepare_statement (conn : out PostgreSQL_Connection;
+   function prepare_statement (conn : PostgreSQL_Connection;
                                stmt : aliased out BND.PGresult_Access;
+                               name : String;
                                sql  : String) return Boolean;
+
+   function destroy_statement (conn : out PostgreSQL_Connection;
+                               name : String) return Boolean;
 
    function direct_stmt_exec  (conn : out PostgreSQL_Connection;
                                stmt : aliased out BND.PGresult_Access;
@@ -162,6 +166,9 @@ package AdaBase.Connection.Base.PostgreSQL is
 
    function driverCode    (conn : PostgreSQL_Connection;
                            res  : BND.PGresult_Access) return Driver_Codes;
+
+   function markers_found (conn : PostgreSQL_Connection;
+                           res  : BND.PGresult_Access) return Natural;
 
    ------------------
    --  EXCEPTIONS  --

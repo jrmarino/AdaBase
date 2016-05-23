@@ -924,13 +924,24 @@ package body AdaBase.Connection.Base.PostgreSQL is
    -------------------------
    --  prepare_statement  --
    -------------------------
-   function prepare_statement (conn : out PostgreSQL_Connection;
+   function prepare_statement (conn : PostgreSQL_Connection;
                                stmt : aliased out BND.PGresult_Access;
+                               name : String;
                                sql  : String) return Boolean
    is
-      pragma Unreferenced (conn, stmt, sql);
+      use type BND.ExecStatusType;
+      c_stmt_name : BND.ICS.chars_ptr := BND.ICS.New_String (name);
+      c_query     : BND.ICS.chars_ptr := BND.ICS.New_String (sql);
    begin
-      return False;
+
+      stmt := BND.PQprepare (conn       => conn.handle,
+                             stmtName   => c_stmt_name,
+                             query      => c_query,
+                             nParams    => 0,
+                             paramTypes => null);
+      BND.ICS.Free (c_stmt_name);
+      BND.ICS.Free (c_query);
+      return (BND.PQresultStatus (stmt) = BND.PGRES_COMMAND_OK);
    end prepare_statement;
 
 
@@ -1234,6 +1245,37 @@ package body AdaBase.Connection.Base.PostgreSQL is
          return db_convert (buffer'Access, len);
       end;
    end field_binary;
+
+
+   ---------------------
+   --  markers_found  --
+   ---------------------
+   function markers_found (conn : PostgreSQL_Connection;
+                           res  : BND.PGresult_Access) return Natural
+   is
+      result : constant BND.IC.int := BND.PQnparams (res);
+   begin
+      return (Natural (result));
+   end markers_found;
+
+
+   -------------------------
+   --  destroy_statement  --
+   -------------------------
+   function destroy_statement (conn : out PostgreSQL_Connection;
+                               name : String) return Boolean
+   is
+      sql : constant String := "DEALLOCATE " & name;
+   begin
+      if conn.prop_active then
+         conn.private_execute (sql);
+      end if;
+
+      return True;
+   exception
+      when QUERY_FAIL =>
+         return False;
+   end destroy_statement;
 
 
 end AdaBase.Connection.Base.PostgreSQL;
