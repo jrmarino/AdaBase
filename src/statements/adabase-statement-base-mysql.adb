@@ -1270,79 +1270,64 @@ package body AdaBase.Statement.Base.MySQL is
       begin
          row := Convert (rptr);
          for F in 1 .. maxlen loop
-            if Stmt.crate.Element (Index => F).bound then
-               declare
-                  sz : constant Natural := field_lengths (F);
-                  EN : constant Boolean := row (F) = null;
-                  ST : constant String  := db_convert (row (F), sz);
+            declare
+               dossier  : bindrec renames Stmt.crate.Element (F);
+               colinfo  : column_info renames Stmt.column_info.Element (F);
+               sz : constant Natural := field_lengths (F);
+               EN : constant Boolean := row (F) = null;
+               ST : constant String  := db_convert (row (F), sz);
 
-                  Tout : constant field_types :=
-                    Stmt.crate.Element (Index => F) .output_type;
-                  Tnative : constant field_types :=
-                    Stmt.column_info.Element (Index => F).field_type;
-               begin
-                  if Tnative /= Tout then
-                     raise BINDING_TYPE_MISMATCH with "native type : " &
-                       field_types'Image (Tnative) & " binding type : " &
-                       field_types'Image (Tout);
-                  end if;
-                  case Tnative is
-                     when ft_nbyte0 =>
-                        Stmt.crate.Element (F).a00.all := (ST = "1");
-                     when ft_nbyte1 =>
-                        Stmt.crate.Element (F).a01.all := convert (ST);
-                     when ft_nbyte2 =>
-                        Stmt.crate.Element (F).a02.all := convert (ST);
-                     when ft_nbyte3 =>
-                        Stmt.crate.Element (F).a03.all := convert (ST);
-                     when ft_nbyte4 =>
-                        Stmt.crate.Element (F).a04.all := convert (ST);
-                     when ft_nbyte8 =>
-                        Stmt.crate.Element (F).a05.all := convert (ST);
-                     when ft_byte1 =>
-                        Stmt.crate.Element (F).a06.all := convert (ST);
-                     when ft_byte2 =>
-                        Stmt.crate.Element (F).a07.all := convert (ST);
-                     when ft_byte3 =>
-                        Stmt.crate.Element (F).a08.all := convert (ST);
-                     when ft_byte4 =>
-                        Stmt.crate.Element (F).a09.all := convert (ST);
-                     when ft_byte8 =>
-                        Stmt.crate.Element (F).a10.all := convert (ST);
-                     when ft_real9  =>
-                        Stmt.crate.Element (F).a11.all := convert (ST);
-                     when ft_real18 =>
-                        Stmt.crate.Element (F).a12.all := convert (ST);
-                     when ft_textual =>
-                        Stmt.crate.Element (F).a13.all := CT.SUS (ST);
-                     when ft_widetext =>
-                        Stmt.crate.Element (F).a14.all := convert (ST);
-                     when ft_supertext =>
-                        Stmt.crate.Element (F).a15.all := convert (ST);
-                     when ft_timestamp =>
-                        begin
-                           Stmt.crate.Element (F).a16.all := ARC.convert (ST);
-                        exception
-                           when CAL.Time_Error =>
-                              Stmt.crate.Element (F).a16.all := CAL.Time_Of
-                                (Year  => CAL.Year_Number'First,
-                                 Month => CAL.Month_Number'First,
-                                 Day   => CAL.Day_Number'First);
-                        end;
-                     when ft_chain =>
-                        if Stmt.crate.Element (F).a17.all'Length /= sz then
-                           raise BINDING_SIZE_MISMATCH with "native size : " &
-                             Stmt.crate.Element (F).a17.all'Length'Img &
-                             " binding size : " & sz'Img;
-                        end if;
-                        Stmt.crate.Element (F).a17.all := ARC.convert (ST);
-                     when ft_enumtype =>
-                        Stmt.crate.Element (F).a18.all := ARC.convert (ST);
-                     when ft_settype =>
-                        Stmt.crate.Element (F).a19.all := ARC.convert (ST);
-                  end case;
-               end;
-            end if;
+               Tout    : constant field_types := dossier.output_type;
+               Tnative : constant field_types := colinfo.field_type;
+            begin
+               if not dossier.bound then
+                  goto continue;
+               end if;
+
+               if Tnative /= Tout then
+                  raise BINDING_TYPE_MISMATCH with "native type : " &
+                    field_types'Image (Tnative) & " binding type : " &
+                    field_types'Image (Tout);
+               end if;
+               case Tnative is
+                  when ft_nbyte0    => dossier.a00.all := (ST = "1");
+                  when ft_nbyte1    => dossier.a01.all := convert (ST);
+                  when ft_nbyte2    => dossier.a02.all := convert (ST);
+                  when ft_nbyte3    => dossier.a03.all := convert (ST);
+                  when ft_nbyte4    => dossier.a04.all := convert (ST);
+                  when ft_nbyte8    => dossier.a05.all := convert (ST);
+                  when ft_byte1     => dossier.a06.all := convert (ST);
+                  when ft_byte2     => dossier.a07.all := convert (ST);
+                  when ft_byte3     => dossier.a08.all := convert (ST);
+                  when ft_byte4     => dossier.a09.all := convert (ST);
+                  when ft_byte8     => dossier.a10.all := convert (ST);
+                  when ft_real9     => dossier.a11.all := convert (ST);
+                  when ft_real18    => dossier.a12.all := convert (ST);
+                  when ft_textual   => dossier.a13.all := CT.SUS (ST);
+                  when ft_widetext  => dossier.a14.all := convert (ST);
+                  when ft_supertext => dossier.a15.all := convert (ST);
+                  when ft_timestamp =>
+                     begin
+                        dossier.a16.all := ARC.convert (ST);
+                     exception
+                        when CAL.Time_Error =>
+                           dossier.a16.all := CAL.Time_Of
+                             (Year  => CAL.Year_Number'First,
+                              Month => CAL.Month_Number'First,
+                              Day   => CAL.Day_Number'First);
+                     end;
+                  when ft_chain =>
+                     if dossier.a17.all'Length /= sz then
+                        raise BINDING_SIZE_MISMATCH with "native size : " &
+                          dossier.a17.all'Length'Img &
+                          " binding size : " & sz'Img;
+                     end if;
+                     dossier.a17.all := ARC.convert (ST);
+                  when ft_enumtype => dossier.a18.all := ARC.convert (ST);
+                  when ft_settype  => dossier.a19.all := ARC.convert (ST);
+               end case;
+            end;
+            <<continue>>
          end loop;
          return True;
       end;
