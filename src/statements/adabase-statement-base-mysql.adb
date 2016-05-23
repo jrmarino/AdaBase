@@ -1306,6 +1306,7 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_textual   => dossier.a13.all := CT.SUS (ST);
                   when ft_widetext  => dossier.a14.all := convert (ST);
                   when ft_supertext => dossier.a15.all := convert (ST);
+                  when ft_enumtype => dossier.a18.all := ARC.convert (ST);
                   when ft_timestamp =>
                      begin
                         dossier.a16.all := ARC.convert (ST);
@@ -1317,14 +1318,29 @@ package body AdaBase.Statement.Base.MySQL is
                               Day   => CAL.Day_Number'First);
                      end;
                   when ft_chain =>
-                     if dossier.a17.all'Length /= sz then
-                        raise BINDING_SIZE_MISMATCH with "native size : " &
-                          dossier.a17.all'Length'Img &
-                          " binding size : " & sz'Img;
-                     end if;
-                     dossier.a17.all := ARC.convert (ST);
-                  when ft_enumtype => dossier.a18.all := ARC.convert (ST);
-                  when ft_settype  => dossier.a19.all := ARC.convert (ST);
+                     declare
+                        FL    : Natural := dossier.a17.all'Length;
+                        DVLEN : Natural := ST'Length;
+                     begin
+                        if DVLEN > FL then
+                           raise BINDING_SIZE_MISMATCH with "native size : " &
+                             DVLEN'Img & " greater than binding size : " &
+                             FL'Img;
+                        end if;
+                        dossier.a17.all := ARC.convert (ST, FL);
+                     end;
+                  when ft_settype =>
+                     declare
+                        FL    : Natural := dossier.a19.all'Length;
+                        items : constant Natural := CT.num_set_items (ST);
+                     begin
+                        if items > FL then
+                           raise BINDING_SIZE_MISMATCH with
+                             "native size : " & items'Img &
+                             " greater than binding size : " & FL'Img;
+                        end if;
+                        dossier.a19.all := ARC.convert (ST, FL);
+                     end;
                end case;
             end;
             <<continue>>
