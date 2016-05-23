@@ -358,6 +358,12 @@ package body AdaBase.Statement.Base.PostgreSQL is
                Tout     : constant field_types := dossier.output_type;
                Tnative  : constant field_types := colinfo.field_type;
                isnull   : constant Boolean := null_value (F);
+               errmsg   : constant String  := "native type : " &
+                          field_types'Image (Tnative) & " binding type : " &
+                          field_types'Image (Tout);
+               smallerr : constant String  := "Native unsigned type : " &
+                          field_types'Image (Tnative) & " is too small for " &
+                          field_types'Image (Tout) & " binding type";
                ST       : constant String  :=
                           string_equivalent (F, colinfo.binary_format);
             begin
@@ -370,23 +376,67 @@ package body AdaBase.Statement.Base.PostgreSQL is
                --  remain strict on other type mismatches.
 
                case Tout is
-                  when ft_nbyte1 | ft_nbyte2 | ft_nbyte3 | ft_nbyte4 |
-                       ft_nbyte8 =>
+                  when ft_nbyte1 =>
                      case Tnative is
                         when ft_byte1 | ft_byte2 | ft_byte3 | ft_byte4 |
-                             ft_byte8 | ft_nbyte1 | ft_nbyte2 | ft_nbyte3 |
-                             ft_nbyte4 | ft_nbyte8 =>
-                           null;  -- Fall through
+                             ft_byte8 | ft_nbyte2 | ft_nbyte3 | ft_nbyte4 |
+                             ft_nbyte8 =>
+                           null;  -- Fall through (all could fail to convert)
+                        when ft_nbyte1 =>
+                           null;  -- guaranteed to convert
                         when others =>
-                           raise BINDING_TYPE_MISMATCH with "native type : " &
-                             field_types'Image (Tnative) & " binding type : " &
-                             field_types'Image (Tout);
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_nbyte2 =>
+                     case Tnative is
+                        when ft_byte2 | ft_byte3 | ft_byte4 | ft_byte8 |
+                             ft_nbyte3 | ft_nbyte4 | ft_nbyte8 =>
+                           null;  -- Fall through (all could fail to convert)
+                        when ft_nbyte1 | ft_nbyte2 =>
+                           null;  -- guaranteed to convert
+                        when ft_byte1 =>
+                           raise BINDING_TYPE_MISMATCH with smallerr;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_nbyte3 =>
+                     case Tnative is
+                        when ft_byte3 | ft_byte4 | ft_byte8 | ft_nbyte4 |
+                             ft_nbyte8 =>
+                           null;  -- Fall through (all could fail to convert)
+                        when ft_nbyte1 | ft_nbyte2 | ft_nbyte3 =>
+                           null;  -- guaranteed to convert
+                        when ft_byte1 | ft_byte2 =>
+                           raise BINDING_TYPE_MISMATCH with smallerr;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_nbyte4 =>
+                     case Tnative is
+                        when ft_byte4 | ft_byte8 | ft_nbyte8 =>
+                           null;  -- Fall through (all could fail to convert)
+                        when ft_nbyte1 | ft_nbyte2 | ft_nbyte3 | ft_nbyte4 =>
+                           null;  -- guaranteed to convert
+                        when ft_byte1 | ft_byte2 | ft_byte3 =>
+                           raise BINDING_TYPE_MISMATCH with smallerr;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_nbyte8 =>
+                     case Tnative is
+                        when ft_byte8 =>
+                           null;  -- Fall through (could fail to convert)
+                        when ft_nbyte1 | ft_nbyte2 | ft_nbyte3 | ft_nbyte4 |
+                             ft_nbyte8 =>
+                           null;  -- guaranteed to convert
+                        when ft_byte1 | ft_byte2 | ft_byte3 | ft_byte4 =>
+                           raise BINDING_TYPE_MISMATCH with smallerr;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
                      end case;
                   when others =>
                      if Tnative /= Tout then
-                        raise BINDING_TYPE_MISMATCH with "native type : " &
-                          field_types'Image (Tnative) & " binding type : " &
-                          field_types'Image (Tout);
+                        raise BINDING_TYPE_MISMATCH with errmsg;
                      end if;
                end case;
 
