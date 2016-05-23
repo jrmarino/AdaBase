@@ -26,6 +26,7 @@ package AdaBase.Results.Converters is
    function convert (nv : NByte0) return Wide_String;
    function convert (nv : NByte0) return Wide_Wide_String;
    function convert (nv : NByte0) return Chain;
+   function convert (nv : NByte0) return Textual;
 
 
    -------------
@@ -47,6 +48,7 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str2 (IntType => NByte1);
    function convert is new GEN.convert2str3 (IntType => NByte1);
    function convert (nv : NByte1) return Chain;
+   function convert (nv : NByte1) return Textual;
 
 
    -------------
@@ -68,6 +70,7 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str2 (IntType => NByte2);
    function convert is new GEN.convert2str3 (IntType => NByte2);
    function convert (nv : NByte2) return Chain;
+   function convert (nv : NByte2) return Textual;
 
 
    -------------
@@ -89,6 +92,7 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str2 (IntType => NByte3);
    function convert is new GEN.convert2str3 (IntType => NByte3);
    function convert (nv : NByte3) return Chain;
+   function convert (nv : NByte3) return Textual;
 
 
    -------------
@@ -110,6 +114,7 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str2 (IntType => NByte4);
    function convert is new GEN.convert2str3 (IntType => NByte4);
    function convert (nv : NByte4) return Chain;
+   function convert (nv : NByte4) return Textual;
 
 
    -------------
@@ -131,6 +136,7 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str2 (IntType => NByte8);
    function convert is new GEN.convert2str3 (IntType => NByte8);
    function convert (nv : NByte8) return Chain;
+   function convert (nv : NByte8) return Textual;
 
 
    ------------
@@ -151,6 +157,7 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str1 (IntType => Byte1);
    function convert is new GEN.convert2str2 (IntType => Byte1);
    function convert is new GEN.convert2str3 (IntType => Byte1);
+   function convert (nv : Byte1) return Textual;
 
 
    -----------
@@ -171,6 +178,7 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str1 (IntType => Byte2);
    function convert is new GEN.convert2str2 (IntType => Byte2);
    function convert is new GEN.convert2str3 (IntType => Byte2);
+   function convert (nv : Byte2) return Textual;
 
 
    -----------
@@ -191,6 +199,7 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str1 (IntType => Byte3);
    function convert is new GEN.convert2str2 (IntType => Byte3);
    function convert is new GEN.convert2str3 (IntType => Byte3);
+   function convert (nv : Byte3) return Textual;
 
 
    -----------
@@ -211,6 +220,7 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str1 (IntType => Byte4);
    function convert is new GEN.convert2str2 (IntType => Byte4);
    function convert is new GEN.convert2str3 (IntType => Byte4);
+   function convert (nv : Byte4) return Textual;
 
 
    -----------
@@ -231,6 +241,7 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str1 (IntType => Byte8);
    function convert is new GEN.convert2str2 (IntType => Byte8);
    function convert is new GEN.convert2str3 (IntType => Byte8);
+   function convert (nv : Byte8) return Textual;
 
 
    -----------
@@ -240,6 +251,7 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert3str1 (RealType => Real9);
    function convert is new GEN.convert3str2 (RealType => Real9);
    function convert is new GEN.convert3str3 (RealType => Real9);
+   function convert (nv : Real9) return Textual;
 
 
    ------------
@@ -249,6 +261,7 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert3str1 (RealType => Real18);
    function convert is new GEN.convert3str2 (RealType => Real18);
    function convert is new GEN.convert3str3 (RealType => Real18);
+   function convert (nv : Real18) return Textual;
 
 
    ------------
@@ -303,6 +316,7 @@ package AdaBase.Results.Converters is
    function convert (nv : Textwide) return Chain;
    function convert (nv : Textwide) return Enumtype;
    function convert (nv : Textwide) return Settype;
+   function convert (nv : Textwide) return Textual;
 
 
    ----------------------
@@ -328,6 +342,7 @@ package AdaBase.Results.Converters is
    function convert (nv : Textsuper) return Chain;
    function convert (nv : Textsuper) return Enumtype;
    function convert (nv : Textsuper) return Settype;
+   function convert (nv : Textsuper) return Textual;
 
 
    ----------
@@ -336,6 +351,7 @@ package AdaBase.Results.Converters is
    function convert (nv : AC.Time) return String;
    function convert (nv : AC.Time) return Wide_String;
    function convert (nv : AC.Time) return Wide_Wide_String;
+   function convert (nv : AC.Time) return Textual;
 
 
    -----------------
@@ -344,6 +360,7 @@ package AdaBase.Results.Converters is
    function convert (nv : Enumtype) return String;
    function convert (nv : Enumtype) return Wide_String;
    function convert (nv : Enumtype) return Wide_Wide_String;
+   function convert (nv : Enumtype) return Textual;
 
 
    ------------------------
@@ -358,6 +375,7 @@ package AdaBase.Results.Converters is
    function convert (nv : Chain) return String;
    function convert (nv : Chain) return Wide_String;
    function convert (nv : Chain) return Wide_Wide_String;
+   function convert (nv : Chain) return Textual;
 
 
    ---------------
@@ -366,6 +384,7 @@ package AdaBase.Results.Converters is
    function convert (nv : Settype) return String;
    function convert (nv : Settype) return Wide_String;
    function convert (nv : Settype) return Wide_Wide_String;
+   function convert (nv : Settype) return Textual;
 
 
 end AdaBase.Results.Converters;

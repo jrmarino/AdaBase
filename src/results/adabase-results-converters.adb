@@ -1766,4 +1766,141 @@ package body AdaBase.Results.Converters is
    end convert;
 
 
+   ----------------------------------------
+   --  Convert all data types to Texual  --
+   ----------------------------------------
+   function convert (nv : NByte0) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+   function convert (nv : NByte1) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+   function convert (nv : NByte2) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+   function convert (nv : NByte3) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+   function convert (nv : NByte4) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+   function convert (nv : NByte8) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+   function convert (nv : Byte1) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+   function convert (nv : Byte2) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+   function convert (nv : Byte3) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+   function convert (nv : Byte4) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+   function convert (nv : Byte8) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+   function convert (nv : Real9) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+   function convert (nv : Real18) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+   function convert (nv : Textwide) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+   function convert (nv : Textsuper) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+   function convert (nv : AC.Time) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+   function convert (nv : Enumtype) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+   function convert (nv : Chain) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+   function convert (nv : Settype) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
+
 end AdaBase.Results.Converters;
