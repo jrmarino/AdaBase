@@ -17,6 +17,10 @@ procedure Bad_Select is
 
 begin
 
+   --  PostgreSQL will abort a transaction even for a bad select
+   --  so in this case, let's not start any transactions
+   CON.DR.set_trait_autocommit (True);
+
    CON.connect_database;
 
    declare
