@@ -355,7 +355,6 @@ package body AdaBase.Statement.Base.PostgreSQL is
             declare
                dossier  : bindrec renames Stmt.crate.Element (F);
                colinfo  : column_info renames Stmt.column_info.Element (F);
-               dvariant : ARF.Variant;
                Tout     : constant field_types := dossier.output_type;
                Tnative  : constant field_types := colinfo.field_type;
                isnull   : constant Boolean := null_value (F);
@@ -415,7 +414,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
                   when ft_settype =>
                      declare
                         FL    : Natural := dossier.a19.all'Length;
-                        items : constant Natural := num_set_items (ST);
+                        items : constant Natural := CT.num_set_items (ST);
                      begin
                         if items > FL then
                            raise BINDING_SIZE_MISMATCH with

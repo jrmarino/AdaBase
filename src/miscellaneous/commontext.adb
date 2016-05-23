@@ -373,7 +373,7 @@ package body CommonText is
    is
       result : Natural := 0;
    begin
-      if not CT.IsBlank (nv) then
+      if not IsBlank (nv) then
          result := 1;
          for x in nv'Range loop
             if nv (x) = ',' then
