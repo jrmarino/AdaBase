@@ -5,6 +5,7 @@ with AdaBase.Interfaces.Connection;
 with AdaBase.Bindings.PostgreSQL;
 with AdaBase.Results;
 with Ada.Containers.Ordered_Maps;
+with Ada.Unchecked_Deallocation;
 with Ada.Exceptions;
 
 package AdaBase.Connection.Base.PostgreSQL is
@@ -17,6 +18,11 @@ package AdaBase.Connection.Base.PostgreSQL is
    type PostgreSQL_Connection is new Base_Connection and AIC.iConnection
    with private;
    type PostgreSQL_Connection_Access is access all PostgreSQL_Connection;
+
+   type param_unit is record
+      payload : AR.Textual;
+   end record;
+   type parameter_block is array (Positive range <>) of param_unit;
 
    -----------------------------------------
    --  SUBROUTINES REQUIRED BY INTERFACE  --
@@ -174,6 +180,11 @@ package AdaBase.Connection.Base.PostgreSQL is
    function markers_found (conn : PostgreSQL_Connection;
                            res  : BND.PGresult_Access) return Natural;
 
+   function execute_prepared_stmt (conn : PostgreSQL_Connection;
+                                   name : String;
+                                   data : parameter_block)
+                                   return BND.PGresult_Access;
+
    ------------------
    --  EXCEPTIONS  --
    ------------------
@@ -251,6 +262,9 @@ private
                                           return Boolean;
    function private_select     (conn : PostgreSQL_Connection; sql : String)
                                 return BND.PGresult_Access;
+
+   procedure free_binary is new Ada.Unchecked_Deallocation
+     (BND.IC.char_array, BND.ICS.char_array_access);
 
    overriding
    procedure finalize (conn : in out PostgreSQL_Connection);

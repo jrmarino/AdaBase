@@ -5,6 +5,7 @@
 --  http://forge.ada-ru.org/matreshka
 --  Used with permission from Vadim Godunko <vgodunko@gmail.com>
 
+with System;
 with Interfaces.C.Strings;
 
 package AdaBase.Bindings.PostgreSQL is
@@ -64,12 +65,20 @@ package AdaBase.Bindings.PostgreSQL is
       PQTRANS_UNKNOWN);               --  cannot determine status
    pragma Convention (C, PGTransactionStatusType);
 
-   type chars_ptr_Access is access all ICS.chars_ptr;
-   pragma Convention (C, chars_ptr_Access);
-
    type int_Access is access all IC.int;
    pragma Convention (C, int_Access);
 
+   type Param_Int_Array is array (Positive range <>) of aliased IC.int;
+   pragma Convention (C, Param_Int_Array);
+
+   type Param_Oid_Array is array (Positive range <>) of aliased Oid;
+   pragma Convention (C, Param_Oid_Array);
+
+   type Param_Val_Array is
+     array (Positive range <>) of aliased ICS.char_array_access;
+
+   type Param_Int_Array_Access is access all Param_Int_Array;
+   type Param_Oid_Array_Access is access all Param_Oid_Array;
 
    ------------------------
    --  Type Definitions  --
@@ -122,10 +131,20 @@ package AdaBase.Bindings.PostgreSQL is
                     command : ICS.chars_ptr) return PGresult_Access;
    pragma Import (C, PQexec, "PQexec");
 
+   function PQexecParams   (conn         : PGconn_Access;
+                            command      : ICS.chars_ptr;
+                            nParams      : IC.int;
+                            paramTypes   : Oid_Access;
+                            paramValues  : System.Address;
+                            paramLengths : int_Access;
+                            paramFormats : int_Access;
+                            resultFormat : IC.int) return PGresult_Access;
+   pragma Import (C, PQexecParams, "PQexecParams");
+
    function PQexecPrepared (conn         : PGconn_Access;
                             stmtName     : ICS.chars_ptr;
                             nParams      : IC.int;
-                            paramValues  : ICS.chars_ptr_array;
+                            paramValues  : System.Address;
                             paramLengths : int_Access;
                             paramFormats : int_Access;
                             resultFormat : IC.int) return PGresult_Access;

@@ -1295,4 +1295,61 @@ package body AdaBase.Connection.Base.PostgreSQL is
    end destroy_statement;
 
 
+   -----------------------------
+   --  execute_prepared_stmt  --
+   -----------------------------
+   function execute_prepared_stmt (conn : PostgreSQL_Connection;
+                                   name : String;
+                                   data : parameter_block)
+                                   return BND.PGresult_Access
+   is
+      use type BND.IC.int;
+      subtype param_range is Positive range 1 .. data'Length;
+
+      nParams      : constant BND.IC.int := BND.IC.int (data'Length);
+      resultFormat : constant BND.IC.int := 1;  --  specify binary results
+      stmtName     : BND.ICS.chars_ptr := BND.ICS.New_String (name);
+      paramValues  : BND.Param_Val_Array (param_range);
+      paramLengths : BND.Param_Int_Array (param_range);
+      paramFormats : BND.Param_Int_Array (param_range);
+      pgres        : BND.PGresult_Access;
+      datalen      : Natural;
+      binsize      : BND.IC.size_t;
+   begin
+      for x in paramLengths'Range loop
+         datalen := CT.len (data (x).payload);
+         binsize := BND.IC.size_t (datalen);
+         paramFormats (x) := BND.IC.int (1);  -- binary
+         paramLengths (x) := BND.IC.int (datalen);
+         if datalen > 0 then
+            declare
+               Str : constant String := CT.USS (data (x).payload);
+            begin
+               paramValues (x) := new BND.IC.char_array (1 .. binsize);
+               paramValues (x).all := BND.IC.To_C (Str, False);
+            end;
+         end if;
+      end loop;
+
+      pgres := BND.PQexecPrepared
+        (conn         => conn.handle,
+         stmtName     => stmtName,
+         nParams      => nParams,
+         paramValues  => paramValues (1).all'Address,
+         paramLengths => paramLengths (1)'Unchecked_Access,
+         paramFormats => paramFormats (1)'Unchecked_Access,
+         resultFormat => resultFormat);
+
+      BND.ICS.Free (stmtName);
+      for x in paramValues'Range loop
+         if paramLengths (x) > 0 then
+            free_binary (paramValues (x));
+         end if;
+      end loop;
+
+      --  Let the caller check the state of pgres, just return it as is
+      return pgres;
+   end execute_prepared_stmt;
+
+
 end AdaBase.Connection.Base.PostgreSQL;
