@@ -75,4 +75,7 @@ package CommonText is
    --  Returns a single query given a multiquery and an index starting from 1
    function subquery (trimmed_sql : String; index : Positive) return String;
 
+   --  With "set" imput of comma-separated values, return number of items
+   function num_set_items (nv : String) return Natural;
+
 end CommonText;

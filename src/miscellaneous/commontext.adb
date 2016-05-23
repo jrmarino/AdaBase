@@ -365,4 +365,24 @@ package body CommonText is
       end if;
    end subquery;
 
+
+   ---------------------
+   --  num_set_items  --
+   ---------------------
+   function num_set_items (nv : String) return Natural
+   is
+      result : Natural := 0;
+   begin
+      if not CT.IsBlank (nv) then
+         result := 1;
+         for x in nv'Range loop
+            if nv (x) = ',' then
+               result := result + 1;
+            end if;
+         end loop;
+      end if;
+      return result;
+   end num_set_items;
+
+
 end CommonText;
