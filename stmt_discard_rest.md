@@ -102,7 +102,6 @@ Query successful: TRUE
 <p class="caption">Output using the SQLite driver</p>
 <br/>
 <pre class="output">
-</pre>
 Query successful: FALSE
   Driver message: ERROR:  relation "froits" does not exist
 LINE 1: SELECT fruit, calories FROM froits WHERE color = 'red'
@@ -115,6 +114,7 @@ SQL now: SELECT fruit, calories FROM fruits WHERE color = 'red'
 Query successful: TRUE
    Number fields: 2
   Data discarded: TRUE
+</pre>
 <p class="caption">Output using the PostgreSQL driver</p>
 <br/>
 <p>{{ page.supported_statements }}</p>
