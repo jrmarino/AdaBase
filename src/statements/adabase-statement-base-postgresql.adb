@@ -222,10 +222,13 @@ package body AdaBase.Statement.Base.PostgreSQL is
    function column_name (Stmt : PostgreSQL_statement; index : Positive)
                          return String
    is
-      conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
-      pndx : Natural := index - 1;
+      maxlen : constant Natural := Natural (Stmt.column_info.Length);
    begin
-      return conn.field_name (Stmt.stmt_handle, pndx);
+      if index > maxlen then
+         raise INVALID_COLUMN_INDEX with "Max index is" & maxlen'Img &
+           " but" & index'Img & " attempted";
+      end if;
+      return CT.USS (Stmt.column_info.Element (Index => index).field_name);
    end column_name;
 
 
@@ -236,10 +239,13 @@ package body AdaBase.Statement.Base.PostgreSQL is
    function column_table  (Stmt : PostgreSQL_statement; index : Positive)
                            return String
    is
-      conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
-      pndx : Natural := index - 1;
+      maxlen : constant Natural := Natural (Stmt.column_info.Length);
    begin
-      return conn.field_table (Stmt.stmt_handle, pndx);
+      if index > maxlen then
+         raise INVALID_COLUMN_INDEX with "Max index is" & maxlen'Img &
+           " but" & index'Img & " attempted";
+      end if;
+      return CT.USS (Stmt.column_info.Element (Index => index).table);
    end column_table;
 
 
@@ -420,14 +426,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
       function sn (raw : String) return String;
       function fn (raw : String) return CT.Text is
       begin
-         case Stmt.con_case_mode is
-            when upper_case =>
-               return CT.SUS (ACH.To_Upper (raw));
-            when lower_case =>
-               return CT.SUS (ACH.To_Lower (raw));
-            when natural_case =>
-               return CT.SUS (raw);
-         end case;
+         return CT.SUS (sn (raw));
       end fn;
       function sn (raw : String) return String is
       begin
