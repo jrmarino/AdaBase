@@ -136,7 +136,7 @@ Inserted row  36
 Affected rows:  1
 2016-05-02 18:28:28    mysql :    Disconnect : Disconnect From database
 </pre>
-<p class="caption">Output using MySQL Driver</p>
+<p class="caption">Output using the MySQL driver</p>
 <br/>
 <pre class="output">
 2016-05-12 14:27:02   sqlite :       Connect : Connection to file:///home/marino/adabase.sqlite database succeeded.
@@ -156,7 +156,7 @@ Inserted row  38
 Affected rows:  1
 2016-05-12 14:27:02   sqlite :    Disconnect : Disconnect From database
 </pre>
-<p class="caption">Output using SQLite Driver</p>
+<p class="caption">Output using the SQLite driver</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>
 <p>{{ page.supported_stmts }}</p>

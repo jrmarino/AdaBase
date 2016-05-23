@@ -172,7 +172,7 @@ grapefruit: 100 calories, yellow
 banana: 107 calories, yellow
 avocado: 150 calories, green
 </pre>
-<p class="caption">Output using MySQL Driver</p>
+<p class="caption">Output using the MySQL driver</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>
 <p>{{ page.supported_stmts }}</p>

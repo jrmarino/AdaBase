@@ -69,7 +69,7 @@ end Wipe_Out;
 2016-04-25 07:11:51    mysql :       Execute : DROP TABLE breakfast
 2016-04-25 07:11:51    mysql :    Disconnect : Disconnect From database
 </pre>
-<p class="caption">Output using MySQL Driver</p>
+<p class="caption">Output using the MySQL driver</p>
 <br/>
 <pre class="output">
 2016-05-12 21:13:19   sqlite :       Connect : Connection to file:///home/marino/adabase.sqlite database succeeded.
@@ -80,7 +80,7 @@ end Wipe_Out;
 2016-05-12 21:13:19   sqlite :       Execute : DROP TABLE breakfast
 2016-05-12 21:13:19   sqlite :    Disconnect : Disconnect From database
 </pre>
-<p class="caption">Output using SQlite Driver</p>
+<p class="caption">Output using the SQLite driver</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>
 </div>

@@ -108,7 +108,7 @@ Column 4:
 18       orange (orange) calories = 65
 27    tangerine (orange) calories = 26
 </pre>
-<p class="caption">Output using MySQL Driver</p>
+<p class="caption">Output using the MySQL driver</p>
 <br/>
 <pre class="output">
  Query successful: TRUE
@@ -141,7 +141,7 @@ Column 4:
 18       orange (orange) calories = 65
 27    tangerine (orange) calories = 26
 </pre>
-<p class="caption">Output using SQLite Driver</p>
+<p class="caption">Output using the SQLite driver</p>
 <br/>
 <pre class="output">
  Query successful: TRUE
@@ -174,7 +174,7 @@ Column 4:
 18       orange (orange) calories = 65
 27    tangerine (orange) calories = 26
 </pre>
-<p class="caption">Output using PostgreSQL Driver</p>
+<p class="caption">Output using the PostgreSQL driver</p>
 <br/>
 <p>{{ page.supported_stmts }}</p>
 </div>

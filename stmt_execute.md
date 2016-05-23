@@ -367,7 +367,7 @@ Note slight differences in real9 and real18 field values
 due to rounding differences inherent in the different
 retrieval mechanisms of direct and prep stmt results.
 </pre>
-<p class="caption">Output using MySQL Driver</p>
+<p class="caption">Output using the MySQL driver</p>
 <br/>
 <pre class="output">
 Dumping Result from direct statement ...
@@ -454,7 +454,7 @@ Note slight differences in real9 and real18 field values
 due to rounding differences inherent in the different
 retrieval mechanisms of direct and prep stmt results.
 </pre>
-<p class="caption">Output using SQLite Driver</p>
+<p class="caption">Output using the SQLite driver</p>
 <br/>
 <p>{{ page.supported_stmts }}</p>
 </div>

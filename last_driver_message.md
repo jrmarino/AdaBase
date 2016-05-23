@@ -68,7 +68,7 @@ Driver message: Unknown column 'caloriesx' in 'field list'
    Driver code:  1054
      SQL State: 42S22
 </pre>
-<p class="caption">Output using MySQL Driver</p>
+<p class="caption">Output using the MySQL driver</p>
 <br/>
 <pre class="output">
 SQL: UPDATE fruits set caloriesx = 14 WHERE fruit = 'strawberry'
@@ -77,7 +77,7 @@ Driver message: no such column: caloriesx
    Driver code:  1
      SQL State: HY000
 </pre>
-<p class="caption">Output using SQLite Driver</p>
+<p class="caption">Output using the SQLite driver</p>
 <br/>
 <pre class="output">
 SQL: UPDATE fruits set caloriesx = 14 WHERE fruit = 'strawberry'
@@ -89,7 +89,7 @@ LINE 1: UPDATE fruits set caloriesx = 14 WHERE fruit = 'strawberry'
    Driver code:  2
      SQL State: 42703
 </pre>
-<p class="caption">Output using PostgreSQL Driver</p>
+<p class="caption">Output using the PostgreSQL driver</p>
 <br/>
 <p class="caption">See {{ page.stmt_discard_rest }}
 for another usage example.</p>

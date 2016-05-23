@@ -119,7 +119,7 @@ server version: 5.06.27
  using buffers: FALSE
 2016-04-22 20:47:44    mysql :    Disconnect : Disconnect From database
 </pre>
-<p class="caption">Output using MySQL Driver</p>
+<p class="caption">Output using the MySQL driver</p>
 <br/>
 <p>This trait is limited to specific drivers.  Specially [DB] is limited to "MySQL.MySQL_Driver"</p>
 </div>

@@ -82,7 +82,7 @@ server version: 5.06.27
     error_mode: SILENT
      blob_size:  65536
 </pre>
-<p class="caption">Output using MySQL Driver</p>
+<p class="caption">Output using the MySQL driver</p>
 <br/>
 <pre class="output">
    client info: 2016-04-08 15:09:49 fe7d3b75fe1bde41511b323925af8ae1b910bc4d
@@ -101,7 +101,7 @@ server version: Not applicable
     error_mode: SILENT
      blob_size:  65536
 </pre>
-<p class="caption">Output using SQlite Driver</p>
+<p class="caption">Output using the SQLite driver</p>
 <br/>
 <pre class="output">
    client info: 9.05.02
@@ -120,7 +120,7 @@ server version: 9.05.02
     error_mode: SILENT
      blob_size:  65536
 </pre>
-<p class="caption">Output using PostgreSQL Driver</p>
+<p class="caption">Output using the PostgreSQL driver</p>
 <br/>
 <p>{{ page.supported_drivers }}</p>
 </div>

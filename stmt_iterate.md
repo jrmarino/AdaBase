@@ -138,7 +138,7 @@ Chicago Blackhawks (CHI)
 Colorado Avalanche (COL)
 Columbus Blue Jackets (CLM)
 </pre>
-<p class="caption">Output using MySQL and SQLite Drivers</p>
+<p class="caption">Output using the MySQL and SQLite drivers</p>
 <br/>
 <p>{{ page.supported_stmts }}</p>
 </div>

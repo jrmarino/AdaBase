@@ -126,7 +126,7 @@ Convert BR field to wide string: Baltimore Ravens
 Convert ST settype to string:    hockey,baseball,tennis
 Length of ST set:                3
 </pre>
-<p class="caption">Output using MySQL Driver</p>
+<p class="caption">Output using the MySQL driver</p>
 <br/>
 </div>
 <div class="sidenav">

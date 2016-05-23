@@ -132,12 +132,12 @@ team_id        abbreviation
 30             SJ             
 31             WIN            
 </pre>
-<p class="caption">Output using MySQL Driver</p>
+<p class="caption">Output using the MySQL driver</p>
 <br/>
 <pre class="output">
 Stored procedures not supported on SQLite3 native driver
 </pre>
-<p class="caption">Output using SQLite Driver</p>
+<p class="caption">Output using the SQLite driver</p>
 <br/>
 <p>{{ page.supported_stmts }}</p>
 </div>
