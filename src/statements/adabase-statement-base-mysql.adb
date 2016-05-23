@@ -1306,7 +1306,7 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_textual   => dossier.a13.all := CT.SUS (ST);
                   when ft_widetext  => dossier.a14.all := convert (ST);
                   when ft_supertext => dossier.a15.all := convert (ST);
-                  when ft_enumtype => dossier.a18.all := ARC.convert (ST);
+                  when ft_enumtype  => dossier.a18.all := ARC.convert (ST);
                   when ft_timestamp =>
                      begin
                         dossier.a16.all := ARC.convert (ST);

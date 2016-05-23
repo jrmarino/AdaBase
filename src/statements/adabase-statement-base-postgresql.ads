@@ -15,6 +15,7 @@ package AdaBase.Statement.Base.PostgreSQL is
      (type_of_statement : Stmt_Type;
       log_handler       : ALF.LogFacility_access;
       pgsql_conn        : CON.PostgreSQL_Connection_Access;
+      identifier        : Trax_ID;
       initial_sql       : SQL_Access;
       con_error_mode    : Error_Modes;
       con_case_mode     : Case_Modes;
@@ -98,6 +99,7 @@ private
      (type_of_statement : Stmt_Type;
       log_handler       : ALF.LogFacility_access;
       pgsql_conn        : CON.PostgreSQL_Connection_Access;
+      identifier        : Trax_ID;
       initial_sql       : SQL_Access;
       con_error_mode    : Error_Modes;
       con_case_mode     : Case_Modes;

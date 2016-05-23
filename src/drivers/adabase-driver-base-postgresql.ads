@@ -60,6 +60,8 @@ package AdaBase.Driver.Base.PostgreSQL is
 
 private
 
+   global_statement_counter : Trax_ID := 0;
+
    type PostgreSQL_Driver is new Base_Driver and AID.iDriver with
       record
          local_connection : aliased CON.PostgreSQL_Connection;

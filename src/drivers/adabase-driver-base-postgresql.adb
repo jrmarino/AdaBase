@@ -255,6 +255,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
          logcat := statement_preparation;
       end if;
       if driver.connection_active then
+         global_statement_counter := global_statement_counter + 1;
          declare
             buffered_mode : constant Boolean := not driver.async_cmd_mode;
             statement : SMT.PostgreSQL_statement
@@ -262,6 +263,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
                log_handler       => logger'Access,
                pgsql_conn        => CON.PostgreSQL_Connection_Access
                                     (driver.connection),
+               identifier        => global_statement_counter,
                initial_sql       => duplicate'Unchecked_Access,
                con_error_mode    => driver.trait_error_mode,
                con_case_mode     => driver.trait_column_case,
