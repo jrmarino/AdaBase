@@ -1296,6 +1296,14 @@ package body AdaBase.Results.Converters is
       end;
    end convert;
 
+   function convert (nv : String) return Enumtype
+   is
+      result : Enumtype;
+   begin
+      result.enumeration := CT.SUS (nv);
+      return result;
+   end convert;
+
    function convert (nv : Textual) return Enumtype
    is
       result : Enumtype;
