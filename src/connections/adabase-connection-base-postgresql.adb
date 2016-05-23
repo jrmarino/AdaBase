@@ -946,6 +946,23 @@ package body AdaBase.Connection.Base.PostgreSQL is
 
 
    ------------------------
+   --  prepare_metadata  --
+   ------------------------
+   function prepare_metadata  (conn : PostgreSQL_Connection;
+                               meta : aliased out BND.PGresult_Access;
+                               name : String) return Boolean
+   is
+      use type BND.ExecStatusType;
+      c_stmt_name : BND.ICS.chars_ptr := BND.ICS.New_String (name);
+   begin
+      meta := BND.PQdescribePrepared (conn     => conn.handle,
+                                      stmtName => c_stmt_name);
+      BND.ICS.Free (c_stmt_name);
+      return (BND.PQresultStatus (meta) = BND.PGRES_COMMAND_OK);
+   end prepare_metadata;
+
+
+   ------------------------
    --  direst_stmt_exec  --
    ------------------------
    function direct_stmt_exec  (conn : out PostgreSQL_Connection;

@@ -108,6 +108,7 @@ private
    is new Base_Statement and AIS.iStatement with
       record
          stmt_handle    : aliased BND.PGresult_Access := null;
+         stmt_allocated : Boolean                     := False;
          assign_counter : Natural                     := 0;
          num_columns    : Natural                     := 0;
          size_of_rowset : Trax_ID                     := 0;
@@ -131,5 +132,7 @@ private
 
    function assemble_datarow (Stmt : PostgreSQL_statement;
                               row_number : Trax_ID) return ARS.Datarow;
+
+   function show_statement_name (Stmt : PostgreSQL_statement) return String;
 
 end AdaBase.Statement.Base.PostgreSQL;

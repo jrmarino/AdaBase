@@ -118,6 +118,10 @@ package AdaBase.Connection.Base.PostgreSQL is
                                name : String;
                                sql  : String) return Boolean;
 
+   function prepare_metadata  (conn : PostgreSQL_Connection;
+                               meta : aliased out BND.PGresult_Access;
+                               name : String) return Boolean;
+
    function destroy_statement (conn : out PostgreSQL_Connection;
                                name : String) return Boolean;
 

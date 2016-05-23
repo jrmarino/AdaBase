@@ -186,6 +186,11 @@ package AdaBase.Bindings.PostgreSQL is
                        paramTypes : Oid_Access) return PGresult_Access;
    pragma Import (C, PQprepare, "PQprepare");
 
+   function PQdescribePrepared (conn     : PGconn_Access;
+                                stmtName : ICS.chars_ptr)
+                                return PGresult_Access;
+   pragma Import (C, PQdescribePrepared, "PQdescribePrepared");
+
    function PQresultStatus (res : PGresult_Access) return ExecStatusType;
    pragma Import (C, PQresultStatus, "PQresultStatus");
 

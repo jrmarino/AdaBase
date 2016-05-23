@@ -127,10 +127,39 @@ package body AdaBase.Statement.Base.PostgreSQL is
    --  execute #1  --
    ------------------
    overriding
-   function execute (Stmt : out PostgreSQL_statement) return Boolean is
+   function execute (Stmt : out PostgreSQL_statement) return Boolean
+   is
+      conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+      num_markers : constant Natural := Natural (Stmt.realmccoy.Length);
+      status_successful : Boolean := True;
    begin
-      --  TO BE IMPLEMENTED
+      if Stmt.type_of_statement = direct_statement then
+         raise INVALID_FOR_DIRECT_QUERY
+           with "The execute command is for prepared statements only";
+      end if;
+      Stmt.successful_execution := False;
       Stmt.rows_leftover := False;
+
+      if num_markers > 0 then
+         --  IMPLEMENT
+         null;
+      else
+         --  No binding required, just execute the prepared statement
+         Stmt.log_nominal (category => statement_execution,
+                           message => "Exec without bound parameters");
+
+--           begin
+--           if Stmt.mysql_conn.prep_execute (Stmt.stmt_handle) then
+--              Stmt.successful_execution := True;
+--           else
+--              Stmt.log_problem (category => statement_execution,
+--                                message => "failed to exec prep stmt",
+--                                pull_codes => True);
+--              status_successful := False;
+--           end if;
+      end if;
+
+      --  TO BE IMPLEMENTED
       return False;
    end execute;
 
@@ -524,6 +553,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
       use type CON.PostgreSQL_Connection_Access;
       conn   : CON.PostgreSQL_Connection_Access renames Object.pgsql_conn;
       logcat : Log_Category;
+      stmt_name   : String := Object.show_statement_name;
+      hold_result : aliased BND.PGresult_Access;
    begin
 
       if conn = null then
@@ -547,10 +578,11 @@ package body AdaBase.Statement.Base.PostgreSQL is
       end case;
 
       if Object.type_of_statement = prepared_statement then
-         if conn.prepare_statement (stmt => Object.stmt_handle,
+         if conn.prepare_statement (stmt => hold_result,
+                                    name => stmt_name,
                                     sql  => Object.sql_final.all)
          then
-            Object.successful_execution := True;
+            Object.stmt_allocated := True;
             Object.log_nominal (category => logcat,
                                 message  => Object.sql_final.all);
          else
@@ -561,20 +593,39 @@ package body AdaBase.Statement.Base.PostgreSQL is
                pull_codes => True);
             return;
          end if;
+
          --  Check that we have as many markers as expected
---           declare
---              params : Natural := conn.prep_markers_found (Object.stmt_handle);
---              errmsg : String := "marker mismatch," &
---                Object.realmccoy.Length'Img & " expected but" &
---                params'Img & " found by SQLite";
---           begin
---              if params /= Natural (Object.realmccoy.Length) then
---                 Object.log_problem
---                   (category => statement_preparation,
---                    message  => errmsg);
---                 return;
---              end if;
---           end;
+         declare
+            params : Natural := conn.markers_found (Object.stmt_handle);
+            errmsg : String := "marker mismatch," &
+              Object.realmccoy.Length'Img & " expected but" &
+              params'Img & " found by PostgreSQL";
+         begin
+            if params /= Natural (Object.realmccoy.Length) then
+               Object.log_problem
+                 (category => statement_preparation,
+                  message  => errmsg);
+               return;
+            end if;
+         end;
+
+         --  Get column metadata
+         if conn.prepare_metadata (meta => Object.stmt_handle,
+                                   name => stmt_name)
+         then
+            Object.scan_column_information;
+            conn.discard_pgresult (Object.stmt_handle);
+            Object.stmt_handle := hold_result;
+            Object.size_of_rowset := 0;
+            Object.result_arrow   := 0;
+         else
+            Object.log_problem
+              (category => statement_preparation,
+               message  => "Failed to acquire prep statement metadata (" &
+                            stmt_name & ")",
+               pull_codes => True);
+         end if;
+
       else
          if conn.direct_stmt_exec (stmt => Object.stmt_handle,
                                    sql => Object.sql_final.all)
@@ -584,6 +635,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
             Object.successful_execution := True;
             Object.result_arrow := 0;
             Object.size_of_rowset := conn.rows_in_result (Object.stmt_handle);
+
+            Object.scan_column_information;
          else
             Object.log_problem
               (category => statement_execution,
@@ -591,8 +644,6 @@ package body AdaBase.Statement.Base.PostgreSQL is
             return;
          end if;
       end if;
-
-      Object.scan_column_information;
 
    exception
       when HELL : others =>
@@ -728,7 +779,15 @@ package body AdaBase.Statement.Base.PostgreSQL is
 
       if Object.stmt_handle /= null then
          conn.discard_pgresult (Object.stmt_handle);
-         Object.stmt_handle := null;
+      end if;
+
+      if Object.stmt_allocated then
+         if not conn.destroy_statement (Object.show_statement_name) then
+            Object.log_problem
+              (category   => statement_preparation,
+               message    => "Deallocating statement resources",
+               pull_codes => True);
+         end if;
       end if;
 
       if Object.sql_final /= null then
@@ -852,6 +911,15 @@ package body AdaBase.Statement.Base.PostgreSQL is
       end loop;
       return result;
    end assemble_datarow;
+
+
+   ---------------------------
+   --  show_statement_name  --
+   ---------------------------
+   function show_statement_name (Stmt : PostgreSQL_statement) return String is
+   begin
+      return "AdaBase_" & CT.trim (Stmt.identifier'Img);
+   end show_statement_name;
 
 
 end AdaBase.Statement.Base.PostgreSQL;
