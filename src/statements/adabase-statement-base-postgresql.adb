@@ -365,13 +365,32 @@ package body AdaBase.Statement.Base.PostgreSQL is
                   goto continue;
                end if;
 
-               if Tnative /= Tout then
-                  raise BINDING_TYPE_MISMATCH with "native type : " &
-                    field_types'Image (Tnative) & " binding type : " &
-                    field_types'Image (Tout);
-               end if;
+               --  Because PostgreSQL does not support unsigned integer
+               --  types, allow binding NByteX binding to ByteX types, but
+               --  remain strict on other type mismatches.
 
-               case Tnative is
+               case Tout is
+                  when ft_nbyte1 | ft_nbyte2 | ft_nbyte3 | ft_nbyte4 |
+                       ft_nbyte8 =>
+                     case Tnative is
+                        when ft_byte1 | ft_byte2 | ft_byte3 | ft_byte4 |
+                             ft_byte8 | ft_nbyte1 | ft_nbyte2 | ft_nbyte3 |
+                             ft_nbyte4 | ft_nbyte8 =>
+                           null;  -- Fall through
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with "native type : " &
+                             field_types'Image (Tnative) & " binding type : " &
+                             field_types'Image (Tout);
+                     end case;
+                  when others =>
+                     if Tnative /= Tout then
+                        raise BINDING_TYPE_MISMATCH with "native type : " &
+                          field_types'Image (Tnative) & " binding type : " &
+                          field_types'Image (Tout);
+                     end if;
+               end case;
+
+               case Tout is
                   when ft_nbyte0    => dossier.a00.all := (ST = "1");
                   when ft_nbyte1    => dossier.a01.all := convert (ST);
                   when ft_nbyte2    => dossier.a02.all := convert (ST);
