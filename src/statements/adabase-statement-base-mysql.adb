@@ -1337,8 +1337,7 @@ package body AdaBase.Statement.Base.MySQL is
                         end if;
                         Stmt.crate.Element (F).a17.all := ARC.convert (ST);
                      when ft_enumtype =>
-                        Stmt.crate.Element (F).a18.all :=
-                          ARC.convert (CT.SUS (ST));
+                        Stmt.crate.Element (F).a18.all := ARC.convert (ST);
                      when ft_settype =>
                         Stmt.crate.Element (F).a19.all := ARC.convert (ST);
                   end case;

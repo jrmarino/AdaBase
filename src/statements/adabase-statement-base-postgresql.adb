@@ -310,10 +310,127 @@ package body AdaBase.Statement.Base.PostgreSQL is
    --  fetch_bound  --
    -------------------
    overriding
-   function fetch_bound (Stmt : out PostgreSQL_statement) return Boolean is
+   function fetch_bound (Stmt : out PostgreSQL_statement) return Boolean
+   is
+      function null_value (column : Natural) return Boolean;
+      function string_equivalent (column : Natural; binary : Boolean)
+                                  return String;
+
+      conn   : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+
+      function string_equivalent (column : Natural; binary : Boolean)
+                                  return String
+      is
+         --  PostgreSQL result set is zero-indexed
+         row_num : constant Natural := Natural (Stmt.result_arrow) - 1;
+         col_num : constant Natural := column - 1;
+      begin
+         if binary then
+            return conn.field_binary (Stmt.stmt_handle, row_num, col_num,
+                                      Stmt.con_max_blob);
+         else
+            return conn.field_string (Stmt.stmt_handle, row_num, col_num);
+         end if;
+      end string_equivalent;
+
+      function null_value (column : Natural) return Boolean
+      is
+         --  PostgreSQL result set is zero-indexed
+         row_num : constant Natural := Natural (Stmt.result_arrow) - 1;
+         col_num : constant Natural := column - 1;
+      begin
+         return conn.field_is_null (Stmt.stmt_handle, row_num, col_num);
+      end null_value;
+
    begin
-      --  TO BE IMPLEMENTED
-      return False;
+      if Stmt.result_arrow >= Stmt.size_of_rowset then
+         return False;
+      end if;
+      Stmt.result_arrow := Stmt.result_arrow + 1;
+
+      declare
+         maxlen : constant Natural := Stmt.num_columns;
+      begin
+         for F in 1 .. maxlen loop
+            declare
+               dossier  : bindrec renames Stmt.crate.Element (F);
+               colinfo  : column_info renames Stmt.column_info.Element (F);
+               dvariant : ARF.Variant;
+               Tout     : constant field_types := dossier.output_type;
+               Tnative  : constant field_types := colinfo.field_type;
+               isnull   : constant Boolean := null_value (F);
+               ST       : constant String  :=
+                          string_equivalent (F, colinfo.binary_format);
+            begin
+               if not dossier.bound then
+                  goto continue;
+               end if;
+
+               if Tnative /= Tout then
+                  raise BINDING_TYPE_MISMATCH with "native type : " &
+                    field_types'Image (Tnative) & " binding type : " &
+                    field_types'Image (Tout);
+               end if;
+
+               case Tnative is
+                  when ft_nbyte0    => dossier.a00.all := (ST = "1");
+                  when ft_nbyte1    => dossier.a01.all := convert (ST);
+                  when ft_nbyte2    => dossier.a02.all := convert (ST);
+                  when ft_nbyte3    => dossier.a03.all := convert (ST);
+                  when ft_nbyte4    => dossier.a04.all := convert (ST);
+                  when ft_nbyte8    => dossier.a05.all := convert (ST);
+                  when ft_byte1     => dossier.a06.all := convert (ST);
+                  when ft_byte2     => dossier.a07.all := convert (ST);
+                  when ft_byte3     => dossier.a08.all := convert (ST);
+                  when ft_byte4     => dossier.a09.all := convert (ST);
+                  when ft_byte8     => dossier.a10.all := convert (ST);
+                  when ft_real9     => dossier.a11.all := convert (ST);
+                  when ft_real18    => dossier.a12.all := convert (ST);
+                  when ft_textual   => dossier.a13.all := CT.SUS (ST);
+                  when ft_widetext  => dossier.a14.all := convert (ST);
+                  when ft_supertext => dossier.a15.all := convert (ST);
+                  when ft_enumtype  => dossier.a18.all := ARC.convert (ST);
+                  when ft_timestamp =>
+                     begin
+                        dossier.a16.all := ARC.convert (ST);
+                     exception
+                        when CAL.Time_Error =>
+                           dossier.a16.all := CAL.Time_Of
+                             (Year  => CAL.Year_Number'First,
+                              Month => CAL.Month_Number'First,
+                              Day   => CAL.Day_Number'First);
+                     end;
+                  when ft_chain =>
+                     declare
+                        FL    : Natural := dossier.a17.all'Length;
+                        DVLEN : Natural := ST'Length;
+                     begin
+                        if DVLEN > FL then
+                           raise BINDING_SIZE_MISMATCH with "native size : " &
+                             DVLEN'Img & " greater than binding size : " &
+                             FL'Img;
+                        end if;
+                        dossier.a17.all := ARC.convert (ST, FL);
+                     end;
+                  when ft_settype =>
+                     declare
+                        FL    : Natural := dossier.a19.all'Length;
+                        items : constant Natural := num_set_items (ST);
+                     begin
+                        if items > FL then
+                           raise BINDING_SIZE_MISMATCH with
+                             "native size : " & items'Img &
+                             " greater than binding size : " & FL'Img;
+                        end if;
+                        dossier.a19.all := ARC.convert (ST, FL);
+                     end;
+               end case;
+            end;
+            <<continue>>
+         end loop;
+      end;
+
+      return True;
    end fetch_bound;
 
 

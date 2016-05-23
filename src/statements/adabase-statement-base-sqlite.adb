@@ -3,25 +3,6 @@
 
 package body AdaBase.Statement.Base.SQLite is
 
-   ---------------------
-   --  num_set_items  --
-   ---------------------
-   function num_set_items (nv : String) return Natural
-   is
-      result : Natural := 0;
-   begin
-      if not CT.IsBlank (nv) then
-         result := 1;
-         for x in nv'Range loop
-            if nv (x) = ',' then
-               result := result + 1;
-            end if;
-         end loop;
-      end if;
-      return result;
-   end num_set_items;
-
-
    -------------------
    --  log_problem  --
    -------------------
@@ -695,11 +676,11 @@ package body AdaBase.Statement.Base.SQLite is
                      when ft_widetext  => dossier.a14.all := convert (ST);
                      when ft_supertext => dossier.a15.all := convert (ST);
                      when ft_timestamp => dossier.a16.all := ARC.convert (ST);
-                     when ft_enumtype  => dossier.a18.all := ARC.convert (dvariant.v13);
+                     when ft_enumtype  => dossier.a18.all := ARC.convert (ST);
                      when ft_settype =>
                         declare
                            FL    : Natural := dossier.a19.all'Length;
-                           items : constant Natural := num_set_items (ST);
+                           items : constant Natural := CT.num_set_items (ST);
                         begin
                            if items > FL then
                               raise BINDING_SIZE_MISMATCH with
