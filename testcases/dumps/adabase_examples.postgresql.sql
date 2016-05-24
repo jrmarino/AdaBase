@@ -173,7 +173,7 @@ COPY fruits (id, fruit, color, calories) FROM stdin;
 -- Name: fruits_id_seq; Type: SEQUENCE SET; Schema: public; Owner: adabaser
 --
 
-SELECT pg_catalog.setval('fruits_id_seq', 1, false);
+SELECT pg_catalog.setval('fruits_id_seq', 30, true);
 
 
 --
