@@ -324,6 +324,7 @@ package body AdaBase.Driver.Base is
              CT.SUS ("ACK! Rollback attempted when autocommit mode set on");
       err3 : constant CT.Text :=
              CT.SUS ("Rollback attempt failed");
+      msg1 : constant CT.Text := CT.SUS ("ROLLBACK TRANSACTION");
    begin
       if not driver.connection_active then
          --  Non-fatal attempt to roll back when no database is connected
@@ -338,6 +339,7 @@ package body AdaBase.Driver.Base is
          return;
       end if;
       driver.connection.rollback;
+      driver.log_nominal (category => transaction, message => msg1);
    exception
       when others =>
          driver.log_problem (category   => miscellaneous,

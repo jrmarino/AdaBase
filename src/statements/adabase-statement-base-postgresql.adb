@@ -188,12 +188,14 @@ package body AdaBase.Statement.Base.PostgreSQL is
             Stmt.successful_execution := False;
       end case;
 
-      if not Stmt.insert_return then
-         Stmt.size_of_rowset := conn.rows_in_result (Stmt.result_handle);
-      end if;
+      if Stmt.successful_execution then
+         if not Stmt.insert_return then
+            Stmt.size_of_rowset := conn.rows_in_result (Stmt.result_handle);
+         end if;
 
-      if Stmt.insert_return then
-         Stmt.last_inserted := conn.returned_id (Stmt.result_handle);
+         if Stmt.insert_return then
+            Stmt.last_inserted := conn.returned_id (Stmt.result_handle);
+         end if;
       end if;
 
       return Stmt.successful_execution;
@@ -646,11 +648,13 @@ package body AdaBase.Statement.Base.PostgreSQL is
             Object.log_nominal (category => logcat,
                                 message  => Object.sql_final.all);
          else
+            Object.log_problem (statement_preparation,
+                                conn.driverMessage (Object.prepared_stmt));
             Object.log_problem
               (category => statement_preparation,
                message  => "Failed to prepare SQL query: '" &
                             Object.sql_final.all & "'",
-               pull_codes => True);
+               break    => True);
             return;
          end if;
 
@@ -664,11 +668,13 @@ package body AdaBase.Statement.Base.PostgreSQL is
             params := conn.markers_found (hold_result);
             conn.discard_pgresult (hold_result);
          else
+            Object.log_problem (statement_preparation,
+                                conn.driverMessage (hold_result));
             Object.log_problem
               (category => statement_preparation,
                message  => "Failed to acquire prep statement metadata (" &
                             stmt_name & ")",
-               pull_codes => True);
+               break    => True);
             return;
          end if;
 
@@ -683,7 +689,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
             if params /= Natural (Object.realmccoy.Length) then
                Object.log_problem
                  (category => statement_preparation,
-                  message  => errmsg);
+                  message  => errmsg,
+                  break    => True);
                return;
             end if;
          end;
@@ -721,16 +728,11 @@ package body AdaBase.Statement.Base.PostgreSQL is
          else
             Object.log_problem
               (category => statement_execution,
-               message  => "Failed to execute a direct SQL query");
+               message  => "Failed to execute a direct SQL query",
+               break    => True);
             return;
          end if;
       end if;
-
-   exception
-      when HELL : others =>
-         Object.log_problem
-           (category => statement_preparation,
-            message  => CON.EX.Exception_Message (HELL));
    end initialize;
 
 

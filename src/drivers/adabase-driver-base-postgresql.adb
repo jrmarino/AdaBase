@@ -297,7 +297,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
       end if;
       --  We never get here, the driver.log_problem throws exception first
       raise CON.STMT_NOT_VALID
-        with "failed to return SQLite statement";
+        with "failed to return statement";
 
    end private_statement;
 
