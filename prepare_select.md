@@ -173,7 +173,7 @@ tomato (red) 9 calories
 2016-05-24 20:19:37    pgsql :  Prepare Stmt : INSERT INTO fruits (fruit, color, calories) VALUES ('potato','tan', 77)
 2016-05-24 20:19:37    pgsql :  Execute Stmt : Exec without bound parameters
 Inserted row  46
-Affected rows:  0
+Affected rows:  1
 2016-05-24 20:19:37    pgsql :   Transaction : ROLLBACK TRANSACTION
 2016-05-24 20:19:37    pgsql :    Disconnect : Disconnect From database
 </pre>
