@@ -1444,7 +1444,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    function execute_prepared_stmt (conn : PostgreSQL_Connection;
                                    name : String) return BND.PGresult_Access
    is
-      resultFormat : constant BND.IC.int := 1;  --  specify binary results
+      resultFormat : constant BND.IC.int := 0;  --  specify text results
       stmtName     : BND.ICS.chars_ptr := BND.ICS.New_String (name);
       pgres        : BND.PGresult_Access;
    begin

@@ -132,6 +132,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
       markers : constant Natural := Natural (Stmt.realmccoy.Length);
       status_successful : Boolean := True;
+      data_present : Boolean := False;
    begin
       if Stmt.type_of_statement = direct_statement then
          raise INVALID_FOR_DIRECT_QUERY
@@ -141,7 +142,9 @@ package body AdaBase.Statement.Base.PostgreSQL is
       Stmt.result_arrow := 0;
       Stmt.last_inserted := 0;
       Stmt.size_of_rowset := 0;
+      Stmt.impacted := 0;
       Stmt.rows_leftover := False;
+      Stmt.result_present := False;
       Stmt.successful_execution := False;
       conn.discard_pgresult (Stmt.result_handle);
 
@@ -187,18 +190,21 @@ package body AdaBase.Statement.Base.PostgreSQL is
          when CON.returned_data =>
             Stmt.successful_execution := True;
             Stmt.insert_return := Stmt.insert_prepsql;
+            data_present := True;
          when CON.failed =>
             Stmt.successful_execution := False;
       end case;
 
       if Stmt.successful_execution then
-         if not Stmt.insert_return then
-            Stmt.size_of_rowset := conn.rows_in_result (Stmt.result_handle);
+         if data_present then
+            if Stmt.insert_return then
+               Stmt.last_inserted := conn.returned_id (Stmt.result_handle);
+            else
+               Stmt.size_of_rowset := conn.rows_in_result (Stmt.result_handle);
+               Stmt.result_present := True;
+            end if;
          end if;
-
-         if Stmt.insert_return then
-            Stmt.last_inserted := conn.returned_id (Stmt.result_handle);
-         end if;
+         Stmt.impacted := conn.rows_impacted (Stmt.result_handle);
       end if;
 
       return Stmt.successful_execution;
@@ -279,9 +285,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
    overriding
    function rows_returned (Stmt : PostgreSQL_statement) return Affected_Rows
    is
-      conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
    begin
-      return conn.rows_impacted (Stmt.result_handle);
+      return Stmt.size_of_rowset;
    end rows_returned;
 
 
