@@ -64,6 +64,7 @@ package AdaBase.Results.Field is
                          return Std_Field;
    function spawn_field (binob : Chain) return Std_Field;
    function spawn_field (enumset : String) return Std_Field;
+   function spawn_null_field (data_type : field_types) return Std_Field;
 
 private
 

@@ -924,7 +924,10 @@ package body AdaBase.Statement.Base.PostgreSQL is
             ST       : constant String  :=
                        string_equivalent (F, colinfo.binary_format);
          begin
-            case colinfo.field_type is
+            if isnull then
+               field := ARF.spawn_null_field (colinfo.field_type);
+            else
+               case colinfo.field_type is
                when ft_nbyte0 =>
                   dvariant := (datatype => ft_nbyte0, v00 => ST = "1");
                when ft_nbyte1 =>
@@ -971,9 +974,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
                                V18 => ARC.convert (CT.SUS (ST)));
                when others =>
                   null;
-
-            end case;
-            case colinfo.field_type is
+               end case;
+               case colinfo.field_type is
                when ft_chain =>
                   field := ARF.spawn_field (binob => ARC.convert (ST));
                when ft_settype =>
@@ -981,7 +983,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
                when others =>
                   field := ARF.spawn_field (data => dvariant,
                                             null_data => isnull);
-            end case;
+               end case;
+            end if;
 
             result.push (heading    => heading,
                          field      => field,

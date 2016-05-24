@@ -616,9 +616,9 @@ package body AdaBase.Results.Field is
    end native_type;
 
 
-   ------------------------------
-   --  CREATE STANDARD FIELDS  --
-   ------------------------------
+   ----------------------
+   --  spawn_field #1  --
+   ----------------------
    function spawn_field (data : Variant; null_data : Boolean := False)
                          return Std_Field
    is
@@ -628,6 +628,10 @@ package body AdaBase.Results.Field is
       return result;
    end spawn_field;
 
+
+   ----------------------
+   --  spawn_field #2  --
+   ----------------------
    function spawn_field (binob : Chain) return Std_Field
    is
       result  : Std_Field;
@@ -637,6 +641,10 @@ package body AdaBase.Results.Field is
       return result;
    end spawn_field;
 
+
+   ----------------------
+   --  spawn_field #3  --
+   ----------------------
    function spawn_field (enumset : String) return Std_Field
    is
       result  : Std_Field;
@@ -646,6 +654,42 @@ package body AdaBase.Results.Field is
    end spawn_field;
 
 
+   ------------------------
+   --  spawn_null_field  --
+   ------------------------
+   function spawn_null_field (data_type : field_types) return Std_Field
+   is
+      result  : Std_Field;
+   begin
+      case data_type is
+         when ft_nbyte0 => result.set ((ft_nbyte0, PARAM_IS_BOOLEAN), True);
+         when ft_nbyte1 => result.set ((ft_nbyte1, PARAM_IS_NBYTE_1), True);
+         when ft_nbyte2 => result.set ((ft_nbyte2, PARAM_IS_NBYTE_2), True);
+         when ft_nbyte3 => result.set ((ft_nbyte3, PARAM_IS_NBYTE_3), True);
+         when ft_nbyte4 => result.set ((ft_nbyte4, PARAM_IS_NBYTE_4), True);
+         when ft_nbyte8 => result.set ((ft_nbyte8, PARAM_IS_NBYTE_8), True);
+         when ft_byte1 => result.set ((ft_byte1, PARAM_IS_BYTE_1), True);
+         when ft_byte2 => result.set ((ft_byte2, PARAM_IS_BYTE_2), True);
+         when ft_byte3 => result.set ((ft_byte3, PARAM_IS_BYTE_3), True);
+         when ft_byte4 => result.set ((ft_byte4, PARAM_IS_BYTE_4), True);
+         when ft_byte8 => result.set ((ft_byte8, PARAM_IS_BYTE_8), True);
+         when ft_real9 => result.set ((ft_real9, PARAM_IS_REAL_9), True);
+         when ft_real18 => result.set ((ft_real18, PARAM_IS_REAL_18), True);
+         when ft_textual => result.set ((ft_textual, PARAM_IS_TEXTUAL), True);
+         when ft_widetext => result.set ((ft_widetext, PARAM_IS_TEXTWIDE), True);
+         when ft_supertext => result.set ((ft_supertext, PARAM_IS_TEXTSUPER), True);
+         when ft_timestamp => result.set ((ft_timestamp, PARAM_IS_TIMESTAMP), True);
+         when ft_chain    => result.set ((ft_chain, PARAM_IS_TEXTUAL), True);
+         when ft_enumtype => result.set ((ft_enumtype, PARAM_IS_ENUM), True);
+         when ft_settype  => result.set ((ft_settype, PARAM_IS_TEXTUAL), True);
+      end case;
+      return result;
+   end spawn_null_field;
+
+
+   -----------
+   --  set  --
+   -----------
    procedure set (field : out Std_Field; data : Variant; exnull : Boolean) is
    begin
       case data.datatype is
