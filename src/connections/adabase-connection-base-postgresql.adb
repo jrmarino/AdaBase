@@ -1295,9 +1295,9 @@ package body AdaBase.Connection.Base.PostgreSQL is
    end destroy_statement;
 
 
-   -----------------------------
-   --  execute_prepared_stmt  --
-   -----------------------------
+   --------------------------------
+   --  execute_prepared_stmt #1  --
+   --------------------------------
    function execute_prepared_stmt (conn : PostgreSQL_Connection;
                                    name : String;
                                    data : parameter_block)
@@ -1347,6 +1347,32 @@ package body AdaBase.Connection.Base.PostgreSQL is
          end if;
       end loop;
 
+      --  Let the caller check the state of pgres, just return it as is
+      return pgres;
+   end execute_prepared_stmt;
+
+
+   --------------------------------
+   --  execute_prepared_stmt #2  --
+   --------------------------------
+   function execute_prepared_stmt (conn : PostgreSQL_Connection;
+                                   name : String) return BND.PGresult_Access
+   is
+      resultFormat : constant BND.IC.int := 1;  --  specify binary results
+      stmtName     : BND.ICS.chars_ptr := BND.ICS.New_String (name);
+      nothing      : BND.IC.char_array (1 .. 0);
+      pgres        : BND.PGresult_Access;
+   begin
+      pgres := BND.PQexecPrepared
+        (conn         => conn.handle,
+         stmtName     => stmtName,
+         nParams      => 0,
+         paramValues  => nothing'Address,
+         paramLengths => null,
+         paramFormats => null,
+         resultFormat => resultFormat);
+
+      BND.ICS.Free (stmtName);
       --  Let the caller check the state of pgres, just return it as is
       return pgres;
    end execute_prepared_stmt;

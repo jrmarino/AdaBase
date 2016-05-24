@@ -185,6 +185,8 @@ package AdaBase.Connection.Base.PostgreSQL is
                                    data : parameter_block)
                                    return BND.PGresult_Access;
 
+   function execute_prepared_stmt (conn : PostgreSQL_Connection;
+                                   name : String) return BND.PGresult_Access;
    ------------------
    --  EXCEPTIONS  --
    ------------------

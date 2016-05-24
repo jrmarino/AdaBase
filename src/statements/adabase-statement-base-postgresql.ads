@@ -87,9 +87,7 @@ private
       field_name    : CT.Text;
       field_type    : field_types;
       field_size    : Natural;
-      null_possible : Boolean;
       binary_format : Boolean;
-      --  mysql_type    : ABM.enum_field_types;
    end record;
 
    package VColumns is new AC.Vectors (Index_Type   => Positive,
@@ -108,6 +106,7 @@ private
    is new Base_Statement and AIS.iStatement with
       record
          stmt_handle    : aliased BND.PGresult_Access := null;
+         prep_exec_res  : aliased BND.PGresult_Access := null;
          stmt_allocated : Boolean                     := False;
          assign_counter : Natural                     := 0;
          num_columns    : Natural                     := 0;
@@ -134,5 +133,8 @@ private
                               row_number : Trax_ID) return ARS.Datarow;
 
    function show_statement_name (Stmt : PostgreSQL_statement) return String;
+
+   function bind_text_value (Stmt : PostgreSQL_statement; marker : Positive)
+                             return AR.Textual;
 
 end AdaBase.Statement.Base.PostgreSQL;

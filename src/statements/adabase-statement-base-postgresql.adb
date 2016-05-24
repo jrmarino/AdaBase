@@ -141,12 +141,35 @@ package body AdaBase.Statement.Base.PostgreSQL is
       Stmt.rows_leftover := False;
 
       if num_markers > 0 then
-         --  IMPLEMENT
-         null;
+         --  Check to make sure all prepared markers are bound
+         for sx in Natural range 1 .. num_markers loop
+            if not Stmt.realmccoy.Element (sx).bound then
+               raise STMT_PREPARATION
+                 with "Prep Stmt column" & sx'Img & " unbound";
+            end if;
+         end loop;
+
+         --  Now bind the actual values to the markers
+         declare
+            canvas : CON.parameter_block (1 .. num_markers);
+         begin
+            for x in canvas'Range loop
+               canvas (x).payload := Stmt.bind_text_value (x);
+            end loop;
+            Stmt.log_nominal (category => statement_execution,
+                              message => "Exec with" & num_markers'Img &
+                                " bound parameters");
+            Stmt.prep_exec_res :=  conn.execute_prepared_stmt
+              (name => Stmt.show_statement_name,
+               data => canvas);
+         end;
+
       else
          --  No binding required, just execute the prepared statement
          Stmt.log_nominal (category => statement_execution,
                            message => "Exec without bound parameters");
+         Stmt.prep_exec_res := conn.execute_prepared_stmt
+           (name => Stmt.show_statement_name);
 
 --           begin
 --           if Stmt.mysql_conn.prep_execute (Stmt.stmt_handle) then
@@ -158,6 +181,10 @@ package body AdaBase.Statement.Base.PostgreSQL is
 --              status_successful := False;
 --           end if;
       end if;
+
+      Stmt.successful_execution := True;
+      Stmt.result_arrow := 0;
+      Stmt.size_of_rowset := conn.rows_in_result (Stmt.prep_exec_res);
 
       --  TO BE IMPLEMENTED
       return False;
@@ -553,6 +580,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
       use type CON.PostgreSQL_Connection_Access;
       conn   : CON.PostgreSQL_Connection_Access renames Object.pgsql_conn;
       logcat : Log_Category;
+      params : Natural;
       stmt_name   : String := Object.show_statement_name;
       hold_result : aliased BND.PGresult_Access;
    begin
@@ -594,9 +622,27 @@ package body AdaBase.Statement.Base.PostgreSQL is
             return;
          end if;
 
+         --  Get column metadata
+         if conn.prepare_metadata (meta => Object.stmt_handle,
+                                   name => stmt_name)
+         then
+            Object.scan_column_information;
+            params := conn.markers_found (Object.stmt_handle);
+            conn.discard_pgresult (Object.stmt_handle);
+            Object.stmt_handle := hold_result;
+            Object.size_of_rowset := 0;
+            Object.result_arrow   := 0;
+         else
+            Object.log_problem
+              (category => statement_preparation,
+               message  => "Failed to acquire prep statement metadata (" &
+                            stmt_name & ")",
+               pull_codes => True);
+            return;
+         end if;
+
          --  Check that we have as many markers as expected
          declare
-            params : Natural := conn.markers_found (Object.stmt_handle);
             errmsg : String := "marker mismatch," &
               Object.realmccoy.Length'Img & " expected but" &
               params'Img & " found by PostgreSQL";
@@ -608,23 +654,6 @@ package body AdaBase.Statement.Base.PostgreSQL is
                return;
             end if;
          end;
-
-         --  Get column metadata
-         if conn.prepare_metadata (meta => Object.stmt_handle,
-                                   name => stmt_name)
-         then
-            Object.scan_column_information;
-            conn.discard_pgresult (Object.stmt_handle);
-            Object.stmt_handle := hold_result;
-            Object.size_of_rowset := 0;
-            Object.result_arrow   := 0;
-         else
-            Object.log_problem
-              (category => statement_preparation,
-               message  => "Failed to acquire prep statement metadata (" &
-                            stmt_name & ")",
-               pull_codes => True);
-         end if;
 
       else
          if conn.direct_stmt_exec (stmt => Object.stmt_handle,
@@ -690,13 +719,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
             info.field_name    := fn (name);
             info.table         := fn (table);
             info.field_type    := conn.field_type (Stmt.stmt_handle, index);
-            info.binary_format := conn.field_data_is_binary (Stmt.stmt_handle,
-                                                             index);
-
-            --  IMPLEMENT
-            info.null_possible := False;
-
-
+            info.binary_format :=
+              conn.field_data_is_binary (Stmt.stmt_handle, index);
             Stmt.column_info.Append (New_Item => info);
             --  The following pre-populates for bind support
             Stmt.crate.Append (New_Item => brec);
@@ -921,5 +945,162 @@ package body AdaBase.Statement.Base.PostgreSQL is
       return "AdaBase_" & CT.trim (Stmt.identifier'Img);
    end show_statement_name;
 
+
+   -----------------------
+   --  bind_text_value  --
+   -----------------------
+   function bind_text_value (Stmt : PostgreSQL_statement; marker : Positive)
+                             return AR.Textual
+   is
+      zone    : bindrec renames Stmt.realmccoy.Element (marker);
+      vartype : constant field_types := zone.output_type;
+
+      use type AR.NByte0_Access;
+      use type AR.NByte1_Access;
+      use type AR.NByte2_Access;
+      use type AR.NByte3_Access;
+      use type AR.NByte4_Access;
+      use type AR.NByte8_Access;
+      use type AR.Byte1_Access;
+      use type AR.Byte2_Access;
+      use type AR.Byte3_Access;
+      use type AR.Byte4_Access;
+      use type AR.Byte8_Access;
+      use type AR.Real9_Access;
+      use type AR.Real18_Access;
+      use type AR.Str1_Access;
+      use type AR.Str2_Access;
+      use type AR.Str4_Access;
+      use type AR.Time_Access;
+      use type AR.Enum_Access;
+      use type AR.Chain_Access;
+      use type AR.Settype_Access;
+
+      hold : AR.Textual;
+   begin
+      case vartype is
+         when ft_nbyte0 =>
+            if zone.a00 = null then
+               hold := ARC.convert (zone.v00);
+            else
+               hold := ARC.convert (zone.a00.all);
+            end if;
+         when ft_nbyte1 =>
+            if zone.a01 = null then
+               hold := ARC.convert (zone.v01);
+            else
+               hold := ARC.convert (zone.a01.all);
+            end if;
+         when ft_nbyte2 =>
+            if zone.a02 = null then
+               hold := ARC.convert (zone.v02);
+            else
+               hold := ARC.convert (zone.a02.all);
+            end if;
+         when ft_nbyte3 =>
+            if zone.a03 = null then
+               hold := ARC.convert (zone.v03);
+            else
+               hold := ARC.convert (zone.a03.all);
+            end if;
+         when ft_nbyte4 =>
+            if zone.a04 = null then
+               hold := ARC.convert (zone.v04);
+            else
+               hold := ARC.convert (zone.a04.all);
+            end if;
+         when ft_nbyte8 =>
+            if zone.a05 = null then
+               hold := ARC.convert (zone.v05);
+            else
+               hold := ARC.convert (zone.a05.all);
+            end if;
+         when ft_byte1 =>
+            if zone.a06 = null then
+               hold := ARC.convert (zone.v06);
+            else
+               hold := ARC.convert (zone.a06.all);
+            end if;
+         when ft_byte2 =>
+            if zone.a07 = null then
+               hold := ARC.convert (zone.v07);
+            else
+               hold := ARC.convert (zone.a07.all);
+            end if;
+         when ft_byte3 =>
+            if zone.a08 = null then
+               hold := ARC.convert (zone.v08);
+            else
+               hold := ARC.convert (zone.a08.all);
+            end if;
+         when ft_byte4 =>
+            if zone.a09 = null then
+               hold := ARC.convert (zone.v09);
+            else
+               hold := ARC.convert (zone.a09.all);
+            end if;
+         when ft_byte8 =>
+            if zone.a10 = null then
+               hold := ARC.convert (zone.v10);
+            else
+               hold := ARC.convert (zone.a10.all);
+            end if;
+         when ft_real9 =>
+            if zone.a11 = null then
+               hold := ARC.convert (zone.v11);
+            else
+               hold := ARC.convert (zone.a11.all);
+            end if;
+         when ft_real18 =>
+            if zone.a12 = null then
+               hold := ARC.convert (zone.v12);
+            else
+               hold := ARC.convert (zone.a12.all);
+            end if;
+         when ft_textual =>
+            if zone.a13 = null then
+               hold := zone.v13;
+            else
+               hold := zone.a13.all;
+            end if;
+         when ft_widetext =>
+            if zone.a14 = null then
+               hold := ARC.convert (zone.v14);
+            else
+               hold := ARC.convert (zone.a14.all);
+            end if;
+         when ft_supertext =>
+            if zone.a15 = null then
+               hold := ARC.convert (zone.v15);
+            else
+               hold := ARC.convert (zone.a15.all);
+            end if;
+         when ft_timestamp =>
+            if zone.a16 = null then
+               hold := ARC.convert (zone.v16);
+            else
+               hold := ARC.convert (zone.a16.all);
+            end if;
+         when ft_chain =>
+            if zone.a17 = null then
+               hold := zone.v17;
+            else
+               hold := ARC.convert (zone.a17.all);
+            end if;
+         when ft_enumtype =>
+            if zone.a18 = null then
+               hold := ARC.convert (zone.v18);
+            else
+               hold := ARC.convert (zone.a18.all);
+            end if;
+         when ft_settype =>
+            if zone.a19 = null then
+               hold := zone.v19;
+            else
+               hold := ARC.convert (zone.a19.all);
+            end if;
+      end case;
+      return hold;
+   end bind_text_value;
 
 end AdaBase.Statement.Base.PostgreSQL;
