@@ -158,6 +158,27 @@ Affected rows:  1
 </pre>
 <p class="caption">Output using the SQLite driver</p>
 <br/>
+<pre class="output">
+2016-05-24 20:19:37    pgsql :       Connect : Connection to adabase_examples database succeeded.
+2016-05-24 20:19:37    pgsql :  Prepare Stmt : SELECT ALL * FROM fruits WHERE color = $1 and calories > $2 and calories < $3
+2016-05-24 20:19:37    pgsql :  Execute Stmt : Exec with 3 bound parameters
+execute succeeded
+Column 1 heading: id
+Column 2 heading: fruit
+Column 3 heading: color
+Column 4 heading: calories
+returned rows:  2
+apple (red) 95 calories
+tomato (red) 9 calories
+2016-05-24 20:19:37    pgsql :  Prepare Stmt : INSERT INTO fruits (fruit, color, calories) VALUES ('potato','tan', 77)
+2016-05-24 20:19:37    pgsql :  Execute Stmt : Exec without bound parameters
+Inserted row  46
+Affected rows:  0
+2016-05-24 20:19:37    pgsql :   Transaction : ROLLBACK TRANSACTION
+2016-05-24 20:19:37    pgsql :    Disconnect : Disconnect From database
+</pre>
+<p class="caption">Output using the PostgreSQL driver</p>
+<br/>
 <p>{{ page.supported_drivers }}</p>
 <p>{{ page.supported_stmts }}</p>
 </div>
