@@ -108,10 +108,13 @@ private
          result_handle  : aliased BND.PGresult_Access := null;
          prepared_stmt  : aliased BND.PGresult_Access := null;
          stmt_allocated : Boolean                     := False;
+         insert_prepsql : Boolean                     := False;
+         insert_return  : Boolean                     := False;
          assign_counter : Natural                     := 0;
          num_columns    : Natural                     := 0;
          size_of_rowset : Trax_ID                     := 0;
          result_arrow   : Trax_ID                     := 0;
+         last_inserted  : Trax_ID                     := 0;
          column_info    : VColumns.Vector;
          sql_final      : SQL_Access;
       end record;

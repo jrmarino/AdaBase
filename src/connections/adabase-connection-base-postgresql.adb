@@ -152,6 +152,27 @@ package body AdaBase.Connection.Base.PostgreSQL is
    end description;
 
 
+   -------------------------
+   --  helper_get_row_id  --
+   -------------------------
+   function returned_id (conn : PostgreSQL_Connection;
+                         res  : BND.PGresult_Access) return Trax_ID
+   is
+   begin
+      if conn.field_is_null (res, 0, 0) then
+         return 0;
+      end if;
+
+      declare
+         field : constant String := conn.field_string (res, 0, 0);
+      begin
+         return Trax_ID (Integer'Value (field));
+      exception
+         when others => return 0;
+      end;
+   end returned_id;
+
+
    -----------------------
    --  private_execute  --
    -----------------------
@@ -173,18 +194,17 @@ package body AdaBase.Connection.Base.PostgreSQL is
       pgres := BND.PQexec (conn => conn.handle, command => query);
 
       BND.ICS.Free (query);
-      case BND.PQresultStatus (pgres) is
-         when BND.PGRES_COMMAND_OK =>
+      case conn.examine_result (pgres) is
+         when executed =>
             success := True;
             conn.cmd_insert_return := False;
-         when BND.PGRES_TUPLES_OK =>
+         when returned_data =>
             success := True;
             conn.cmd_insert_return := ins_cmd;
-         when others =>
+         when failed =>
             success := False;
             msg := CT.SUS (conn.driverMessage (pgres));
       end case;
-      conn.insert_return_val := 0;
       conn.cmd_sql_state := conn.SqlState (pgres);
 
       if success then
@@ -194,15 +214,9 @@ package body AdaBase.Connection.Base.PostgreSQL is
       end if;
 
       if conn.cmd_insert_return then
-         if not conn.field_is_null (pgres, 0, 0) then
-            declare
-               field : constant String := conn.field_string (pgres, 0, 0);
-            begin
-               conn.insert_return_val := Trax_ID (Integer'Value (field));
-            exception
-               when others => null;
-            end;
-         end if;
+         conn.insert_return_val := conn.returned_id (pgres);
+      else
+         conn.insert_return_val := 0;
       end if;
 
       BND.PQclear (pgres);
@@ -230,13 +244,14 @@ package body AdaBase.Connection.Base.PostgreSQL is
       pgres := BND.PQexec (conn => conn.handle, command => query);
 
       BND.ICS.Free (query);
-      case BND.PQresultStatus (pgres) is
-         when BND.PGRES_TUPLES_OK =>
-            success := True;
-         when BND.PGRES_COMMAND_OK =>
+
+      case conn.examine_result (pgres) is
+         when executed =>
             success := False;
             selcmd := False;
-         when others =>
+         when returned_data =>
+            success := True;
+         when failed =>
             success := False;
             msg := CT.SUS (conn.driverMessage (pgres));
       end case;
@@ -967,6 +982,24 @@ package body AdaBase.Connection.Base.PostgreSQL is
    end prepare_metadata;
 
 
+   ----------------------
+   --  examine_result  --
+   ----------------------
+   function examine_result (conn : PostgreSQL_Connection;
+                            res  : BND.PGresult_Access) return postexec_status
+   is
+   begin
+      case BND.PQresultStatus (res) is
+         when BND.PGRES_COMMAND_OK =>
+            return executed;
+         when BND.PGRES_TUPLES_OK =>
+            return returned_data;
+         when others =>
+            return failed;
+      end case;
+   end examine_result;
+
+
    ------------------------
    --  direst_stmt_exec  --
    ------------------------
@@ -989,14 +1022,14 @@ package body AdaBase.Connection.Base.PostgreSQL is
       stmt := BND.PQexec (conn => conn.handle, command => query);
 
       BND.ICS.Free (query);
-      case BND.PQresultStatus (stmt) is
-         when BND.PGRES_COMMAND_OK =>
+      case conn.examine_result (stmt) is
+         when executed =>
             success := True;
             conn.cmd_insert_return := False;
-         when BND.PGRES_TUPLES_OK =>
+         when returned_data =>
             success := True;
             conn.cmd_insert_return := ins_cmd;
-         when others =>
+         when failed =>
             success := False;
             msg := CT.SUS (conn.driverMessage (stmt));
       end case;

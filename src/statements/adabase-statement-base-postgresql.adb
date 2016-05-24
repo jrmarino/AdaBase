@@ -62,9 +62,11 @@ package body AdaBase.Statement.Base.PostgreSQL is
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
    begin
-      --  return conn.lastInsertID
-      --  TO BE IMPLEMENTED (depends on connection implementation)
-      return 0;
+      if Stmt.insert_return then
+         return Stmt.last_inserted;
+      else
+         return conn.select_last_val;
+      end if;
    end last_insert_id;
 
 
@@ -136,8 +138,11 @@ package body AdaBase.Statement.Base.PostgreSQL is
            with "The execute command is for prepared statements only";
       end if;
 
-      Stmt.successful_execution := False;
+      Stmt.result_arrow := 0;
+      Stmt.last_inserted := 0;
+      Stmt.size_of_rowset := 0;
       Stmt.rows_leftover := False;
+      Stmt.successful_execution := False;
       conn.discard_pgresult (Stmt.result_handle);
 
       if markers > 0 then
@@ -171,25 +176,27 @@ package body AdaBase.Statement.Base.PostgreSQL is
 
          Stmt.result_handle := conn.execute_prepared_stmt
            (name => Stmt.show_statement_name);
-
---           begin
---           if Stmt.mysql_conn.prep_execute (Stmt.stmt_handle) then
---              Stmt.successful_execution := True;
---           else
---              Stmt.log_problem (category => statement_execution,
---                                message => "failed to exec prep stmt",
---                                pull_codes => True);
---              status_successful := False;
---           end if;
       end if;
 
+      case conn.examine_result (Stmt.result_handle) is
+         when CON.executed =>
+            Stmt.successful_execution := True;
+         when CON.returned_data =>
+            Stmt.successful_execution := True;
+            Stmt.insert_return := Stmt.insert_prepsql;
+         when CON.failed =>
+            Stmt.successful_execution := False;
+      end case;
 
-      Stmt.successful_execution := True;
-      Stmt.result_arrow := 0;
-      Stmt.size_of_rowset := conn.rows_in_result (Stmt.result_handle);
+      if not Stmt.insert_return then
+         Stmt.size_of_rowset := conn.rows_in_result (Stmt.result_handle);
+      end if;
 
-      --  TO BE IMPLEMENTED
-      return False;
+      if Stmt.insert_return then
+         Stmt.last_inserted := conn.returned_id (Stmt.result_handle);
+      end if;
+
+      return Stmt.successful_execution;
    end execute;
 
 
@@ -594,10 +601,14 @@ package body AdaBase.Statement.Base.PostgreSQL is
          return;
       end if;
 
-      logger_access     := Object.log_handler;
-      Object.dialect    := driver_postgresql;
-      Object.connection := ACB.Base_Connection_Access (conn);
+      logger_access         := Object.log_handler;
+      Object.dialect        := driver_postgresql;
+      Object.connection     := ACB.Base_Connection_Access (conn);
+      Object.insert_prepsql := False;
 
+      --------------------------------
+      --  Set SQL and log category  --
+      --------------------------------
       case Object.type_of_statement is
          when direct_statement =>
             Object.sql_final := new String'(CT.trim_sql
@@ -610,7 +621,23 @@ package body AdaBase.Statement.Base.PostgreSQL is
             logcat := statement_preparation;
       end case;
 
+      --------------------------------------------------------
+      --  Detect INSERT commands (for INSERT .. RETURNING)  --
+      --------------------------------------------------------
+      declare
+         sql : String := Object.initial_sql.all;
+      begin
+         if sql'Length > 12 and then
+           ACH.To_Upper (sql (sql'First .. sql'First + 6)) = "INSERT "
+         then
+            Object.insert_prepsql := True;
+         end if;
+      end;
+
       if Object.type_of_statement = prepared_statement then
+         -----------------------------------
+         --  Prepared Statement handling  --
+         -----------------------------------
          if conn.prepare_statement (stmt => Object.prepared_stmt,
                                     name => stmt_name,
                                     sql  => Object.sql_final.all)
@@ -627,15 +654,15 @@ package body AdaBase.Statement.Base.PostgreSQL is
             return;
          end if;
 
-         --  Get column metadata
+         ---------------------------------------
+         --  Get column metadata (prep stmt)  --
+         ---------------------------------------
          if conn.prepare_metadata (meta => hold_result,
                                    name => stmt_name)
          then
             Object.scan_column_information (hold_result);
             params := conn.markers_found (hold_result);
             conn.discard_pgresult (hold_result);
-            Object.size_of_rowset := 0;
-            Object.result_arrow   := 0;
          else
             Object.log_problem
               (category => statement_preparation,
@@ -645,7 +672,9 @@ package body AdaBase.Statement.Base.PostgreSQL is
             return;
          end if;
 
-         --  Check that we have as many markers as expected
+         ------------------------------------------------------
+         --  Check that we have as many markers as expected  --
+         ------------------------------------------------------
          declare
             errmsg : String := "marker mismatch," &
               Object.realmccoy.Length'Img & " expected but" &
@@ -660,15 +689,33 @@ package body AdaBase.Statement.Base.PostgreSQL is
          end;
 
       else
+         ---------------------------------
+         --  Direct statement handling  --
+         ---------------------------------
          if conn.direct_stmt_exec (stmt => Object.result_handle,
                                    sql => Object.sql_final.all)
          then
             Object.log_nominal (category => logcat,
                                 message  => Object.sql_final.all);
-            Object.successful_execution := True;
-            Object.result_arrow := 0;
-            Object.size_of_rowset :=
-              conn.rows_in_result (Object.result_handle);
+
+            case conn.examine_result (Object.result_handle) is
+               when CON.executed =>
+                  Object.successful_execution := True;
+               when CON.returned_data =>
+                  Object.successful_execution := True;
+                  Object.insert_return := Object.insert_prepsql;
+               when CON.failed =>
+                  Object.successful_execution := False;
+            end case;
+
+            if not Object.insert_return then
+               Object.size_of_rowset :=
+                 conn.rows_in_result (Object.result_handle);
+            end if;
+
+            if Object.insert_return then
+               Object.last_inserted := conn.returned_id (Object.result_handle);
+            end if;
 
             Object.scan_column_information (Object.result_handle);
          else

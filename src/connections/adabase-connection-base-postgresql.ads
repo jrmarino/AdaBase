@@ -24,6 +24,8 @@ package AdaBase.Connection.Base.PostgreSQL is
    end record;
    type parameter_block is array (Positive range <>) of param_unit;
 
+   type postexec_status is (executed, returned_data, failed);
+
    -----------------------------------------
    --  SUBROUTINES REQUIRED BY INTERFACE  --
    -----------------------------------------
@@ -187,6 +189,16 @@ package AdaBase.Connection.Base.PostgreSQL is
 
    function execute_prepared_stmt (conn : PostgreSQL_Connection;
                                    name : String) return BND.PGresult_Access;
+
+   function examine_result   (conn : PostgreSQL_Connection;
+                              res  : BND.PGresult_Access)
+                              return postexec_status;
+
+   function returned_id      (conn : PostgreSQL_Connection;
+                              res  : BND.PGresult_Access) return Trax_ID;
+
+   function select_last_val  (conn : PostgreSQL_Connection) return Trax_ID;
+
    ------------------
    --  EXCEPTIONS  --
    ------------------
@@ -256,7 +268,6 @@ private
    procedure cache_table_names (conn : out PostgreSQL_Connection);
    procedure cache_data_types  (conn : out PostgreSQL_Connection);
    function piped_tables       (conn : PostgreSQL_Connection) return String;
-   function select_last_val    (conn : PostgreSQL_Connection) return Trax_ID;
    function get_server_version (conn : PostgreSQL_Connection) return Natural;
    function get_server_info    (conn : PostgreSQL_Connection) return CT.Text;
    function within_transaction (conn : PostgreSQL_Connection) return Boolean;
