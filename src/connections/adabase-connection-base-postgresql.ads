@@ -5,6 +5,7 @@ with AdaBase.Interfaces.Connection;
 with AdaBase.Bindings.PostgreSQL;
 with AdaBase.Results;
 with Ada.Containers.Ordered_Maps;
+with Ada.Containers.Vectors;
 with Ada.Unchecked_Deallocation;
 with Ada.Exceptions;
 
@@ -201,6 +202,9 @@ package AdaBase.Connection.Base.PostgreSQL is
 
    function select_last_val  (conn : PostgreSQL_Connection) return Trax_ID;
 
+   procedure destroy_later   (conn : out PostgreSQL_Connection;
+                              identifier : Trax_ID);
+
    ------------------
    --  EXCEPTIONS  --
    ------------------
@@ -238,6 +242,10 @@ private
      (Key_Type     => Positive,
       Element_Type => data_type_rec);
 
+   package stmt_vector is new Ada.Containers.Vectors
+     (Index_Type   => Natural,
+      Element_Type => Trax_ID);
+
    type PostgreSQL_Connection is new Base_Connection and AIC.iConnection
      with record
       info_description : String (1 .. 29) := "PostgreSQL 9.1+ native driver";
@@ -254,6 +262,9 @@ private
       --  Upon connection, dump tables and data types and store them
       tables            : table_map.Map;
       data_types        : type_map.Map;
+
+      --  Upon commit and rollback, deallocate all prep stmts in map
+      stmts_to_destroy  : stmt_vector.Vector;
    end record;
 
    function is_ipv4_or_ipv6 (teststr : String) return Boolean;

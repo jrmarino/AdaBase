@@ -853,6 +853,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    procedure finalize (Object : in out PostgreSQL_statement)
    is
       conn : CON.PostgreSQL_Connection_Access renames Object.pgsql_conn;
+      name : constant String := Object.show_statement_name;
    begin
       if Object.assign_counter /= 2 then
          return;
@@ -861,11 +862,20 @@ package body AdaBase.Statement.Base.PostgreSQL is
       conn.discard_pgresult (Object.result_handle);
 
       if Object.stmt_allocated then
-         if not conn.destroy_statement (Object.show_statement_name) then
-            Object.log_problem
-              (category   => statement_preparation,
-               message    => "Deallocating statement resources",
-               pull_codes => True);
+         if conn.autoCommit then
+            if not conn.destroy_statement (name) then
+               Object.log_problem
+                 (category   => statement_preparation,
+                  message    => "Deallocating statement resources: " & name,
+                  pull_codes => True);
+            end if;
+         else
+            --  If we deallocate a prepared statement in the middle of a
+            --  transaction, the transaction is marked aborted, so we have
+            --  to postpone the deallocation until commit or rollback.
+            --  Morever, the connector needs to handle it so we don't have
+            --  to create variations of driver.commit and driver.rollback
+            conn.destroy_later (Object.identifier);
          end if;
       end if;
 

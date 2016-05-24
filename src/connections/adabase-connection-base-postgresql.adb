@@ -335,10 +335,23 @@ package body AdaBase.Connection.Base.PostgreSQL is
    --  commit  --
    --------------
    overriding
-   procedure commit (conn : out PostgreSQL_Connection) is
+   procedure commit (conn : out PostgreSQL_Connection)
+   is
+      procedure deallocate_prep_statement (Position : stmt_vector.Cursor);
+      procedure deallocate_prep_statement (Position : stmt_vector.Cursor)
+      is
+         identifier : constant Trax_ID := stmt_vector.Element (Position);
+         stmt_name  : constant String := "AdaBase_" & CT.trim (identifier'Img);
+      begin
+         if conn.destroy_statement (stmt_name) then
+            null;
+         end if;
+      end deallocate_prep_statement;
    begin
       begin
          conn.private_execute ("COMMIT");
+         conn.stmts_to_destroy.Iterate (deallocate_prep_statement'Access);
+         conn.stmts_to_destroy.Clear;
       exception
          when E : QUERY_FAIL =>
             raise COMMIT_FAIL with EX.Exception_Message (E);
@@ -353,10 +366,23 @@ package body AdaBase.Connection.Base.PostgreSQL is
    --  rollback  --
    ----------------
    overriding
-   procedure rollback (conn : out PostgreSQL_Connection) is
+   procedure rollback (conn : out PostgreSQL_Connection)
+   is
+      procedure deallocate_prep_statement (Position : stmt_vector.Cursor);
+      procedure deallocate_prep_statement (Position : stmt_vector.Cursor)
+      is
+         identifier : constant Trax_ID := stmt_vector.Element (Position);
+         stmt_name  : constant String := "AdaBase_" & CT.trim (identifier'Img);
+      begin
+         if conn.destroy_statement (stmt_name) then
+            null;
+         end if;
+      end deallocate_prep_statement;
    begin
       begin
          conn.private_execute ("ROLLBACK");
+         conn.stmts_to_destroy.Iterate (deallocate_prep_statement'Access);
+         conn.stmts_to_destroy.Clear;
       exception
          when E : QUERY_FAIL =>
             raise ROLLBACK_FAIL with EX.Exception_Message (E);
@@ -1435,6 +1461,16 @@ package body AdaBase.Connection.Base.PostgreSQL is
       --  Let the caller check the state of pgres, just return it as is
       return pgres;
    end execute_prepared_stmt;
+
+
+   ---------------------
+   --  destroy_later  --
+   ---------------------
+   procedure destroy_later (conn : out PostgreSQL_Connection;
+                            identifier : Trax_ID) is
+   begin
+      conn.stmts_to_destroy.Append (New_Item => identifier);
+   end destroy_later;
 
 
 end AdaBase.Connection.Base.PostgreSQL;
