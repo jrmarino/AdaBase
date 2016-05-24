@@ -48,11 +48,9 @@ package body AdaBase.Statement.Base.PostgreSQL is
    --  column_count  --
    --------------------
    overriding
-   function column_count (Stmt : PostgreSQL_statement) return Natural
-   is
-      conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+   function column_count (Stmt : PostgreSQL_statement) return Natural is
    begin
-      return conn.fields_count (Stmt.stmt_handle);
+      return Stmt.num_columns;
    end column_count;
 
 
@@ -78,7 +76,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
    begin
-      return conn.SqlState (Stmt.stmt_handle);
+      return conn.SqlState (Stmt.result_handle);
    end last_sql_state;
 
 
@@ -90,7 +88,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
    begin
-      return conn.driverCode (Stmt.stmt_handle);
+      return conn.driverCode (Stmt.result_handle);
    end last_driver_code;
 
 
@@ -102,7 +100,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
    begin
-      return conn.driverMessage (Stmt.stmt_handle);
+      return conn.driverMessage (Stmt.result_handle);
    end last_driver_message;
 
 
@@ -130,19 +128,21 @@ package body AdaBase.Statement.Base.PostgreSQL is
    function execute (Stmt : out PostgreSQL_statement) return Boolean
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
-      num_markers : constant Natural := Natural (Stmt.realmccoy.Length);
+      markers : constant Natural := Natural (Stmt.realmccoy.Length);
       status_successful : Boolean := True;
    begin
       if Stmt.type_of_statement = direct_statement then
          raise INVALID_FOR_DIRECT_QUERY
            with "The execute command is for prepared statements only";
       end if;
+
       Stmt.successful_execution := False;
       Stmt.rows_leftover := False;
+      conn.discard_pgresult (Stmt.result_handle);
 
-      if num_markers > 0 then
+      if markers > 0 then
          --  Check to make sure all prepared markers are bound
-         for sx in Natural range 1 .. num_markers loop
+         for sx in Natural range 1 .. markers loop
             if not Stmt.realmccoy.Element (sx).bound then
                raise STMT_PREPARATION
                  with "Prep Stmt column" & sx'Img & " unbound";
@@ -151,15 +151,15 @@ package body AdaBase.Statement.Base.PostgreSQL is
 
          --  Now bind the actual values to the markers
          declare
-            canvas : CON.parameter_block (1 .. num_markers);
+            canvas : CON.parameter_block (1 .. markers);
+            msg : String := "Exec with" & markers'Img & " bound parameters";
          begin
             for x in canvas'Range loop
                canvas (x).payload := Stmt.bind_text_value (x);
             end loop;
-            Stmt.log_nominal (category => statement_execution,
-                              message => "Exec with" & num_markers'Img &
-                                " bound parameters");
-            Stmt.prep_exec_res :=  conn.execute_prepared_stmt
+            Stmt.log_nominal (statement_execution, msg);
+
+            Stmt.result_handle :=  conn.execute_prepared_stmt
               (name => Stmt.show_statement_name,
                data => canvas);
          end;
@@ -168,7 +168,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
          --  No binding required, just execute the prepared statement
          Stmt.log_nominal (category => statement_execution,
                            message => "Exec without bound parameters");
-         Stmt.prep_exec_res := conn.execute_prepared_stmt
+
+         Stmt.result_handle := conn.execute_prepared_stmt
            (name => Stmt.show_statement_name);
 
 --           begin
@@ -182,9 +183,10 @@ package body AdaBase.Statement.Base.PostgreSQL is
 --           end if;
       end if;
 
+
       Stmt.successful_execution := True;
       Stmt.result_arrow := 0;
-      Stmt.size_of_rowset := conn.rows_in_result (Stmt.prep_exec_res);
+      Stmt.size_of_rowset := conn.rows_in_result (Stmt.result_handle);
 
       --  TO BE IMPLEMENTED
       return False;
@@ -267,7 +269,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
    begin
-      return conn.rows_impacted (Stmt.stmt_handle);
+      return conn.rows_impacted (Stmt.result_handle);
    end rows_returned;
 
 
@@ -312,10 +314,13 @@ package body AdaBase.Statement.Base.PostgreSQL is
    function column_native_type (Stmt : PostgreSQL_statement; index : Positive)
                                 return field_types
    is
-      conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
-      pndx : Natural := index - 1;
+      maxlen : constant Natural := Natural (Stmt.column_info.Length);
    begin
-      return conn.field_type (Stmt.stmt_handle, pndx);
+      if index > maxlen then
+         raise INVALID_COLUMN_INDEX with "Max index is" & maxlen'Img &
+           " but" & index'Img & " attempted";
+      end if;
+      return Stmt.column_info.Element (Index => index).field_type;
    end column_native_type;
 
 
@@ -382,10 +387,10 @@ package body AdaBase.Statement.Base.PostgreSQL is
          col_num : constant Natural := column - 1;
       begin
          if binary then
-            return conn.field_binary (Stmt.stmt_handle, row_num, col_num,
+            return conn.field_binary (Stmt.result_handle, row_num, col_num,
                                       Stmt.con_max_blob);
          else
-            return conn.field_string (Stmt.stmt_handle, row_num, col_num);
+            return conn.field_string (Stmt.result_handle, row_num, col_num);
          end if;
       end string_equivalent;
 
@@ -395,7 +400,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
          row_num : constant Natural := Natural (Stmt.result_arrow) - 1;
          col_num : constant Natural := column - 1;
       begin
-         return conn.field_is_null (Stmt.stmt_handle, row_num, col_num);
+         return conn.field_is_null (Stmt.result_handle, row_num, col_num);
       end null_value;
 
    begin
@@ -606,7 +611,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
       end case;
 
       if Object.type_of_statement = prepared_statement then
-         if conn.prepare_statement (stmt => hold_result,
+         if conn.prepare_statement (stmt => Object.prepared_stmt,
                                     name => stmt_name,
                                     sql  => Object.sql_final.all)
          then
@@ -623,13 +628,12 @@ package body AdaBase.Statement.Base.PostgreSQL is
          end if;
 
          --  Get column metadata
-         if conn.prepare_metadata (meta => Object.stmt_handle,
+         if conn.prepare_metadata (meta => hold_result,
                                    name => stmt_name)
          then
-            Object.scan_column_information;
-            params := conn.markers_found (Object.stmt_handle);
-            conn.discard_pgresult (Object.stmt_handle);
-            Object.stmt_handle := hold_result;
+            Object.scan_column_information (hold_result);
+            params := conn.markers_found (hold_result);
+            conn.discard_pgresult (hold_result);
             Object.size_of_rowset := 0;
             Object.result_arrow   := 0;
          else
@@ -656,16 +660,17 @@ package body AdaBase.Statement.Base.PostgreSQL is
          end;
 
       else
-         if conn.direct_stmt_exec (stmt => Object.stmt_handle,
+         if conn.direct_stmt_exec (stmt => Object.result_handle,
                                    sql => Object.sql_final.all)
          then
             Object.log_nominal (category => logcat,
                                 message  => Object.sql_final.all);
             Object.successful_execution := True;
             Object.result_arrow := 0;
-            Object.size_of_rowset := conn.rows_in_result (Object.stmt_handle);
+            Object.size_of_rowset :=
+              conn.rows_in_result (Object.result_handle);
 
-            Object.scan_column_information;
+            Object.scan_column_information (Object.result_handle);
          else
             Object.log_problem
               (category => statement_execution,
@@ -685,7 +690,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
    -------------------------------
    --  scan_column_information  --
    -------------------------------
-   procedure scan_column_information (Stmt : out PostgreSQL_statement)
+   procedure scan_column_information (Stmt : out PostgreSQL_statement;
+                                      pgresult : BND.PGresult_Access)
    is
       function fn (raw : String) return CT.Text;
       function sn (raw : String) return String;
@@ -707,20 +713,20 @@ package body AdaBase.Statement.Base.PostgreSQL is
 
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
    begin
-      Stmt.num_columns := conn.fields_count (Stmt.stmt_handle);
+      Stmt.num_columns := conn.fields_count (pgresult);
       for index in Natural range 0 .. Stmt.num_columns - 1 loop
          declare
             info  : column_info;
             brec  : bindrec;
-            name  : String := conn.field_name (Stmt.stmt_handle, index);
-            table : String := conn.field_table (Stmt.stmt_handle, index);
+            name  : String := conn.field_name (pgresult, index);
+            table : String := conn.field_table (pgresult, index);
          begin
             brec.v00           := False;   --  placeholder
             info.field_name    := fn (name);
             info.table         := fn (table);
-            info.field_type    := conn.field_type (Stmt.stmt_handle, index);
+            info.field_type    := conn.field_type (pgresult, index);
             info.binary_format :=
-              conn.field_data_is_binary (Stmt.stmt_handle, index);
+              conn.field_data_is_binary (pgresult, index);
             Stmt.column_info.Append (New_Item => info);
             --  The following pre-populates for bind support
             Stmt.crate.Append (New_Item => brec);
@@ -794,16 +800,13 @@ package body AdaBase.Statement.Base.PostgreSQL is
    overriding
    procedure finalize (Object : in out PostgreSQL_statement)
    is
-      use type BND.PGresult_Access;
       conn : CON.PostgreSQL_Connection_Access renames Object.pgsql_conn;
    begin
       if Object.assign_counter /= 2 then
          return;
       end if;
 
-      if Object.stmt_handle /= null then
-         conn.discard_pgresult (Object.stmt_handle);
-      end if;
+      conn.discard_pgresult (Object.result_handle);
 
       if Object.stmt_allocated then
          if not conn.destroy_statement (Object.show_statement_name) then
@@ -841,10 +844,10 @@ package body AdaBase.Statement.Base.PostgreSQL is
          col_num : constant Natural := column - 1;
       begin
          if binary then
-            return conn.field_binary (Stmt.stmt_handle, row_num, col_num,
+            return conn.field_binary (Stmt.result_handle, row_num, col_num,
                                       Stmt.con_max_blob);
          else
-            return conn.field_string (Stmt.stmt_handle, row_num, col_num);
+            return conn.field_string (Stmt.result_handle, row_num, col_num);
          end if;
       end string_equivalent;
 
@@ -854,7 +857,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
          row_num : constant Natural := Natural (row_number) - 1;
          col_num : constant Natural := column - 1;
       begin
-         return conn.field_is_null (Stmt.stmt_handle, row_num, col_num);
+         return conn.field_is_null (Stmt.result_handle, row_num, col_num);
       end null_value;
 
    begin

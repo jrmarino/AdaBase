@@ -105,8 +105,8 @@ private
       con_buffered      : Boolean)
    is new Base_Statement and AIS.iStatement with
       record
-         stmt_handle    : aliased BND.PGresult_Access := null;
-         prep_exec_res  : aliased BND.PGresult_Access := null;
+         result_handle  : aliased BND.PGresult_Access := null;
+         prepared_stmt  : aliased BND.PGresult_Access := null;
          stmt_allocated : Boolean                     := False;
          assign_counter : Natural                     := 0;
          num_columns    : Natural                     := 0;
@@ -127,7 +127,8 @@ private
    procedure Adjust     (Object : in out PostgreSQL_statement);
    procedure finalize   (Object : in out PostgreSQL_statement);
    function reformat_markers (parameterized_sql : String) return String;
-   procedure scan_column_information (Stmt : out PostgreSQL_statement);
+   procedure scan_column_information (Stmt : out PostgreSQL_statement;
+                                      pgresult : BND.PGresult_Access);
 
    function assemble_datarow (Stmt : PostgreSQL_statement;
                               row_number : Trax_ID) return ARS.Datarow;

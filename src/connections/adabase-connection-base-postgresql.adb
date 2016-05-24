@@ -451,9 +451,14 @@ package body AdaBase.Connection.Base.PostgreSQL is
    --  discard_pgresult  --
    ------------------------
    procedure discard_pgresult (conn : PostgreSQL_Connection;
-                               res  : BND.PGresult_Access) is
+                               res  : out BND.PGresult_Access)
+   is
+      use type BND.PGresult_Access;
    begin
-      BND.PQclear (res);
+      if res /= null then
+         BND.PQclear (res);
+      end if;
+      res := null;
    end discard_pgresult;
 
 

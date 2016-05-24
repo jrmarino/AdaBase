@@ -105,7 +105,7 @@ package AdaBase.Connection.Base.PostgreSQL is
                                  return SQL_State;
 
    procedure discard_pgresult    (conn : PostgreSQL_Connection;
-                                  res  : BND.PGresult_Access);
+                                  res  : out BND.PGresult_Access);
 
    function rows_in_result       (conn : PostgreSQL_Connection;
                                   res  : BND.PGresult_Access)
