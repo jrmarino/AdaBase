@@ -161,6 +161,9 @@ package body AdaBase.Statement.Base.PostgreSQL is
          begin
             for x in canvas'Range loop
                canvas (x).payload := Stmt.bind_text_value (x);
+               canvas (x).is_null := Stmt.realmccoy.Element (x).null_data;
+               canvas (x).binary  := Stmt.realmccoy.Element (x).output_type =
+                                     ft_chain;
             end loop;
             Stmt.log_nominal (statement_execution, msg);
 

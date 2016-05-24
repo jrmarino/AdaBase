@@ -1341,7 +1341,6 @@ package body AdaBase.Connection.Base.PostgreSQL is
                                    data : parameter_block)
                                    return BND.PGresult_Access
    is
-      use type BND.IC.int;
       subtype param_range is Positive range 1 .. data'Length;
 
       nParams      : constant BND.IC.int := BND.IC.int (data'Length);
@@ -1350,22 +1349,44 @@ package body AdaBase.Connection.Base.PostgreSQL is
       paramValues  : BND.Param_Val_Array (param_range);
       paramLengths : BND.Param_Int_Array (param_range);
       paramFormats : BND.Param_Int_Array (param_range);
+      need_free    : array (param_range) of Boolean;
       pgres        : BND.PGresult_Access;
       datalen      : Natural;
-      binsize      : BND.IC.size_t;
    begin
       for x in paramLengths'Range loop
          datalen := CT.len (data (x).payload);
-         binsize := BND.IC.size_t (datalen);
-         paramFormats (x) := BND.IC.int (1);  -- binary
          paramLengths (x) := BND.IC.int (datalen);
-         if datalen > 0 then
-            declare
-               Str : constant String := CT.USS (data (x).payload);
-            begin
-               paramValues (x).buffer := new BND.IC.char_array (1 .. binsize);
-               paramValues (x).buffer.all := BND.IC.To_C (Str, False);
-            end;
+
+         if data (x).binary then
+            paramFormats (x) := BND.IC.int (1);
+            if data (x).is_null then
+               need_free (x) := False;
+               paramValues (x).buffer := null;
+            else
+               need_free (x) := True;
+               declare
+                  Str : constant String := CT.USS (data (x).payload);
+                  bsz : BND.IC.size_t := BND.IC.size_t (datalen);
+               begin
+                  paramValues (x).buffer := new BND.IC.char_array (1 .. bsz);
+                  paramValues (x).buffer.all := BND.IC.To_C (Str, False);
+               end;
+            end if;
+         else
+            paramFormats (x) := BND.IC.int (0);
+            if data (x).is_null then
+               need_free (x) := False;
+               paramValues (x).buffer := null;
+            else
+               declare
+                  use type BND.IC.size_t;
+                  Str : constant String := CT.USS (data (x).payload);
+                  bsz : BND.IC.size_t := BND.IC.size_t (datalen) + 1;
+               begin
+                  paramValues (x).buffer := new BND.IC.char_array (1 .. bsz);
+                  paramValues (x).buffer.all := BND.IC.To_C (Str, True);
+               end;
+            end if;
          end if;
       end loop;
 
@@ -1379,8 +1400,9 @@ package body AdaBase.Connection.Base.PostgreSQL is
          resultFormat => resultFormat);
 
       BND.ICS.Free (stmtName);
-      for x in paramValues'Range loop
-         if paramLengths (x) > 0 then
+
+      for x in need_free'Range loop
+         if need_free (x) then
             free_binary (paramValues (x).buffer);
          end if;
       end loop;
