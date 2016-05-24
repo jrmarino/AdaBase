@@ -1344,7 +1344,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
       subtype param_range is Positive range 1 .. data'Length;
 
       nParams      : constant BND.IC.int := BND.IC.int (data'Length);
-      resultFormat : constant BND.IC.int := 1;  --  specify binary results
+      resultFormat : constant BND.IC.int := 0;  --  specify text results
       stmtName     : BND.ICS.chars_ptr := BND.ICS.New_String (name);
       paramValues  : BND.Param_Val_Array (param_range);
       paramLengths : BND.Param_Int_Array (param_range);

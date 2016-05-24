@@ -167,7 +167,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
             end loop;
             Stmt.log_nominal (statement_execution, msg);
 
-            Stmt.result_handle :=  conn.execute_prepared_stmt
+            Stmt.result_handle := conn.execute_prepared_stmt
               (name => Stmt.show_statement_name,
                data => canvas);
          end;
