@@ -74,11 +74,14 @@ package AdaBase.Bindings.PostgreSQL is
    type Param_Oid_Array is array (Positive range <>) of aliased Oid;
    pragma Convention (C, Param_Oid_Array);
 
-   type Param_Val_Array is
-     array (Positive range <>) of aliased ICS.char_array_access;
+   type PValues_Container is record
+      buffer : ICS.char_array_access;
+   end record;
+   pragma Convention (C, PValues_Container);
 
-   type Param_Int_Array_Access is access all Param_Int_Array;
-   type Param_Oid_Array_Access is access all Param_Oid_Array;
+   type Param_Val_Array is
+     array (Positive range <>) of aliased PValues_Container;
+   pragma Convention (C, Param_Val_Array);
 
    ------------------------
    --  Type Definitions  --
@@ -135,7 +138,7 @@ package AdaBase.Bindings.PostgreSQL is
                             command      : ICS.chars_ptr;
                             nParams      : IC.int;
                             paramTypes   : Oid_Access;
-                            paramValues  : System.Address;
+                            paramValues  : access PValues_Container;
                             paramLengths : int_Access;
                             paramFormats : int_Access;
                             resultFormat : IC.int) return PGresult_Access;
@@ -144,7 +147,7 @@ package AdaBase.Bindings.PostgreSQL is
    function PQexecPrepared (conn         : PGconn_Access;
                             stmtName     : ICS.chars_ptr;
                             nParams      : IC.int;
-                            paramValues  : System.Address;
+                            paramValues  : access PValues_Container;
                             paramLengths : int_Access;
                             paramFormats : int_Access;
                             resultFormat : IC.int) return PGresult_Access;

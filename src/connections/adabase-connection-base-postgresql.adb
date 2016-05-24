@@ -1363,8 +1363,8 @@ package body AdaBase.Connection.Base.PostgreSQL is
             declare
                Str : constant String := CT.USS (data (x).payload);
             begin
-               paramValues (x) := new BND.IC.char_array (1 .. binsize);
-               paramValues (x).all := BND.IC.To_C (Str, False);
+               paramValues (x).buffer := new BND.IC.char_array (1 .. binsize);
+               paramValues (x).buffer.all := BND.IC.To_C (Str, False);
             end;
          end if;
       end loop;
@@ -1373,7 +1373,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
         (conn         => conn.handle,
          stmtName     => stmtName,
          nParams      => nParams,
-         paramValues  => paramValues (1).all'Address,
+         paramValues  => paramValues (1)'Unchecked_Access,
          paramLengths => paramLengths (1)'Unchecked_Access,
          paramFormats => paramFormats (1)'Unchecked_Access,
          resultFormat => resultFormat);
@@ -1381,7 +1381,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
       BND.ICS.Free (stmtName);
       for x in paramValues'Range loop
          if paramLengths (x) > 0 then
-            free_binary (paramValues (x));
+            free_binary (paramValues (x).buffer);
          end if;
       end loop;
 
@@ -1398,14 +1398,13 @@ package body AdaBase.Connection.Base.PostgreSQL is
    is
       resultFormat : constant BND.IC.int := 1;  --  specify binary results
       stmtName     : BND.ICS.chars_ptr := BND.ICS.New_String (name);
-      nothing      : BND.IC.char_array (1 .. 0);
       pgres        : BND.PGresult_Access;
    begin
       pgres := BND.PQexecPrepared
         (conn         => conn.handle,
          stmtName     => stmtName,
          nParams      => 0,
-         paramValues  => nothing'Address,
+         paramValues  => null,
          paramLengths => null,
          paramFormats => null,
          resultFormat => resultFormat);
