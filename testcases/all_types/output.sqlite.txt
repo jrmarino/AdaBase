@@ -13,7 +13,7 @@ Dumping Result from direct statement ...
 12. real9           FT_REAL18      7.98399999999999999E+00
 13. real18          FT_REAL18      5.31234234342299985E+01
 14. exact_decimal   FT_REAL18      1.23450000000000003E+02
-15. bit_type        FT_CHAIN       0C 93
+15. bit_type        FT_TEXTUAL     110010010011
 16. my_date         FT_TEXTUAL     1993-01-15
 17. my_datetime     FT_TEXTUAL     1972-08-01 08:00:05
 18. my_timestamp    FT_TEXTUAL     2016-05-03 20:17:51
@@ -49,7 +49,7 @@ Dumping Result from prepared statement ...
 12. real9           FT_REAL18      7.98399999999999999E+00
 13. real18          FT_REAL18      5.31234234342299985E+01
 14. exact_decimal   FT_REAL18      1.23450000000000003E+02
-15. bit_type        FT_CHAIN       0C 93
+15. bit_type        FT_TEXTUAL     110010010011
 16. my_date         FT_TEXTUAL     1993-01-15
 17. my_datetime     FT_TEXTUAL     1972-08-01 08:00:05
 18. my_timestamp    FT_TEXTUAL     2016-05-03 20:17:51
@@ -84,8 +84,8 @@ Dumping Result from PS/Bound fetch ...
 11. byte8           -7700000000
 12. real9            7.98400000E+00
 13. real18           5.31234234342299985E+01
-14. exact            1.23450000E+02
-15. bits            0C 93
+14. exact            1.23450000000000003E+02
+15. bits            110010010011
 16. date            1993-01-15 00:00:00
 17. datetime        1972-08-01 08:00:05
 18. timestamp       2016-05-03 20:17:51
