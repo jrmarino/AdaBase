@@ -581,7 +581,6 @@ package body AdaBase.Connection.Base.SQLite is
          elsif
            CT.contains (dtype, "BLOB") or else
            CT.contains (dtype, "BINARY") or else
-           CT.contains (dtype, "BIT") or else
            dtype = "IMAGE"
          then
             data_type := BND.SQLITE_BLOB;
