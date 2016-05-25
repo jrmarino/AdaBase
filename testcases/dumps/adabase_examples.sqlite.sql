@@ -37,7 +37,7 @@ CREATE TABLE all_types (
 ,  enumtype text
 ,  settype text
 );
-INSERT INTO all_types VALUES (1,1,129,33000,2200000000,6600000000,-120,-30000,8000000,-2000000000,-7700000000,7.984,53.12342343423,123.45,'“','1993-01-15','1972-08-01 08:00:05','2016-05-03 20:17:51','04:30:02',1988,'ABCD1234EFGH5678','The quick brown fox jumped over the lazy dogs','You''re going to need a bigger boat.','Take your stinkin'' paws off me, you damn dirty ape!','Toto, I''ve a feeling we''re not in Kansas anymore.','I ate his liver with some fava beans and a nice chianti.','a$&%','dog','abcdefg','1234(*&^#==','[```;^%^&123@#12','jason.bourne','red','blue,black,white,yellow');
+INSERT INTO all_types VALUES (1,1,129,33000,2200000000,6600000000,-120,-30000,8000000,-2000000000,-7700000000,7.984,53.12342343423,123.45,'110010010011','1993-01-15','1972-08-01 08:00:05','2016-05-03 20:17:51','04:30:02',1988,'ABCD1234EFGH5678','The quick brown fox jumped over the lazy dogs','You''re going to need a bigger boat.','Take your stinkin'' paws off me, you damn dirty ape!','Toto, I''ve a feeling we''re not in Kansas anymore.','I ate his liver with some fava beans and a nice chianti.','a$&%','dog','abcdefg','1234(*&^#==','[```;^%^&123@#12','jason.bourne','red','blue,black,white,yellow');
 CREATE TABLE fruits (
   id integer NOT NULL PRIMARY KEY AUTOINCREMENT
 ,  fruit varchar(45) DEFAULT NULL
