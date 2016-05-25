@@ -779,8 +779,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
          else
             Object.log_problem
               (category => statement_execution,
-               message  => "Failed to execute a direct SQL query",
-               break    => True);
+               message  => "Failed to execute a direct SQL query");
             return;
          end if;
       end if;
