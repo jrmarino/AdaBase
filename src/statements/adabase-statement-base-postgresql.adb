@@ -562,7 +562,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
                end case;
 
                case Tout is
-                  when ft_nbyte0    => dossier.a00.all := (ST = "1");
+                  when ft_nbyte0    => dossier.a00.all := (ST = "t");
                   when ft_nbyte1    => dossier.a01.all := convert (ST);
                   when ft_nbyte2    => dossier.a02.all := convert (ST);
                   when ft_nbyte3    => dossier.a03.all := convert (ST);
@@ -986,7 +986,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
             else
                case colinfo.field_type is
                when ft_nbyte0 =>
-                  dvariant := (datatype => ft_nbyte0, v00 => ST = "1");
+                  dvariant := (datatype => ft_nbyte0, v00 => ST = "t");
                when ft_nbyte1 =>
                   dvariant := (datatype => ft_nbyte1, v01 => convert (ST));
                when ft_nbyte2 =>

@@ -1217,10 +1217,10 @@ package body AdaBase.Results.Converters is
    is
       nvstr : constant String := CT.USS (nv);
    begin
-      if nvstr = "0" then
+      if nvstr = "0" or else nvstr = "f" then
          return False;
       end if;
-      if nvstr = "1" then
+      if nvstr = "1" or else nvstr = "t" then
          return True;
       end if;
       raise CONVERSION_FAILED with "Tried to convert '" & nvstr & "' (S)";
