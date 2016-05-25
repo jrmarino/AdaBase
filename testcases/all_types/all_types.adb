@@ -182,7 +182,7 @@ begin
       v_byte3  : aliased AR.Byte3;
       v_byte4  : aliased AR.Byte4;
       v_byte8  : aliased AR.Byte8;
-      v_exact  : aliased AR.Real9;
+      v_exact  : aliased AR.Real18;
       v_real9  : aliased AR.Real9;
       v_real18 : aliased AR.Real18;
       v_text1  : aliased AR.Textual;
@@ -196,7 +196,7 @@ begin
       v_time3  : aliased AR.AC.Time;
       v_time4  : aliased AR.AC.Time;
       v_year   : aliased AR.NByte2;
-      v_bit    : aliased AR.Chain := (1 .. 2 => 0);
+      v_bit    : aliased AR.Textual;
       v_chain1 : aliased AR.Chain := (1 .. 4 => 0);
       v_chain2 : aliased AR.Chain := (1 .. 6 => 0);
       v_chain3 : aliased AR.Chain := (1 .. 16 => 0);
@@ -259,7 +259,7 @@ begin
             TIO.Put_Line ("12. real9           " & v_real9'Img);
             TIO.Put_Line ("13. real18          " & v_real18'Img);
             TIO.Put_Line ("14. exact           " & v_exact'Img);
-            TIO.Put_Line ("15. bits            " & convert_chain (v_bit));
+            TIO.Put_Line ("15. bits            " & CT.USS (v_bit));
             TIO.Put_Line ("16. date            " & CFM.Image (v_time1));
             TIO.Put_Line ("17. datetime        " & CFM.Image (v_time2));
             TIO.Put_Line ("18. timestamp       " & CFM.Image (v_time3));
@@ -316,7 +316,7 @@ begin
       v_time3  : aliased AR.AC.Time := CFM.Time_Of (2005, 4, 20, 1, 32, 0);
       v_time4  : aliased AR.AC.Time := CFM.Time_Of (1901, 1, 1, 4, 57, 50);
       v_year   : aliased AR.NByte2  := 1992;
-      v_bit    : aliased AR.Chain   := (5, 127);
+      v_bit    : aliased AR.Textual := CT.SUS ("010101111111");
       v_chain1 : aliased AR.Chain   := (12, 44, 65, 240);
       v_chain2 : aliased AR.Chain   := (97, 99, 102);
       v_chain3 : aliased AR.Chain   := (1, 0, 20, 37, 10);
@@ -399,7 +399,6 @@ begin
       end if;
    end;
 
-
    declare
       values : constant String := "20|1|150|-10|-90000|3200100|87.2341|" &
         "15555.213792831213|875.44|2014-10-20|2000-03-25 15:15:00|" &
@@ -417,7 +416,7 @@ begin
       stmt.assign (6,  AR.PARAM_IS_NBYTE_8);
       stmt.assign (7,  AR.PARAM_IS_REAL_9);
       stmt.assign (8,  AR.PARAM_IS_REAL_18);
-      stmt.assign (9,  AR.PARAM_IS_REAL_9);
+      stmt.assign (9,  AR.PARAM_IS_REAL_18);
       stmt.assign (10, AR.PARAM_IS_TIMESTAMP);
       stmt.assign (11, AR.PARAM_IS_TIMESTAMP);
       stmt.assign (12, AR.PARAM_IS_TIMESTAMP);
@@ -433,6 +432,7 @@ begin
          CON.DR.commit;
       else
          TIO.Put_Line ("statement execution failed");
+         TIO.Put_Line (stmt.last_driver_message);
       end if;
    end;
 
