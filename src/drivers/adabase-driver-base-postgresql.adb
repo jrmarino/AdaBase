@@ -277,11 +277,15 @@ package body AdaBase.Driver.Base.PostgreSQL is
                if statement.successful then
                   driver.log_nominal
                     (category => logcat,
-                     message  => CT.SUS ("query succeeded," &
-                         statement.rows_returned'Img & " rows returned"));
+                     message  => CT.SUS ("query" &
+                                 global_statement_counter'Img &
+                                 " succeeded," & statement.rows_returned'Img &
+                                 " rows returned"));
                else
-                  driver.log_nominal (category => execution,
-                                      message  => CT.SUS ("Query failed!"));
+                  driver.log_nominal
+                    (category => execution,
+                     message  => CT.SUS ("Query" &
+                                 global_statement_counter'Img & " failed!"));
                end if;
             end if;
             return statement;
