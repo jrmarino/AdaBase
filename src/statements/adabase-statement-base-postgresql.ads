@@ -133,7 +133,7 @@ private
    procedure scan_column_information (Stmt : out PostgreSQL_statement;
                                       pgresult : BND.PGresult_Access);
 
-   function assemble_datarow (Stmt : PostgreSQL_statement;
+   function assemble_datarow (Stmt : out PostgreSQL_statement;
                               row_number : Trax_ID) return ARS.Datarow;
 
    function show_statement_name (Stmt : PostgreSQL_statement) return String;

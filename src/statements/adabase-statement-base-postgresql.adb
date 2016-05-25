@@ -115,10 +115,12 @@ package body AdaBase.Statement.Base.PostgreSQL is
       --  When asynchronous command mode becomes supported, this procedure
       --  would free the pgres object and indicate data exhausted somehow.
       --  In the standard buffered mode, we can only simulate it.
+      conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
    begin
       if Stmt.result_arrow < Stmt.size_of_rowset then
          Stmt.result_arrow := Stmt.size_of_rowset;
          Stmt.rows_leftover := True;
+         conn.discard_pgresult (Stmt.result_handle);
       end if;
    end discard_rest;
 
@@ -619,6 +621,9 @@ package body AdaBase.Statement.Base.PostgreSQL is
          end loop;
       end;
 
+      if Stmt.result_arrow = Stmt.size_of_rowset then
+         conn.discard_pgresult (Stmt.result_handle);
+      end if;
       return True;
    end fetch_bound;
 
@@ -934,7 +939,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    ------------------------
    --  assemble_datarow  --
    ------------------------
-   function assemble_datarow (Stmt : PostgreSQL_statement;
+   function assemble_datarow (Stmt : out PostgreSQL_statement;
                               row_number : Trax_ID) return ARS.Datarow
    is
       function null_value (column : Natural) return Boolean;
@@ -1047,6 +1052,9 @@ package body AdaBase.Statement.Base.PostgreSQL is
                          last_field => last_one);
          end;
       end loop;
+      if Stmt.result_arrow = Stmt.size_of_rowset then
+         conn.discard_pgresult (Stmt.result_handle);
+      end if;
       return result;
    end assemble_datarow;
 
