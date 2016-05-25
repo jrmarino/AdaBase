@@ -15,6 +15,8 @@ procedure Bad_Select is
    sql : String := "SELECT fruit, calories FROM froits " &
                    "WHERE color = 'red'";
 
+   success : Boolean := True;
+
 begin
 
    --  PostgreSQL will abort a transaction even for a bad select
@@ -32,11 +34,18 @@ begin
          TIO.Put_Line ("  Driver message: " & stmt.last_driver_message);
          TIO.Put_Line ("     Driver code: " & stmt.last_driver_code'Img);
          TIO.Put_Line ("       SQL State: " & stmt.last_sql_state);
-         --  Fix SQL typo
-         sql (31) := 'u';
-         TIO.Put_Line ("");
-         TIO.Put_Line ("SQL now: " & sql);
-         stmt := CON.DR.query (sql);
+         success := False;
+      end if;
+   end;
+
+   if not success then
+      --  Fix SQL typo
+      sql (31) := 'u';
+      TIO.Put_Line ("");
+      TIO.Put_Line ("SQL now: " & sql);
+      declare
+         stmt : CON.Stmt_Type := CON.DR.query (sql);
+      begin
          TIO.Put_Line ("Query successful: " & stmt.successful'Img);
 
          row := stmt.fetch_next;
@@ -46,8 +55,8 @@ begin
             stmt.discard_rest;
             TIO.Put_Line ("  Data discarded: " & stmt.data_discarded'Img);
          end if;
-      end if;
-   end;
+      end;
+   end if;
    CON.DR.disconnect;
 
 end Bad_Select;
