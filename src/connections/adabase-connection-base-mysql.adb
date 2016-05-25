@@ -632,11 +632,7 @@ package body AdaBase.Connection.Base.MySQL is
               ABM.MYSQL_TYPE_TIME        |
               ABM.MYSQL_TYPE_DATETIME    |
               ABM.MYSQL_TYPE_NEWDATE     => std_type := ft_timestamp;
-         when ABM.MYSQL_TYPE_BIT =>
-            case bestlen is
-               when 0 .. 1               => std_type := ft_nbyte0;
-               when others               => std_type := ft_chain;
-            end case;
+         when ABM.MYSQL_TYPE_BIT         => std_type := ft_textual;
          when ABM.MYSQL_TYPE_TINY_BLOB   |
               ABM.MYSQL_TYPE_BLOB        |
               ABM.MYSQL_TYPE_MEDIUM_BLOB |
@@ -679,12 +675,8 @@ package body AdaBase.Connection.Base.MySQL is
          when ABM.MYSQL_TYPE_NULL     => std_type := ft_textual;
       end case;
       case mytype is
-         when ABM.MYSQL_TYPE_BIT =>
-            case bestlen is
-               when 0 .. 1               => size := 0;
-               when others               => size := ((bestlen - 1) / 8) + 1;
-            end case;
-         when ABM.MYSQL_TYPE_TINY_BLOB   |
+         when ABM.MYSQL_TYPE_BIT         |
+              ABM.MYSQL_TYPE_TINY_BLOB   |
               ABM.MYSQL_TYPE_BLOB        |
               ABM.MYSQL_TYPE_MEDIUM_BLOB |
               ABM.MYSQL_TYPE_LONG_BLOB   |

@@ -4,6 +4,7 @@
 with Ada.Exceptions;
 with Ada.Calendar.Time_Zones;
 with Ada.Unchecked_Conversion;
+with Ada.Text_IO; use Ada.Text_IO;
 
 package body AdaBase.Statement.Base.MySQL is
 
@@ -720,16 +721,18 @@ package body AdaBase.Statement.Base.MySQL is
          row := convert (rptr);
          for F in 1 .. maxlen loop
             declare
+               use type ABM.enum_field_types;
+               colinfo  : column_info renames Stmt.column_info.Element (F);
                field    : ARF.Std_Field;
                last_one : constant Boolean := (F = maxlen);
-               heading  : constant String := CT.USS
-                 (Stmt.column_info.Element (Index => F).field_name);
+               heading  : constant String := CT.USS (colinfo.field_name);
+               mtype    : ABM.enum_field_types := colinfo.mysql_type;
                sz : constant Natural := field_lengths (F);
                EN : constant Boolean := row (F) = null;
                ST : constant String  := db_convert (row (F), sz);
                dvariant : ARF.Variant;
             begin
-               case Stmt.column_info.Element (Index => F).field_type is
+               case colinfo.field_type is
                   when ft_nbyte0 =>
                      dvariant := (datatype => ft_nbyte0, v00 => ST = "1");
                   when ft_nbyte1 =>
@@ -757,7 +760,14 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_real18 =>
                      dvariant := (datatype => ft_real18, v12 => convert (ST));
                   when ft_textual =>
-                     dvariant := (datatype => ft_textual, v13 => CT.SUS (ST));
+                     if mtype = ABM.MYSQL_TYPE_BIT then
+                        dvariant := (datatype => ft_textual,
+                                     v13 => convert_to_bitstring
+                                       (ST, colinfo.field_size));
+                     else
+                        dvariant := (datatype => ft_textual,
+                                     v13 => CT.SUS (ST));
+                     end if;
                   when ft_widetext =>
                      dvariant := (datatype => ft_widetext,
                                   v14 => convert (ST));
@@ -780,7 +790,7 @@ package body AdaBase.Statement.Base.MySQL is
                      null;
 
                end case;
-               case Stmt.column_info.Element (Index => F).field_type is
+               case colinfo.field_type is
                   when ft_chain =>
                      field := ARF.spawn_field (binob => ARC.convert (ST));
                   when ft_settype =>
@@ -893,16 +903,15 @@ package body AdaBase.Statement.Base.MySQL is
             declare
                use type ABM.enum_field_types;
                cv       : mysql_canvas renames Stmt.bind_canvas (F);
+               colinfo  : column_info renames Stmt.column_info.Element (F);
                dvariant : ARF.Variant;
                field    : ARF.Std_Field;
                last_one : constant Boolean := (F = maxlen);
                datalen  : constant Natural := Natural (cv.length);
-               heading  : constant String := CT.USS
-                 (Stmt.column_info.Element (Index => F).field_name);
-               mtype    : ABM.enum_field_types :=
-                 Stmt.column_info.Element (F).mysql_type;
+               heading  : constant String := CT.USS (colinfo.field_name);
+               mtype    : ABM.enum_field_types := colinfo.mysql_type;
             begin
-               case Stmt.column_info.Element (Index => F).field_type is
+               case colinfo.field_type is
                   when ft_nbyte0 =>
                      dvariant := (datatype => ft_nbyte0,
                                   v00 => Natural (cv.buffer_uint8) = 1);
@@ -959,9 +968,16 @@ package body AdaBase.Statement.Base.MySQL is
                                      v12 => AR.Real18 (cv.buffer_double));
                      end if;
                   when ft_textual =>
-                     dvariant := (datatype => ft_textual,
-                                  v13 => CT.SUS (bincopy (cv.buffer_binary,
-                                    datalen, Stmt.con_max_blob)));
+                     if mtype = ABM.MYSQL_TYPE_BIT then
+                        dvariant := (datatype => ft_textual,
+                                     v13 => convert_to_bitstring
+                                       (bincopy (cv.buffer_binary,
+                                        datalen, Stmt.con_max_blob), datalen));
+                     else
+                        dvariant := (datatype => ft_textual,
+                                     v13 => CT.SUS (bincopy (cv.buffer_binary,
+                                       datalen, Stmt.con_max_blob)));
+                     end if;
                   when ft_widetext =>
                      dvariant := (datatype => ft_widetext,
                                   v14 => convert (bincopy (cv.buffer_binary,
@@ -1011,7 +1027,7 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_settype => null;
                   when ft_chain => null;
                end case;
-               case Stmt.column_info.Element (Index => F).field_type is
+               case colinfo.field_type is
                   when ft_chain =>
                      field := ARF.spawn_field
                        (binob => bincopy (cv.buffer_binary, datalen,
@@ -1078,71 +1094,135 @@ package body AdaBase.Statement.Base.MySQL is
             declare
                use type ABM.enum_field_types;
                cv      : mysql_canvas renames Stmt.bind_canvas (F);
+               colinfo : column_info renames Stmt.column_info.Element (F);
+               param   : bindrec renames Stmt.crate.Element (F);
                datalen : constant Natural := Natural (cv.length);
-               Tout    : constant field_types :=
-                         Stmt.crate.Element (Index => F).output_type;
-               Tnative : constant field_types :=
-                         Stmt.column_info.Element (Index => F).field_type;
-               mtype   : ABM.enum_field_types :=
-                          Stmt.column_info.Element (F).mysql_type;
+               Tout    : constant field_types := param.output_type;
+               Tnative : constant field_types := colinfo.field_type;
+               mtype   : ABM.enum_field_types := colinfo.mysql_type;
+               errmsg  : constant String  := "native type : " &
+                         field_types'Image (Tnative) & " binding type : " &
+                         field_types'Image (Tout);
             begin
-               if Tnative /= Tout then
-                  raise BINDING_TYPE_MISMATCH with "native type : " &
-                    field_types'Image (Tnative) & " binding type : " &
-                    field_types'Image (Tout);
-               end if;
-               case Tnative is
-                  when ft_nbyte0 => Stmt.crate.Element (F).a00.all :=
-                       (Natural (cv.buffer_uint8) = 1);
-                  when ft_nbyte1 => Stmt.crate.Element (F).a01.all :=
-                       AR.NByte1 (cv.buffer_uint8);
-                  when ft_nbyte2 => Stmt.crate.Element (F).a02.all :=
-                       AR.NByte2 (cv.buffer_uint16);
-                  when ft_nbyte3 => Stmt.crate.Element (F).a03.all :=
-                       AR.NByte3 (cv.buffer_uint32);
-                  when ft_nbyte4 => Stmt.crate.Element (F).a04.all :=
-                       AR.NByte4 (cv.buffer_uint32);
-                  when ft_nbyte8 => Stmt.crate.Element (F).a05.all :=
-                       AR.NByte8 (cv.buffer_uint64);
-                  when ft_byte1 => Stmt.crate.Element (F).a06.all :=
-                       AR.Byte1 (cv.buffer_int8);
-                  when ft_byte2 => Stmt.crate.Element (F).a07.all :=
-                       AR.Byte2 (cv.buffer_int16);
-                  when ft_byte3 => Stmt.crate.Element (F).a08.all :=
-                       AR.Byte3 (cv.buffer_int32);
-                  when ft_byte4 => Stmt.crate.Element (F).a09.all :=
-                       AR.Byte4 (cv.buffer_int32);
-                  when ft_byte8 => Stmt.crate.Element (F).a10.all :=
-                       AR.Byte8 (cv.buffer_int64);
-                  when ft_real9 =>
+               --  Derivation of implementation taken from PostgreSQL
+               --  Only guaranteed successful converstions allowed though
+
+               case Tout is
+                  when ft_nbyte2 =>
+                     case Tnative is
+                        when ft_nbyte1 | ft_nbyte2 =>
+                           null;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_nbyte3 =>
+                     case Tnative is
+                        when ft_nbyte1 | ft_nbyte2 | ft_nbyte3 =>
+                           null;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_nbyte4 =>
+                     case Tnative is
+                        when ft_nbyte1 | ft_nbyte2 | ft_nbyte3 | ft_nbyte4 =>
+                           null;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_nbyte8 =>
+                     case Tnative is
+                        when ft_nbyte1 | ft_nbyte2 | ft_nbyte3 | ft_nbyte4 |
+                             ft_nbyte8 =>
+                           null;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_byte2 =>
+                     case Tnative is
+                        when ft_byte1 | ft_byte2 =>
+                           null;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_byte3 =>
+                     case Tnative is
+                        when ft_byte1 | ft_byte2 | ft_byte3 =>
+                           null;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_byte4 =>
+                     case Tnative is
+                        when ft_byte1 | ft_byte2 | ft_byte3 | ft_byte4 =>
+                           null;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_byte8 =>
+                     case Tnative is
+                        when ft_byte1 | ft_byte2 | ft_byte3 | ft_byte4 |
+                           ft_byte8 =>
+                           null;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_real18 =>
+                     case Tnative is
+                        when ft_real9 | ft_real18 =>
+                           null;  -- guaranteed to convert without loss
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when others =>
+                     if Tnative /= Tout then
+                        raise BINDING_TYPE_MISMATCH with errmsg;
+                     end if;
+               end case;
+
+               case Tout is
+                  when ft_nbyte0 => param.a00.all := (Natural (cv.buffer_uint8) = 1);
+                  when ft_nbyte1 => param.a01.all := AR.NByte1 (cv.buffer_uint8);
+                  when ft_nbyte2 => param.a02.all := AR.NByte2 (cv.buffer_uint16);
+                  when ft_nbyte3 => param.a03.all := AR.NByte3 (cv.buffer_uint32);
+                  when ft_nbyte4 => param.a04.all := AR.NByte4 (cv.buffer_uint32);
+                  when ft_nbyte8 => param.a05.all := AR.NByte8 (cv.buffer_uint64);
+                  when ft_byte1  => param.a06.all := AR.Byte1 (cv.buffer_int8);
+                  when ft_byte2  => param.a07.all := AR.Byte2 (cv.buffer_int16);
+                  when ft_byte3  => param.a08.all := AR.Byte3 (cv.buffer_int32);
+                  when ft_byte4  => param.a09.all := AR.Byte4 (cv.buffer_int32);
+                  when ft_byte8  => param.a10.all := AR.Byte8 (cv.buffer_int64);
+                  when ft_real9  =>
                      if mtype = ABM.MYSQL_TYPE_NEWDECIMAL or else
                        mtype = ABM.MYSQL_TYPE_DECIMAL
                      then
-                        Stmt.crate.Element (F).a11.all :=
-                          convert (bincopy (cv.buffer_binary, datalen,
-                                   Stmt.con_max_blob));
+                        param.a11.all := convert (bincopy (cv.buffer_binary,
+                                              datalen, Stmt.con_max_blob));
                      else
-                        Stmt.crate.Element (F).a11.all :=
-                          AR.Real9 (cv.buffer_float);
+                        param.a11.all := AR.Real9 (cv.buffer_float);
                      end if;
                   when ft_real18 =>
                      if mtype = ABM.MYSQL_TYPE_NEWDECIMAL or else
                        mtype = ABM.MYSQL_TYPE_DECIMAL
                      then
-                        Stmt.crate.Element (F).a12.all :=
-                          convert (bincopy (cv.buffer_binary, datalen,
-                                   Stmt.con_max_blob));
+                        param.a12.all := convert (bincopy (cv.buffer_binary,
+                                              datalen, Stmt.con_max_blob));
                      else
-                        Stmt.crate.Element (F).a12.all :=
-                          AR.Real18 (cv.buffer_double);
+                        param.a12.all := AR.Real18 (cv.buffer_double);
                      end if;
-                  when ft_textual => Stmt.crate.Element (F).a13.all :=
-                       CT.SUS (bincopy (cv.buffer_binary, datalen,
-                               Stmt.con_max_blob));
-                  when ft_widetext => Stmt.crate.Element (F).a14.all :=
+                  when ft_textual =>
+                     if mtype = ABM.MYSQL_TYPE_BIT then
+                        param.a13.all := convert_to_bitstring
+                          (bincopy (cv.buffer_binary, datalen,
+                           Stmt.con_max_blob), datalen);
+                     else
+                        param.a13.all :=
+                          CT.SUS (bincopy (cv.buffer_binary, datalen,
+                                  Stmt.con_max_blob));
+                     end if;
+                  when ft_widetext => param.a14.all :=
                        convert (bincopy (cv.buffer_binary, datalen,
                                 Stmt.con_max_blob));
-                  when ft_supertext => Stmt.crate.Element (F).a15.all :=
+                  when ft_supertext => param.a15.all :=
                        convert (bincopy (cv.buffer_binary, datalen,
                                 Stmt.con_max_blob));
                   when ft_timestamp =>
@@ -1166,28 +1246,27 @@ package body AdaBase.Statement.Base.MySQL is
                         then
                            day := CAL.Day_Number'First;
                         end if;
-                        Stmt.crate.Element (F).a16.all :=
-                          CFM.Time_Of
-                            (Year => year,
-                             Month => month,
-                             Day => day,
-                             Hour => Natural (cv.buffer_time.hour),
-                             Minute => Natural (cv.buffer_time.minute),
-                             Second => Natural (cv.buffer_time.second),
-                             Sub_Second => CFM.Second_Duration (Natural
-                               (cv.buffer_time.second_part) / 1000000));
+                        param.a16.all := CFM.Time_Of
+                          (Year => year,
+                           Month => month,
+                           Day => day,
+                           Hour => Natural (cv.buffer_time.hour),
+                           Minute => Natural (cv.buffer_time.minute),
+                           Second => Natural (cv.buffer_time.second),
+                           Sub_Second => CFM.Second_Duration (Natural
+                             (cv.buffer_time.second_part) / 1000000));
                      end;
                   when ft_chain =>
-                     if Stmt.crate.Element (F).a17.all'Length < datalen then
+                     if param.a17.all'Length < datalen then
                            raise BINDING_SIZE_MISMATCH with "native size : " &
-                             Stmt.crate.Element (F).a17.all'Length'Img &
+                             param.a17.all'Length'Img &
                              " less than binding size : " & datalen'Img;
                      end if;
-                     Stmt.crate.Element (F).a17.all := bincopy
+                     param.a17.all := bincopy
                        (cv.buffer_binary, datalen, Stmt.con_max_blob,
-                        Stmt.crate.Element (F).a17.all'Length);
+                        param.a17.all'Length);
                   when ft_enumtype =>
-                     Stmt.crate.Element (F).a18.all :=
+                     param.a18.all :=
                        ARC.convert (CT.SUS (bincopy (cv.buffer_binary, datalen,
                                 Stmt.con_max_blob)));
                   when ft_settype =>
@@ -1196,14 +1275,14 @@ package body AdaBase.Statement.Base.MySQL is
                           (cv.buffer_binary, datalen, Stmt.con_max_blob);
                         num_items : constant Natural := num_set_items (setstr);
                      begin
-                        if Stmt.crate.Element (F).a19.all'Length < num_items
+                        if param.a19.all'Length < num_items
                         then
                            raise BINDING_SIZE_MISMATCH with "native size : " &
-                             Stmt.crate.Element (F).a19.all'Length'Img &
+                             param.a19.all'Length'Img &
                              " less than binding size : " & num_items'Img;
                         end if;
-                        Stmt.crate.Element (F).a19.all := ARC.convert
-                          (setstr, Stmt.crate.Element (F).a19.all'Length);
+                        param.a19.all := ARC.convert (setstr,
+                                                      param.a19.all'Length);
                      end;
                end case;
             end;
@@ -1271,24 +1350,99 @@ package body AdaBase.Statement.Base.MySQL is
          row := Convert (rptr);
          for F in 1 .. maxlen loop
             declare
+               use type ABM.enum_field_types;
                dossier  : bindrec renames Stmt.crate.Element (F);
                colinfo  : column_info renames Stmt.column_info.Element (F);
+               mtype    : ABM.enum_field_types := colinfo.mysql_type;
                sz : constant Natural := field_lengths (F);
                EN : constant Boolean := row (F) = null;
                ST : constant String  := db_convert (row (F), sz);
 
                Tout    : constant field_types := dossier.output_type;
                Tnative : constant field_types := colinfo.field_type;
+               errmsg  : constant String  := "native type : " &
+                         field_types'Image (Tnative) & " binding type : " &
+                         field_types'Image (Tout);
             begin
                if not dossier.bound then
                   goto continue;
                end if;
 
-               if Tnative /= Tout then
-                  raise BINDING_TYPE_MISMATCH with "native type : " &
-                    field_types'Image (Tnative) & " binding type : " &
-                    field_types'Image (Tout);
-               end if;
+               --  Derivation of implementation taken from PostgreSQL
+               --  Only guaranteed successful converstions allowed though
+
+               case Tout is
+                  when ft_nbyte2 =>
+                     case Tnative is
+                        when ft_nbyte1 | ft_nbyte2 =>
+                           null;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_nbyte3 =>
+                     case Tnative is
+                        when ft_nbyte1 | ft_nbyte2 | ft_nbyte3 =>
+                           null;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_nbyte4 =>
+                     case Tnative is
+                        when ft_nbyte1 | ft_nbyte2 | ft_nbyte3 | ft_nbyte4 =>
+                           null;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_nbyte8 =>
+                     case Tnative is
+                        when ft_nbyte1 | ft_nbyte2 | ft_nbyte3 | ft_nbyte4 |
+                             ft_nbyte8 =>
+                           null;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_byte2 =>
+                     case Tnative is
+                        when ft_byte1 | ft_byte2 =>
+                           null;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_byte3 =>
+                     case Tnative is
+                        when ft_byte1 | ft_byte2 | ft_byte3 =>
+                           null;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_byte4 =>
+                     case Tnative is
+                        when ft_byte1 | ft_byte2 | ft_byte3 | ft_byte4 =>
+                           null;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_byte8 =>
+                     case Tnative is
+                        when ft_byte1 | ft_byte2 | ft_byte3 | ft_byte4 |
+                           ft_byte8 =>
+                           null;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_real18 =>
+                     case Tnative is
+                        when ft_real9 | ft_real18 =>
+                           null;  -- guaranteed to convert without loss
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when others =>
+                     if Tnative /= Tout then
+                        raise BINDING_TYPE_MISMATCH with errmsg;
+                     end if;
+               end case;
+
                case Tnative is
                   when ft_nbyte0    => dossier.a00.all := (ST = "1");
                   when ft_nbyte1    => dossier.a01.all := convert (ST);
@@ -1303,10 +1457,16 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_byte8     => dossier.a10.all := convert (ST);
                   when ft_real9     => dossier.a11.all := convert (ST);
                   when ft_real18    => dossier.a12.all := convert (ST);
-                  when ft_textual   => dossier.a13.all := CT.SUS (ST);
                   when ft_widetext  => dossier.a14.all := convert (ST);
                   when ft_supertext => dossier.a15.all := convert (ST);
                   when ft_enumtype  => dossier.a18.all := ARC.convert (ST);
+                  when ft_textual   =>
+                     if mtype = ABM.MYSQL_TYPE_BIT then
+                        dossier.a13.all := convert_to_bitstring
+                          (ST, colinfo.field_size);
+                     else
+                        dossier.a13.all := CT.SUS (ST);
+                     end if;
                   when ft_timestamp =>
                      begin
                         dossier.a16.all := ARC.convert (ST);
@@ -1820,6 +1980,40 @@ package body AdaBase.Statement.Base.MySQL is
       end if;
       return result;
    end num_set_items;
+
+
+   ----------------------------
+   --  convert_to_bitstring  --
+   ----------------------------
+   function convert_to_bitstring (nv : String; width : Natural) return CT.Text
+   is
+      use type AR.NByte1;
+      result : String (1 .. width * 8) := (others => '0');
+      marker : Natural;
+      lode   : AR.NByte1;
+      mask   : constant array (0 .. 7) of AR.NByte1 := (2 ** 0, 2 ** 1,
+                                                        2 ** 2, 2 ** 3,
+                                                        2 ** 4, 2 ** 5,
+                                                        2 ** 6, 2 ** 7);
+   begin
+      --  We can't seem to get the true size, e.g 12 bits shows as 2,
+      --  for two bytes, which could represent up to 16 bits.  Thus, we
+      --  return a variable width in multiples of 8.  MySQL doesn't mind
+      --  leading zeros.
+
+      marker := 1 + (width - nv'Length) * 8;
+
+      for x in nv'Range loop
+         for position in 0 .. 7 loop
+            lode := AR.NByte1 (Character'Pos (nv (x)));
+            if (lode and mask (position)) > 0 then
+               result (marker + 7 - position) := '1';
+            end if;
+         end loop;
+         marker := marker + 8;
+      end loop;
+      return CT.SUS (result);
+   end convert_to_bitstring;
 
 
 end AdaBase.Statement.Base.MySQL;
