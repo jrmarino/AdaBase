@@ -82,6 +82,18 @@ end Wipe_Out;
 </pre>
 <p class="caption">Output using the SQLite driver</p>
 <br/>
+<pre class="output">
+2016-05-25 17:39:24    pgsql :       Connect : Connection to adabase_examples database succeeded.
+NOTICE:  table "breakfast" does not exist, skipping
+2016-05-25 17:39:24    pgsql :       Execute : DROP TABLE IF EXISTS breakfast CASCADE
+2016-05-25 17:39:24    pgsql :       Execute : CREATE TABLE breakfast AS SELECT id, fruit FROM fruits
+2016-05-25 17:39:24    pgsql :       Execute : TRUNCATE breakfast
+2016-05-25 17:39:24    pgsql :       Execute : DROP TABLE breakfast
+2016-05-25 17:39:24    pgsql :   Transaction : END TRANSACTION (COMMIT)
+2016-05-25 17:39:24    pgsql :    Disconnect : Disconnect From database
+</pre>
+<p class="caption">Output using the PostgreSQL driver</p>
+<br/>
 <p>{{ page.supported_drivers }}</p>
 </div>
 <div class="sidenav">
