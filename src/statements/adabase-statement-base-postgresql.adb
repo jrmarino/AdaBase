@@ -930,6 +930,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
             --  to create variations of driver.commit and driver.rollback
             conn.destroy_later (Object.identifier);
          end if;
+         conn.discard_pgresult (Object.prepared_stmt);
       end if;
 
       if Object.sql_final /= null then
