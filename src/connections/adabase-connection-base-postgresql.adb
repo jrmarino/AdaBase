@@ -1328,6 +1328,50 @@ package body AdaBase.Connection.Base.PostgreSQL is
    end field_binary;
 
 
+   --------------------
+   --  field_chain  --
+   --------------------
+   function field_chain  (conn : PostgreSQL_Connection;
+                          res  : BND.PGresult_Access;
+                          row_number    : Natural;
+                          column_number : Natural;
+                          max_length    : Natural) return String
+   is
+      raw      : String := conn.field_string (res, row_number, column_number);
+      staged   : String (1 .. raw'Length) := (others => '_');
+      arrow    : Natural := raw'First;
+      terminus : Natural := raw'Last;
+      marker   : Natural := 0;
+   begin
+      if CT.IsBlank (raw) then
+         return "";
+      end if;
+
+      loop
+         marker := marker + 1;
+         if raw (arrow) = ASCII.Back_Slash then
+            if arrow + 3 > terminus then
+               --  format error!  Should never happen
+               --  replace with zero and eject
+               staged (marker) := Character'Val (0);
+               exit;
+            end if;
+            declare
+               myoct : constant octet := raw (arrow + 1 .. arrow + 3);
+            begin
+               staged (marker) := convert_octet_to_char (myoct);
+            end;
+         else
+            staged (marker) := raw (arrow);
+         end if;
+         arrow := arrow + 1;
+         exit when arrow > terminus;
+         exit when marker = max_length;
+      end loop;
+      return staged (1 .. marker);
+   end field_chain;
+
+
    ---------------------
    --  markers_found  --
    ---------------------
@@ -1471,6 +1515,31 @@ package body AdaBase.Connection.Base.PostgreSQL is
    begin
       conn.stmts_to_destroy.Append (New_Item => identifier);
    end destroy_later;
+
+
+   -----------------------------
+   --  convert_octet_to_char  --
+   -----------------------------
+   function convert_octet_to_char (before : octet) return Character
+   is
+      function digit (raw : Character) return Natural;
+
+      --  This convert function does no error checking, it expects to receive
+      --  valid octal numbers.  It will no throw an error if illegal
+      --  characters are found, but rather it will return something value.
+
+      function digit (raw : Character) return Natural is
+      begin
+         case raw is
+            when '0' .. '7' => return Character'Pos (raw) - 48;
+            when others     => return 0;
+         end case;
+      end digit;
+   begin
+      return Character'Val (digit (before (3)) +
+                            digit (before (2)) * 8 +
+                            digit (before (1)) * 64);
+   end convert_octet_to_char;
 
 
 end AdaBase.Connection.Base.PostgreSQL;

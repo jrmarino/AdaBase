@@ -176,6 +176,12 @@ package AdaBase.Connection.Base.PostgreSQL is
                            column_number : Natural;
                            max_length    : Natural) return String;
 
+   function field_chain   (conn : PostgreSQL_Connection;
+                           res  : BND.PGresult_Access;
+                           row_number    : Natural;
+                           column_number : Natural;
+                           max_length    : Natural) return String;
+
    function driverMessage (conn : PostgreSQL_Connection;
                            res  : BND.PGresult_Access) return String;
 
@@ -267,6 +273,9 @@ private
       stmts_to_destroy  : stmt_vector.Vector;
    end record;
 
+   subtype octet is String (1 .. 3);
+
+   function convert_octet_to_char (before : octet) return Character;
    function is_ipv4_or_ipv6 (teststr : String) return Boolean;
    function convert_version (pgsql_version : Natural) return CT.Text;
    function get_library_version return Natural;

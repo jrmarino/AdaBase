@@ -404,8 +404,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
          col_num : constant Natural := column - 1;
       begin
          if binary then
-            return conn.field_binary (Stmt.result_handle, row_num, col_num,
-                                      Stmt.con_max_blob);
+            return conn.field_chain (Stmt.result_handle, row_num, col_num,
+                                     Stmt.con_max_blob);
          else
             return conn.field_string (Stmt.result_handle, row_num, col_num);
          end if;
@@ -825,8 +825,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
             info.field_name    := fn (name);
             info.table         := fn (table);
             info.field_type    := conn.field_type (pgresult, index);
-            info.binary_format :=
-              conn.field_data_is_binary (pgresult, index);
+            info.binary_format := info.field_type = ft_chain;
             Stmt.column_info.Append (New_Item => info);
             --  The following pre-populates for bind support
             Stmt.crate.Append (New_Item => brec);
@@ -934,7 +933,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
 
 
    ------------------------
-   --  assembly_datarow  --
+   --  assemble_datarow  --
    ------------------------
    function assemble_datarow (Stmt : PostgreSQL_statement;
                               row_number : Trax_ID) return ARS.Datarow
