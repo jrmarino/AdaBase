@@ -103,11 +103,14 @@ package body AdaBase.Driver.Base.PostgreSQL is
       vanilla   : String := assembly_common_select
         (distinct, tables, columns, conditions, groupby, having, order);
    begin
-      case null_sort is
-         when native      => rockyroad := CT.SUS (vanilla);
-         when nulls_first => rockyroad := CT.SUS (vanilla & " NULLS FIRST");
-         when nulls_last  => rockyroad := CT.SUS (vanilla & " NULLS LAST");
-      end case;
+      rockyroad := CT.SUS (vanilla);
+      if not CT.IsBlank (order) and then null_sort /= native then
+         case null_sort is
+            when native      => null;
+            when nulls_first => CT.SU.Append (rockyroad, " NULLS FIRST");
+            when nulls_last  => CT.SU.Append (rockyroad, " NULLS LAST");
+         end case;
+      end if;
       if limit > 0 then
          if offset > 0 then
             return CT.USS (rockyroad) & " LIMIT" & limit'Img &
