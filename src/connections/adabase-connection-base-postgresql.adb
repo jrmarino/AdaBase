@@ -1427,36 +1427,20 @@ package body AdaBase.Connection.Base.PostgreSQL is
          datalen := CT.len (data (x).payload);
          paramLengths (x) := BND.IC.int (datalen);
 
-         if data (x).binary then
-            paramFormats (x) := BND.IC.int (1);
-            if data (x).is_null then
-               need_free (x) := False;
-               paramValues (x).buffer := null;
-            else
-               need_free (x) := True;
-               declare
-                  Str : constant String := CT.USS (data (x).payload);
-                  bsz : BND.IC.size_t := BND.IC.size_t (datalen);
-               begin
-                  paramValues (x).buffer := new BND.IC.char_array (1 .. bsz);
-                  paramValues (x).buffer.all := BND.IC.To_C (Str, False);
-               end;
-            end if;
+         --  By policy, binary format is never used
+         paramFormats (x) := BND.IC.int (0);
+         if data (x).is_null then
+            need_free (x) := False;
+            paramValues (x).buffer := null;
          else
-            paramFormats (x) := BND.IC.int (0);
-            if data (x).is_null then
-               need_free (x) := False;
-               paramValues (x).buffer := null;
-            else
-               declare
-                  use type BND.IC.size_t;
-                  Str : constant String := CT.USS (data (x).payload);
-                  bsz : BND.IC.size_t := BND.IC.size_t (datalen) + 1;
-               begin
-                  paramValues (x).buffer := new BND.IC.char_array (1 .. bsz);
-                  paramValues (x).buffer.all := BND.IC.To_C (Str, True);
-               end;
-            end if;
+            declare
+               use type BND.IC.size_t;
+               Str : constant String := CT.USS (data (x).payload);
+               bsz : BND.IC.size_t := BND.IC.size_t (datalen) + 1;
+            begin
+               paramValues (x).buffer := new BND.IC.char_array (1 .. bsz);
+               paramValues (x).buffer.all := BND.IC.To_C (Str, True);
+            end;
          end if;
       end loop;
 

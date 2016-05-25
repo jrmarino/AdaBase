@@ -22,7 +22,6 @@ package AdaBase.Connection.Base.PostgreSQL is
 
    type param_unit is record
       payload : AR.Textual;
-      binary  : Boolean;
       is_null : Boolean;
    end record;
    type parameter_block is array (Positive range <>) of param_unit;
