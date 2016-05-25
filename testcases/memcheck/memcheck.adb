@@ -45,6 +45,13 @@ begin
       testnumber := Integer'Value (CLI.Argument (2));
    end if;
 
+   --  PostgreSQL driver keeps track of all the query names waiting for
+   --  the transaction to end, but it never does so the storage vector
+   --  keeps building.  We can either set autocommit=on or command a
+   --  commit after each cycle (one prevents memory from getting used,
+   --  the other constantly reclaims it.  The end result is the same)
+   CON.DR.set_trait_autocommit (True);
+
    CON.connect_database;
 
    for x in Integer range 1 .. cycles loop
