@@ -138,7 +138,6 @@ private
 
    function show_statement_name (Stmt : PostgreSQL_statement) return String;
 
-   function convert_to_pg_style_binary (nv : AR.Chain) return AR.Textual;
    function bind_text_value (Stmt : PostgreSQL_statement; marker : Positive)
                              return AR.Textual;
 

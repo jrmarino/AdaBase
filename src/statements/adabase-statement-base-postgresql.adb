@@ -165,6 +165,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
             for x in canvas'Range loop
                canvas (x).payload := Stmt.bind_text_value (x);
                canvas (x).is_null := Stmt.realmccoy.Element (x).null_data;
+               canvas (x).binary  := Stmt.realmccoy.Element (x).output_type =
+                                     ft_chain;
             end loop;
             Stmt.log_nominal (statement_execution, msg);
 
@@ -1196,9 +1198,9 @@ package body AdaBase.Statement.Base.PostgreSQL is
             end if;
          when ft_chain =>
             if zone.a17 = null then
-               hold := convert_to_pg_style_binary (ARC.convert (zone.v17));
+               hold := zone.v17;
             else
-               hold := convert_to_pg_style_binary (zone.a17.all);
+               hold := ARC.convert (zone.a17.all);
             end if;
          when ft_enumtype =>
             if zone.a18 = null then
@@ -1215,48 +1217,5 @@ package body AdaBase.Statement.Base.PostgreSQL is
       end case;
       return hold;
    end bind_text_value;
-
-
-   ----------------------------------
-   --  convert_to_pg_style_binary  --
-   ----------------------------------
-   function convert_to_pg_style_binary (nv : AR.Chain) return AR.Textual
-   is
-      type halfbyte is mod 2 ** 4;
-      function to_hex (bite : AR.NByte1) return String;
-      function to_hex (halfbite : halfbyte) return Character;
-
-      function to_hex (halfbite : halfbyte) return Character
-      is
-         code : Integer;
-      begin
-         case halfbite is
-            when  0 ..  9 => code := Character'Pos ('0') + Integer (halfbite);
-            when 10 .. 15 => code := Character'Pos ('A') + Integer (halfbite)
-                                     - 10;
-         end case;
-         return Character'Val (code);
-      end to_hex;
-
-      function to_hex (bite : AR.NByte1) return String
-      is
-         use type AR.NByte1;
-         product : String := "00";
-      begin
-         product (2) := to_hex (halfbite => halfbyte (bite and 16#F#));
-         product (1) := to_hex (halfbite => halfbyte (bite / 16));
-         return product;
-      end to_hex;
-
-      len     : constant Natural := 2 + (nv'Length * 2);
-      payload : String (1 .. len) := (1 => '/', 2 => 'x', others => '0');
-      marker  : Natural := 3;
-   begin
-      for x in nv'Range loop
-         payload (marker .. marker + 1) := to_hex (nv (x));
-         marker := marker + 2;
-      end loop;
-      return CT.SUS (payload);
-   end convert_to_pg_style_binary;
 
 end AdaBase.Statement.Base.PostgreSQL;
