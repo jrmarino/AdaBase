@@ -512,6 +512,49 @@ package body AdaBase.Statement.Base.PostgreSQL is
                         when others =>
                            raise BINDING_TYPE_MISMATCH with errmsg;
                      end case;
+                  when ft_byte1 =>
+                     case Tnative is
+                        when ft_byte2 =>
+                           null;  -- smallest poss. type (could fail to conv)
+                        when ft_byte1 =>
+                           null;  -- guaranteed to convert but impossible case
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_byte3 =>
+                     case Tnative is
+                        when ft_byte4 =>
+                           null;  -- smallest poss. type (could fail to conv)
+                        when ft_byte1 | ft_byte2 | ft_byte3 =>
+                           null;  -- guaranteed to convert (1/3 imposs.)
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_real18 =>
+                     case Tnative is
+                        when ft_real9 | ft_real18 =>
+                           null;  -- guaranteed to convert without loss
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_textual =>
+                     case Tnative is
+                        when ft_settype =>
+                           null;  --  No support for Sets in pgsql, conv->str
+                        when ft_textual | ft_widetext | ft_supertext =>
+                           null;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_settype =>
+                     case Tnative is
+                        when ft_textual =>
+                           null; --  No support for Sets in pgsql, conv->set
+                        when ft_settype =>
+                           null; --  impossible
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
                   when others =>
                      if Tnative /= Tout then
                         raise BINDING_TYPE_MISMATCH with errmsg;
