@@ -702,7 +702,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
          then
             Object.stmt_allocated := True;
             Object.log_nominal (category => logcat,
-                                message  => Object.sql_final.all);
+                                message  => stmt_name & " - " &
+                                            Object.sql_final.all);
          else
             Object.log_problem (statement_preparation,
                                 conn.driverMessage (Object.prepared_stmt));
@@ -724,6 +725,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
             params := conn.markers_found (hold_result);
             conn.discard_pgresult (hold_result);
          else
+            conn.discard_pgresult (hold_result);
             Object.log_problem (statement_preparation,
                                 conn.driverMessage (hold_result));
             Object.log_problem
@@ -863,7 +865,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
       logger_access.all.log_problem
           (driver     => statement.dialect,
            category   => category,
-           message    => CT.SUS (message),
+           message    => CT.SUS ("PROBLEM: " & message),
            error_msg  => error_msg,
            error_code => error_code,
            sqlstate   => sqlstate,
@@ -1064,7 +1066,10 @@ package body AdaBase.Statement.Base.PostgreSQL is
    ---------------------------
    function show_statement_name (Stmt : PostgreSQL_statement) return String is
    begin
-      return "AdaBase_" & CT.trim (Stmt.identifier'Img);
+      --  This is not documented, but the name has to be all lower case.
+      --  This nugget was responsible for hours of tracking down
+      --  prepared statement deallocation errors.
+      return "adabase_" & CT.trim (Stmt.identifier'Img);
    end show_statement_name;
 
 
