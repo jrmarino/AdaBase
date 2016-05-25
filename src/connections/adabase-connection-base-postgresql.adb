@@ -1337,35 +1337,34 @@ package body AdaBase.Connection.Base.PostgreSQL is
                           column_number : Natural;
                           max_length    : Natural) return String
    is
+      --  raw expected in format "/x[hex-byte][hex-byte]...[hex-byte]"
       raw      : String := conn.field_string (res, row_number, column_number);
-      staged   : String (1 .. raw'Length) := (others => '_');
+      maxlen   : Natural := raw'Length / 2;
+      staged   : String (1 .. maxlen) := (others => '_');
       arrow    : Natural := raw'First;
       terminus : Natural := raw'Last;
       marker   : Natural := 0;
    begin
-      if CT.IsBlank (raw) then
+      if CT.len (raw) < 4 then
          return "";
       end if;
 
+      arrow := arrow + 2;   --  skip past "/x"
+
       loop
          marker := marker + 1;
-         if raw (arrow) = ASCII.Back_Slash then
-            if arrow + 3 > terminus then
-               --  format error!  Should never happen
-               --  replace with zero and eject
+         if arrow + 1 > terminus then
+            --  format error!  Odd length should never happen
+            --  replace with zero and eject
                staged (marker) := Character'Val (0);
-               exit;
-            end if;
-            declare
-               myoct : constant octet := raw (arrow + 1 .. arrow + 3);
-            begin
-               staged (marker) := convert_octet_to_char (myoct);
-               arrow := arrow + 4;
-            end;
-         else
-            staged (marker) := raw (arrow);
-            arrow := arrow + 1;
+            exit;
          end if;
+         declare
+            hex : constant hexbyte := raw (arrow .. arrow + 1);
+         begin
+            staged (marker) := convert_hexbyte_to_char (hex);
+            arrow := arrow + 2;
+         end;
          exit when arrow > terminus;
          exit when marker = max_length;
       end loop;
@@ -1541,6 +1540,35 @@ package body AdaBase.Connection.Base.PostgreSQL is
                             digit (before (2)) * 8 +
                             digit (before (1)) * 64);
    end convert_octet_to_char;
+
+
+   -------------------------------
+   --  convert_hexbyte_to_char  --
+   -------------------------------
+   function convert_hexbyte_to_char (before : hexbyte) return Character
+   is
+      function digit (raw : Character) return Natural;
+
+      --  This convert function does no error checking, it expects to receive
+      --  valid octal numbers.  It will no throw an error if illegal
+      --  characters are found, but rather it will return something value.
+
+      function digit (raw : Character) return Natural is
+      begin
+         case raw is
+            when '0' .. '9' => return Character'Pos (raw) -
+                                      Character'Pos ('0');
+            when 'A' .. 'F' => return Character'Pos (raw) + 10 -
+                                      Character'Pos ('A');
+            when 'a' .. 'f' => return Character'Pos (raw) + 10 -
+                                      Character'Pos ('a');
+            when others     => return 0;
+         end case;
+      end digit;
+   begin
+      return Character'Val (digit (before (2)) +
+                            digit (before (1)) * 16);
+   end convert_hexbyte_to_char;
 
 
 end AdaBase.Connection.Base.PostgreSQL;

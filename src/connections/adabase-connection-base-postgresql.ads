@@ -274,8 +274,10 @@ private
    end record;
 
    subtype octet is String (1 .. 3);
+   subtype hexbyte is String (1 .. 2);
 
    function convert_octet_to_char (before : octet) return Character;
+   function convert_hexbyte_to_char (before : hexbyte) return Character;
    function is_ipv4_or_ipv6 (teststr : String) return Boolean;
    function convert_version (pgsql_version : Natural) return CT.Text;
    function get_library_version return Natural;
