@@ -953,8 +953,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
          col_num : constant Natural := column - 1;
       begin
          if binary then
-            return conn.field_binary (Stmt.result_handle, row_num, col_num,
-                                      Stmt.con_max_blob);
+            return conn.field_chain (Stmt.result_handle, row_num, col_num,
+                                     Stmt.con_max_blob);
          else
             return conn.field_string (Stmt.result_handle, row_num, col_num);
          end if;
