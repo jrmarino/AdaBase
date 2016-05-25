@@ -1360,11 +1360,12 @@ package body AdaBase.Connection.Base.PostgreSQL is
                myoct : constant octet := raw (arrow + 1 .. arrow + 3);
             begin
                staged (marker) := convert_octet_to_char (myoct);
+               arrow := arrow + 4;
             end;
          else
             staged (marker) := raw (arrow);
+            arrow := arrow + 1;
          end if;
-         arrow := arrow + 1;
          exit when arrow > terminus;
          exit when marker = max_length;
       end loop;
