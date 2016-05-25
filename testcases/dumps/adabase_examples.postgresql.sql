@@ -30,6 +30,20 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 SET search_path = public, pg_catalog;
 
 --
+-- Name: colors; Type: TYPE; Schema: public; Owner: adabaser
+--
+
+CREATE TYPE colors AS ENUM (
+    'red',
+    'green',
+    'blue',
+    'pink'
+);
+
+
+ALTER TYPE colors OWNER TO adabaser;
+
+--
 -- Name: nbyte2; Type: DOMAIN; Schema: public; Owner: adabaser
 --
 
@@ -55,6 +69,71 @@ ALTER TYPE schedule_status OWNER TO adabaser;
 SET default_tablespace = '';
 
 SET default_with_oids = false;
+
+--
+-- Name: all_types; Type: TABLE; Schema: public; Owner: adabaser
+--
+
+CREATE TABLE all_types (
+    id_nbyte3 integer NOT NULL,
+    nbyte0 boolean NOT NULL,
+    nbyte1 smallint NOT NULL,
+    nbyte2 integer,
+    nbyte4 bigint,
+    nbyte8 bigint NOT NULL,
+    byte1 smallint,
+    byte2 smallint NOT NULL,
+    byte3 integer,
+    byte4 integer,
+    byte5 bigint,
+    real9 real NOT NULL,
+    real18 double precision NOT NULL,
+    exact_decimal numeric(5,2) NOT NULL,
+    bit_type bit(12),
+    my_date date NOT NULL,
+    my_datetime timestamp without time zone,
+    my_timestamp timestamp without time zone DEFAULT timezone('utc'::text, now()),
+    my_time time without time zone NOT NULL,
+    my_year smallint NOT NULL,
+    fixed_string character(16),
+    variable_string character varying(50),
+    my_tinytext text NOT NULL,
+    my_text text,
+    my_mediumtext text,
+    my_longtext text,
+    my_binary bytea,
+    my_varbinary bytea NOT NULL,
+    my_tinyblob bytea,
+    my_mediumblob bytea,
+    my_blob bytea NOT NULL,
+    my_longblob bytea,
+    enumtype colors NOT NULL,
+    settype text NOT NULL
+);
+
+
+ALTER TABLE all_types OWNER TO adabaser;
+
+--
+-- Name: all_types_id_nbyte3_seq; Type: SEQUENCE; Schema: public; Owner: adabaser
+--
+
+CREATE SEQUENCE all_types_id_nbyte3_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE all_types_id_nbyte3_seq OWNER TO adabaser;
+
+--
+-- Name: all_types_id_nbyte3_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: adabaser
+--
+
+ALTER SEQUENCE all_types_id_nbyte3_seq OWNED BY all_types.id_nbyte3;
+
 
 --
 -- Name: fruits; Type: TABLE; Schema: public; Owner: adabaser
@@ -126,10 +205,33 @@ CREATE TABLE nhl_teams (
 ALTER TABLE nhl_teams OWNER TO adabaser;
 
 --
+-- Name: id_nbyte3; Type: DEFAULT; Schema: public; Owner: adabaser
+--
+
+ALTER TABLE ONLY all_types ALTER COLUMN id_nbyte3 SET DEFAULT nextval('all_types_id_nbyte3_seq'::regclass);
+
+
+--
 -- Name: id; Type: DEFAULT; Schema: public; Owner: adabaser
 --
 
 ALTER TABLE ONLY fruits ALTER COLUMN id SET DEFAULT nextval('fruits_id_seq'::regclass);
+
+
+--
+-- Data for Name: all_types; Type: TABLE DATA; Schema: public; Owner: adabaser
+--
+
+COPY all_types (id_nbyte3, nbyte0, nbyte1, nbyte2, nbyte4, nbyte8, byte1, byte2, byte3, byte4, byte5, real9, real18, exact_decimal, bit_type, my_date, my_datetime, my_timestamp, my_time, my_year, fixed_string, variable_string, my_tinytext, my_text, my_mediumtext, my_longtext, my_binary, my_varbinary, my_tinyblob, my_mediumblob, my_blob, my_longblob, enumtype, settype) FROM stdin;
+1	t	129	33000	2200000000	6600000000	-120	-30000	8000000	-2000000000	-7700000000	7.98400021	53.1234234342299985	123.45	110010010011	1993-01-15	1972-08-01 08:00:05	2016-05-03 20:17:51	04:30:02	1988	ABCD1234EFGH5678	The quick brown fox jumped over the lazy dogs	You're going to need a bigger boat.	Take your stinkin' paws off me, you damn dirty ape!	Toto, I've a feeling we're not in Kansas anymore.	I ate his liver with some fava beans and a nice chianti.	\\x61242625	\\x646f67	\\x61626364656667	\\x31323334282a265e233d3d	\\x5b6060603b5e255e2631323340233132	\\x6a61736f6e2e626f75726e65	red	blue,black,white,yellow
+\.
+
+
+--
+-- Name: all_types_id_nbyte3_seq; Type: SEQUENCE SET; Schema: public; Owner: adabaser
+--
+
+SELECT pg_catalog.setval('all_types_id_nbyte3_seq', 1, false);
 
 
 --
@@ -456,6 +558,14 @@ COPY nhl_teams (team_id, abbreviation, city, mascot) FROM stdin;
 30	SJ	San Jose	Sharks
 31	WIN	Winnepeg	Jets
 \.
+
+
+--
+-- Name: all_types_pkey; Type: CONSTRAINT; Schema: public; Owner: adabaser
+--
+
+ALTER TABLE ONLY all_types
+    ADD CONSTRAINT all_types_pkey PRIMARY KEY (id_nbyte3);
 
 
 --
