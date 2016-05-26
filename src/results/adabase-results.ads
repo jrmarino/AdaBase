@@ -2,7 +2,7 @@
 --  Reference: ../../License.txt
 
 with CommonText;
-with Ada.Calendar;
+with Ada.Calendar.Formatting;
 with Ada.Strings.Wide_Unbounded;
 with Ada.Strings.Wide_Wide_Unbounded;
 
@@ -10,6 +10,7 @@ package AdaBase.Results is
 
    package CT   renames CommonText;
    package AC   renames Ada.Calendar;
+   package ACF  renames Ada.Calendar.Formatting;
    package SUW  renames Ada.Strings.Wide_Unbounded;
    package SUWW renames Ada.Strings.Wide_Wide_Unbounded;
 
@@ -94,8 +95,13 @@ package AdaBase.Results is
    PARAM_IS_TEXTUAL   : constant Textual := Blank_String;
    PARAM_IS_TEXTWIDE  : constant Textwide := Blank_WString;
    PARAM_IS_TEXTSUPER : constant Textsuper := Blank_WWString;
-   PARAM_IS_TIMESTAMP : constant AC.Time := AC.Time_Of (AC.Year_Number'First,
-                                                        AC.Month_Number'First,
-                                                        AC.Day_Number'First);
+   PARAM_IS_TIMESTAMP : constant AC.Time :=
+                        ACF.Time_Of (Year       => AC.Year_Number'First,
+                                     Month      => AC.Month_Number'First,
+                                     Day        => AC.Day_Number'First,
+                                     Hour       => ACF.Hour_Number'First,
+                                     Minute     => ACF.Minute_Number'First,
+                                     Second     => ACF.Second_Number'First,
+                                     Sub_Second => ACF.Second_Duration'First);
 
 end AdaBase.Results;

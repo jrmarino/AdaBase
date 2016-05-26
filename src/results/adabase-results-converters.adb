@@ -3,7 +3,6 @@
 
 with Ada.Strings;
 with Ada.Characters.Conversions;
-with Ada.Calendar.Formatting;
 with Interfaces;
 with System;
 
@@ -11,7 +10,6 @@ package body AdaBase.Results.Converters is
 
    package AS  renames Ada.Strings;
    package ACC renames Ada.Characters.Conversions;
-   package ACF renames Ada.Calendar.Formatting;
    package BIT renames Interfaces;
 
    use type System.Bit_Order;
