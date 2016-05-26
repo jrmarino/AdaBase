@@ -659,14 +659,13 @@ package body AdaBase.Connection.Base.SQLite is
                            stmt  : BND.sqlite3_stmt_Access;
                            index : Natural) return Boolean
    is
-      --  use type BND.enum_field_types;
+      use type BND.IC.int;
       result    : BND.IC.int;
       col_index : constant BND.IC.int := BND.IC.int (index);
-      null_type : constant Natural :=
-                  BND.enum_field_types'Pos (BND.SQLITE_NULL);
+      null_type : BND.IC.int := 5;  --  enum_field_types : SQLITE_NULL => 5
    begin
       result := BND.sqlite3_column_type (stmt, col_index);
-      return (Natural (result) = null_type);
+      return (result = null_type);
    end field_is_null;
 
 

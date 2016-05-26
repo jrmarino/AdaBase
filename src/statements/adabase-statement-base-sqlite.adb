@@ -500,8 +500,7 @@ package body AdaBase.Statement.Base.SQLite is
                dvariant : ARF.Variant;
                scol     : constant Natural := F - 1;
                last_one : constant Boolean := (F = maxlen);
-               heading  : constant String := CT.USS
-                          (Stmt.column_info.Element (Index => F).field_name);
+               heading  : constant String := CT.USS (colinfo.field_name);
                isnull   : constant Boolean :=
                           conn.field_is_null (Stmt.stmt_handle, scol);
             begin
