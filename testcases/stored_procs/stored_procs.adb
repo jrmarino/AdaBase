@@ -46,7 +46,6 @@ procedure Stored_Procs is
       TIO.Put_Line ("");
    end dump_result;
 
-   sql         : constant String := "CALL multiple_rowsets";
    set_fetched : Boolean;
    set_present : Boolean;
 
