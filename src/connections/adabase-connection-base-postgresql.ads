@@ -191,6 +191,10 @@ package AdaBase.Connection.Base.PostgreSQL is
    function markers_found (conn : PostgreSQL_Connection;
                            res  : BND.PGresult_Access) return Natural;
 
+   function holds_refcursor (conn : PostgreSQL_Connection;
+                             res  : BND.PGresult_Access;
+                             column_number : Natural) return Boolean;
+
    function execute_prepared_stmt (conn : PostgreSQL_Connection;
                                    name : String;
                                    data : parameter_block)

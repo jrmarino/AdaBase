@@ -1517,6 +1517,21 @@ package body AdaBase.Connection.Base.PostgreSQL is
    end destroy_later;
 
 
+   -----------------------
+   --  holds_refcursor  --
+   ------------------------
+   function holds_refcursor (conn : PostgreSQL_Connection;
+                             res  : BND.PGresult_Access;
+                             column_number : Natural) return Boolean
+   is
+      use type BND.Oid;
+      colnum : constant BND.IC.int := BND.IC.int (column_number);
+      pg_oid : BND.Oid := BND.PQftype (res, colnum);
+   begin
+      return (pg_oid = BND.PG_TYPE_refcursor);
+   end holds_refcursor;
+
+
    -----------------------------
    --  convert_octet_to_char  --
    -----------------------------

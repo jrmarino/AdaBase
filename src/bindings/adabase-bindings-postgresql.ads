@@ -98,6 +98,7 @@ package AdaBase.Bindings.PostgreSQL is
    PG_DIAG_CONSTRAINT_NAME : constant IC.int := IC.int (Character'Pos ('n'));
 
    InvalidOid              : constant Oid := Oid (0);
+   PG_TYPE_refcursor       : constant Oid := Oid (1790);
 
    -----------------
    -- Subprograms --
