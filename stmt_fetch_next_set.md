@@ -139,7 +139,7 @@ raised ADABASE.CONNECTION.BASE.SQLITE.UNSUPPORTED_BY_SQLITE : SQLite does not ha
 <div class="sidenav">
   <h3>See Also</h3>
   <ul>
-    <li>{{ page.query }}</li>
+    <li>{{ page.call_proc }}</li>
     <li>{{ page.stmt_column_count }}</li>
     <li>{{ page.stmt_column_name }}</li>
     <li>{{ page.res_column }}</li>

@@ -199,3 +199,6 @@ defaults:
 
        stmt_affected: '<a href="stmt_rows_affected.html">stmt rows affected</a>'
        f_stmt_affected: '<a href="stmt_rows_affected.html">func rows_affected</a>'
+
+       call_proc: '<a href="call_stored_procedure.html">call_stored_procedure</a>'
+       f_call_proc: '<a href="call_stored_procedure.html">func call_stored_procedure</a>'

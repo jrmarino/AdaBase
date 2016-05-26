@@ -33,6 +33,7 @@ title: AdaBase by jrmarino
 <li>{{ page.f_prepare_select }}</li>
 <li>{{ page.f_query }}</li>
 <li>{{ page.f_query_select }}</li>
+<li>{{ page.f_call_proc }}</li>
 </ul>
 
 <h3>AdaBase.Driver (get attributes)</h3>
