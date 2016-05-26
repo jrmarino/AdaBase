@@ -1,0 +1,3 @@
+Command to dump mysql:
+
+mysqldump -u root --routines --databases adabase_examples > adabase_examples.mysql.sql
