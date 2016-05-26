@@ -1,7 +1,11 @@
 --  This file is covered by the Internet Software Consortium (ISC) License
 --  Reference: ../../License.txt
 
+with AdaBase.Results.Sets;
+
 package body AdaBase.Driver.Base.PostgreSQL is
+
+   package ARS renames AdaBase.Results.Sets;
 
    -------------
    --  query  --
@@ -244,12 +248,14 @@ package body AdaBase.Driver.Base.PostgreSQL is
    -------------------------
    function private_statement (driver   : PostgreSQL_Driver;
                                sql      : String;
+                               nextsets : String := "";
                                prepared : Boolean)
                                return SMT.PostgreSQL_statement
    is
       stype     : AID.ASB.Stmt_Type := AID.ASB.direct_statement;
-      logcat    : Log_Category       := execution;
+      logcat    : Log_Category      := execution;
       duplicate : aliased String    := sql;
+      dupensets : aliased String    := nextsets;
       err1      : constant CT.Text  :=
                   CT.SUS ("ACK! Query attempted on inactive connection");
    begin
@@ -268,6 +274,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
                                     (driver.connection),
                identifier        => global_statement_counter,
                initial_sql       => duplicate'Unchecked_Access,
+               next_calls        => dupensets'Unchecked_Access,
                con_error_mode    => driver.trait_error_mode,
                con_case_mode     => driver.trait_column_case,
                con_max_blob      => driver.trait_max_blob_size,
@@ -345,9 +352,38 @@ package body AdaBase.Driver.Base.PostgreSQL is
    is
       SQL : String := "SELECT " & stored_procedure &
                       " (" & proc_arguments & ")";
+      stmt : SMT.PostgreSQL_statement :=
+        driver.private_statement (sql => SQL, prepared => False);
    begin
-      --  This is wrong, leave it for now so it compiles
-      return driver.query (SQL);
+      if stmt.returned_refcursors then
+         if driver.trait_autocommit then
+            raise CON.STORED_PROCEDURES with "When executing stored " &
+              "procedures that return references to result sets, autocommit " &
+              "mode must be OFF (it is currently ON).";
+         end if;
+         declare
+            fullset  : ARS.Datarow_Set := stmt.fetch_all;
+            nextcall : constant String := fullset (1).column (1).as_string;
+            calls    : CT.Text;
+         begin
+            for x in Natural range 2 .. fullset'Length loop
+               if not CT.IsBlank (calls) then
+                  CT.SU.Append (calls, ',');
+               end if;
+               CT.SU.Append (calls, fullset (x).column (1).as_string);
+            end loop;
+            declare
+               SQL2 : String := "FETCH ALL IN " &
+                                 ASCII.Quotation & nextcall & ASCII.Quotation;
+            begin
+               return driver.private_statement (sql      => SQL2,
+                                                nextsets => CT.USS (calls),
+                                                prepared => False);
+            end;
+         end;
+      else
+         return stmt;
+      end if;
    end call_stored_procedure;
 
 

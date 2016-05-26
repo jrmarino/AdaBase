@@ -634,10 +634,53 @@ package body AdaBase.Statement.Base.PostgreSQL is
    overriding
    procedure fetch_next_set (Stmt         : out PostgreSQL_statement;
                              data_present : out Boolean;
-                             data_fetched : out Boolean) is
+                             data_fetched : out Boolean)
+   is
+      conn      : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+      next_call : constant String := Stmt.pop_result_set_reference;
+      SQL       : constant String := "FETCH ALL IN " &
+                  ASCII.Quotation & next_call & ASCII.Quotation;
    begin
-      --  TO BE IMPLEMENTED
-      null;
+      data_fetched := False;
+      data_present := not Stmt.refcursors.Is_Empty;
+      if CT.IsBlank (next_call) then
+         return;
+      end if;
+
+      --  Clear existing results
+      conn.discard_pgresult (Stmt.result_handle);
+      Stmt.column_info.Clear;
+
+      --  execute next query
+      if conn.direct_stmt_exec (Stmt.result_handle, SQL) then
+         Stmt.log_nominal (category => miscellaneous,
+                           message  => "Stored procs next set: " & SQL);
+
+         case conn.examine_result (Stmt.result_handle) is
+            when CON.executed =>
+               Stmt.successful_execution := True;
+            when CON.returned_data =>
+               data_fetched := True;
+               Stmt.successful_execution := True;
+               Stmt.insert_return := Stmt.insert_prepsql;
+            when CON.failed =>
+               Stmt.successful_execution := False;
+         end case;
+
+         if not Stmt.insert_return then
+            Stmt.size_of_rowset := conn.rows_in_result (Stmt.result_handle);
+         end if;
+
+         if Stmt.insert_return then
+            Stmt.last_inserted := conn.returned_id (Stmt.result_handle);
+         end if;
+
+         Stmt.scan_column_information (Stmt.result_handle);
+      else
+         Stmt.log_problem
+           (category => miscellaneous,
+            message  => "Stored procs: Failed fetch next rowset " & next_call);
+      end if;
    end fetch_next_set;
 
 
@@ -783,6 +826,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
             end if;
 
             Object.scan_column_information (Object.result_handle);
+            Object.push_result_references (calls => Object.next_calls.all);
          else
             Object.log_problem
               (category => statement_execution,
@@ -1230,5 +1274,76 @@ package body AdaBase.Statement.Base.PostgreSQL is
       end case;
       return hold;
    end bind_text_value;
+
+
+   ---------------------------
+   --  returned_refcursors  --
+   ---------------------------
+   function returned_refcursors (Stmt : PostgreSQL_statement)
+                                 return Boolean
+   is
+      conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
+   begin
+      return Stmt.size_of_rowset > 0 and then
+        conn.holds_refcursor (Stmt.result_handle, 1);
+   end returned_refcursors;
+
+
+   --------------------------------
+   --  pop_result_set_reference  --
+   --------------------------------
+   function pop_result_set_reference (Stmt : out PostgreSQL_statement)
+                                      return String
+   is
+   begin
+      if Stmt.refcursors.Is_Empty then
+         return "";
+      end if;
+      declare
+         answer : String := CT.USS (Stmt.refcursors.First_Element.payload);
+      begin
+         Stmt.refcursors.Delete_First;
+         return answer;
+      end;
+   end pop_result_set_reference;
+
+
+   ------------------------------
+   --  push_result_references  --
+   ------------------------------
+   procedure push_result_references (Stmt  : out PostgreSQL_statement;
+                                     calls : String)
+   is
+      items : Natural;
+      base  : Natural;
+   begin
+      if CT.IsBlank (calls) then
+         return;
+      end if;
+      items := CT.num_set_items (calls);
+      if items = 1 then
+         Stmt.refcursors.Append ((payload => CT.SUS (calls)));
+      else
+         base := calls'First;
+         for x in Natural range 1 .. items - 1 loop
+            if calls (x) = ',' then
+               declare
+                  len : Natural := x - base;
+                  Str : String (1 .. len) := calls (base .. x - 1);
+               begin
+                  Stmt.refcursors.Append ((payload => CT.SUS (Str)));
+                  base := x + 1;
+               end;
+            end if;
+         end loop;
+         declare
+            len : Natural := calls'Last + 1 - base;
+            Str : String (1 .. len) := calls (base .. calls'Last);
+         begin
+            Stmt.refcursors.Append ((payload => CT.SUS (Str)));
+         end;
+      end if;
+   end push_result_references;
+
 
 end AdaBase.Statement.Base.PostgreSQL;

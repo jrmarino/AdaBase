@@ -4,6 +4,7 @@
 with AdaBase.Interfaces.Driver;
 with AdaBase.Statement.Base.PostgreSQL;
 with AdaBase.Connection.Base.PostgreSQL;
+with Ada.Containers.Vectors;
 
 package AdaBase.Driver.Base.PostgreSQL is
 
@@ -95,6 +96,7 @@ private
 
    function private_statement (driver   : PostgreSQL_Driver;
                                sql      : String;
+                               nextsets : String := "";
                                prepared : Boolean)
                                return SMT.PostgreSQL_statement;
 

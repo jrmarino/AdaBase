@@ -17,6 +17,7 @@ package AdaBase.Statement.Base.PostgreSQL is
       pgsql_conn        : CON.PostgreSQL_Connection_Access;
       identifier        : Trax_ID;
       initial_sql       : SQL_Access;
+      next_calls        : SQL_Access;
       con_error_mode    : Error_Modes;
       con_case_mode     : Case_Modes;
       con_max_blob      : BLOB_Maximum;
@@ -79,6 +80,8 @@ package AdaBase.Statement.Base.PostgreSQL is
                              data_present : out Boolean;
                              data_fetched : out Boolean);
 
+   function returned_refcursors (Stmt : PostgreSQL_statement)
+                                 return Boolean;
 
 private
 
@@ -90,8 +93,12 @@ private
       binary_format : Boolean;
    end record;
 
-   package VColumns is new AC.Vectors (Index_Type   => Positive,
-                                       Element_Type => column_info);
+   type string_box is record
+      payload : CT.Text;
+   end record;
+
+   package VRefcursors is new Ada.Containers.Vectors (Natural, string_box);
+   package VColumns is new AC.Vectors (Positive, column_info);
 
    type PostgreSQL_statement
      (type_of_statement : Stmt_Type;
@@ -99,6 +106,7 @@ private
       pgsql_conn        : CON.PostgreSQL_Connection_Access;
       identifier        : Trax_ID;
       initial_sql       : SQL_Access;
+      next_calls        : SQL_Access;
       con_error_mode    : Error_Modes;
       con_case_mode     : Case_Modes;
       con_max_blob      : BLOB_Maximum;
@@ -116,6 +124,7 @@ private
          result_arrow   : Trax_ID                     := 0;
          last_inserted  : Trax_ID                     := 0;
          column_info    : VColumns.Vector;
+         refcursors     : VRefcursors.Vector;
          sql_final      : SQL_Access;
       end record;
 
@@ -140,5 +149,11 @@ private
 
    function bind_text_value (Stmt : PostgreSQL_statement; marker : Positive)
                              return AR.Textual;
+
+   function pop_result_set_reference (Stmt : out PostgreSQL_statement)
+                                      return String;
+
+   procedure push_result_references (Stmt  : out PostgreSQL_statement;
+                                     calls : String);
 
 end AdaBase.Statement.Base.PostgreSQL;

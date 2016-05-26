@@ -233,6 +233,7 @@ package AdaBase.Connection.Base.PostgreSQL is
    STMT_NOT_VALID        : exception;
    STMT_RESET_FAIL       : exception;
    STMT_FETCH_FAIL       : exception;
+   STORED_PROCEDURES     : exception;
 
 private
 
