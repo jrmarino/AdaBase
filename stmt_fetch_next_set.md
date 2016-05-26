@@ -134,7 +134,7 @@ raised ADABASE.CONNECTION.BASE.SQLITE.UNSUPPORTED_BY_SQLITE : SQLite does not ha
 </pre>
 <p class="caption">Output using the SQLite driver</p>
 <br/>
-<p>{{ page.supported_stmts }}</p>
+<p>[STMT] is "MySQL.MySQL_statement" or "PostgreSQL.PostgreSQL_statement"</p>
 </div>
 <div class="sidenav">
   <h3>See Also</h3>
