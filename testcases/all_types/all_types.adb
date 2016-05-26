@@ -103,12 +103,16 @@ procedure All_Types is
             TIO.Put (CT.zeropad (c, 2) & ". ");
             TIO.Put (pad (stmt_acc.column_name (c), 16));
             TIO.Put (pad (stmt_acc.column_native_type (c)'Img, 15));
-            case stmt_acc.column_native_type (c) is
-               when AdaBase.ft_chain =>
-                  TIO.Put_Line (convert_chain (row.column (c).as_chain));
-               when others =>
-                  TIO.Put_Line (row.column (c).as_string);
-            end case;
+            if row.column (c).is_null then
+               TIO.Put_Line ("<null>");
+            else
+               case stmt_acc.column_native_type (c) is
+                  when AdaBase.ft_chain =>
+                     TIO.Put_Line (convert_chain (row.column (c).as_chain));
+                     when others =>
+                     TIO.Put_Line (row.column (c).as_string);
+               end case;
+            end if;
          end loop;
       end loop;
       TIO.Put_Line ("");
@@ -433,6 +437,17 @@ begin
       else
          TIO.Put_Line ("statement execution failed");
          TIO.Put_Line (stmt.last_driver_message);
+      end if;
+   end;
+
+   declare
+      sql20 : String := sql1 (sql1'First .. sql1'Last - 1) & "20";
+      stmt : aliased CON.Stmt_Type := CON.DR.query (sql20);
+   begin
+      if stmt.successful then
+         stmt_acc := stmt'Unchecked_Access;
+         TIO.Put_Line ("Dumping Result from last insert ...");
+         dump_result;
       end if;
    end;
 
