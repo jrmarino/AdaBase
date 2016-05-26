@@ -29,6 +29,8 @@ procedure All_Types is
    stmt_acc : CON.Stmt_Type_access;
 
    procedure dump_result;
+   procedure run_bind_test (sql_request : String);
+   function print_time (timevar : CAL.Time) return String;
    function halfbyte_to_hex (value : halfbyte) return Character;
    function convert_chain (chain : AR.Chain) return String;
    function convert_set (set : AR.Settype) return String;
@@ -150,35 +152,16 @@ procedure All_Types is
                              "settype, my_varbinary, my_blob) VALUES " &
                              "(?,?, ?,?,?,?,?,?, ?,?,?, ?,?,?,?, ?,?,?)";
 
-begin
-
-   CON.DR.command_standard_logger (device => ALF.file, action => ALF.attach);
-
-   CON.connect_database;
-
-   declare
-      stmt : aliased CON.Stmt_Type := CON.DR.query (sql1);
+   function print_time (timevar : CAL.Time) return String is
    begin
-      if stmt.successful then
-         stmt_acc := stmt'Unchecked_Access;
-         TIO.Put_Line ("Dumping Result from direct statement ...");
-         dump_result;
-      end if;
-   end;
+      return CFM.Image (timevar);
+   exception
+      when others =>
+         return "<conversion failed>";
+   end print_time;
 
-   declare
-      stmt : aliased CON.Stmt_Type := CON.DR.prepare (sql1);
-   begin
-      if stmt.execute then
-         stmt_acc := stmt'Unchecked_Access;
-         TIO.Put_Line ("Dumping Result from prepared statement ...");
-         dump_result;
-      else
-         TIO.Put_Line ("statement execution failed");
-      end if;
-   end;
-
-   declare
+   procedure run_bind_test (sql_request : String)
+   is
       v_nbyte0 : aliased AR.NByte0;
       v_nbyte1 : aliased AR.NByte1;
       v_nbyte2 : aliased AR.NByte2;
@@ -213,7 +196,7 @@ begin
       v_chain6 : aliased AR.Chain := (1 .. 16 => 0);
       v_enum   : aliased AR.Enumtype;
       v_set    : aliased AR.Settype := (1 .. 6 => (AR.PARAM_IS_ENUM));
-      stmt : CON.Stmt_Type := CON.DR.prepare (sql1);
+      stmt : CON.Stmt_Type := CON.DR.prepare (sql_request);
    begin
       if stmt.execute then
          stmt.bind (1, v_nbyte0'Unchecked_Access);
@@ -268,10 +251,10 @@ begin
             TIO.Put_Line ("13. real18          " & v_real18'Img);
             TIO.Put_Line ("14. exact           " & v_exact'Img);
             TIO.Put_Line ("15. bits            " & CT.USS (v_bit));
-            TIO.Put_Line ("16. date            " & CFM.Image (v_time1));
-            TIO.Put_Line ("17. datetime        " & CFM.Image (v_time2));
-            TIO.Put_Line ("18. timestamp       " & CFM.Image (v_time3));
-            TIO.Put_Line ("19. time            " & CFM.Image (v_time4));
+            TIO.Put_Line ("16. date            " & print_time (v_time1));
+            TIO.Put_Line ("17. datetime        " & print_time (v_time2));
+            TIO.Put_Line ("18. timestamp       " & print_time (v_time3));
+            TIO.Put_Line ("19. time            " & print_time (v_time4));
             TIO.Put_Line ("20. year            " & v_year'Img);
             TIO.Put_Line ("21. fixed string    " & CT.USS (v_text1));
             TIO.Put_Line ("22. variable string " & CT.USS (v_text2));
@@ -279,7 +262,8 @@ begin
             TIO.Put_Line ("24. text            " & CT.USS (v_text4));
             TIO.Put_Line ("25. medium text     " & CT.USS (v_text5));
             TIO.Put_Line ("26. long text       " & CT.USS (v_text6));
-            TIO.Put_Line ("27. enum            " & CT.USS (v_enum.enumeration));
+            TIO.Put_Line ("27. enum            " & CT.USS
+                                                   (v_enum.enumeration));
             TIO.Put_Line ("28. settype         " & convert_set (v_set));
             TIO.Put_Line ("29. binary          " & convert_chain (v_chain1));
             TIO.Put_Line ("30. varbinary       " & convert_chain (v_chain2));
@@ -289,7 +273,37 @@ begin
             TIO.Put_Line ("34. long blob       " & convert_chain (v_chain6));
          end loop;
       end if;
+   end run_bind_test;
+
+begin
+
+   CON.DR.command_standard_logger (device => ALF.file, action => ALF.attach);
+
+   CON.connect_database;
+
+   declare
+      stmt : aliased CON.Stmt_Type := CON.DR.query (sql1);
+   begin
+      if stmt.successful then
+         stmt_acc := stmt'Unchecked_Access;
+         TIO.Put_Line ("Dumping Result from direct statement ...");
+         dump_result;
+      end if;
    end;
+
+   declare
+      stmt : aliased CON.Stmt_Type := CON.DR.prepare (sql1);
+   begin
+      if stmt.execute then
+         stmt_acc := stmt'Unchecked_Access;
+         TIO.Put_Line ("Dumping Result from prepared statement ...");
+         dump_result;
+      else
+         TIO.Put_Line ("statement execution failed");
+      end if;
+   end;
+
+   run_bind_test (sql1);
 
    declare
       numrows : AdaBase.Affected_Rows;
@@ -454,6 +468,12 @@ begin
          TIO.Put_Line ("Dumping Result from last insert ...");
          dump_result;
       end if;
+   end;
+
+   declare
+      sql20 : String := sql1 (sql1'First .. sql1'Last - 1) & "20";
+   begin
+      run_bind_test (sql20);
    end;
 
    CON.DR.disconnect;

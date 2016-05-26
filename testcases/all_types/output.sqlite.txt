@@ -146,3 +146,38 @@ Dumping Result from last insert ...
 33. my_blob         FT_CHAIN       34 35 36 37 38 39 41 00 43 2E 2C 7A 5B 5D
 34. my_longblob     FT_CHAIN       <null>
 
+Dumping Result from PS/Bound fetch ...
+ 1. nbyte0          TRUE
+ 2. nbyte1           150
+ 3. nbyte2           0
+ 4. nbyte3           20
+ 5. nbyte4           0
+ 6. nbyte8           3200100
+ 7. byte1            0
+ 8. byte2           -10
+ 9. byte3            0
+10. byte4           -90000
+11. byte8            0
+12. real9            8.72341000E+01
+13. real18           1.55552137928312131E+04
+14. exact            8.75440000000000055E+02
+15. bits            
+16. date            2014-10-20 00:00:00
+17. datetime        1901-01-01 00:00:00
+18. timestamp       2000-03-25 15:15:00
+19. time            1901-01-01 20:18:13
+20. year             1986
+21. fixed string    
+22. variable string 
+23. tinytext        AdaBase is so cool!
+24. text            
+25. medium text     
+26. long text       
+27. enum            green
+28. settype         yellow,black
+29. binary          00 00 00 00
+30. varbinary       20 30 31 32 33 00
+31. tiny blob       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+32. medium blob     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+33. blob            34 35 36 37 38 39 41 00 43 2E 2C 7A 5B 5D 00 00
+34. long blob       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
