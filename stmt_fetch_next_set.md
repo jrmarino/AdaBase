@@ -126,7 +126,7 @@ team_id        abbreviation
 30             SJ             
 31             WIN            
 </pre>
-<p class="caption">Output using the MySQL driver</p>
+<p class="caption">Output using the MySQL and PostgreSQL drivers</p>
 <br/>
 <pre class="output">
 
