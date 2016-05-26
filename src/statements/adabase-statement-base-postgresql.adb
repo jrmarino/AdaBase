@@ -451,6 +451,11 @@ package body AdaBase.Statement.Base.PostgreSQL is
                   goto continue;
                end if;
 
+               if isnull or else CT.IsBlank (ST) then
+                  set_as_null (dossier);
+                  goto continue;
+               end if;
+
                --  Because PostgreSQL does not support unsigned integer
                --  types, allow binding NByteX binding to ByteX types, but
                --  remain strict on other type mismatches.

@@ -675,6 +675,7 @@ private
       end case;
    end record;
 
+   procedure set_as_null (param : bindrec);
 
 
    --  For fetch_bound

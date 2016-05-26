@@ -1560,4 +1560,38 @@ package body AdaBase.Statement.Base is
    end auto_assign;
 
 
+   ------------------
+   --  set_as_null  --
+   -------------------
+   procedure set_as_null (param : bindrec)
+   is
+      data_type : field_types := param.output_type;
+   begin
+      case data_type is
+         when ft_nbyte0    => param.a00.all := AR.PARAM_IS_BOOLEAN;
+         when ft_nbyte1    => param.a01.all := AR.PARAM_IS_NBYTE_1;
+         when ft_nbyte2    => param.a02.all := AR.PARAM_IS_NBYTE_2;
+         when ft_nbyte3    => param.a03.all := AR.PARAM_IS_NBYTE_3;
+         when ft_nbyte4    => param.a04.all := AR.PARAM_IS_NBYTE_4;
+         when ft_nbyte8    => param.a05.all := AR.PARAM_IS_NBYTE_8;
+         when ft_byte1     => param.a06.all := AR.PARAM_IS_BYTE_1;
+         when ft_byte2     => param.a07.all := AR.PARAM_IS_BYTE_2;
+         when ft_byte3     => param.a08.all := AR.PARAM_IS_BYTE_3;
+         when ft_byte4     => param.a09.all := AR.PARAM_IS_BYTE_4;
+         when ft_byte8     => param.a10.all := AR.PARAM_IS_BYTE_8;
+         when ft_real9     => param.a11.all := AR.PARAM_IS_REAL_9;
+         when ft_real18    => param.a12.all := AR.PARAM_IS_REAL_18;
+         when ft_textual   => param.a13.all := AR.PARAM_IS_TEXTUAL;
+         when ft_widetext  => param.a14.all := AR.PARAM_IS_TEXTWIDE;
+         when ft_supertext => param.a15.all := AR.PARAM_IS_TEXTSUPER;
+         when ft_timestamp => param.a16.all := AR.PARAM_IS_TIMESTAMP;
+         when ft_enumtype  => param.a18.all := AR.PARAM_IS_ENUM;
+         when ft_chain     => param.a17.all :=
+                              ARC.convert ("", param.a17.all'Length);
+         when ft_settype   => param.a19.all :=
+                              ARC.convert ("", param.a19.all'Length);
+      end case;
+   end set_as_null;
+
+
 end AdaBase.Statement.Base;
