@@ -66,6 +66,32 @@ CREATE TYPE schedule_status AS ENUM (
 
 ALTER TYPE schedule_status OWNER TO adabaser;
 
+--
+-- Name: multiple_rowsets(); Type: FUNCTION; Schema: public; Owner: adabaser
+--
+
+CREATE FUNCTION multiple_rowsets() RETURNS SETOF refcursor
+    LANGUAGE plpgsql
+    AS $$
+  DECLARE
+    ref1 refcursor;
+    ref2 refcursor;
+    ref3 refcursor;
+  BEGIN
+    OPEN ref1 FOR SELECT * FROM fruits ORDER BY calories DESC LIMIT 8;
+    RETURN NEXT ref1;
+
+    OPEN ref2 FOR SELECT fruit FROM fruits WHERE color = 'red';
+    RETURN NEXT ref2;
+
+    OPEN ref3 FOR SELECT team_id, abbreviation FROM nhl_teams WHERE team_id > 28;
+    RETURN NEXT ref3;
+  END
+$$;
+
+
+ALTER FUNCTION public.multiple_rowsets() OWNER TO adabaser;
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
