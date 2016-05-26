@@ -58,12 +58,6 @@ begin
       stmt : aliased CON.Stmt_Type :=
              CON.DR.call_stored_procedure ("multiple_rowsets", "");
    begin
-      if stmt.successful then
-         set_fetched := True;
-      else
-         TIO.Put_Line ("Stored procedures not supported on " &
-            CON.DR.trait_driver);
-      end if;
       set_fetched := stmt.successful;
       stmt_acc := stmt'Unchecked_Access;
       loop
