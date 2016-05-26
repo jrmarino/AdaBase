@@ -495,16 +495,20 @@ package body AdaBase.Statement.Base.SQLite is
 
          for F in 1 .. maxlen loop
             declare
+               colinfo  : column_info renames Stmt.column_info.Element (F);
                field    : ARF.Std_Field;
                dvariant : ARF.Variant;
                scol     : constant Natural := F - 1;
                last_one : constant Boolean := (F = maxlen);
                heading  : constant String := CT.USS
                           (Stmt.column_info.Element (Index => F).field_name);
-               EN       : constant Boolean :=
+               isnull   : constant Boolean :=
                           conn.field_is_null (Stmt.stmt_handle, scol);
             begin
-               case Stmt.column_info.Element (Index => F).field_type is
+               if isnull then
+                  field := ARF.spawn_null_field (colinfo.field_type);
+               else
+                  case colinfo.field_type is
                   when ft_nbyte0  =>
                      --  This should never occur though
                      dvariant := (datatype => ft_nbyte0, v00 => False);
@@ -523,8 +527,8 @@ package body AdaBase.Statement.Base.SQLite is
                   when ft_chain   => null;
                   when others => raise INVALID_FOR_RESULT_SET
                        with "Impossible field type (internal bug??)";
-               end case;
-               case Stmt.column_info.Element (Index => F).field_type is
+                  end case;
+                  case colinfo.field_type is
                   when ft_chain =>
                      field := ARF.spawn_field
                        (binob => ARC.convert
@@ -534,9 +538,10 @@ package body AdaBase.Statement.Base.SQLite is
                                 maxsz => Stmt.con_max_blob)));
                   when ft_nbyte0 | ft_byte8 | ft_real18 | ft_textual =>
                      field := ARF.spawn_field (data => dvariant,
-                                               null_data => EN);
+                                               null_data => isnull);
                   when others => null;
-               end case;
+                  end case;
+               end if;
                result.push (heading    => heading,
                             field      => field,
                             last_field => last_one);

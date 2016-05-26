@@ -677,10 +677,14 @@ package body AdaBase.Connection.Base.SQLite is
                            stmt  : BND.sqlite3_stmt_Access;
                            index : Natural) return AR.Textual
    is
+      use type BND.ICS.chars_ptr;
       result : BND.ICS.chars_ptr;
       col_index : constant BND.IC.int := BND.IC.int (index);
    begin
       result := BND.sqlite3_column_text (stmt, col_index);
+      if result = BND.ICS.Null_Ptr then
+         return CT.blank;
+      end if;
       declare
          asString : String := BND.ICS.Value (result);
       begin
