@@ -934,11 +934,12 @@ package body AdaBase.Connection.Base.PostgreSQL is
       use type BND.Oid;
       colnum : constant BND.IC.int := BND.IC.int (column_number);
       pg_oid : BND.Oid := BND.PQftable (res, colnum);
-      pg_key : Positive := Positive (pg_oid);
+      pg_key : Integer := Integer (pg_oid);
    begin
       if pg_oid = BND.InvalidOid then
          return "INVALID COLUMN";
       end if;
+      pg_key := Positive (pg_oid);
       if conn.tables.Contains (Key => pg_key) then
          return CT.USS (conn.tables.Element (pg_key).column_1);
       else

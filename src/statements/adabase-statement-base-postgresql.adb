@@ -642,7 +642,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
                   ASCII.Quotation & next_call & ASCII.Quotation;
    begin
       data_fetched := False;
-      data_present := not Stmt.refcursors.Is_Empty;
+      data_present := False;
       if CT.IsBlank (next_call) then
          return;
       end if;
@@ -650,6 +650,19 @@ package body AdaBase.Statement.Base.PostgreSQL is
       --  Clear existing results
       conn.discard_pgresult (Stmt.result_handle);
       Stmt.column_info.Clear;
+      Stmt.alpha_markers.Clear;
+      Stmt.headings_map.Clear;
+      Stmt.crate.Clear;
+      Stmt.realmccoy.Clear;
+      Stmt.result_present := False;
+      Stmt.rows_leftover  := False;
+      Stmt.insert_return  := False;
+      Stmt.impacted       := 0;
+      Stmt.assign_counter := 0;
+      Stmt.size_of_rowset := 0;
+      Stmt.num_columns    := 0;
+      Stmt.result_arrow   := 0;
+      Stmt.last_inserted  := 0;
 
       --  execute next query
       if conn.direct_stmt_exec (Stmt.result_handle, SQL) then
@@ -658,8 +671,10 @@ package body AdaBase.Statement.Base.PostgreSQL is
 
          case conn.examine_result (Stmt.result_handle) is
             when CON.executed =>
+               data_present := True;
                Stmt.successful_execution := True;
             when CON.returned_data =>
+               data_present := True;
                data_fetched := True;
                Stmt.successful_execution := True;
                Stmt.insert_return := Stmt.insert_prepsql;
@@ -1285,7 +1300,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
    begin
       return Stmt.size_of_rowset > 0 and then
-        conn.holds_refcursor (Stmt.result_handle, 1);
+        conn.holds_refcursor (Stmt.result_handle, 0);
    end returned_refcursors;
 
 
@@ -1326,15 +1341,18 @@ package body AdaBase.Statement.Base.PostgreSQL is
       else
          base := calls'First;
          for x in Natural range 1 .. items - 1 loop
-            if calls (x) = ',' then
-               declare
-                  len : Natural := x - base;
-                  Str : String (1 .. len) := calls (base .. x - 1);
-               begin
-                  Stmt.refcursors.Append ((payload => CT.SUS (Str)));
-                  base := x + 1;
-               end;
-            end if;
+            for y in Natural range base .. calls'Last loop
+               if calls (y) = ',' then
+                  declare
+                     len : Natural := y - base;
+                     Str : String (1 .. len) := calls (base .. y - 1);
+                  begin
+                     Stmt.refcursors.Append ((payload => CT.SUS (Str)));
+                     base := y + 1;
+                  end;
+                  exit;
+               end if;
+            end loop;
          end loop;
          declare
             len : Natural := calls'Last + 1 - base;
