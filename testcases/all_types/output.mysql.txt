@@ -110,3 +110,39 @@ Inserted 1 row(s)
 Inserted 1 row(s)
 Inserted 1 row(s)
 Inserted 1 row(s)
+Dumping Result from last insert ...
+01. nbyte0          FT_NBYTE0      1
+02. nbyte1          FT_NBYTE1      150
+03. nbyte2          FT_NBYTE2      <null>
+04. id_nbyte3       FT_NBYTE3      20
+05. nbyte4          FT_NBYTE4      <null>
+06. nbyte8          FT_NBYTE8      3200100
+07. byte1           FT_BYTE1       <null>
+08. byte2           FT_BYTE2       -10
+09. byte3           FT_BYTE3       <null>
+10. byte4           FT_BYTE4       -90000
+11. byte5           FT_BYTE8       <null>
+12. real9           FT_REAL9       8.72341000E+01
+13. real18          FT_REAL18      1.55552137928312130E+04
+14. exact_decimal   FT_REAL9       8.75440000E+02
+15. bit_type        FT_TEXTUAL     <null>
+16. my_date         FT_TIMESTAMP   2014-10-20 00:00:00
+17. my_datetime     FT_TIMESTAMP   <null>
+18. my_timestamp    FT_TIMESTAMP   2000-03-25 15:15:00
+19. my_time         FT_TIMESTAMP   1901-01-01 20:18:13
+20. my_year         FT_NBYTE2      1986
+21. fixed_string    FT_TEXTUAL     <null>
+22. variable_string FT_TEXTUAL     <null>
+23. my_tinytext     FT_TEXTUAL     AdaBase is so cool!
+24. my_text         FT_TEXTUAL     <null>
+25. my_mediumtext   FT_TEXTUAL     <null>
+26. my_longtext     FT_TEXTUAL     <null>
+27. enumtype        FT_ENUMTYPE    green
+28. settype         FT_SETTYPE     black,yellow
+29. my_binary       FT_CHAIN       <null>
+30. my_varbinary    FT_CHAIN       20 30 31 32 33
+31. my_tinyblob     FT_CHAIN       <null>
+32. my_mediumblob   FT_CHAIN       <null>
+33. my_blob         FT_CHAIN       34 35 36 37 38 39 41 00 43 2E 2C 7A 5B 5D
+34. my_longblob     FT_CHAIN       <null>
+

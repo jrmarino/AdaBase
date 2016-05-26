@@ -2,10 +2,12 @@ with AdaBase;
 with Connect;
 with CommonText;
 with Ada.Text_IO;
+with Ada.Exceptions;
 with Ada.Calendar.Formatting;
 with AdaBase.Results.Sets;
 with AdaBase.Logger.Facility;
 with Interfaces;
+with GNAT.Traceback.Symbolic;
 
 procedure All_Types is
 
@@ -17,6 +19,8 @@ procedure All_Types is
    package ALF renames AdaBase.Logger.Facility;
    package CAL renames Ada.Calendar;
    package CFM renames Ada.Calendar.Formatting;
+   package SYM renames GNAT.Traceback.Symbolic;
+   package EX  renames Ada.Exceptions;
 
    package Byte_Io is new Ada.Text_Io.Modular_Io (Interfaces.Unsigned_8);
 
@@ -404,12 +408,13 @@ begin
    end;
 
    declare
-      values : constant String := "20|1|150|-10|-90000|3200100|87.2341|" &
+      values : String := "20|1|150|-10|-90000|3200100|87.2341|" &
         "15555.213792831213|875.44|2014-10-20|2000-03-25 15:15:00|" &
         "20:18:13|1986|AdaBase is so cool!|green|yellow,black|" &
         " 0123|456789ABC.,z[]";
       stmt : CON.Stmt_Type := CON.DR.prepare (sql3);
    begin
+      values (values'Last - 6) := Character'Val (0);
       --  This has to be done only once after the prepare command
       --  Set the type for each parameter (required for at least MySQL)
       stmt.assign (1,  AR.PARAM_IS_NBYTE_3);
@@ -452,5 +457,13 @@ begin
    end;
 
    CON.DR.disconnect;
+
+exception
+   when E : others =>
+      TIO.Put_Line ("");
+      TIO.Put_Line ("exception name: " & EX.Exception_Name (E));
+      TIO.Put_Line ("exception msg : " & EX.Exception_Message (E));
+      TIO.Put_Line ("Traceback:");
+      TIO.Put_Line (SYM.Symbolic_Traceback (E));
 
 end All_Types;
