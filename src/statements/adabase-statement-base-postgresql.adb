@@ -591,10 +591,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
                         dossier.a16.all := ARC.convert (ST);
                      exception
                         when AR.CONVERSION_FAILED =>
-                           dossier.a16.all := CAL.Time_Of
-                             (Year  => CAL.Year_Number'First,
-                              Month => CAL.Month_Number'First,
-                              Day   => CAL.Day_Number'First);
+                           dossier.a16.all := AR.PARAM_IS_TIMESTAMP;
                      end;
                   when ft_chain =>
                      declare

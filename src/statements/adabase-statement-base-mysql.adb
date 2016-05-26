@@ -1375,6 +1375,11 @@ package body AdaBase.Statement.Base.MySQL is
                   goto continue;
                end if;
 
+               if isnull or else CT.IsBlank (ST) then
+                  set_as_null (dossier);
+                  goto continue;
+               end if;
+
                --  Derivation of implementation taken from PostgreSQL
                --  Only guaranteed successful converstions allowed though
 
@@ -1450,7 +1455,7 @@ package body AdaBase.Statement.Base.MySQL is
                      end if;
                end case;
 
-               case Tnative is
+               case Tout is
                   when ft_nbyte0    => dossier.a00.all := (ST = "1");
                   when ft_nbyte1    => dossier.a01.all := convert (ST);
                   when ft_nbyte2    => dossier.a02.all := convert (ST);
@@ -1479,10 +1484,7 @@ package body AdaBase.Statement.Base.MySQL is
                         dossier.a16.all := ARC.convert (ST);
                      exception
                         when AR.CONVERSION_FAILED =>
-                           dossier.a16.all := CAL.Time_Of
-                             (Year  => CAL.Year_Number'First,
-                              Month => CAL.Month_Number'First,
-                              Day   => CAL.Day_Number'First);
+                           dossier.a16.all := AR.PARAM_IS_TIMESTAMP;
                      end;
                   when ft_chain =>
                      declare
