@@ -55,7 +55,8 @@ begin
    CON.connect_database;
 
    declare
-      stmt : aliased CON.Stmt_Type := CON.DR.query (sql);
+      stmt : aliased CON.Stmt_Type :=
+             CON.DR.call_stored_procedure ("multiple_rowsets", "");
    begin
       if stmt.successful then
          set_fetched := True;
