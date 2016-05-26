@@ -29,7 +29,7 @@ procedure All_Types is
    stmt_acc : CON.Stmt_Type_access;
 
    procedure dump_result;
-   procedure run_bind_test (sql_request : String);
+   procedure run_bind_test (sql_request : String; direct : Boolean);
    function print_time (timevar : CAL.Time) return String;
    function halfbyte_to_hex (value : halfbyte) return Character;
    function convert_chain (chain : AR.Chain) return String;
@@ -160,7 +160,7 @@ procedure All_Types is
          return "<conversion failed>";
    end print_time;
 
-   procedure run_bind_test (sql_request : String)
+   procedure run_bind_test (sql_request : String; direct : Boolean)
    is
       v_nbyte0 : aliased AR.NByte0;
       v_nbyte1 : aliased AR.NByte1;
@@ -196,9 +196,24 @@ procedure All_Types is
       v_chain6 : aliased AR.Chain := (1 .. 16 => 0);
       v_enum   : aliased AR.Enumtype;
       v_set    : aliased AR.Settype := (1 .. 6 => (AR.PARAM_IS_ENUM));
-      stmt : CON.Stmt_Type := CON.DR.prepare (sql_request);
+
+      function Toggle (direct : Boolean) return CON.Stmt_Type;
+      function Toggle (direct : Boolean) return CON.Stmt_Type is
+      begin
+         if direct then
+            return CON.DR.query (sql_request);
+         else
+            return CON.DR.prepare (sql_request);
+         end if;
+      end Toggle;
+
+      stmt : CON.Stmt_Type := Toggle (direct);
    begin
-      if stmt.execute then
+      if not direct then
+         if not stmt.execute then
+            goto done;
+         end if;
+      end if;
          stmt.bind (1, v_nbyte0'Unchecked_Access);
          stmt.bind (2, v_nbyte1'Unchecked_Access);
          stmt.bind (3, v_nbyte2'Unchecked_Access);
@@ -272,7 +287,7 @@ procedure All_Types is
             TIO.Put_Line ("33. blob            " & convert_chain (v_chain5));
             TIO.Put_Line ("34. long blob       " & convert_chain (v_chain6));
          end loop;
-      end if;
+      <<done>>
    end run_bind_test;
 
 begin
@@ -303,7 +318,7 @@ begin
       end if;
    end;
 
-   run_bind_test (sql1);
+   run_bind_test (sql1, False);
 
    declare
       numrows : AdaBase.Affected_Rows;
@@ -473,7 +488,9 @@ begin
    declare
       sql20 : String := sql1 (sql1'First .. sql1'Last - 1) & "20";
    begin
-      run_bind_test (sql20);
+      run_bind_test (sql20, False);
+      TIO.Put_Line ("");
+      run_bind_test (sql20, True);
    end;
 
    CON.DR.disconnect;
