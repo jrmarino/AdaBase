@@ -61,6 +61,11 @@ package AdaBase.Driver.Base.SQLite is
                             offset     : Trax_ID := 0)
                             return ASS.SQLite_statement;
 
+   function call_stored_procedure (driver           : SQLite_Driver;
+                                   stored_procedure : String;
+                                   proc_arguments   : String)
+                                   return ASS.SQLite_statement;
+
 private
 
    type SQLite_Driver is new Base_Driver and AID.iDriver with

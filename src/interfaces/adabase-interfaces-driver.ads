@@ -116,8 +116,9 @@ package AdaBase.Interfaces.Driver is
    --                                 offset      : TraxID := 0)
    --                                 return ASB.basic_statement is abstract;
    --
-   --  function prepare (same as query)
-   --  function prepare_select (same as query_select)
+   --  function prepare (same as query) return statement
+   --  function prepare_select (same as query_select) return statement
+   --  function call_stored_procedure (procedure name) return statement
 
    ------------------------------------------------------------------------
    -- CONNECTIONS                                                        --

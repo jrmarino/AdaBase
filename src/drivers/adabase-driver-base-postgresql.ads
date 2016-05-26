@@ -52,6 +52,11 @@ package AdaBase.Driver.Base.PostgreSQL is
                             offset     : Trax_ID := 0)
                             return SMT.PostgreSQL_statement;
 
+   function call_stored_procedure (driver           : PostgreSQL_Driver;
+                                   stored_procedure : String;
+                                   proc_arguments   : String)
+                                   return SMT.PostgreSQL_statement;
+
    function trait_query_buffers_used       (driver : PostgreSQL_Driver)
                                             return Boolean;
 

@@ -351,4 +351,19 @@ package body AdaBase.Driver.Base.SQLite is
       return vanilla;
    end sql_assemble;
 
+
+   -----------------------------
+   --  call_stored_procedure  --
+   -----------------------------
+   function call_stored_procedure (driver           : SQLite_Driver;
+                                   stored_procedure : String;
+                                   proc_arguments   : String)
+                                   return ASS.SQLite_statement is
+   begin
+      raise ACS.UNSUPPORTED_BY_SQLITE
+        with "SQLite does not have the capability of stored procedures";
+      return driver.query ("this never runs.");
+   end call_stored_procedure;
+
+
 end AdaBase.Driver.Base.SQLite;

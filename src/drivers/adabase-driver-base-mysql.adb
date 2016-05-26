@@ -380,4 +380,18 @@ package body AdaBase.Driver.Base.MySQL is
    end sql_assemble;
 
 
+   -----------------------------
+   --  call_stored_procedure  --
+   -----------------------------
+   function call_stored_procedure (driver           : MySQL_Driver;
+                                   stored_procedure : String;
+                                   proc_arguments   : String)
+                                   return ASM.MySQL_statement
+   is
+      SQL : String := "CALL " & stored_procedure & " (" & proc_arguments & ")";
+   begin
+      return driver.query (SQL);
+   end call_stored_procedure;
+
+
 end AdaBase.Driver.Base.MySQL;

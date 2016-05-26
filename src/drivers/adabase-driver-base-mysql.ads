@@ -61,6 +61,11 @@ package AdaBase.Driver.Base.MySQL is
                             offset     : Trax_ID := 0)
                             return ASM.MySQL_statement;
 
+   function call_stored_procedure (driver           : MySQL_Driver;
+                                   stored_procedure : String;
+                                   proc_arguments   : String)
+                                   return ASM.MySQL_statement;
+
 private
 
    type MySQL_Driver is new Base_Driver and AID.iDriver with

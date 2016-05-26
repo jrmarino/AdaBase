@@ -334,4 +334,21 @@ package body AdaBase.Driver.Base.PostgreSQL is
         with "Single row mode is not currently supported";
    end set_trait_query_buffers_used;
 
+
+   -----------------------------
+   --  call_stored_procedure  --
+   -----------------------------
+   function call_stored_procedure (driver           : PostgreSQL_Driver;
+                                   stored_procedure : String;
+                                   proc_arguments   : String)
+                                   return SMT.PostgreSQL_statement
+   is
+      SQL : String := "SELECT " & stored_procedure &
+                      " (" & proc_arguments & ")";
+   begin
+      --  This is wrong, leave it for now so it compiles
+      return driver.query (SQL);
+   end call_stored_procedure;
+
+
 end AdaBase.Driver.Base.PostgreSQL;
