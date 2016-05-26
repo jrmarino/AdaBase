@@ -72,7 +72,6 @@ procedure Stored_Procs is
       TIO.Put_Line ("");
    end dump_result;
 
-   sql         : constant String := "CALL multiple_rowsets";
    set_fetched : Boolean;
    set_present : Boolean;
 
@@ -81,14 +80,9 @@ begin
    CON.connect_database;
 
    declare
-      stmt : aliased CON.Stmt_Type := CON.DR.query (sql);
+      stmt : aliased CON.Stmt_Type :=
+             CON.DR.call_stored_procedure ("multiple_rowsets", "");
    begin
-      if stmt.successful then
-         set_fetched := True;
-      else
-         TIO.Put_Line ("Stored procedures not supported on " &
-            CON.DR.trait_driver);
-      end if;
       set_fetched := stmt.successful;
       stmt_acc := stmt'Unchecked_Access;
       loop
@@ -135,7 +129,8 @@ team_id        abbreviation
 <p class="caption">Output using the MySQL driver</p>
 <br/>
 <pre class="output">
-Stored procedures not supported on SQLite3 native driver
+
+raised ADABASE.CONNECTION.BASE.SQLITE.UNSUPPORTED_BY_SQLITE : SQLite does not have the capability of stored procedures
 </pre>
 <p class="caption">Output using the SQLite driver</p>
 <br/>
