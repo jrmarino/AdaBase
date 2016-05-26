@@ -1,0 +1,39 @@
+---
+title: Execute Stored Procedures
+---
+
+<div class="leftside">
+<h3>AdaBase.Statement.Base.[STMT] function<br/>
+AdaBase.Driver.Base.[DB].call_stored_procedure 
+(stored_procedure : String;
+ proc_arguments : String)</h3>
+<p>
+This function will execute the stored procedure identified by the name
+indicated by the <i>stored_procedure</i> and use the
+<i>proc_arguments</i> to pass arguments to the stored procedure.  This
+can be in the form of an empty string (no arguments), a single word
+(1 argument), or several words separated by commas (multiple arguments).
+</p>
+<p>The first result set the executed stored procedure returns (if any)
+is returns by the <b>call_stored_procedure</b> function.  Some procedures
+may return multiple result sets, and the subsequent ones can be accessed
+by the <b>fetch_next_set</b> function.
+</p>
+<br/>
+<p class="caption">See {{ page.fetch_next_set }} for a usage example.</p>
+<br/>
+<p>{{ page.supported_drivers }}</p>
+<p>{{ page.supported_stmts }}</p>
+</div>
+<div class="sidenav">
+  <h3>See Also</h3>
+  <ul>
+    <li>{{ page.prepare }}</li>
+    <li>{{ page.prepare_select }}</li>
+    <li>{{ page.query }}</li>
+    <li>{{ page.query_select }}</li>  </ul>
+    <li>{{ page.fetch_next_set }}</li>
+    <li>{{ page.fetch_next }}</li>
+    <li>{{ page.fetch_bound }}</li>
+    <li>{{ page.fetch_all }}</li>
+</div>

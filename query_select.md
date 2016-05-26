@@ -182,8 +182,9 @@ avocado: 150 calories, green
   <ul>
     <li>{{ page.stmt_successful }}</li>
     <li>{{ page.stmt_discard_rest }}</li>
-    <li>{{ page.fetch_all }}</li>
+    <li>{{ page.fetch_next }}</li>
     <li>{{ page.fetch_bound }}</li>
+    <li>{{ page.fetch_all }}</li>
     <li>{{ page.stmt_bind }}</li>
     <li>{{ page.res_std_field }}</li>
     <li>{{ page.query }}</li>
