@@ -585,7 +585,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
                      begin
                         dossier.a16.all := ARC.convert (ST);
                      exception
-                        when CAL.Time_Error =>
+                        when AR.CONVERSION_FAILED =>
                            dossier.a16.all := CAL.Time_Of
                              (Year  => CAL.Year_Number'First,
                               Month => CAL.Month_Number'First,
@@ -1088,7 +1088,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
                      dvariant := (datatype => ft_timestamp,
                                   v16 => ARC.convert (ST));
                   exception
-                     when CAL.Time_Error =>
+                     when AR.CONVERSION_FAILED =>
                         dvariant := (datatype => ft_textual,
                                      v13 => CT.SUS (ST));
                   end;

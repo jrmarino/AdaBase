@@ -726,13 +726,16 @@ package body AdaBase.Statement.Base.MySQL is
                field    : ARF.Std_Field;
                last_one : constant Boolean := (F = maxlen);
                heading  : constant String := CT.USS (colinfo.field_name);
+               isnull   : constant Boolean := (row (F) = null);
                mtype    : ABM.enum_field_types := colinfo.mysql_type;
                sz : constant Natural := field_lengths (F);
-               EN : constant Boolean := row (F) = null;
                ST : constant String  := db_convert (row (F), sz);
                dvariant : ARF.Variant;
             begin
-               case colinfo.field_type is
+               if isnull then
+                  field := ARF.spawn_null_field (colinfo.field_type);
+               else
+                  case colinfo.field_type is
                   when ft_nbyte0 =>
                      dvariant := (datatype => ft_nbyte0, v00 => ST = "1");
                   when ft_nbyte1 =>
@@ -779,7 +782,7 @@ package body AdaBase.Statement.Base.MySQL is
                         dvariant := (datatype => ft_timestamp,
                                      v16 => ARC.convert (ST));
                      exception
-                        when CAL.Time_Error =>
+                        when AR.CONVERSION_FAILED =>
                            dvariant := (datatype => ft_textual,
                                         v13 => CT.SUS (ST));
                      end;
@@ -788,17 +791,17 @@ package body AdaBase.Statement.Base.MySQL is
                                   V18 => ARC.convert (CT.SUS (ST)));
                   when others =>
                      null;
-
-               end case;
-               case colinfo.field_type is
+                  end case;
+                  case colinfo.field_type is
                   when ft_chain =>
                      field := ARF.spawn_field (binob => ARC.convert (ST));
                   when ft_settype =>
                      field := ARF.spawn_field (enumset => ST);
                   when others =>
                      field := ARF.spawn_field (data => dvariant,
-                                               null_data => EN);
-               end case;
+                                               null_data => isnull);
+                  end case;
+               end if;
 
                result.push (heading    => heading,
                             field      => field,
@@ -909,9 +912,13 @@ package body AdaBase.Statement.Base.MySQL is
                last_one : constant Boolean := (F = maxlen);
                datalen  : constant Natural := Natural (cv.length);
                heading  : constant String := CT.USS (colinfo.field_name);
+               isnull   : constant Boolean := (Natural (cv.is_null) = 1);
                mtype    : ABM.enum_field_types := colinfo.mysql_type;
             begin
-               case colinfo.field_type is
+               if isnull then
+                  field := ARF.spawn_null_field (colinfo.field_type);
+               else
+                  case colinfo.field_type is
                   when ft_nbyte0 =>
                      dvariant := (datatype => ft_nbyte0,
                                   v00 => Natural (cv.buffer_uint8) = 1);
@@ -1026,8 +1033,8 @@ package body AdaBase.Statement.Base.MySQL is
                                      Stmt.con_max_blob))));
                   when ft_settype => null;
                   when ft_chain => null;
-               end case;
-               case colinfo.field_type is
+                  end case;
+                  case colinfo.field_type is
                   when ft_chain =>
                      field := ARF.spawn_field
                        (binob => bincopy (cv.buffer_binary, datalen,
@@ -1039,8 +1046,9 @@ package body AdaBase.Statement.Base.MySQL is
                   when others =>
                      field := ARF.spawn_field
                        (data => dvariant,
-                        null_data => Natural (cv.is_null) = 1);
-               end case;
+                        null_data => isnull);
+                  end case;
+               end if;
 
                result.push (heading    => heading,
                             field      => field,
@@ -1354,15 +1362,14 @@ package body AdaBase.Statement.Base.MySQL is
                dossier  : bindrec renames Stmt.crate.Element (F);
                colinfo  : column_info renames Stmt.column_info.Element (F);
                mtype    : ABM.enum_field_types := colinfo.mysql_type;
-               sz : constant Natural := field_lengths (F);
-               EN : constant Boolean := row (F) = null;
-               ST : constant String  := db_convert (row (F), sz);
-
-               Tout    : constant field_types := dossier.output_type;
-               Tnative : constant field_types := colinfo.field_type;
-               errmsg  : constant String  := "native type : " &
-                         field_types'Image (Tnative) & " binding type : " &
-                         field_types'Image (Tout);
+               isnull   : constant Boolean := (row (F) = null);
+               sz       : constant Natural := field_lengths (F);
+               ST       : constant String  := db_convert (row (F), sz);
+               Tout     : constant field_types := dossier.output_type;
+               Tnative  : constant field_types := colinfo.field_type;
+               errmsg   : constant String  := "native type : " &
+                          field_types'Image (Tnative) & " binding type : " &
+                          field_types'Image (Tout);
             begin
                if not dossier.bound then
                   goto continue;
@@ -1471,7 +1478,7 @@ package body AdaBase.Statement.Base.MySQL is
                      begin
                         dossier.a16.all := ARC.convert (ST);
                      exception
-                        when CAL.Time_Error =>
+                        when AR.CONVERSION_FAILED =>
                            dossier.a16.all := CAL.Time_Of
                              (Year  => CAL.Year_Number'First,
                               Month => CAL.Month_Number'First,
