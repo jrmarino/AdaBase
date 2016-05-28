@@ -71,11 +71,23 @@ package Spatial_Data is
    --  Retrieval functions  --
    ---------------------------
    function size_of_collection    (collection : Geometry) return Positive;
-   function collection_item_shape (collection : Geometry; index : Positive)
+   function collection_item_shape (collection : Geometry;
+                                   index      : Positive := 1)
                                    return Geometric_Shape;
+   function retrieve_polygon     (collection : Geometry; index : Positive := 1)
+                                  return Geometric_Polygon;
+   function retrieve_point       (collection : Geometry; index : Positive := 1)
+                                  return Geometric_Point;
+   function retrieve_line        (collection : Geometry; index : Positive := 1)
+                                  return Geometric_Line;
+   function retrieve_line_string (collection : Geometry; index : Positive := 1)
+                                  return Geometric_Line_String;
+   function retrieve_circle      (collection : Geometry)
+                                  return Geometric_Circle;
 
    CONVERSION_FAILED       : exception;
    OUT_OF_COLLECTION_RANGE : exception;
+   LACKING_POINTS          : exception;
 
 private
 
@@ -138,5 +150,15 @@ private
                                    (others => heterogeneous_Dummy);
          end case;
       end record;
+
+   --  raises exception if index is out of range
+   procedure check_collection_index (collection : Geometry; index : Positive);
+
+   --  Raises exception if index is not found, otherwise locates exactly
+   --  where shapes starts in the array and how many points it contains
+   procedure locate_heterogenous_item (collection : Geometry;
+                                       index      : Positive;
+                                       set_index  : out Positive;
+                                       num_points : out Positive);
 
 end Spatial_Data;

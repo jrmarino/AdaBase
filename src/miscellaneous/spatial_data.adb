@@ -69,6 +69,11 @@ package body Spatial_Data is
    is
       product : Geometry := (single_polygon, 1, polygon);
    begin
+      if polygon'Length < 3 then
+         raise LACKING_POINTS
+           with "polygons must have at least 3 points (found only" &
+           polygon'Length'Img & ")";
+      end if;
       return product;
    end initialize_as_polygon;
 
@@ -368,6 +373,11 @@ package body Spatial_Data is
       num_items   : Natural := collection.items + 1;
       point_count : Natural;
    begin
+      if polygon'Length < 3 then
+         raise LACKING_POINTS
+           with "polygons must have at least 3 points (found only" &
+           polygon'Length'Img & ")";
+      end if;
       case classification is
          when single_circle =>
             raise CONVERSION_FAILED
@@ -536,11 +546,10 @@ package body Spatial_Data is
    end size_of_collection;
 
 
-   -----------------------------
-   --  collection_item_shape  --
-   -----------------------------
-   function collection_item_shape (collection : Geometry; index : Positive)
-                                   return Geometric_Shape
+   ------------------------------
+   --  check_collection_index  --
+   ------------------------------
+   procedure check_collection_index (collection : Geometry; index : Positive)
    is
    begin
       if index > collection.items then
@@ -548,6 +557,47 @@ package body Spatial_Data is
            with "Only" & collection.items'Img & " items in collection " &
            "(attempted index of" & index'Img & ")";
       end if;
+   end check_collection_index;
+
+
+   ------------------------------
+   --  locate_homogenous_item  --
+   ------------------------------
+   procedure locate_heterogenous_item (collection : Geometry;
+                                       index      : Positive;
+                                       set_index  : out Positive;
+                                       num_points : out Positive)
+   is
+      set_index_set : Boolean := False;
+   begin
+      for x in collection.set_heterogeneous'Range loop
+         if collection.set_heterogeneous (x).shape_id = index then
+            if not set_index_set then
+               set_index := x;
+               set_index_set := True;
+               num_points := 1;
+            else
+               num_points := num_points + 1;
+            end if;
+         end if;
+      end loop;
+      if not set_index_set then
+         raise CONVERSION_FAILED
+           with "data corrupt: expected index" & index'Img &
+           " not found, but" & collection.items'Img & " items are present";
+      end if;
+   end locate_heterogenous_item;
+
+
+   -----------------------------
+   --  collection_item_shape  --
+   -----------------------------
+   function collection_item_shape (collection : Geometry;
+                                   index : Positive := 1)
+                                   return Geometric_Shape
+   is
+   begin
+      collection.check_collection_index (index);
       case collection.contents is
          when single_point         => return point_shape;
          when single_line          => return line_shape;
@@ -569,5 +619,257 @@ package body Spatial_Data is
               " index=" & index'Img & " but heterogeneous shape not found";
       end case;
    end collection_item_shape;
+
+
+   ----------------------
+   --  retrieve_point  --
+   ----------------------
+   function retrieve_point (collection : Geometry; index : Positive := 1)
+                             return Geometric_Point is
+   begin
+      collection.check_collection_index (index);
+      case collection.contents is
+         when single_point  => return collection.point;
+         when multi_point   => return collection.set_points (index);
+         when heterogeneous =>
+            declare
+               sub_index : Positive;
+               data_size : Positive;
+            begin
+               collection.locate_heterogenous_item (index      => index,
+                                                    set_index  => sub_index,
+                                                    num_points => data_size);
+               if collection.set_heterogeneous (sub_index).shape =
+                 point_shape and then data_size > 1
+               then
+                  return collection.set_heterogeneous (sub_index).point;
+               else
+                  raise CONVERSION_FAILED
+                    with "Data type at heterogenous index" & index'Img &
+                    "is not a point or is not 1-component group";
+               end if;
+            end;
+         when others =>
+            raise CONVERSION_FAILED
+              with "Requested point, but shape is " &
+              collection.collection_item_shape (index)'Img;
+      end case;
+   end retrieve_point;
+
+
+   ---------------------
+   --  retrieve_line  --
+   ---------------------
+   function retrieve_line (collection : Geometry; index : Positive := 1)
+                           return Geometric_Line is
+   begin
+      collection.check_collection_index (index);
+      case collection.contents is
+         when single_line => return collection.line;
+         when heterogeneous =>
+            declare
+               sub_index : Positive;
+               data_size : Positive;
+               LN        : Geometric_Line;
+            begin
+               collection.locate_heterogenous_item (index      => index,
+                                                    set_index  => sub_index,
+                                                    num_points => data_size);
+               if collection.set_heterogeneous (sub_index).shape = line_shape
+                 and then data_size = 2
+               then
+                  LN (1) := collection.set_heterogeneous (sub_index).point;
+                  LN (2) := collection.set_heterogeneous (sub_index + 1).point;
+                  return LN;
+               else
+                  raise CONVERSION_FAILED
+                    with "Data type at heterogeneous index" & index'Img &
+                    "is not a line or is not 2-component group";
+               end if;
+            end;
+         when others =>
+            raise CONVERSION_FAILED
+              with "Requested line, but shape is " &
+              collection.collection_item_shape (index)'Img;
+      end case;
+   end retrieve_line;
+
+
+   ----------------------------
+   --  retrieve_line_string  --
+   ----------------------------
+   function retrieve_line_string (collection : Geometry; index : Positive := 1)
+                                  return Geometric_Line_String is
+   begin
+      collection.check_collection_index (index);
+      case collection.contents is
+         when single_line_string => return collection.line_string;
+         when heterogeneous =>
+            declare
+               sub_index : Positive;
+               data_size : Positive;
+            begin
+               collection.locate_heterogenous_item (index      => index,
+                                                    set_index  => sub_index,
+                                                    num_points => data_size);
+               if collection.set_heterogeneous (sub_index).shape =
+                 line_string_shape and then data_size >= 2
+               then
+                  declare
+                     LNS : Geometric_Line_String (1 .. data_size);
+                  begin
+                     for x in Positive range 1 .. data_size loop
+                        LNS (x) := collection.set_heterogeneous
+                          (sub_index + x - 1).point;
+                     end loop;
+                     return LNS;
+                  end;
+               else
+                  raise CONVERSION_FAILED
+                    with "Data type at heterogeneous index" & index'Img &
+                    "is not a line_string or is not at least 2 points long";
+               end if;
+            end;
+         when multi_line_string  =>
+            declare
+               sub_index : Positive;
+               data_size : Positive;
+               set_index_set : Boolean := False;
+            begin
+               for x in collection.set_line_strings'Range loop
+                  if collection.set_line_strings (x).shape_id = index then
+                     if not set_index_set then
+                        sub_index := x;
+                        set_index_set := True;
+                        data_size := 1;
+                     else
+                        data_size := data_size + 1;
+                     end if;
+                  end if;
+               end loop;
+               if not set_index_set then
+                  raise CONVERSION_FAILED
+                    with "data corrupt: expected index" & index'Img &
+                    " not found, but" & collection.items'Img;
+               end if;
+               if data_size >= 2 then
+                  declare
+                     LNS : Geometric_Line_String (1 .. data_size);
+                  begin
+                     for x in Positive range 1 .. data_size loop
+                        LNS (x) := collection.set_line_strings
+                          (sub_index + x - 1).point;
+                     end loop;
+                     return LNS;
+                  end;
+               else
+                  raise CONVERSION_FAILED
+                    with "Data type at set_line_strings index" & index'Img &
+                    "is not at least 2 points long";
+               end if;
+            end;
+         when others =>
+            raise CONVERSION_FAILED
+              with "Requested line_string, but shape is " &
+              collection.collection_item_shape (index)'Img;
+      end case;
+   end retrieve_line_string;
+
+
+   ----------------------
+   --  retrieve_circle  --
+   ----------------------
+   function retrieve_circle (collection : Geometry) return Geometric_Circle is
+   begin
+      case collection.contents is
+         when single_circle  => return collection.circle;
+         when others =>
+            raise CONVERSION_FAILED
+              with "Requested circle, but shape is " &
+              collection.collection_item_shape (1)'Img;
+      end case;
+   end retrieve_circle;
+
+
+   ------------------------
+   --  retrieve_polygon  --
+   ------------------------
+   function retrieve_polygon (collection : Geometry; index : Positive := 1)
+                              return Geometric_Polygon is
+   begin
+      collection.check_collection_index (index);
+      case collection.contents is
+         when single_polygon => return collection.polygon;
+         when heterogeneous =>
+            declare
+               sub_index : Positive;
+               data_size : Positive;
+            begin
+               collection.locate_heterogenous_item (index      => index,
+                                                    set_index  => sub_index,
+                                                    num_points => data_size);
+               if collection.set_heterogeneous (sub_index).shape =
+                 polygon_shape and then data_size > 2
+               then
+                  declare
+                     LNS : Geometric_Polygon (1 .. data_size);
+                  begin
+                     for x in Positive range 1 .. data_size loop
+                        LNS (x) := collection.set_heterogeneous
+                          (sub_index + x - 1).point;
+                     end loop;
+                     return LNS;
+                  end;
+               else
+                  raise CONVERSION_FAILED
+                    with "Data type at heterogeneous index" & index'Img &
+                    "is not a polygon or does not have at least 3 points";
+               end if;
+            end;
+         when multi_polygon  =>
+            declare
+               sub_index : Positive;
+               data_size : Positive;
+               set_index_set : Boolean := False;
+            begin
+               for x in collection.set_polygons'Range loop
+                  if collection.set_polygons (x).shape_id = index then
+                     if not set_index_set then
+                        sub_index := x;
+                        set_index_set := True;
+                        data_size := 1;
+                     else
+                        data_size := data_size + 1;
+                     end if;
+                  end if;
+               end loop;
+               if not set_index_set then
+                  raise CONVERSION_FAILED
+                    with "data corrupt: expected index" & index'Img &
+                    " not found, but" & collection.items'Img;
+               end if;
+               if data_size > 2 then
+                  declare
+                     LNS : Geometric_Polygon (1 .. data_size);
+                  begin
+                     for x in Positive range 1 .. data_size loop
+                        LNS (x) := collection.set_polygons
+                          (sub_index + x - 1).point;
+                     end loop;
+                     return LNS;
+                  end;
+               else
+                  raise CONVERSION_FAILED
+                    with "Data type at set_line_strings index" & index'Img &
+                    "is not at least 3 points long";
+               end if;
+            end;
+         when others =>
+            raise CONVERSION_FAILED
+              with "Requested polygon, but shape is " &
+              collection.collection_item_shape (index)'Img;
+      end case;
+   end retrieve_polygon;
+
 
 end Spatial_Data;
