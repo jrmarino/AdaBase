@@ -1093,8 +1093,9 @@ package body Spatial_Data is
             begin
                for x in collection.set_points'Range loop
                   first := (x = collection.set_points'First);
-                  CT.SU.Append (product, format_point
-                                (collection.set_points (x), first));
+                  CT.SU.Append
+                    (product, format_point
+                       (collection.set_points (x), first));
                end loop;
                return CT.USS (product) & ")";
             end;
@@ -1105,12 +1106,9 @@ package body Spatial_Data is
             begin
                for ls in 1 .. collection.items loop
                   first := (ls = 1);
-                  declare
-                     LNS : Geometric_Line_String :=
-                           collection.retrieve_line_string (ls);
-                  begin
-                     CT.SU.Append (product, format_line_string (LNS, first));
-                  end;
+                  CT.SU.Append
+                    (product, format_line_string
+                       (collection.retrieve_line_string (ls), first));
                end loop;
                return CT.USS (product) & ")";
             end;
@@ -1121,12 +1119,9 @@ package body Spatial_Data is
             begin
                for ls in 1 .. collection.items loop
                   first := (ls = 1);
-                  declare
-                     LNS : Geometric_Polygon :=
-                           collection.retrieve_polygon (ls);
-                  begin
-                     CT.SU.Append (product, format_polygon (LNS, first));
-                  end;
+                  CT.SU.Append
+                    (product, format_polygon
+                       (collection.retrieve_polygon (ls), first));
                end loop;
                return CT.USS (product) & ")";
             end;
