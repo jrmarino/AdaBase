@@ -34,6 +34,8 @@ package Spacial_Data is
    subtype Geometric_Line_String is Geometric_Point_set;
    subtype Geometric_Line is Geometric_Point_set (1 .. 2);
 
+   Origin_Point : constant Geometric_Point := (0.0, 0.0);
+
    --------------------------------
    --  Initialization functions  --
    --------------------------------
@@ -47,10 +49,22 @@ package Spacial_Data is
    function initialize_as_infinite_line (two_points_on_line : Geometric_Line)
                                          return Geometry;
 
+   -----------------------------------
+   --  Build collections functions  --
+   -----------------------------------
+   procedure append_point (collection : out Geometry; point : Geometric_Point);
+   procedure append_line  (collection : out Geometry; line : Geometric_Line);
+   procedure append_line_string (collection : out Geometry;
+                                 line_string : Geometric_Line_String);
+   procedure append_polygon (collection : out Geometry;
+                             polygon : Geometric_Polygon);
+
+   CONVERSION_FAILED : exception;
+
 private
 
-   type Geometric_Shape is (point, line, line_string, infinite_line,
-                            circle, polygon);
+   type Geometric_Shape is (gs_point, gs_line, gs_line_string,
+                            gs_infinite_line, gs_circle, gs_polygon);
 
 
    subtype Geometric_Point_Collection is Geometric_Point_set;
@@ -68,6 +82,12 @@ private
          shape_id : Positive;
       end record;
 
+   Homogeneous_Dummy : constant Homogeneous_Collection_Unit :=
+                       (Origin_Point, 1);
+
+   heterogeneous_Dummy : constant Heterogeneous_Collection_Unit :=
+                         (Origin_Point, gs_point, 1);
+
    type Homogeneous_Collection is
        array (Positive range <>) of Homogeneous_Collection_Unit;
 
@@ -78,25 +98,32 @@ private
       record
          case contents is
             when single_point =>
-               point : Geometric_Point;
+               point : Geometric_Point := Origin_Point;
             when single_circle =>
-               circle : Geometric_Circle;
+               circle : Geometric_Circle := (center_point => Origin_Point,
+                                             radius       => 1.0);
             when single_line =>
-               line : Geometric_Line;
+               line : Geometric_Line := (others => Origin_Point);
             when single_infinite_line =>
-               infinite_line : Geometric_Line;
+               infinite_line : Geometric_Line := (others => Origin_Point);
             when single_line_string =>
-               line_string : Geometric_Line_String (1 .. items);
+               line_string : Geometric_Line_String (1 .. items) :=
+                             (others => Origin_Point);
             when single_polygon =>
-               polygon : Geometric_Polygon (1 .. items);
+               polygon : Geometric_Polygon (1 .. items) :=
+                         (others => Origin_Point);
             when multi_point =>
-               set_points : Geometric_Point_Collection (1 .. items);
+               set_points : Geometric_Point_Collection (1 .. items) :=
+                            (others => Origin_Point);
             when multi_line_string =>
-               set_line_strings : Homogeneous_Collection (1 .. items);
+               set_line_strings : Homogeneous_Collection (1 .. items) :=
+                                  (others => Homogeneous_Dummy);
             when multi_polygon =>
-               set_polygons : Homogeneous_Collection (1 .. items);
+               set_polygons : Homogeneous_Collection (1 .. items) :=
+                              (others => Homogeneous_Dummy);
             when heterogeneous =>
-               set_heterogeneous : Heterogeneous_Collection (1 .. items);
+               set_heterogeneous : Heterogeneous_Collection (1 .. items) :=
+                                   (others => heterogeneous_Dummy);
          end case;
       end record;
 
