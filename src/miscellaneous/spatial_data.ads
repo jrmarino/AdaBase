@@ -14,6 +14,13 @@ package Spatial_Data is
                             multi_polygon,
                             heterogeneous);
 
+   type Geometric_Shape is (point_shape,
+                            line_shape,
+                            line_string_shape,
+                            infinite_line_shape,
+                            circle_shape,
+                            polygon_shape);
+
    type Geometry (contents : Collection_Type; items : Positive) is private;
    type Geometric_Real is digits 18;
 
@@ -59,13 +66,16 @@ package Spatial_Data is
    procedure append_polygon (collection : out Geometry;
                              polygon : Geometric_Polygon);
 
+
+   ---------------------------
+   --  Retrieval functions  --
+   ---------------------------
+   function size_of_collection (collection : Geometry) return Positive;
+
+
    CONVERSION_FAILED : exception;
 
 private
-
-   type Geometric_Shape is (gs_point, gs_line, gs_line_string,
-                            gs_infinite_line, gs_circle, gs_polygon);
-
 
    subtype Geometric_Point_Collection is Geometric_Point_set;
 
@@ -86,7 +96,7 @@ private
                        (Origin_Point, 1);
 
    heterogeneous_Dummy : constant Heterogeneous_Collection_Unit :=
-                         (Origin_Point, gs_point, 1);
+                         (Origin_Point, point_shape, 1);
 
    type Homogeneous_Collection is
        array (Positive range <>) of Homogeneous_Collection_Unit;
