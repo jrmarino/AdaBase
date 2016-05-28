@@ -70,10 +70,12 @@ package Spatial_Data is
    ---------------------------
    --  Retrieval functions  --
    ---------------------------
-   function size_of_collection (collection : Geometry) return Positive;
+   function size_of_collection    (collection : Geometry) return Positive;
+   function collection_item_shape (collection : Geometry; index : Positive)
+                                   return Geometric_Shape;
 
-
-   CONVERSION_FAILED : exception;
+   CONVERSION_FAILED       : exception;
+   OUT_OF_COLLECTION_RANGE : exception;
 
 private
 

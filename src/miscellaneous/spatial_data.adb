@@ -535,4 +535,39 @@ package body Spatial_Data is
       return collection.items;
    end size_of_collection;
 
+
+   -----------------------------
+   --  collection_item_shape  --
+   -----------------------------
+   function collection_item_shape (collection : Geometry; index : Positive)
+                                   return Geometric_Shape
+   is
+   begin
+      if index > collection.items then
+         raise OUT_OF_COLLECTION_RANGE
+           with "Only" & collection.items'Img & " items in collection " &
+           "(attempted index of" & index'Img & ")";
+      end if;
+      case collection.contents is
+         when single_point         => return point_shape;
+         when single_line          => return line_shape;
+         when single_line_string   => return line_string_shape;
+         when single_infinite_line => return infinite_line_shape;
+         when single_circle        => return circle_shape;
+         when single_polygon       => return polygon_shape;
+         when multi_point          => return point_shape;
+         when multi_line_string    => return line_string_shape;
+         when multi_polygon        => return polygon_shape;
+         when heterogeneous        =>
+            for x in collection.set_heterogeneous'Range loop
+               if collection.set_heterogeneous (x).shape_id = index then
+                  return collection.set_heterogeneous (x).shape;
+               end if;
+            end loop;
+            raise CONVERSION_FAILED
+              with "Impossible! Collection size=" & collection.items'Img &
+              " index=" & index'Img & " but heterogeneous shape not found";
+      end case;
+   end collection_item_shape;
+
 end Spatial_Data;
