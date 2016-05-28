@@ -872,4 +872,120 @@ package body Spatial_Data is
    end retrieve_polygon;
 
 
+   --------------------------------------------
+   --  retrieve_two_points_of_infinite_line  --
+   --------------------------------------------
+   function retrieve_two_points_of_infinite_line (collection : Geometry)
+                                                  return Geometric_Line is
+   begin
+      case collection.contents is
+         when single_infinite_line => return collection.infinite_line;
+         when others =>
+            raise CONVERSION_FAILED
+              with "Requested infinite_line, but shape is " &
+              collection.collection_item_shape (1)'Img;
+      end case;
+   end retrieve_two_points_of_infinite_line;
+
+
+   --------------------------------
+   --  convert_infinite_line #1  --
+   --------------------------------
+   function convert_infinite_line (line : Geometric_Line)
+                                   return Slope_Intercept
+   is
+      diff_x    : constant Geometric_Real := line (2).X - line (1).X;
+      diff_y    : constant Geometric_Real := line (2).Y - line (1).Y;
+      slope     : Geometric_Real;
+      intercept : Geometric_Real;
+   begin
+      if diff_x = 0.0 then
+         return (slope => 0.0, y_intercept => 0.0, vertical => True);
+      end if;
+
+      slope := diff_y / diff_x;
+      intercept := line (1).Y - (slope * line (1).X);
+      return (slope, intercept, False);
+   end convert_infinite_line;
+
+
+   --------------------------------
+   --  convert_infinite_line #2  --
+   --------------------------------
+   function convert_infinite_line (line : Geometric_Line) return Standard_Form
+   is
+      --  If vertical slope ("run" = 0, "rise" /= 0) the result is
+      --      A=1 B=0 C=x-coordinate
+      --  For the non-vertical case
+      --  A is equivalent to negative slope
+      --  B is equivalent to 1.0
+      --  C is equivalent to y-intercept
+      SLINT : Slope_Intercept := convert_infinite_line (line);
+   begin
+      if SLINT.vertical then
+         return (A => 1.0, B => 0.0, C => line (1).X);
+      end if;
+      return (A => -1.0 * SLINT.slope, B => 1.0, C => SLINT.y_intercept);
+   end convert_infinite_line;
+
+
+   -----------------------------------
+   --  convert_to_infinite_line #1  --
+   -----------------------------------
+   function convert_to_infinite_line (std_form : Standard_Form)
+                                      return Geometric_Line
+   is
+      XX : Geometric_Real;
+      YY : Geometric_Real;
+   begin
+      if std_form.B = 0.0 then
+         if std_form.A = 0.0 then
+            raise CONVERSION_FAILED
+              with "Illegal standard form: A and B are both zero";
+         end if;
+         --  Vertical line
+         XX := std_form.C / std_form.A;
+         return ((XX, 0.0), (XX, 1.0));
+      end if;
+
+      if std_form.A = 0.0 then
+         --  Horizontal line
+         YY := std_form.C / std_form.B;
+         return ((0.0, YY), (1.0, YY));
+      end if;
+
+      --  Sloped (non-inclusively been +/- 0 and infinity)
+      --  In other words, neither A nor B is zero; both axes are crossed
+      XX := std_form.C / std_form.A;
+      YY := std_form.C / std_form.B;
+      return ((0.0, YY), (XX, 0.0));
+
+   end convert_to_infinite_line;
+
+
+   -----------------------------------
+   --  convert_to_infinite_line #2  --
+   -----------------------------------
+   function convert_to_infinite_line (intercept_form : Slope_Intercept)
+                                      return Geometric_Line
+   is
+      XX : Geometric_Real;
+      YY : Geometric_Real;
+   begin
+      if intercept_form.vertical then
+         raise CONVERSION_FAILED
+           with "Cannot convert vertical lines using the intercept form";
+      end if;
+      YY := intercept_form.y_intercept;
+
+      --  Handle horizontal case
+      if intercept_form.slope = 0.0 then
+         return ((0.0, YY), (1.0, YY));
+      end if;
+
+      --  Remaining cases cross both axes
+      XX := -1.0 * intercept_form.y_intercept / intercept_form.slope;
+      return ((0.0, YY), (XX, 0.0));
+   end convert_to_infinite_line;
+
 end Spatial_Data;

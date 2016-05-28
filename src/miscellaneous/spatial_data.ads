@@ -36,6 +36,20 @@ package Spatial_Data is
          radius       : Geometric_Real;
       end record;
 
+   type Slope_Intercept is
+      record
+         slope       : Geometric_Real;
+         y_intercept : Geometric_Real;
+         vertical    : Boolean;
+      end record;
+
+   type Standard_Form is
+      record
+         A : Geometric_Real;
+         B : Geometric_Real;
+         C : Geometric_Real;
+      end record;
+
    type Geometric_Point_set is array (Positive range <>) of Geometric_Point;
    subtype Geometric_Polygon is Geometric_Point_set;
    subtype Geometric_Line_String is Geometric_Point_set;
@@ -84,6 +98,24 @@ package Spatial_Data is
                                   return Geometric_Line_String;
    function retrieve_circle      (collection : Geometry)
                                   return Geometric_Circle;
+
+   function retrieve_two_points_of_infinite_line (collection : Geometry)
+                                                  return Geometric_Line;
+
+   -------------------
+   --  Conversions  --
+   -------------------
+
+   function convert_infinite_line (line : Geometric_Line)
+                                   return Slope_Intercept;
+
+   function convert_infinite_line (line : Geometric_Line) return Standard_Form;
+
+   function convert_to_infinite_line (std_form : Standard_Form)
+                                      return Geometric_Line;
+
+   function convert_to_infinite_line (intercept_form : Slope_Intercept)
+                                      return Geometric_Line;
 
    CONVERSION_FAILED       : exception;
    OUT_OF_COLLECTION_RANGE : exception;
