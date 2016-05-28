@@ -1,7 +1,7 @@
 --  This file is covered by the Internet Software Consortium (ISC) License
 --  Reference: ../../License.txt
 
-package body Spacial_Data is
+package body Spatial_Data is
 
 
    ---------------------------
@@ -524,8 +524,7 @@ package body Spacial_Data is
             end;
       end case;
       collection := product;
-
    end append_polygon;
 
 
-end Spacial_Data;
+end Spatial_Data;

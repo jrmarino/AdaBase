@@ -1,7 +1,7 @@
 --  This file is covered by the Internet Software Consortium (ISC) License
 --  Reference: ../../License.txt
 
-package Spacial_Data is
+package Spatial_Data is
 
    type Collection_Type is (single_point,
                             single_line,
@@ -127,4 +127,4 @@ private
          end case;
       end record;
 
-end Spacial_Data;
+end Spatial_Data;
