@@ -109,9 +109,8 @@ package body CommonText is
    function int2str  (A : Integer) return String
    is
       raw : constant String := A'Img;
-      len : constant Natural := raw'Length;
    begin
-      return raw (2 .. len);
+      return trim (raw);
    end int2str;
 
 

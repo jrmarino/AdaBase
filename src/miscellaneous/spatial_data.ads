@@ -117,6 +117,12 @@ package Spatial_Data is
    function convert_to_infinite_line (intercept_form : Slope_Intercept)
                                       return Geometric_Line;
 
+   ---------------------------
+   --  Text Representation  --
+   ---------------------------
+   function convert_to_mysql_text (collection : Geometry) return String;
+
+
    CONVERSION_FAILED       : exception;
    OUT_OF_COLLECTION_RANGE : exception;
    LACKING_POINTS          : exception;
@@ -182,6 +188,8 @@ private
                                    (others => heterogeneous_Dummy);
          end case;
       end record;
+
+   function format_real (value : Geometric_Real) return String;
 
    --  raises exception if index is out of range
    procedure check_collection_index (collection : Geometry; index : Positive);

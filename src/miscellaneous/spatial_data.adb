@@ -1,8 +1,11 @@
 --  This file is covered by the Internet Software Consortium (ISC) License
 --  Reference: ../../License.txt
 
+with CommonText;
+
 package body Spatial_Data is
 
+   package CT renames CommonText;
 
    ---------------------------
    --  initialize_as_point  --
@@ -987,5 +990,176 @@ package body Spatial_Data is
       XX := -1.0 * intercept_form.y_intercept / intercept_form.slope;
       return ((0.0, YY), (XX, 0.0));
    end convert_to_infinite_line;
+
+
+   -------------------
+   --  format_real  --
+   -------------------
+   function format_real (value : Geometric_Real) return String is
+      raw : constant String := value'Img;
+   begin
+      return CT.trim (raw);
+   end format_real;
+
+
+   -----------------------
+   --  convert_to_text  --
+   -----------------------
+   function convert_to_mysql_text (collection : Geometry) return String is
+      function format_point (pt    : Geometric_Point;
+                             first : Boolean := False) return String;
+      function format_polygon (LNS   : Geometric_Polygon;
+                               first : Boolean := False) return String;
+      function format_line_string (LNS   : Geometric_Line_String;
+                                   first : Boolean := False) return String;
+
+      function format_point (pt    : Geometric_Point;
+                             first : Boolean := False) return String
+      is
+         ptx  : constant String := format_real (pt.X);
+         pty  : constant String := format_real (pt.Y);
+         sep  : constant String := ", ";
+         core : constant String := "Point(" & ptx & sep & pty & ")";
+      begin
+         if first then
+            return core;
+         else
+            return sep & core;
+         end if;
+      end format_point;
+
+      function format_polygon (LNS   : Geometric_Polygon;
+                               first : Boolean := False) return String
+      is
+         lead : constant String := "Polygon(LineString(";
+         sep  : constant String := ", ";
+         work : CT.Text := CT.SUS (lead);
+         inn1 : Boolean;
+      begin
+         for x in LNS'Range loop
+            inn1 := (x = LNS'First);
+                     CT.SU.Append (work, format_point (LNS (x), inn1));
+         end loop;
+         if first then
+            return CT.USS (work) & "))";
+         else
+            return sep & CT.USS (work) & "))";
+         end if;
+      end format_polygon;
+
+      function format_line_string (LNS : Geometric_Line_String;
+                                   first : Boolean := False) return String
+      is
+         lead : constant String := "LineString(";
+         sep  : constant String := ", ";
+         work : CT.Text := CT.SUS (lead);
+         inn1 : Boolean;
+      begin
+         for x in LNS'Range loop
+            inn1 := (x = LNS'First);
+                     CT.SU.Append (work, format_point (LNS (x), inn1));
+         end loop;
+         if first then
+            return CT.USS (work) & ")";
+         else
+            return sep & CT.USS (work) & ")";
+         end if;
+      end format_line_string;
+
+      classification : Collection_Type := collection.contents;
+   begin
+      case classification is
+         when single_point => return format_point (collection.point, True);
+         when single_line  =>
+            return format_line_string (collection.line, True);
+         when single_line_string =>
+            return format_line_string (collection.line_string, True);
+         when single_infinite_line =>
+            --  Infinite lines are not supported by MySQL so this is not
+            --  actually correct
+            return format_line_string (collection.infinite_line, True);
+         when single_circle =>
+            --  Circles are unique to postgresql, so this is nonsense for
+            --  MySQL.  It's better than exception though, I guess.
+            return "Circle(" &
+              format_point (collection.circle.center_point, True) & ", " &
+              format_real (collection.circle.radius) & ")";
+         when single_polygon =>
+            return format_polygon (collection.polygon, True);
+         when multi_point =>
+            declare
+               product : CT.Text := CT.SUS ("MultiPoint(");
+               first   : Boolean;
+            begin
+               for x in collection.set_points'Range loop
+                  first := (x = collection.set_points'First);
+                  CT.SU.Append (product, format_point
+                                (collection.set_points (x), first));
+               end loop;
+               return CT.USS (product) & ")";
+            end;
+         when multi_line_string =>
+            declare
+               product : CT.Text := CT.SUS ("MultiLineString(");
+               first   : Boolean;
+            begin
+               for ls in 1 .. collection.items loop
+                  first := (ls = 1);
+                  declare
+                     LNS : Geometric_Line_String :=
+                           collection.retrieve_line_string (ls);
+                  begin
+                     CT.SU.Append (product, format_line_string (LNS, first));
+                  end;
+               end loop;
+               return CT.USS (product) & ")";
+            end;
+         when multi_polygon =>
+            declare
+               product : CT.Text := CT.SUS ("MultiPolygon(");
+               first   : Boolean;
+            begin
+               for ls in 1 .. collection.items loop
+                  first := (ls = 1);
+                  declare
+                     LNS : Geometric_Polygon :=
+                           collection.retrieve_polygon (ls);
+                  begin
+                     CT.SU.Append (product, format_polygon (LNS, first));
+                  end;
+               end loop;
+               return CT.USS (product) & ")";
+            end;
+         when heterogeneous =>
+            declare
+               product : CT.Text := CT.SUS ("GeometryCollection(");
+               first   : Boolean;
+               flavor  : Geometric_Shape;
+            begin
+               for ls in 1 .. collection.items loop
+                  first := (ls = 1);
+                  flavor := collection.collection_item_shape;
+                  case flavor is
+                     when point_shape =>
+                        CT.SU.Append
+                          (product, format_point
+                             (collection.retrieve_point (ls), first));
+                     when line_string_shape =>
+                        CT.SU.Append
+                          (product, format_line_string
+                             (collection.retrieve_line_string (ls), first));
+                     when polygon_shape =>
+                        CT.SU.Append
+                          (product, format_polygon
+                             (collection.retrieve_polygon (ls), first));
+                     when circle_shape        => null;
+                     when line_shape          => null;
+                     when infinite_line_shape => null;
+                  end case;
+               end loop;
+               return CT.USS (product) & ")";
+            end;
+      end case;
+   end convert_to_mysql_text;
 
 end Spatial_Data;
