@@ -72,9 +72,9 @@ package body Spatial_Data is
    is
       product : Geometry := (single_polygon, 1, polygon);
    begin
-      if polygon'Length < 3 then
+      if polygon'Length < 4 then
          raise LACKING_POINTS
-           with "polygons must have at least 3 points (found only" &
+           with "polygons must have at least 4 points (found only" &
            polygon'Length'Img & ")";
       end if;
       return product;
@@ -99,25 +99,27 @@ package body Spatial_Data is
             product := (multi_point, num_items, (collection.point, point));
          when single_line =>
             product := (heterogeneous, num_items,
-                        ((collection.line (1), line_shape, 1),
-                         (collection.line (2), line_shape, 1),
-                         (point, point_shape, 2)));
+                        ((collection.line (1), line_shape, 1, 1),
+                         (collection.line (2), line_shape, 1, 1),
+                         (point, point_shape, num_items, 1)));
          when single_infinite_line =>
-            product := (heterogeneous, num_items,
-                        ((collection.infinite_line (1), infinite_line_shape, 1),
-                         (collection.infinite_line (2), infinite_line_shape, 1),
-                         (point, point_shape, 2)));
+            product :=
+              (heterogeneous, num_items,
+               ((collection.infinite_line (1), infinite_line_shape, 1, 1),
+                (collection.infinite_line (2), infinite_line_shape, 1, 1),
+                (point, point_shape, num_items, 1)));
          when single_line_string =>
             point_count := collection.line_string'Length + 1;
             declare
                HC : Heterogeneous_Collection (1 .. point_count);
             begin
                for x in collection.line_string'Range loop
-                  HC (x).point    := collection.line (x);
-                  HC (x).shape    := line_string_shape;
-                  HC (x).shape_id := 1;
+                  HC (x).point     := collection.line (x);
+                  HC (x).shape     := line_string_shape;
+                  HC (x).shape_id  := 1;
+                  HC (x).component := 1;
                end loop;
-               HC (HC'Last) := (point, point_shape, 2);
+               HC (HC'Last) := (point, point_shape, num_items, 1);
                product := (heterogeneous, num_items, HC);
             end;
          when single_polygon =>
@@ -126,11 +128,12 @@ package body Spatial_Data is
                HC : Heterogeneous_Collection (1 .. point_count);
             begin
                for x in collection.polygon'Range loop
-                  HC (x).point    := collection.line (x);
-                  HC (x).shape    := polygon_shape;
-                  HC (x).shape_id := 1;
+                  HC (x).point     := collection.line (x);
+                  HC (x).shape     := polygon_shape;
+                  HC (x).shape_id  := 1;
+                  HC (x).component := 1;
                end loop;
-               HC (HC'Last) := (point, point_shape, 2);
+               HC (HC'Last) := (point, point_shape, num_items, 1);
                product := (heterogeneous, num_items, HC);
             end;
          when multi_point =>
@@ -147,11 +150,12 @@ package body Spatial_Data is
                HC : Heterogeneous_Collection (1 .. point_count);
             begin
                for x in collection.set_line_strings'Range loop
-                  HC (x).shape_id := collection.set_line_strings (x).shape_id;
-                  HC (x).point    := collection.set_line_strings (x).point;
-                  HC (x).shape    := line_string_shape;
+                  HC (x).shape_id  := collection.set_line_strings (x).shape_id;
+                  HC (x).point     := collection.set_line_strings (x).point;
+                  HC (x).shape     := line_string_shape;
+                  HC (x).component := 1;
                end loop;
-               HC (HC'Last) := (point, point_shape, num_items);
+               HC (HC'Last) := (point, point_shape, num_items, 1);
                product := (heterogeneous, num_items, HC);
             end;
          when multi_polygon =>
@@ -160,11 +164,12 @@ package body Spatial_Data is
                HC : Heterogeneous_Collection (1 .. point_count);
             begin
                for x in collection.set_polygons'Range loop
-                  HC (x).shape_id := collection.set_polygons (x).shape_id;
-                  HC (x).point    := collection.set_polygons (x).point;
-                  HC (x).shape    := polygon_shape;
+                  HC (x).shape_id  := collection.set_polygons (x).shape_id;
+                  HC (x).point     := collection.set_polygons (x).point;
+                  HC (x).shape     := polygon_shape;
+                  HC (x).component := 1;
                end loop;
-               HC (HC'Last) := (point, point_shape, num_items);
+               HC (HC'Last) := (point, point_shape, num_items, 1);
                product := (heterogeneous, num_items, HC);
             end;
          when heterogeneous =>
@@ -174,7 +179,7 @@ package body Spatial_Data is
             begin
                HC (1 .. collection.set_heterogeneous'Last) :=
                  collection.set_heterogeneous;
-               HC (HC'Last) := (point, point_shape, num_items);
+               HC (HC'Last) := (point, point_shape, num_items, 1);
                product := (heterogeneous, num_items, HC);
             end;
       end case;
@@ -376,9 +381,9 @@ package body Spatial_Data is
       num_items   : Natural := collection.items + 1;
       point_count : Natural;
    begin
-      if polygon'Length < 3 then
+      if polygon'Length < 4 then
          raise LACKING_POINTS
-           with "polygons must have at least 3 points (found only" &
+           with "polygons must have at least 4 points (found only" &
            polygon'Length'Img & ")";
       end if;
       case classification is
@@ -458,15 +463,19 @@ package body Spatial_Data is
             point_count := collection.polygon'Length + polygon'Length;
             declare
                LL : Natural := collection.polygon'Length;
-               HC : Homogeneous_Collection (1 .. point_count);
+               HC : Heterogeneous_Collection (1 .. point_count);
             begin
                for x in collection.polygon'Range loop
-                  HC (x).shape_id := 1;
-                  HC (x).point    := collection.polygon (x);
+                  HC (x).shape     := polygon_shape;
+                  HC (x).point     := collection.polygon (x);
+                  HC (x).shape_id  := 1;
+                  HC (x).component := 1;
                end loop;
                for x in polygon'Range loop
-                  HC (x + LL).shape_id := num_items;
-                  HC (x + LL).point    := polygon (x);
+                  HC (x + LL).shape     := polygon_shape;
+                  HC (x + LL).point     := polygon (x);
+                  HC (x + LL).shape_id  := num_items;
+                  HC (x + LL).component := 1;
                end loop;
                product := (multi_polygon, num_items, HC);
             end;
@@ -477,14 +486,16 @@ package body Spatial_Data is
                HC : Heterogeneous_Collection (1 .. point_count);
             begin
                for x in collection.set_points'Range loop
-                  HC (x).shape_id := x;
-                  HC (x).shape    := point_shape;
-                  HC (x).point    := collection.set_points (x);
+                  HC (x).shape     := point_shape;
+                  HC (x).point     := collection.set_points (x);
+                  HC (x).shape_id  := x;
+                  HC (x).component := 1;
                end loop;
                for x in polygon'Range loop
-                  HC (x + LL).shape_id := num_items;
-                  HC (x + LL).shape    := polygon_shape;
-                  HC (x + LL).point    := polygon (x);
+                  HC (x + LL).shape     := polygon_shape;
+                  HC (x + LL).point     := polygon (x);
+                  HC (x + LL).shape_id  := num_items;
+                  HC (x + LL).component := 1;
                end loop;
                product := (heterogeneous, num_items, HC);
             end;
@@ -496,13 +507,16 @@ package body Spatial_Data is
                HC : Heterogeneous_Collection (1 .. point_count);
             begin
                for x in collection.set_line_strings'Range loop
-                  HC (x).shape    := line_string_shape;
-                  HC (x).shape_id := collection.set_line_strings (x).shape_id;
-                  HC (x).point    := collection.set_line_strings (x).point;
+                  HC (x).shape     := line_string_shape;
+                  HC (x).point     := collection.set_line_strings (x).point;
+                  HC (x).shape_id  := collection.set_line_strings (x).shape_id;
+                  HC (x).component := 1;
                end loop;
                for x in polygon'Range loop
-                  HC (x + LL).shape_id := num_items;
+                  HC (x + LL).shape    := polygon_shape;
                   HC (x + LL).point    := polygon (x);
+                  HC (x + LL).shape_id := num_items;
+                  HC (x + LL).component := 1;
                end loop;
                product := (heterogeneous, num_items, HC);
             end;
@@ -510,12 +524,14 @@ package body Spatial_Data is
             point_count := collection.set_polygons'Length + polygon'Length;
             declare
                LL : Natural := collection.set_polygons'Length;
-               HC : Homogeneous_Collection (1 .. point_count);
+               HC : Heterogeneous_Collection (1 .. point_count);
             begin
                HC (collection.set_polygons'Range) := collection.set_polygons;
                for x in polygon'Range loop
-                  HC (x + LL).shape_id := num_items;
-                  HC (x + LL).point    := polygon (x);
+                  HC (x + LL).shape     := point_shape;
+                  HC (x + LL).point     := polygon (x);
+                  HC (x + LL).shape_id  := num_items;
+                  HC (x + LL).component := 1;
                end loop;
                product := (multi_polygon, num_items, HC);
             end;
@@ -529,15 +545,103 @@ package body Spatial_Data is
                HC (collection.set_heterogeneous'Range) :=
                  collection.set_heterogeneous;
                for x in polygon'Range loop
-                  HC (x + LL).shape_id := num_items;
-                  HC (x + LL).shape    := polygon_shape;
-                  HC (x + LL).point    := polygon (x);
+                  HC (x + LL).shape     := polygon_shape;
+                  HC (x + LL).point     := polygon (x);
+                  HC (x + LL).shape_id  := num_items;
+                  HC (x + LL).component := 1;
                end loop;
                product := (heterogeneous, num_items, HC);
             end;
       end case;
       collection := product;
    end append_polygon;
+
+
+   ---------------------------
+   --  append_polygon_hole  --
+   ---------------------------
+   procedure append_polygon_hole (collection : out Geometry;
+                                  polygon : Geometric_Polygon)
+   is
+      classification : Collection_Type := collection.contents;
+      product     : Geometry := initialize_as_point ((0.0, 0.0));
+      point_count : Natural;
+   begin
+      if polygon'Length < 4 then
+         raise LACKING_POINTS
+           with "polygons must have at least 4 points (found only" &
+           polygon'Length'Img & ")";
+      end if;
+      case classification is
+         when single_polygon =>
+            point_count := collection.polygon'Length + polygon'Length;
+            declare
+               LL : Natural := collection.polygon'Length;
+               HC : Heterogeneous_Collection (1 .. point_count);
+            begin
+               for x in collection.polygon'Range loop
+                  HC (x).shape     := polygon_shape;
+                  HC (x).point     := collection.polygon (x);
+                  HC (x).shape_id  := 1;
+                  HC (x).component := 1;
+               end loop;
+               for x in polygon'Range loop
+                  HC (x + LL).shape     := polygon_shape;
+                  HC (x + LL).point     := polygon (x);
+                  HC (x + LL).shape_id  := 1;
+                  HC (x + LL).component := 2;
+               end loop;
+               product := (multi_polygon, 1, HC);
+            end;
+         when multi_polygon =>
+            point_count := collection.set_polygons'Length + polygon'Length;
+            declare
+               LL : Natural := collection.set_polygons'Length;
+               HC : Heterogeneous_Collection (1 .. point_count);
+               last_id : Positive := collection.set_polygons (LL).shape_id;
+               last_sc : Positive := collection.set_polygons (LL).component;
+            begin
+               HC (collection.set_polygons'Range) := collection.set_polygons;
+               for x in polygon'Range loop
+                  HC (x + LL).shape     := point_shape;
+                  HC (x + LL).point     := polygon (x);
+                  HC (x + LL).shape_id  := last_id;
+                  HC (x + LL).component := last_sc + 1;
+               end loop;
+               product := (multi_polygon, last_id, HC);
+            end;
+         when heterogeneous =>
+            point_count := collection.set_heterogeneous'Length +
+                           polygon'Length;
+            declare
+               LL : Natural := collection.set_heterogeneous'Length;
+               HC : Heterogeneous_Collection (1 .. point_count);
+               last_id : Positive;
+               last_sc : Positive;
+            begin
+               if collection.set_heterogeneous (LL).shape /= polygon_shape then
+                  raise ILLEGAL_POLY_HOLE
+                    with "The last inserted shape was not a polygon";
+               end if;
+               last_id := collection.set_heterogeneous (LL).shape_id;
+               last_sc := collection.set_heterogeneous (LL).component;
+
+               HC (collection.set_heterogeneous'Range) :=
+                 collection.set_heterogeneous;
+               for x in polygon'Range loop
+                  HC (x + LL).shape     := point_shape;
+                  HC (x + LL).point     := polygon (x);
+                  HC (x + LL).shape_id  := last_id;
+                  HC (x + LL).component := last_sc + 1;
+               end loop;
+               product := (heterogeneous, last_id, HC);
+            end;
+         when others =>
+            raise ILLEGAL_POLY_HOLE
+              with "Cannot add polygon hole to " & classification'Img;
+      end case;
+      collection := product;
+   end append_polygon_hole;
 
 
    --------------------------
@@ -592,6 +696,126 @@ package body Spatial_Data is
    end locate_heterogenous_item;
 
 
+   -------------------------
+   --  polygon_ring_size  --
+   -------------------------
+   function polygon_ring_size (collection : Geometry; position : Positive)
+                               return Positive
+   is
+      current_id : Positive := collection.set_polygons (position).shape_id;
+      current_sc : Positive := collection.set_polygons (position).component;
+      arrow      : Positive := position;
+      size       : Positive := 1;
+   begin
+      loop
+         arrow := arrow + 1;
+         exit when arrow > collection.set_polygons'Length;
+         exit when collection.set_polygons (arrow).shape_id /= current_id;
+         exit when collection.set_polygons (arrow).component /= current_sc;
+         size := size + 1;
+      end loop;
+      return size;
+   end polygon_ring_size;
+
+
+   --------------------------------
+   --  polygon_hetero_ring_size  --
+   --------------------------------
+   function polygon_hetero_ring_size (collection : Geometry;
+                                      position   : Positive)
+                                      return Positive
+   is
+      curr_id : Positive := collection.set_heterogeneous (position).shape_id;
+      curr_sc : Positive := collection.set_heterogeneous (position).component;
+      arrow   : Positive := position;
+      size    : Positive := 1;
+   begin
+      loop
+         arrow := arrow + 1;
+         exit when arrow > collection.set_heterogeneous'Length;
+         exit when collection.set_heterogeneous (arrow).shape_id /= curr_id;
+         exit when collection.set_heterogeneous (arrow).component /= curr_sc;
+         size := size + 1;
+      end loop;
+      return size;
+   end polygon_hetero_ring_size;
+
+
+   ------------------------------
+   --  outer_polygon_position  --
+   ------------------------------
+   function outer_polygon_position (collection : Geometry; item : Positive)
+                                    return Positive is
+   begin
+      for x in collection.set_polygons'Range loop
+         if collection.set_polygons (x).shape_id = item then
+            if collection.set_polygons (x).component = 1 then
+               return x;
+            end if;
+         end if;
+      end loop;
+      raise CONVERSION_FAILED
+        with "Item" & item'Img & " was not found";
+   end outer_polygon_position;
+
+
+   -------------------------------------
+   --  outer_polygon_hetero_position  --
+   -------------------------------------
+   function outer_polygon_hetero_position (collection : Geometry;
+                                                 item : Positive)
+                                                 return Positive is
+   begin
+      for x in collection.set_heterogeneous'Range loop
+         if collection.set_heterogeneous (x).shape_id = item then
+            if collection.set_heterogeneous (x).component = 1 then
+               return x;
+            end if;
+         end if;
+      end loop;
+      raise CONVERSION_FAILED
+        with "Item" & item'Img & " was not found";
+   end outer_polygon_hetero_position;
+
+
+   ------------------------------
+   --  inner_polygon_position  --
+   ------------------------------
+   function inner_polygon_position (collection : Geometry; item : Positive;
+                                    hole_item : Positive) return Positive is
+   begin
+      for x in collection.set_polygons'Range loop
+         if collection.set_polygons (x).shape_id = item and then
+           collection.set_polygons (x).component = hole_item
+         then
+            return x;
+         end if;
+      end loop;
+      raise CONVERSION_FAILED
+        with "Item" & item'Img & "/" & hole_item'Img & " was not found";
+   end inner_polygon_position;
+
+
+   -------------------------------------
+   --  inner_polygon_hetero_position  --
+   -------------------------------------
+   function inner_polygon_hetero_position (collection : Geometry;
+                                           item : Positive;
+                                           hole_item : Positive)
+                                           return Positive is
+   begin
+      for x in collection.set_heterogeneous'Range loop
+         if collection.set_heterogeneous (x).shape_id = item and then
+           collection.set_heterogeneous (x).component = hole_item
+         then
+            return x;
+         end if;
+      end loop;
+      raise CONVERSION_FAILED
+        with "Item" & item'Img & "/" & hole_item'Img & " was not found";
+   end inner_polygon_hetero_position;
+
+
    -----------------------------
    --  collection_item_shape  --
    -----------------------------
@@ -599,6 +823,7 @@ package body Spatial_Data is
                                    index : Positive := 1)
                                    return Geometric_Shape
    is
+      position : Positive;
    begin
       collection.check_collection_index (index);
       case collection.contents is
@@ -798,74 +1023,36 @@ package body Spatial_Data is
    --  retrieve_polygon  --
    ------------------------
    function retrieve_polygon (collection : Geometry; index : Positive := 1)
-                              return Geometric_Polygon is
+                              return Geometric_Polygon
+   is
+      position  : Positive;
+      data_size : Positive;
    begin
       collection.check_collection_index (index);
       case collection.contents is
          when single_polygon => return collection.polygon;
          when heterogeneous =>
+            position  := collection.outer_polygon_hetero_position (index);
+            data_size := collection.polygon_hetero_ring_size (position);
             declare
-               sub_index : Positive;
-               data_size : Positive;
+               LNS : Geometric_Polygon (1 .. data_size);
             begin
-               collection.locate_heterogenous_item (index      => index,
-                                                    set_index  => sub_index,
-                                                    num_points => data_size);
-               if collection.set_heterogeneous (sub_index).shape =
-                 polygon_shape and then data_size > 2
-               then
-                  declare
-                     LNS : Geometric_Polygon (1 .. data_size);
-                  begin
-                     for x in Positive range 1 .. data_size loop
-                        LNS (x) := collection.set_heterogeneous
-                          (sub_index + x - 1).point;
-                     end loop;
-                     return LNS;
-                  end;
-               else
-                  raise CONVERSION_FAILED
-                    with "Data type at heterogeneous index" & index'Img &
-                    "is not a polygon or does not have at least 3 points";
-               end if;
+               for x in Positive range 1 .. data_size loop
+                  LNS (x) :=
+                    collection.set_heterogeneous (position + x - 1).point;
+               end loop;
+               return LNS;
             end;
          when multi_polygon  =>
+            position  := collection.outer_polygon_position (index);
+            data_size := collection.polygon_ring_size (position);
             declare
-               sub_index : Positive;
-               data_size : Positive;
-               set_index_set : Boolean := False;
+               LNS : Geometric_Polygon (1 .. data_size);
             begin
-               for x in collection.set_polygons'Range loop
-                  if collection.set_polygons (x).shape_id = index then
-                     if not set_index_set then
-                        sub_index := x;
-                        set_index_set := True;
-                        data_size := 1;
-                     else
-                        data_size := data_size + 1;
-                     end if;
-                  end if;
+               for x in Positive range 1 .. data_size loop
+                  LNS (x) := collection.set_polygons (position + x - 1).point;
                end loop;
-               if not set_index_set then
-                  raise CONVERSION_FAILED
-                    with "data corrupt: expected index" & index'Img &
-                    " not found, but" & collection.items'Img;
-               end if;
-               if data_size > 2 then
-                  declare
-                     LNS : Geometric_Polygon (1 .. data_size);
-                  begin
-                     for x in Positive range 1 .. data_size loop
-                        LNS (x) := collection.set_polygons
-                          (sub_index + x - 1).point;
-                     end loop;
-                     return LNS;
-                  end;
-               else
-                  raise CONVERSION_FAILED
-                    with "Data type at set_line_strings index" & index'Img &
-                    "is not at least 3 points long";
-               end if;
+               return LNS;
             end;
          when others =>
             raise CONVERSION_FAILED
@@ -873,6 +1060,49 @@ package body Spatial_Data is
               collection.collection_item_shape (index)'Img;
       end case;
    end retrieve_polygon;
+
+
+   ---------------------
+   --  retrieve_hole  --
+   ---------------------
+   function retrieve_hole (collection : Geometry; index : Positive := 1;
+                           hole_index : Positive) return Geometric_Polygon
+   is
+      position  : Positive;
+      data_size : Positive;
+   begin
+      collection.check_collection_index (index);
+      case collection.contents is
+         when heterogeneous =>
+            position :=
+              collection.inner_polygon_hetero_position (index, hole_index);
+            data_size := collection.polygon_hetero_ring_size (position);
+            declare
+               LNS : Geometric_Polygon (1 .. data_size);
+            begin
+               for x in Positive range 1 .. data_size loop
+                  LNS (x) :=
+                    collection.set_heterogeneous (position + x - 1).point;
+               end loop;
+               return LNS;
+            end;
+         when multi_polygon  =>
+            position  := collection.inner_polygon_position (index, hole_index);
+            data_size := collection.polygon_ring_size (position);
+            declare
+               LNS : Geometric_Polygon (1 .. data_size);
+            begin
+               for x in Positive range 1 .. data_size loop
+                  LNS (x) := collection.set_polygons (position + x - 1).point;
+               end loop;
+               return LNS;
+            end;
+         when others =>
+            raise CONVERSION_FAILED
+              with "Requested polygon hole#" & hole_index'Img &
+              ", but shape is " & collection.collection_item_shape (index)'Img;
+      end case;
+   end retrieve_hole;
 
 
    --------------------------------------------
@@ -1002,9 +1232,9 @@ package body Spatial_Data is
    end format_real;
 
 
-   -----------------------
-   --  convert_to_text  --
-   -----------------------
+   ------------------
+   --  mysql_text  --
+   ------------------
    function mysql_text (collection : Geometry) return String is
       function format_point (pt    : Geometric_Point;
                              first : Boolean := False) return String;

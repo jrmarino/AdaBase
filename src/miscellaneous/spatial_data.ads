@@ -75,11 +75,12 @@ package Spatial_Data is
    -----------------------------------
    procedure append_point (collection : out Geometry; point : Geometric_Point);
    procedure append_line  (collection : out Geometry; line : Geometric_Line);
-   procedure append_line_string (collection : out Geometry;
+   procedure append_line_string (collection  : out Geometry;
                                  line_string : Geometric_Line_String);
-   procedure append_polygon (collection : out Geometry;
-                             polygon : Geometric_Polygon);
-
+   procedure append_polygon_hole (collection : out Geometry;
+                                  polygon    : Geometric_Polygon);
+   procedure append_polygon      (collection : out Geometry;
+                                  polygon    : Geometric_Polygon);
 
    ---------------------------
    --  Retrieval functions  --
@@ -89,6 +90,9 @@ package Spatial_Data is
                                    index      : Positive := 1)
                                    return Geometric_Shape;
    function retrieve_polygon     (collection : Geometry; index : Positive := 1)
+                                  return Geometric_Polygon;
+   function retrieve_hole        (collection : Geometry; index : Positive := 1;
+                                  hole_index : Positive)
                                   return Geometric_Polygon;
    function retrieve_point       (collection : Geometry; index : Positive := 1)
                                   return Geometric_Point;
@@ -127,6 +131,7 @@ package Spatial_Data is
    CONVERSION_FAILED       : exception;
    OUT_OF_COLLECTION_RANGE : exception;
    LACKING_POINTS          : exception;
+   ILLEGAL_POLY_HOLE       : exception;
 
 private
 
@@ -140,16 +145,17 @@ private
 
    type Heterogeneous_Collection_Unit is
       record
-         point    : Geometric_Point;
-         shape    : Geometric_Shape;
-         shape_id : Positive;
+         point     : Geometric_Point;
+         shape     : Geometric_Shape;
+         shape_id  : Positive;
+         component : Positive := 1;
       end record;
 
    Homogeneous_Dummy : constant Homogeneous_Collection_Unit :=
                        (Origin_Point, 1);
 
    heterogeneous_Dummy : constant Heterogeneous_Collection_Unit :=
-                         (Origin_Point, point_shape, 1);
+                         (Origin_Point, point_shape, 1, 1);
 
    type Homogeneous_Collection is
        array (Positive range <>) of Homogeneous_Collection_Unit;
@@ -182,15 +188,41 @@ private
                set_line_strings : Homogeneous_Collection (1 .. items) :=
                                   (others => Homogeneous_Dummy);
             when multi_polygon =>
-               set_polygons : Homogeneous_Collection (1 .. items) :=
-                              (others => Homogeneous_Dummy);
+               --  Includes the "holes" of a single polygon.  Appending a
+               --  hole will change the container from polygon to set_polygons
+               set_polygons : Heterogeneous_Collection (1 .. items) :=
+                              (others => heterogeneous_Dummy);
             when heterogeneous =>
                set_heterogeneous : Heterogeneous_Collection (1 .. items) :=
                                    (others => heterogeneous_Dummy);
          end case;
       end record;
 
+   --  returns a trimmed floating point image
    function format_real (value : Geometric_Real) return String;
+
+   --  Returns starting position in polygon_set for given index
+   --  For 2-ring polygons, this is same as outer ring
+   function outer_polygon_position (collection : Geometry; item : Positive)
+                                    return Positive;
+   function outer_polygon_hetero_position (collection : Geometry;
+                                           item : Positive)
+                                           return Positive;
+
+   --  Returns starting position of inner ring of 2-ring polygons
+   function inner_polygon_position (collection : Geometry; item : Positive;
+                                   hole_item : Positive) return Positive;
+   function inner_polygon_hetero_position (collection : Geometry;
+                                           item : Positive;
+                                           hole_item : Positive)
+                                           return Positive;
+
+   --  Given a starting position, returns the number of points in the polygon
+   function polygon_ring_size (collection : Geometry; position : Positive)
+                               return Positive;
+   function polygon_hetero_ring_size (collection : Geometry;
+                                      position : Positive)
+                                      return Positive;
 
    --  raises exception if index is out of range
    procedure check_collection_index (collection : Geometry; index : Positive);
