@@ -1005,7 +1005,7 @@ package body Spatial_Data is
    -----------------------
    --  convert_to_text  --
    -----------------------
-   function convert_to_mysql_text (collection : Geometry) return String is
+   function mysql_text (collection : Geometry) return String is
       function format_point (pt    : Geometric_Point;
                              first : Boolean := False) return String;
       function format_polygon (LNS   : Geometric_Polygon;
@@ -1155,6 +1155,207 @@ package body Spatial_Data is
                return CT.USS (product) & ")";
             end;
       end case;
-   end convert_to_mysql_text;
+   end mysql_text;
+
+   -----------------------
+   --  Well_Known_Text  --
+   -----------------------
+   function Well_Known_Text (collection : Geometry) return String
+   is
+      function format_point (pt    : Geometric_Point;
+                             first : Boolean := False;
+                             label : Boolean := False) return String;
+      function format_polygon (LNS   : Geometric_Polygon;
+                               first : Boolean := False;
+                               label : Boolean := False) return String;
+      function format_line_string (LNS   : Geometric_Line_String;
+                                   first : Boolean := False;
+                                   label : Boolean := False) return String;
+
+      function format_point (pt    : Geometric_Point;
+                             first : Boolean := False;
+                             label : Boolean := False) return String
+      is
+         ptx    : constant String := format_real (pt.X);
+         pty    : constant String := format_real (pt.Y);
+         lead   : constant String := "POINT ";
+         sep    : constant String := ", ";
+         popen  : constant String := "(";
+         pclose : constant String := ")";
+         core   : constant String := ptx & sep & pty;
+      begin
+         if label then
+            if first then
+               return lead & popen & core & pclose;
+            else
+               return sep & lead & popen & core & pclose;
+            end if;
+         else
+            if first then
+               return core;
+            else
+               return sep & core;
+            end if;
+         end if;
+      end format_point;
+
+      --  IMPLEMENT inner polygons
+      function format_polygon (LNS   : Geometric_Polygon;
+                               first : Boolean := False;
+                               label : Boolean := False) return String
+      is
+         lead   : constant String := "POLYGON ";
+         sep    : constant String := ", ";
+         popen  : constant String := "((";
+         pclose : constant String := "))";
+         work   : CT.Text;
+         inner1 : Boolean;
+      begin
+         if label then
+            if first then
+               CT.SU.Append (work, lead & popen);
+            else
+               CT.SU.Append (work, sep & lead & popen);
+            end if;
+         else
+            if first then
+               CT.SU.Append (work, popen);
+            else
+               CT.SU.Append (work, sep & popen);
+            end if;
+         end if;
+         for x in LNS'Range loop
+            inner1 := (x = LNS'First);
+            CT.SU.Append (work, format_point (LNS (x), inner1));
+         end loop;
+         CT.SU.Append (work, pclose);
+         return CT.USS (work);
+      end format_polygon;
+
+      function format_line_string (LNS : Geometric_Line_String;
+                                   first : Boolean := False;
+                                   label : Boolean := False) return String
+      is
+         lead   : constant String := "LINESTRING ";
+         sep    : constant String := ", ";
+         popen  : constant String := "(";
+         pclose : constant String := ")";
+         work   : CT.Text := CT.blank;
+         inner1 : Boolean;
+      begin
+         if label then
+            if first then
+               CT.SU.Append (work, lead & popen);
+            else
+               CT.SU.Append (work, sep & lead & popen);
+            end if;
+         else
+            if first then
+               CT.SU.Append (work, popen);
+            else
+               CT.SU.Append (work, sep & popen);
+            end if;
+         end if;
+
+         for x in LNS'Range loop
+            inner1 := (x = LNS'First);
+                     CT.SU.Append (work, format_point (LNS (x), inner1));
+         end loop;
+         CT.SU.Append (work, pclose);
+         return CT.USS (work);
+      end format_line_string;
+
+      classification : Collection_Type := collection.contents;
+   begin
+      case classification is
+         when single_point =>
+            return format_point (collection.point, True, True);
+         when single_line  =>
+            return format_line_string (collection.line, True, True);
+         when single_line_string =>
+            return format_line_string (collection.line_string, True, True);
+         when single_infinite_line =>
+            --  Infinite lines are not supported by WKT so this is wrong
+            return format_line_string (collection.infinite_line, True, True);
+         when single_circle =>
+            --  No circles in WKT, so using this output will result in error
+            return "CIRCLE (" &
+              format_point (collection.circle.center_point, True) & ", " &
+              format_real (collection.circle.radius) & ")";
+         when single_polygon =>
+            return format_polygon (collection.polygon, True, True);
+         when multi_point =>
+            declare
+               product : CT.Text := CT.SUS ("MULTIPOINT (");
+               first   : Boolean;
+            begin
+               for x in collection.set_points'Range loop
+                  first := (x = collection.set_points'First);
+                  CT.SU.Append
+                    (product, format_point
+                       (collection.set_points (x), first));
+               end loop;
+               return CT.USS (product) & ")";
+            end;
+         when multi_line_string =>
+            declare
+               product : CT.Text := CT.SUS ("MULTILINESTRING (");
+               first   : Boolean;
+            begin
+               for ls in 1 .. collection.items loop
+                  first := (ls = 1);
+                  CT.SU.Append
+                    (product, format_line_string
+                       (collection.retrieve_line_string (ls), first));
+               end loop;
+               return CT.USS (product) & ")";
+            end;
+         when multi_polygon =>
+            declare
+               product : CT.Text := CT.SUS ("MULTIPOLYGON (");
+               first   : Boolean;
+            begin
+               for ls in 1 .. collection.items loop
+                  first := (ls = 1);
+                  CT.SU.Append
+                    (product, format_polygon
+                       (collection.retrieve_polygon (ls), first));
+               end loop;
+               return CT.USS (product) & ")";
+            end;
+         when heterogeneous =>
+            declare
+               product : CT.Text := CT.SUS ("GEOMETRYCOLLECTION (");
+               first   : Boolean;
+               flavor  : Geometric_Shape;
+            begin
+               for ls in 1 .. collection.items loop
+                  first := (ls = 1);
+                  flavor := collection.collection_item_shape;
+                  case flavor is
+                     when point_shape =>
+                        CT.SU.Append
+                          (product, format_point
+                             (collection.retrieve_point (ls), first, True));
+                     when line_string_shape =>
+                        CT.SU.Append
+                          (product, format_line_string
+                             (collection.retrieve_line_string (ls), first,
+                              True));
+                     when polygon_shape =>
+                        CT.SU.Append
+                          (product, format_polygon
+                             (collection.retrieve_polygon (ls), first, True));
+                     when circle_shape        => null;
+                     when line_shape          => null;
+                     when infinite_line_shape => null;
+                  end case;
+               end loop;
+               return CT.USS (product) & ")";
+            end;
+      end case;
+
+   end Well_Known_Text;
+
 
 end Spatial_Data;

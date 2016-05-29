@@ -120,7 +120,8 @@ package Spatial_Data is
    ---------------------------
    --  Text Representation  --
    ---------------------------
-   function convert_to_mysql_text (collection : Geometry) return String;
+   function mysql_text (collection : Geometry) return String;
+   function Well_Known_Text (collection : Geometry) return String;
 
 
    CONVERSION_FAILED       : exception;
