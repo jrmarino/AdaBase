@@ -42,6 +42,7 @@ package CommonText is
    function bool2text (A : Boolean) return Text;
 
    --  shorthand for index
+   function pinpoint (S : String; fragment : String) return Natural;
    function contains (S : String; fragment : String) return Boolean;
    function contains (US : Text; fragment : String) return Boolean;
 

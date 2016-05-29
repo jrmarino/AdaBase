@@ -144,6 +144,15 @@ package body CommonText is
    end bool2text;
 
 
+   ----------------
+   --  pinpoint  --
+   ----------------
+   function pinpoint (S : String; fragment : String) return Natural is
+   begin
+      return AS.Fixed.Index (Source => S, Pattern => fragment);
+   end pinpoint;
+
+
    --------------------
    --  contains  #1  --
    --------------------

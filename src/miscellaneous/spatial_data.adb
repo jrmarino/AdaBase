@@ -1323,9 +1323,61 @@ package body Spatial_Data is
    -------------------
    function format_real (value : Geometric_Real) return String
    is
-      raw : constant String := value'Img;
+      function trim_sides (S : String) return String;
+      raw    : constant String := CT.trim (Geometric_Real'Image (value));
+      last3  : constant String := raw (raw'Last - 2 .. raw'Last);
+      posend : constant Natural := raw'Last - 4;
+      shift  : constant Integer := Integer'Value (last3);
+      canvas : String (1 .. 43) := (others => '0');
+      dot    : Natural;
+
+      function trim_sides (S : String) return String
+      is
+         left  : Natural := S'First;
+         right : Natural := S'Last;
+         keep  : Boolean;
+      begin
+         for x in S'Range loop
+            keep := (S (x) /= '0' and then S (x) /= ' ');
+            exit when keep;
+            left := left + 1;
+         end loop;
+         for x in reverse S'Range loop
+            keep := (S (x) /= '0' and then S (x) /= ' ');
+            exit when keep;
+            right := right - 1;
+         end loop;
+         if S (left) = '.' then
+            left := left - 1;
+         end if;
+         if S (right) = '.' then
+            right := right - 1;
+         end if;
+         return S (left .. right);
+      end trim_sides;
    begin
-      return CT.trim (raw);
+      if shift = 0 then
+         canvas (1 .. posend) := raw (1 .. posend);
+         return trim_sides (canvas (1 .. posend));
+      elsif shift > 0 then
+         canvas (1 .. posend) := raw (1 .. posend);
+         dot := CT.pinpoint (canvas, ".");
+         for bubble in Positive range dot + 1 .. dot + shift loop
+            --  Left side is always the dot
+            canvas (bubble - 1) := canvas (bubble);
+            canvas (bubble) := '.';
+         end loop;
+         return trim_sides (canvas);
+      else
+         canvas (canvas'Last - posend + 1 .. canvas'Last) := raw (1 .. posend);
+         dot := CT.pinpoint (canvas, ".");
+         for bubble in reverse dot + shift .. dot - 1 loop
+            --  Right side is always the dot
+            canvas (bubble + 1) := canvas (bubble);
+            canvas (bubble) := '.';
+         end loop;
+         return trim_sides (canvas);
+      end if;
    end format_real;
 
 
