@@ -1333,18 +1333,20 @@ package body Spatial_Data is
    function mysql_text (collection : Geometry) return String is
       function format_point (pt    : Geometric_Point;
                              first : Boolean := False) return String;
-      function format_polygon (LNS   : Geometric_Polygon;
+      function format_polygon (poly  : Heterogeneous_Collection;
                                first : Boolean := False) return String;
       function format_line_string (LNS   : Geometric_Line_String;
                                    first : Boolean := False) return String;
+
+      sep    : constant String := ", ";
+      pclose : constant String := ")";
 
       function format_point (pt    : Geometric_Point;
                              first : Boolean := False) return String
       is
          ptx  : constant String := format_real (pt.X);
          pty  : constant String := format_real (pt.Y);
-         sep  : constant String := ", ";
-         core : constant String := "Point(" & ptx & sep & pty & ")";
+         core : constant String := "Point(" & ptx & sep & pty & pclose;
       begin
          if first then
             return core;
@@ -1353,30 +1355,41 @@ package body Spatial_Data is
          end if;
       end format_point;
 
-      function format_polygon (LNS   : Geometric_Polygon;
+      function format_polygon (poly  : Heterogeneous_Collection;
                                first : Boolean := False) return String
       is
-         lead : constant String := "Polygon(LineString(";
-         sep  : constant String := ", ";
-         work : CT.Text := CT.SUS (lead);
-         inn1 : Boolean;
+         lead   : constant String := "Polygon(";
+         work   : CT.Text;
+         inner1 : Boolean;
+         lastsc : Natural := 0;
       begin
-         for x in LNS'Range loop
-            inn1 := (x = LNS'First);
-                     CT.SU.Append (work, format_point (LNS (x), inn1));
-         end loop;
          if first then
-            return CT.USS (work) & "))";
+            CT.SU.Append (work, lead);
          else
-            return sep & CT.USS (work) & "))";
+            CT.SU.Append (work, sep & lead);
          end if;
+         for x in poly'Range loop
+            inner1 := (poly (x).component /= lastsc);
+            lastsc := poly (x).component;
+            if inner1 then
+               if x /= poly'First then
+                  CT.SU.Append (work, pclose & sep);
+               end if;
+               CT.SU.Append (work, "Linestring(");
+            end if;
+            CT.SU.Append (work, format_point (poly (x).point, inner1));
+            if x = poly'Last then
+               CT.SU.Append (work, pclose);
+            end if;
+         end loop;
+         CT.SU.Append (work, pclose);
+         return CT.USS (work);
       end format_polygon;
 
       function format_line_string (LNS : Geometric_Line_String;
                                    first : Boolean := False) return String
       is
          lead : constant String := "LineString(";
-         sep  : constant String := ", ";
          work : CT.Text := CT.SUS (lead);
          inn1 : Boolean;
       begin
@@ -1385,9 +1398,9 @@ package body Spatial_Data is
                      CT.SU.Append (work, format_point (LNS (x), inn1));
          end loop;
          if first then
-            return CT.USS (work) & ")";
+            return CT.USS (work) & pclose;
          else
-            return sep & CT.USS (work) & ")";
+            return sep & CT.USS (work) & pclose;
          end if;
       end format_line_string;
 
@@ -1407,10 +1420,10 @@ package body Spatial_Data is
             --  Circles are unique to postgresql, so this is nonsense for
             --  MySQL.  It's better than exception though, I guess.
             return "Circle(" &
-              format_point (collection.circle.center_point, True) & ", " &
-              format_real (collection.circle.radius) & ")";
+              format_point (collection.circle.center_point, True) & sep &
+              format_real (collection.circle.radius) & pclose;
          when single_polygon =>
-            return format_polygon (collection.polygon, True);
+            return format_polygon (collection.retrieve_full_polygon (1), True);
          when multi_point =>
             declare
                product : CT.Text := CT.SUS ("MultiPoint(");
@@ -1422,7 +1435,7 @@ package body Spatial_Data is
                     (product, format_point
                        (collection.set_points (x), first));
                end loop;
-               return CT.USS (product) & ")";
+               return CT.USS (product) & pclose;
             end;
          when multi_line_string =>
             declare
@@ -1435,7 +1448,7 @@ package body Spatial_Data is
                     (product, format_line_string
                        (collection.retrieve_line_string (ls), first));
                end loop;
-               return CT.USS (product) & ")";
+               return CT.USS (product) & pclose;
             end;
          when multi_polygon =>
             declare
@@ -1446,9 +1459,9 @@ package body Spatial_Data is
                   first := (ls = 1);
                   CT.SU.Append
                     (product, format_polygon
-                       (collection.retrieve_polygon (ls), first));
+                       (collection.retrieve_full_polygon (ls), first));
                end loop;
-               return CT.USS (product) & ")";
+               return CT.USS (product) & pclose;
             end;
          when heterogeneous =>
             declare
@@ -1471,13 +1484,13 @@ package body Spatial_Data is
                      when polygon_shape =>
                         CT.SU.Append
                           (product, format_polygon
-                             (collection.retrieve_polygon (ls), first));
+                             (collection.retrieve_full_polygon (ls), first));
                      when circle_shape        => null;
                      when line_shape          => null;
                      when infinite_line_shape => null;
                   end case;
                end loop;
-               return CT.USS (product) & ")";
+               return CT.USS (product) & pclose;
             end;
       end case;
    end mysql_text;
