@@ -34,7 +34,7 @@ package body Spatial_Data is
    --------------------------
    function initialize_as_line (line : Geometric_Line) return Geometry
    is
-      product : Geometry := (single_line, 1, line);
+      product : Geometry := (single_line, line'Length, line);
    begin
       return product;
    end initialize_as_line;
@@ -46,7 +46,8 @@ package body Spatial_Data is
    function initialize_as_line_string (line_string : Geometric_Line_String)
                                        return Geometry
    is
-      product : Geometry := (single_line_string, 1, line_string);
+      num_items : Natural := line_string'Length;
+      product : Geometry := (single_line_string, num_items, line_string);
    begin
       return product;
    end initialize_as_line_string;
@@ -70,7 +71,7 @@ package body Spatial_Data is
    function initialize_as_polygon (polygon : Geometric_Polygon)
                                    return Geometry
    is
-      product : Geometry := (single_polygon, 1, polygon);
+      product : Geometry := (single_polygon, polygon'Length, polygon);
    begin
       if polygon'Length < 4 then
          raise LACKING_POINTS
@@ -1320,7 +1321,8 @@ package body Spatial_Data is
    -------------------
    --  format_real  --
    -------------------
-   function format_real (value : Geometric_Real) return String is
+   function format_real (value : Geometric_Real) return String
+   is
       raw : constant String := value'Img;
    begin
       return CT.trim (raw);
@@ -1522,7 +1524,7 @@ package body Spatial_Data is
          ptx    : constant String := format_real (pt.X);
          pty    : constant String := format_real (pt.Y);
          lead   : constant String := "POINT ";
-         core   : constant String := ptx & sep & pty;
+         core   : constant String := ptx & " " & pty;
       begin
          if label then
             if first then

@@ -21,7 +21,9 @@ package Spatial_Data is
                             circle_shape,
                             polygon_shape);
 
-   type Geometry (contents : Collection_Type; items : Positive) is private;
+   type Geometry (contents : Collection_Type; items : Positive) is
+     tagged private;
+
    type Geometric_Real is digits 18;
 
    type Geometric_Point is
