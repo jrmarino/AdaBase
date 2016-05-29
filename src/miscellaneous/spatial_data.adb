@@ -653,6 +653,50 @@ package body Spatial_Data is
    end size_of_collection;
 
 
+   -------------------------------
+   --  number_of_polygon_holes  --
+   -------------------------------
+   function number_of_polygon_holes (collection : Geometry; index : Positive)
+                                     return Natural
+   is
+      position : Positive;
+      shape_id : Positive;
+      result   : Natural := 0;
+   begin
+      case collection.contents is
+         when multi_polygon | heterogeneous => null;
+         when others => return 0;
+      end case;
+      if collection.collection_item_shape (index) /= polygon_shape then
+         return 0;
+      end if;
+      case collection.contents is
+         when multi_polygon =>
+            position := collection.outer_polygon_position (index);
+            shape_id := collection.set_polygons (position).shape_id;
+            for x in Positive range
+              position + 1 .. collection.set_polygons'Last
+            loop
+               exit when collection.set_polygons (x).shape_id /= shape_id;
+               result := collection.set_polygons (x).component - 1;
+            end loop;
+            return result;
+         when heterogeneous =>
+            position := collection.outer_polygon_hetero_position (index);
+            shape_id := collection.set_heterogeneous (position).shape_id;
+            for x in Positive range
+              position + 1 .. collection.set_heterogeneous'Last
+            loop
+               exit when collection.set_heterogeneous (x).shape_id /= shape_id;
+               result := collection.set_heterogeneous (x).component - 1;
+            end loop;
+            return result;
+         when others => return 0;
+      end case;
+
+   end number_of_polygon_holes;
+
+
    ------------------------------
    --  check_collection_index  --
    ------------------------------
@@ -821,9 +865,7 @@ package body Spatial_Data is
    -----------------------------
    function collection_item_shape (collection : Geometry;
                                    index : Positive := 1)
-                                   return Geometric_Shape
-   is
-      position : Positive;
+                                   return Geometric_Shape is
    begin
       collection.check_collection_index (index);
       case collection.contents is
@@ -1060,6 +1102,59 @@ package body Spatial_Data is
               collection.collection_item_shape (index)'Img;
       end case;
    end retrieve_polygon;
+
+
+   -----------------------------
+   --  retrieve_full_polygon  --
+   -----------------------------
+   function retrieve_full_polygon (collection : Geometry;
+                                   index : Positive := 1)
+                                   return Heterogeneous_Collection
+   is
+      position : Positive;
+      shape_id : Positive;
+      endpoint : Positive := 1;
+   begin
+      collection.check_collection_index (index);
+      case collection.contents is
+         when single_polygon =>
+            declare
+               LL : Natural := collection.polygon'Length;
+               HC : Heterogeneous_Collection (1 .. LL);
+            begin
+               for x in collection.polygon'Range loop
+                  HC (x).shape     := polygon_shape;
+                  HC (x).point     := collection.polygon (x);
+                  HC (x).shape_id  := 1;
+                  HC (x).component := 1;
+               end loop;
+               return HC;
+            end;
+         when multi_polygon  =>
+            position := collection.outer_polygon_position (index);
+            shape_id := collection.set_polygons (position).shape_id;
+            for x in Positive range position .. collection.set_polygons'Last
+            loop
+               exit when collection.set_polygons (x).shape_id /= shape_id;
+               endpoint := x;
+            end loop;
+            return collection.set_polygons (position .. endpoint);
+         when heterogeneous =>
+            position := collection.outer_polygon_hetero_position (index);
+            shape_id := collection.set_heterogeneous (position).shape_id;
+            for x in Positive range
+              position .. collection.set_heterogeneous'Last
+            loop
+               exit when collection.set_heterogeneous (x).shape_id /= shape_id;
+               endpoint := x;
+            end loop;
+            return collection.set_heterogeneous (position .. endpoint);
+         when others =>
+            raise CONVERSION_FAILED
+              with "Requested polygon, but shape is " &
+              collection.collection_item_shape (index)'Img;
+      end case;
+   end retrieve_full_polygon;
 
 
    ---------------------
@@ -1387,6 +1482,7 @@ package body Spatial_Data is
       end case;
    end mysql_text;
 
+
    -----------------------
    --  Well_Known_Text  --
    -----------------------
@@ -1395,12 +1491,16 @@ package body Spatial_Data is
       function format_point (pt    : Geometric_Point;
                              first : Boolean := False;
                              label : Boolean := False) return String;
-      function format_polygon (LNS   : Geometric_Polygon;
+      function format_polygon (poly  : Heterogeneous_Collection;
                                first : Boolean := False;
                                label : Boolean := False) return String;
       function format_line_string (LNS   : Geometric_Line_String;
                                    first : Boolean := False;
                                    label : Boolean := False) return String;
+
+      sep    : constant String := ", ";
+      popen  : constant String := "(";
+      pclose : constant String := ")";
 
       function format_point (pt    : Geometric_Point;
                              first : Boolean := False;
@@ -1409,9 +1509,6 @@ package body Spatial_Data is
          ptx    : constant String := format_real (pt.X);
          pty    : constant String := format_real (pt.Y);
          lead   : constant String := "POINT ";
-         sep    : constant String := ", ";
-         popen  : constant String := "(";
-         pclose : constant String := ")";
          core   : constant String := ptx & sep & pty;
       begin
          if label then
@@ -1429,17 +1526,14 @@ package body Spatial_Data is
          end if;
       end format_point;
 
-      --  IMPLEMENT inner polygons
-      function format_polygon (LNS   : Geometric_Polygon;
+      function format_polygon (poly  : Heterogeneous_Collection;
                                first : Boolean := False;
                                label : Boolean := False) return String
       is
          lead   : constant String := "POLYGON ";
-         sep    : constant String := ", ";
-         popen  : constant String := "((";
-         pclose : constant String := "))";
          work   : CT.Text;
          inner1 : Boolean;
+         lastsc : Natural := 0;
       begin
          if label then
             if first then
@@ -1454,9 +1548,19 @@ package body Spatial_Data is
                CT.SU.Append (work, sep & popen);
             end if;
          end if;
-         for x in LNS'Range loop
-            inner1 := (x = LNS'First);
-            CT.SU.Append (work, format_point (LNS (x), inner1));
+         for x in poly'Range loop
+            inner1 := (poly (x).component /= lastsc);
+            lastsc := poly (x).component;
+            if inner1 then
+               if x /= poly'First then
+                  CT.SU.Append (work, pclose & sep);
+               end if;
+               CT.SU.Append (work, popen);
+            end if;
+            CT.SU.Append (work, format_point (poly (x).point, inner1));
+            if x = poly'Last then
+               CT.SU.Append (work, pclose);
+            end if;
          end loop;
          CT.SU.Append (work, pclose);
          return CT.USS (work);
@@ -1467,9 +1571,6 @@ package body Spatial_Data is
                                    label : Boolean := False) return String
       is
          lead   : constant String := "LINESTRING ";
-         sep    : constant String := ", ";
-         popen  : constant String := "(";
-         pclose : constant String := ")";
          work   : CT.Text := CT.blank;
          inner1 : Boolean;
       begin
@@ -1510,10 +1611,11 @@ package body Spatial_Data is
          when single_circle =>
             --  No circles in WKT, so using this output will result in error
             return "CIRCLE (" &
-              format_point (collection.circle.center_point, True) & ", " &
-              format_real (collection.circle.radius) & ")";
+              format_point (collection.circle.center_point, True) & sep &
+              format_real (collection.circle.radius) & pclose;
          when single_polygon =>
-            return format_polygon (collection.polygon, True, True);
+            return format_polygon (collection.retrieve_full_polygon (1),
+                                   True, True);
          when multi_point =>
             declare
                product : CT.Text := CT.SUS ("MULTIPOINT (");
@@ -1525,7 +1627,7 @@ package body Spatial_Data is
                     (product, format_point
                        (collection.set_points (x), first));
                end loop;
-               return CT.USS (product) & ")";
+               return CT.USS (product) & pclose;
             end;
          when multi_line_string =>
             declare
@@ -1538,7 +1640,7 @@ package body Spatial_Data is
                     (product, format_line_string
                        (collection.retrieve_line_string (ls), first));
                end loop;
-               return CT.USS (product) & ")";
+               return CT.USS (product) & pclose;
             end;
          when multi_polygon =>
             declare
@@ -1549,9 +1651,9 @@ package body Spatial_Data is
                   first := (ls = 1);
                   CT.SU.Append
                     (product, format_polygon
-                       (collection.retrieve_polygon (ls), first));
+                       (collection.retrieve_full_polygon (ls), first));
                end loop;
-               return CT.USS (product) & ")";
+               return CT.USS (product) & pclose;
             end;
          when heterogeneous =>
             declare
@@ -1574,14 +1676,16 @@ package body Spatial_Data is
                               True));
                      when polygon_shape =>
                         CT.SU.Append
-                          (product, format_polygon
-                             (collection.retrieve_polygon (ls), first, True));
+                          (product,
+                           format_polygon
+                             (collection.retrieve_full_polygon (ls),
+                              first, True));
                      when circle_shape        => null;
                      when line_shape          => null;
                      when infinite_line_shape => null;
                   end case;
                end loop;
-               return CT.USS (product) & ")";
+               return CT.USS (product) & pclose;
             end;
       end case;
 

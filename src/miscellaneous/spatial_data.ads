@@ -106,6 +106,9 @@ package Spatial_Data is
    function retrieve_two_points_of_infinite_line (collection : Geometry)
                                                   return Geometric_Line;
 
+   function number_of_polygon_holes (collection : Geometry; index : Positive)
+                                     return Natural;
+
    -------------------
    --  Conversions  --
    -------------------
@@ -233,5 +236,10 @@ private
                                        index      : Positive;
                                        set_index  : out Positive;
                                        num_points : out Positive);
+
+   --  Returns heterogenous section of a polygon including its holes
+   function retrieve_full_polygon (collection : Geometry;
+                                   index : Positive := 1)
+                                   return Heterogeneous_Collection;
 
 end Spatial_Data;
