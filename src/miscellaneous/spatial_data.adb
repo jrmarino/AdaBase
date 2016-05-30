@@ -126,7 +126,7 @@ package body Spatial_Data is
                HC : Heterogeneous_Collection (1 .. point_count);
             begin
                for x in collection.polygon'Range loop
-                  HC (x).point     := collection.line (x);
+                  HC (x).point     := collection.polygon (x);
                   HC (x).shape     := polygon_shape;
                   HC (x).shape_id  := 1;
                   HC (x).component := 1;
@@ -161,12 +161,7 @@ package body Spatial_Data is
                point_count : Natural := collection.set_polygons'Length + 1;
                HC : Heterogeneous_Collection (1 .. point_count);
             begin
-               for x in collection.set_polygons'Range loop
-                  HC (x).shape_id  := collection.set_polygons (x).shape_id;
-                  HC (x).point     := collection.set_polygons (x).point;
-                  HC (x).shape     := polygon_shape;
-                  HC (x).component := 1;
-               end loop;
+               HC (collection.set_polygons'Range) := collection.set_polygons;
                HC (HC'Last) := (point, point_shape, num_units, 1);
                collection := (heterogeneous, point_count, num_units, HC);
             end;
