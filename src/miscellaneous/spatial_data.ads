@@ -84,8 +84,7 @@ package Spatial_Data is
    -----------------------------------
    --  Build collections functions  --
    -----------------------------------
-   function append_point (collection : Geometry; point : Geometric_Point)
-                          return Geometry;
+   procedure append_point (collection : out Geometry; point : Geometric_Point);
    procedure append_line  (collection : out Geometry; line : Geometric_Line);
    procedure append_line_string (collection  : out Geometry;
                                  line_string : Geometric_Line_String);

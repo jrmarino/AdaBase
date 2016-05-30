@@ -75,8 +75,7 @@ package body Spatial_Data is
    --------------------
    --  append_point  --
    --------------------
-   function append_point (collection : Geometry; point : Geometric_Point)
-                          return Geometry
+   procedure append_point (collection : out Geometry; point : Geometric_Point)
    is
       classification : Collection_Type := collection.contents;
       num_units   : Natural := collection.units + 1;
@@ -86,39 +85,40 @@ package body Spatial_Data is
             raise CONVERSION_FAILED
               with "circles cannot be part of a geometric collection";
          when unset =>
-            return (single_point, 1, 1, point);
+            collection := (single_point, 1, 1, point);
          when single_point =>
-            return (multi_point,
-                    num_units,
-                    num_units,
-                    (collection.point, point));
+            collection := (multi_point,
+                           num_units,
+                           num_units,
+                           (collection.point, point));
          when single_line =>
-            return (heterogeneous,
-                    3,
-                    num_units,
-                    ((collection.line (1), line_shape, 1, 1),
-                     (collection.line (2), line_shape, 1, 1),
-                     (point, point_shape, num_units, 1)));
+            collection := (heterogeneous,
+                           3,
+                           num_units,
+                           ((collection.line (1), line_shape, 1, 1),
+                            (collection.line (2), line_shape, 1, 1),
+                            (point, point_shape, num_units, 1)));
          when single_infinite_line =>
-            return (heterogeneous,
-                    3,
-                    num_units,
-                    ((collection.infinite_line (1), infinite_line_shape, 1, 1),
-                     (collection.infinite_line (2), infinite_line_shape, 1, 1),
-                     (point, point_shape, num_units, 1)));
+            collection :=
+              (heterogeneous,
+               3,
+               num_units,
+               ((collection.infinite_line (1), infinite_line_shape, 1, 1),
+                (collection.infinite_line (2), infinite_line_shape, 1, 1),
+                (point, point_shape, num_units, 1)));
          when single_line_string =>
             declare
                point_count : Natural := collection.line_string'Length + 1;
                HC : Heterogeneous_Collection (1 .. point_count);
             begin
                for x in collection.line_string'Range loop
-                  HC (x).point     := collection.line (x);
+                  HC (x).point     := collection.line_string (x);
                   HC (x).shape     := line_string_shape;
                   HC (x).shape_id  := 1;
                   HC (x).component := 1;
                end loop;
                HC (HC'Last) := (point, point_shape, num_units, 1);
-               return (heterogeneous, point_count, num_units, HC);
+               collection := (heterogeneous, point_count, num_units, HC);
             end;
          when single_polygon =>
             declare
@@ -132,7 +132,7 @@ package body Spatial_Data is
                   HC (x).component := 1;
                end loop;
                HC (HC'Last) := (point, point_shape, num_units, 1);
-               return (heterogeneous, point_count, num_units, HC);
+               collection := (heterogeneous, point_count, num_units, HC);
             end;
          when multi_point =>
             declare
@@ -140,7 +140,7 @@ package body Spatial_Data is
             begin
                HC (1 .. collection.set_points'Last) := collection.set_points;
                HC (HC'Last) := (point);
-               return (multi_point, num_units, num_units, HC);
+               collection := (multi_point, num_units, num_units, HC);
             end;
          when multi_line_string =>
             declare
@@ -154,7 +154,7 @@ package body Spatial_Data is
                   HC (x).component := 1;
                end loop;
                HC (HC'Last) := (point, point_shape, num_units, 1);
-               return (heterogeneous, point_count, num_units, HC);
+               collection := (heterogeneous, point_count, num_units, HC);
             end;
          when multi_polygon =>
             declare
@@ -168,17 +168,18 @@ package body Spatial_Data is
                   HC (x).component := 1;
                end loop;
                HC (HC'Last) := (point, point_shape, num_units, 1);
-               return (heterogeneous, point_count, num_units, HC);
+               collection := (heterogeneous, point_count, num_units, HC);
             end;
          when heterogeneous =>
             declare
-               point_count : Natural := collection.set_polygons'Length + 1;
+               point_count : Natural :=
+                 collection.set_heterogeneous'Length + 1;
                HC : Heterogeneous_Collection (1 .. point_count);
             begin
                HC (1 .. collection.set_heterogeneous'Last) :=
                  collection.set_heterogeneous;
                HC (HC'Last) := (point, point_shape, num_units, 1);
-               return (heterogeneous, point_count, num_units, HC);
+               collection := (heterogeneous, point_count, num_units, HC);
             end;
       end case;
    end append_point;
@@ -946,13 +947,13 @@ package body Spatial_Data is
                                          set_index  => sub_index,
                                          num_points => data_size);
                if collection.set_heterogeneous (sub_index).shape =
-                 point_shape and then data_size > 1
+                 point_shape and then data_size = 1
                then
                   return collection.set_heterogeneous (sub_index).point;
                else
                   raise CONVERSION_FAILED
                     with "Data type at heterogenous index" & index'Img &
-                    "is not a point or is not 1-component group";
+                    " is not a point or is not 1-component group";
                end if;
             end;
          when others =>
@@ -1035,7 +1036,7 @@ package body Spatial_Data is
                else
                   raise CONVERSION_FAILED
                     with "Data type at heterogeneous index" & index'Img &
-                    "is not a line_string or is not at least 2 points long";
+                    " is not a line_string or is not at least 2 points long";
                end if;
             end;
          when multi_line_string  =>
@@ -1565,7 +1566,7 @@ package body Spatial_Data is
             begin
                for ls in 1 .. collection.units loop
                   first := (ls = 1);
-                  flavor := collection_item_shape (collection);
+                  flavor := collection_item_shape (collection, ls);
                   case flavor is
                      when point_shape =>
                         CT.SU.Append
@@ -1772,7 +1773,7 @@ package body Spatial_Data is
             begin
                for ls in 1 .. collection.units loop
                   first := (ls = 1);
-                  flavor := collection_item_shape (collection);
+                  flavor := collection_item_shape (collection, ls);
                   case flavor is
                      when point_shape =>
                         CT.SU.Append
