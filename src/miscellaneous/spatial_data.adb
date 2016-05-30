@@ -555,7 +555,7 @@ package body Spatial_Data is
             begin
                HC (collection.set_polygons'Range) := collection.set_polygons;
                for x in polygon'Range loop
-                  HC (x + LL).shape     := point_shape;
+                  HC (x + LL).shape     := polygon_shape;
                   HC (x + LL).point     := polygon (x);
                   HC (x + LL).shape_id  := num_units;
                   HC (x + LL).component := 1;
@@ -1545,13 +1545,19 @@ package body Spatial_Data is
                product : CT.Text := CT.SUS ("MultiPolygon(");
                first   : Boolean;
             begin
+               if collection.units = 1 then
+                  product := CT.blank;
+               end if;
                for ls in 1 .. collection.units loop
                   first := (ls = 1);
                   CT.SU.Append
                     (product, format_polygon
                        (retrieve_full_polygon (collection, ls), first));
                end loop;
-               return CT.USS (product) & pclose;
+               if collection.units > 1 then
+                  CT.SU.Append (product, pclose);
+               end if;
+               return CT.USS (product);
             end;
          when heterogeneous =>
             declare
@@ -1755,6 +1761,9 @@ package body Spatial_Data is
                product : CT.Text := CT.SUS ("MULTIPOLYGON (");
                first   : Boolean;
             begin
+               if collection.units = 1 then
+                  product := CT.SUS ("POLYGON (");
+               end if;
                for ls in 1 .. collection.units loop
                   first := (ls = 1);
                   CT.SU.Append
