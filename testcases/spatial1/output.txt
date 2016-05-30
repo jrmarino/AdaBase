@@ -38,9 +38,13 @@ MySQL: GeometryCollection(LineString(Point(0.5, 2), Point(11, 4.4), Point(12, 8.
 MySQL: GeometryCollection(LineString(Point(4, 2.23), Point(0.25, 5.1)), Point(9.2, 4.773), Point(-7.01, -4.9234))
   WKT: GEOMETRYCOLLECTION (LINESTRING (4 2.23, 0.25 5.1), POINT (9.2 4.773), POINT (-7.01 -4.9234))
 
-===== STILL SINGLE POLYGON =====
+===== STILL SINGLE POLYGON #1 =====
 MySQL: Polygon(Linestring(Point(0.5, 2), Point(11, 4.4), Point(12, 8.1), Point(0.005, 2)), Linestring(Point(1, 2), Point(3.2, 4.5), Point(8.8, 7.7), Point(1, 2)))
   WKT: POLYGON (((0.5 2, 11 4.4, 12 8.1, 0.005 2), (1 2, 3.2 4.5, 8.8 7.7, 1 2)))
+
+===== STILL SINGLE POLYGON #2 =====
+MySQL: Polygon(Linestring(Point(0.5, 2), Point(11, 4.4), Point(12, 8.1), Point(0.005, 2)), Linestring(Point(1, 2), Point(3.2, 4.5), Point(8.8, 7.7), Point(1, 2)), Linestring(Point(13.5, 15.35), Point(98.1, 11.7), Point(-13.75, 0.0004), Point(13.5, 15.35)))
+  WKT: POLYGON (((0.5 2, 11 4.4, 12 8.1, 0.005 2), (1 2, 3.2 4.5, 8.8 7.7, 1 2), (13.5 15.35, 98.1 11.7, -13.75 0.0004, 13.5 15.35)))
 
 ===== POLYGON COLLECTION #1 =====
 MySQL: MultiPolygon(Polygon(Linestring(Point(0.5, 2), Point(11, 4.4), Point(12, 8.1), Point(0.005, 2)), Linestring(Point(1, 2), Point(3.2, 4.5), Point(8.8, 7.7), Point(1, 2))), Polygon(Linestring(Point(5, 6), Point(1.4, 2.2), Point(18.1, 24), Point(5, 6))))
