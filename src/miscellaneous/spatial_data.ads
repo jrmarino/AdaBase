@@ -3,7 +3,8 @@
 
 package Spatial_Data is
 
-   type Collection_Type is (single_point,
+   type Collection_Type is (unset,
+                            single_point,
                             single_line,
                             single_line_string,
                             single_infinite_line,
@@ -21,8 +22,9 @@ package Spatial_Data is
                             circle_shape,
                             polygon_shape);
 
-   type Geometry (contents : Collection_Type; items : Positive) is
-     tagged private;
+   type Geometry (contents : Collection_Type;
+                  points   : Positive;
+                  units    : Natural) is tagged private;
 
    type Geometric_Real is digits 18;
 
@@ -75,7 +77,8 @@ package Spatial_Data is
    -----------------------------------
    --  Build collections functions  --
    -----------------------------------
-   procedure append_point (collection : out Geometry; point : Geometric_Point);
+   function append_point (collection : Geometry; point : Geometric_Point)
+                          return Geometry;
    procedure append_line  (collection : out Geometry; line : Geometric_Line);
    procedure append_line_string (collection  : out Geometry;
                                  line_string : Geometric_Line_String);
@@ -168,9 +171,12 @@ private
    type Heterogeneous_Collection is
        array (Positive range <>) of Heterogeneous_Collection_Unit;
 
-   type Geometry (contents : Collection_Type; items : Positive) is tagged
+   type Geometry (contents : Collection_Type;
+                  points   : Positive;
+                  units    : Natural) is tagged
       record
          case contents is
+            when unset => null;
             when single_point =>
                point : Geometric_Point := Origin_Point;
             when single_circle =>
@@ -181,24 +187,24 @@ private
             when single_infinite_line =>
                infinite_line : Geometric_Line := (others => Origin_Point);
             when single_line_string =>
-               line_string : Geometric_Line_String (1 .. items) :=
+               line_string : Geometric_Line_String (1 .. points) :=
                              (others => Origin_Point);
             when single_polygon =>
-               polygon : Geometric_Polygon (1 .. items) :=
+               polygon : Geometric_Polygon (1 .. points) :=
                          (others => Origin_Point);
             when multi_point =>
-               set_points : Geometric_Point_Collection (1 .. items) :=
+               set_points : Geometric_Point_Collection (1 .. points) :=
                             (others => Origin_Point);
             when multi_line_string =>
-               set_line_strings : Homogeneous_Collection (1 .. items) :=
+               set_line_strings : Homogeneous_Collection (1 .. points) :=
                                   (others => Homogeneous_Dummy);
             when multi_polygon =>
                --  Includes the "holes" of a single polygon.  Appending a
                --  hole will change the container from polygon to set_polygons
-               set_polygons : Heterogeneous_Collection (1 .. items) :=
+               set_polygons : Heterogeneous_Collection (1 .. points) :=
                               (others => heterogeneous_Dummy);
             when heterogeneous =>
-               set_heterogeneous : Heterogeneous_Collection (1 .. items) :=
+               set_heterogeneous : Heterogeneous_Collection (1 .. points) :=
                                    (others => heterogeneous_Dummy);
          end case;
       end record;
