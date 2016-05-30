@@ -5,7 +5,6 @@ package Spatial_Data is
 
    type Collection_Type is (unset,
                             single_point,
-                            single_line,
                             single_line_string,
                             single_infinite_line,
                             single_circle,
@@ -16,7 +15,6 @@ package Spatial_Data is
                             heterogeneous);
 
    type Geometric_Shape is (point_shape,
-                            line_shape,
                             line_string_shape,
                             infinite_line_shape,
                             circle_shape,
@@ -188,8 +186,6 @@ private
             when single_circle =>
                circle : Geometric_Circle := (center_point => Origin_Point,
                                              radius       => 1.0);
-            when single_line =>
-               line : Geometric_Line := (others => Origin_Point);
             when single_infinite_line =>
                infinite_line : Geometric_Line := (others => Origin_Point);
             when single_line_string =>

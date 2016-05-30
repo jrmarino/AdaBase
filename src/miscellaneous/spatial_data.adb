@@ -30,7 +30,7 @@ package body Spatial_Data is
    --------------------------
    function initialize_as_line (line : Geometric_Line) return Geometry is
    begin
-      return (single_line, line'Length, 1, line);
+      return (single_line_string, line'Length, 1, line);
    end initialize_as_line;
 
 
@@ -91,13 +91,6 @@ package body Spatial_Data is
                            num_units,
                            num_units,
                            (collection.point, point));
-         when single_line =>
-            collection := (heterogeneous,
-                           3,
-                           num_units,
-                           ((collection.line (1), line_shape, 1, 1),
-                            (collection.line (2), line_shape, 1, 1),
-                            (point, point_shape, num_units, 1)));
          when single_infinite_line =>
             collection :=
               (heterogeneous,
@@ -221,27 +214,6 @@ package body Spatial_Data is
                   HC (x + 1).shape     := line_string_shape;
                   HC (x + 1).point     := line_string (x);
                   HC (x + 1).component := 1;
-               end loop;
-               product := (heterogeneous, point_count, num_units, HC);
-            end;
-         when single_line =>
-            declare
-               point_count : Natural := collection.line'Length +
-                                        line_string'Length;
-               LL : Natural := collection.line'Length;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               for x in collection.line'Range loop
-                  HC (x).shape_id  := 1;
-                  HC (x).shape     := line_shape;
-                  HC (x).point     := collection.line (x);
-                  HC (x).component := 1;
-               end loop;
-               for x in line_string'Range loop
-                  HC (x + LL).shape_id  := num_units;
-                  HC (x + LL).shape     := line_string_shape;
-                  HC (x + LL).point     := line_string (x);
-                  HC (x + LL).component := 1;
                end loop;
                product := (heterogeneous, point_count, num_units, HC);
             end;
@@ -417,27 +389,6 @@ package body Spatial_Data is
                   HC (x + 1).shape     := polygon_shape;
                   HC (x + 1).point     := polygon (x);
                   HC (x + 1).component := 1;
-               end loop;
-               product := (heterogeneous, point_count, num_units, HC);
-            end;
-         when single_line =>
-            declare
-               point_count : Natural := collection.line'Length +
-                                        polygon'Length;
-               LL : Natural := collection.line'Length;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               for x in collection.line'Range loop
-                  HC (x).shape_id  := 1;
-                  HC (x).shape     := line_shape;
-                  HC (x).point     := collection.line (x);
-                  HC (x).component := 1;
-               end loop;
-               for x in polygon'Range loop
-                  HC (x + LL).shape_id  := num_units;
-                  HC (x + LL).shape     := polygon_shape;
-                  HC (x + LL).point     := polygon (x);
-                  HC (x + LL).component := 1;
                end loop;
                product := (heterogeneous, point_count, num_units, HC);
             end;
@@ -898,7 +849,6 @@ package body Spatial_Data is
       check_collection_index (collection, index);
       case collection.contents is
          when single_point         => return point_shape;
-         when single_line          => return line_shape;
          when single_line_string   => return line_string_shape;
          when single_infinite_line => return infinite_line_shape;
          when single_circle        => return circle_shape;
@@ -966,35 +916,16 @@ package body Spatial_Data is
                            return Geometric_Line is
    begin
       check_collection_index (collection, index);
-      case collection.contents is
-         when single_line => return collection.line;
-         when heterogeneous =>
-            declare
-               sub_index : Positive;
-               data_size : Positive;
-               LN        : Geometric_Line;
-            begin
-               locate_heterogenous_item (collection => collection,
-                                         index      => index,
-                                         set_index  => sub_index,
-                                         num_points => data_size);
-               if collection.set_heterogeneous (sub_index).shape = line_shape
-                 and then data_size = 2
-               then
-                  LN (1) := collection.set_heterogeneous (sub_index).point;
-                  LN (2) := collection.set_heterogeneous (sub_index + 1).point;
-                  return LN;
-               else
-                  raise CONVERSION_FAILED
-                    with "Data type at heterogeneous index" & index'Img &
-                    "is not a line or is not 2-component group";
-               end if;
-            end;
-         when others =>
+      declare
+         product : Geometric_Line_String :=
+                   retrieve_line_string (collection, index);
+      begin
+         if product'Length > 2 then
             raise CONVERSION_FAILED
-              with "Requested line, but shape is " &
-              collection_item_shape (collection, index)'Img;
-      end case;
+              with "Object consists of more than 1 line (it's a line string)";
+         end if;
+         return product;
+      end;
    end retrieve_line;
 
 
@@ -1497,8 +1428,6 @@ package body Spatial_Data is
       case classification is
          when unset        => return "";
          when single_point => return format_point (collection.point, True);
-         when single_line  =>
-            return format_line_string (collection.line, True);
          when single_line_string =>
             return format_line_string (collection.line_string, True);
          when single_infinite_line =>
@@ -1581,10 +1510,6 @@ package body Spatial_Data is
                         CT.SU.Append
                           (product, format_polygon
                              (retrieve_full_polygon (collection, ls), first));
-                     when line_shape          =>
-                        CT.SU.Append
-                          (product, format_line_string
-                             (retrieve_line (collection, ls), first));
                      when circle_shape        => null;
                      when infinite_line_shape => null;
                   end case;
@@ -1715,8 +1640,6 @@ package body Spatial_Data is
             return "";
          when single_point =>
             return format_point (collection.point, True, True);
-         when single_line  =>
-            return format_line_string (collection.line, True, True);
          when single_line_string =>
             return format_line_string (collection.line_string, True, True);
          when single_infinite_line =>
@@ -1797,10 +1720,6 @@ package body Spatial_Data is
                            format_polygon
                              (retrieve_full_polygon (collection, ls),
                               first, True));
-                     when line_shape =>
-                        CT.SU.Append
-                          (product, format_line_string
-                             (retrieve_line (collection, ls), first, True));
                      when circle_shape        => null;
                      when infinite_line_shape => null;
                   end case;
