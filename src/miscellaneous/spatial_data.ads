@@ -22,9 +22,16 @@ package Spatial_Data is
                             circle_shape,
                             polygon_shape);
 
-   type Geometry (contents : Collection_Type;
-                  points   : Positive;
-                  units    : Natural) is tagged private;
+   --  The range limits are necessary to avoid storage error warnings
+   subtype Geo_Points is Positive range 1 .. 2 ** 20;
+   subtype Geo_Units  is Natural  range 0 .. 2 ** 20;
+
+   --  Mutable variant records must be limited if tagged
+   --  However, limited geometry cannot work.  We must be able to change the
+   --  contents discriminate, so it meants this record cannot be tagged.
+   type Geometry (contents : Collection_Type := unset;
+                  points   : Geo_Points := Geo_Points'First;
+                  units    : Geo_Units := Geo_Units'First) is private;
 
    type Geometric_Real is digits 18;
 
@@ -171,9 +178,9 @@ private
    type Heterogeneous_Collection is
        array (Positive range <>) of Heterogeneous_Collection_Unit;
 
-   type Geometry (contents : Collection_Type;
-                  points   : Positive;
-                  units    : Natural) is tagged
+   type Geometry (contents : Collection_Type := unset;
+                  points   : Geo_Points := Geo_Points'First;
+                  units    : Geo_Units := Geo_Units'First) is
       record
          case contents is
             when unset => null;

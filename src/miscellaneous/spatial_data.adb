@@ -191,7 +191,7 @@ package body Spatial_Data is
    is
       LS : Geometric_Line_String (1 .. 2) := (line (1), line (2));
    begin
-      collection.append_line_string (LS);
+      append_line_string (collection, LS);
    end append_line;
 
 
@@ -699,12 +699,12 @@ package body Spatial_Data is
          when multi_polygon | heterogeneous => null;
          when others => return 0;
       end case;
-      if collection.collection_item_shape (index) /= polygon_shape then
+      if collection_item_shape (collection, index) /= polygon_shape then
          return 0;
       end if;
       case collection.contents is
          when multi_polygon =>
-            position := collection.outer_polygon_position (index);
+            position := outer_polygon_position (collection, index);
             shape_id := collection.set_polygons (position).shape_id;
             for x in Positive range
               position + 1 .. collection.set_polygons'Last
@@ -714,7 +714,7 @@ package body Spatial_Data is
             end loop;
             return result;
          when heterogeneous =>
-            position := collection.outer_polygon_hetero_position (index);
+            position := outer_polygon_hetero_position (collection, index);
             shape_id := collection.set_heterogeneous (position).shape_id;
             for x in Positive range
               position + 1 .. collection.set_heterogeneous'Last
@@ -899,7 +899,7 @@ package body Spatial_Data is
                                    index : Positive := 1)
                                    return Geometric_Shape is
    begin
-      collection.check_collection_index (index);
+      check_collection_index (collection, index);
       case collection.contents is
          when single_point         => return point_shape;
          when single_line          => return line_shape;
@@ -932,7 +932,7 @@ package body Spatial_Data is
    function retrieve_point (collection : Geometry; index : Positive := 1)
                              return Geometric_Point is
    begin
-      collection.check_collection_index (index);
+      check_collection_index (collection, index);
       case collection.contents is
          when single_point  => return collection.point;
          when multi_point   => return collection.set_points (index);
@@ -941,9 +941,10 @@ package body Spatial_Data is
                sub_index : Positive;
                data_size : Positive;
             begin
-               collection.locate_heterogenous_item (index      => index,
-                                                    set_index  => sub_index,
-                                                    num_points => data_size);
+               locate_heterogenous_item (collection => collection,
+                                         index      => index,
+                                         set_index  => sub_index,
+                                         num_points => data_size);
                if collection.set_heterogeneous (sub_index).shape =
                  point_shape and then data_size > 1
                then
@@ -957,7 +958,7 @@ package body Spatial_Data is
          when others =>
             raise CONVERSION_FAILED
               with "Requested point, but shape is " &
-              collection.collection_item_shape (index)'Img;
+              collection_item_shape (collection, index)'Img;
       end case;
    end retrieve_point;
 
@@ -968,7 +969,7 @@ package body Spatial_Data is
    function retrieve_line (collection : Geometry; index : Positive := 1)
                            return Geometric_Line is
    begin
-      collection.check_collection_index (index);
+      check_collection_index (collection, index);
       case collection.contents is
          when single_line => return collection.line;
          when heterogeneous =>
@@ -977,9 +978,10 @@ package body Spatial_Data is
                data_size : Positive;
                LN        : Geometric_Line;
             begin
-               collection.locate_heterogenous_item (index      => index,
-                                                    set_index  => sub_index,
-                                                    num_points => data_size);
+               locate_heterogenous_item (collection => collection,
+                                         index      => index,
+                                         set_index  => sub_index,
+                                         num_points => data_size);
                if collection.set_heterogeneous (sub_index).shape = line_shape
                  and then data_size = 2
                then
@@ -995,7 +997,7 @@ package body Spatial_Data is
          when others =>
             raise CONVERSION_FAILED
               with "Requested line, but shape is " &
-              collection.collection_item_shape (index)'Img;
+              collection_item_shape (collection, index)'Img;
       end case;
    end retrieve_line;
 
@@ -1006,7 +1008,7 @@ package body Spatial_Data is
    function retrieve_line_string (collection : Geometry; index : Positive := 1)
                                   return Geometric_Line_String is
    begin
-      collection.check_collection_index (index);
+      check_collection_index (collection, index);
       case collection.contents is
          when single_line_string => return collection.line_string;
          when heterogeneous =>
@@ -1014,9 +1016,10 @@ package body Spatial_Data is
                sub_index : Positive;
                data_size : Positive;
             begin
-               collection.locate_heterogenous_item (index      => index,
-                                                    set_index  => sub_index,
-                                                    num_points => data_size);
+               locate_heterogenous_item (collection => collection,
+                                         index      => index,
+                                         set_index  => sub_index,
+                                         num_points => data_size);
                if collection.set_heterogeneous (sub_index).shape =
                  line_string_shape and then data_size >= 2
                then
@@ -1076,7 +1079,7 @@ package body Spatial_Data is
          when others =>
             raise CONVERSION_FAILED
               with "Requested line_string, but shape is " &
-              collection.collection_item_shape (index)'Img;
+              collection_item_shape (collection, index)'Img;
       end case;
    end retrieve_line_string;
 
@@ -1091,7 +1094,7 @@ package body Spatial_Data is
          when others =>
             raise CONVERSION_FAILED
               with "Requested circle, but shape is " &
-              collection.collection_item_shape (1)'Img;
+              collection_item_shape (collection, 1)'Img;
       end case;
    end retrieve_circle;
 
@@ -1105,12 +1108,12 @@ package body Spatial_Data is
       position  : Positive;
       data_size : Positive;
    begin
-      collection.check_collection_index (index);
+      check_collection_index (collection, index);
       case collection.contents is
          when single_polygon => return collection.polygon;
          when heterogeneous =>
-            position  := collection.outer_polygon_hetero_position (index);
-            data_size := collection.polygon_hetero_ring_size (position);
+            position  := outer_polygon_hetero_position (collection, index);
+            data_size := polygon_hetero_ring_size (collection, position);
             declare
                LNS : Geometric_Polygon (1 .. data_size);
             begin
@@ -1121,8 +1124,8 @@ package body Spatial_Data is
                return LNS;
             end;
          when multi_polygon  =>
-            position  := collection.outer_polygon_position (index);
-            data_size := collection.polygon_ring_size (position);
+            position  := outer_polygon_position (collection, index);
+            data_size := polygon_ring_size (collection, position);
             declare
                LNS : Geometric_Polygon (1 .. data_size);
             begin
@@ -1134,7 +1137,7 @@ package body Spatial_Data is
          when others =>
             raise CONVERSION_FAILED
               with "Requested polygon, but shape is " &
-              collection.collection_item_shape (index)'Img;
+              collection_item_shape (collection, index)'Img;
       end case;
    end retrieve_polygon;
 
@@ -1150,7 +1153,7 @@ package body Spatial_Data is
       shape_id : Positive;
       endpoint : Positive := 1;
    begin
-      collection.check_collection_index (index);
+      check_collection_index (collection, index);
       case collection.contents is
          when single_polygon =>
             declare
@@ -1166,7 +1169,7 @@ package body Spatial_Data is
                return HC;
             end;
          when multi_polygon  =>
-            position := collection.outer_polygon_position (index);
+            position := outer_polygon_position (collection, index);
             shape_id := collection.set_polygons (position).shape_id;
             for x in Positive range position .. collection.set_polygons'Last
             loop
@@ -1175,7 +1178,7 @@ package body Spatial_Data is
             end loop;
             return collection.set_polygons (position .. endpoint);
          when heterogeneous =>
-            position := collection.outer_polygon_hetero_position (index);
+            position := outer_polygon_hetero_position (collection, index);
             shape_id := collection.set_heterogeneous (position).shape_id;
             for x in Positive range
               position .. collection.set_heterogeneous'Last
@@ -1187,7 +1190,7 @@ package body Spatial_Data is
          when others =>
             raise CONVERSION_FAILED
               with "Requested polygon, but shape is " &
-              collection.collection_item_shape (index)'Img;
+              collection_item_shape (collection, index)'Img;
       end case;
    end retrieve_full_polygon;
 
@@ -1201,12 +1204,12 @@ package body Spatial_Data is
       position  : Positive;
       data_size : Positive;
    begin
-      collection.check_collection_index (index);
+      check_collection_index (collection, index);
       case collection.contents is
          when heterogeneous =>
-            position :=
-              collection.inner_polygon_hetero_position (index, hole_index);
-            data_size := collection.polygon_hetero_ring_size (position);
+            position := inner_polygon_hetero_position (collection,
+                                                       index, hole_index);
+            data_size := polygon_hetero_ring_size (collection, position);
             declare
                LNS : Geometric_Polygon (1 .. data_size);
             begin
@@ -1217,8 +1220,9 @@ package body Spatial_Data is
                return LNS;
             end;
          when multi_polygon  =>
-            position  := collection.inner_polygon_position (index, hole_index);
-            data_size := collection.polygon_ring_size (position);
+            position  := inner_polygon_position (collection,
+                                                 index, hole_index);
+            data_size := polygon_ring_size (collection, position);
             declare
                LNS : Geometric_Polygon (1 .. data_size);
             begin
@@ -1228,9 +1232,9 @@ package body Spatial_Data is
                return LNS;
             end;
          when others =>
-            raise CONVERSION_FAILED
-              with "Requested polygon hole#" & hole_index'Img &
-              ", but shape is " & collection.collection_item_shape (index)'Img;
+            raise CONVERSION_FAILED with "Requested polygon hole#" &
+              hole_index'Img & ", but shape is " &
+              collection_item_shape (collection, index)'Img;
       end case;
    end retrieve_hole;
 
@@ -1246,7 +1250,7 @@ package body Spatial_Data is
          when others =>
             raise CONVERSION_FAILED
               with "Requested infinite_line, but shape is " &
-              collection.collection_item_shape (1)'Img;
+              collection_item_shape (collection, 1)'Img;
       end case;
    end retrieve_two_points_of_infinite_line;
 
@@ -1512,7 +1516,8 @@ package body Spatial_Data is
               format_point (collection.circle.center_point, True) & sep &
               format_real (collection.circle.radius) & pclose;
          when single_polygon =>
-            return format_polygon (collection.retrieve_full_polygon (1), True);
+            return format_polygon (retrieve_full_polygon (collection, 1),
+                                   True);
          when multi_point =>
             declare
                product : CT.Text := CT.SUS ("MultiPoint(");
@@ -1535,7 +1540,7 @@ package body Spatial_Data is
                   first := (ls = 1);
                   CT.SU.Append
                     (product, format_line_string
-                       (collection.retrieve_line_string (ls), first));
+                       (retrieve_line_string (collection, ls), first));
                end loop;
                return CT.USS (product) & pclose;
             end;
@@ -1548,7 +1553,7 @@ package body Spatial_Data is
                   first := (ls = 1);
                   CT.SU.Append
                     (product, format_polygon
-                       (collection.retrieve_full_polygon (ls), first));
+                       (retrieve_full_polygon (collection, ls), first));
                end loop;
                return CT.USS (product) & pclose;
             end;
@@ -1560,20 +1565,20 @@ package body Spatial_Data is
             begin
                for ls in 1 .. collection.units loop
                   first := (ls = 1);
-                  flavor := collection.collection_item_shape;
+                  flavor := collection_item_shape (collection);
                   case flavor is
                      when point_shape =>
                         CT.SU.Append
                           (product, format_point
-                             (collection.retrieve_point (ls), first));
+                             (retrieve_point (collection, ls), first));
                      when line_string_shape =>
                         CT.SU.Append
                           (product, format_line_string
-                             (collection.retrieve_line_string (ls), first));
+                             (retrieve_line_string (collection, ls), first));
                      when polygon_shape =>
                         CT.SU.Append
                           (product, format_polygon
-                             (collection.retrieve_full_polygon (ls), first));
+                             (retrieve_full_polygon (collection, ls), first));
                      when circle_shape        => null;
                      when line_shape          => null;
                      when infinite_line_shape => null;
@@ -1718,7 +1723,7 @@ package body Spatial_Data is
               format_point (collection.circle.center_point, True) & sep &
               format_real (collection.circle.radius) & pclose;
          when single_polygon =>
-            return format_polygon (collection.retrieve_full_polygon (1),
+            return format_polygon (retrieve_full_polygon (collection, 1),
                                    True, True);
          when multi_point =>
             declare
@@ -1742,7 +1747,7 @@ package body Spatial_Data is
                   first := (ls = 1);
                   CT.SU.Append
                     (product, format_line_string
-                       (collection.retrieve_line_string (ls), first));
+                       (retrieve_line_string (collection, ls), first));
                end loop;
                return CT.USS (product) & pclose;
             end;
@@ -1755,7 +1760,7 @@ package body Spatial_Data is
                   first := (ls = 1);
                   CT.SU.Append
                     (product, format_polygon
-                       (collection.retrieve_full_polygon (ls), first));
+                       (retrieve_full_polygon (collection, ls), first));
                end loop;
                return CT.USS (product) & pclose;
             end;
@@ -1767,22 +1772,22 @@ package body Spatial_Data is
             begin
                for ls in 1 .. collection.units loop
                   first := (ls = 1);
-                  flavor := collection.collection_item_shape;
+                  flavor := collection_item_shape (collection);
                   case flavor is
                      when point_shape =>
                         CT.SU.Append
                           (product, format_point
-                             (collection.retrieve_point (ls), first, True));
+                             (retrieve_point (collection, ls), first, True));
                      when line_string_shape =>
                         CT.SU.Append
                           (product, format_line_string
-                             (collection.retrieve_line_string (ls), first,
+                             (retrieve_line_string (collection, ls), first,
                               True));
                      when polygon_shape =>
                         CT.SU.Append
                           (product,
                            format_polygon
-                             (collection.retrieve_full_polygon (ls),
+                             (retrieve_full_polygon (collection, ls),
                               first, True));
                      when circle_shape        => null;
                      when line_shape          => null;
