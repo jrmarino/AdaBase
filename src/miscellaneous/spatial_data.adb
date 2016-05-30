@@ -1580,8 +1580,11 @@ package body Spatial_Data is
                         CT.SU.Append
                           (product, format_polygon
                              (retrieve_full_polygon (collection, ls), first));
+                     when line_shape          =>
+                        CT.SU.Append
+                          (product, format_line_string
+                             (retrieve_line (collection, ls), first));
                      when circle_shape        => null;
-                     when line_shape          => null;
                      when infinite_line_shape => null;
                   end case;
                end loop;
@@ -1790,8 +1793,11 @@ package body Spatial_Data is
                            format_polygon
                              (retrieve_full_polygon (collection, ls),
                               first, True));
+                     when line_shape =>
+                        CT.SU.Append
+                          (product, format_line_string
+                             (retrieve_line (collection, ls), first, True));
                      when circle_shape        => null;
-                     when line_shape          => null;
                      when infinite_line_shape => null;
                   end case;
                end loop;
