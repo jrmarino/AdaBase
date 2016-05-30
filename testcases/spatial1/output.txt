@@ -1,0 +1,52 @@
+===== SINGLE POINT =====
+MySQL: Point(18.2, -3.4)
+  WKT: POINT (18.2 -3.4)
+
+===== SINGLE LINE =====
+MySQL: LineString(Point(4, 2.23), Point(0.25, 5.1))
+  WKT: LINESTRING (4 2.23, 0.25 5.1)
+
+===== SINGLE LINE STRING (THREE POINT) =====
+MySQL: LineString(Point(0.5, 2), Point(11, 4.4), Point(12, 8.1))
+  WKT: LINESTRING (0.5 2, 11 4.4, 12 8.1)
+
+===== SINGLE POLYGON (3 SIDES) =====
+MySQL: Polygon(Linestring(Point(0.5, 2), Point(11, 4.4), Point(12, 8.1), Point(0.005, 2)))
+  WKT: POLYGON ((0.5 2, 11 4.4, 12 8.1, 0.005 2))
+
+===== SINGLE CIRCLE (not legal for MySQL or WKT) =====
+MySQL: Circle(Point(2, 1), 4.5)
+  WKT: CIRCLE (2 1, 4.5)
+
+===== INFINITE LINE (converted to regular line on MySQL or WKT) =====
+MySQL: LineString(Point(0, 0), Point(2, 2))
+  WKT: LINESTRING (0 0, 2 2)
+
+===== MULTIPOINT COLLECTION =====
+MySQL: MultiPoint(Point(18.2, -3.4), Point(9.2, 4.773), Point(-7.01, -4.9234))
+  WKT: MULTIPOINT (18.2 -3.4, 9.2 4.773, -7.01 -4.9234)
+
+===== MULTILINESTRING COLLECTION =====
+MySQL: MultiLineString(LineString(Point(0.5, 2), Point(11, 4.4), Point(12, 8.1)), LineString(Point(4.5, 6), Point(9.2, 4.773), Point(-7.01, -4.9234)))
+  WKT: MULTILINESTRING ((0.5 2, 11 4.4, 12 8.1), (4.5 6, 9.2 4.773, -7.01 -4.9234))
+
+===== MIXED COLLECTION #1 =====
+MySQL: GeometryCollection(LineString(Point(0.5, 2), Point(11, 4.4), Point(12, 8.1)), LineString(Point(4.5, 6), Point(9.2, 4.773), Point(-7.01, -4.9234)), Point(9.2, 4.773), Point(-7.01, -4.9234))
+  WKT: GEOMETRYCOLLECTION (LINESTRING (0.5 2, 11 4.4, 12 8.1), LINESTRING (4.5 6, 9.2 4.773, -7.01 -4.9234), POINT (9.2 4.773), POINT (-7.01 -4.9234))
+
+===== MIXED COLLECTION #2 =====
+MySQL: GeometryCollection(LineString(Point(4, 2.23), Point(0.25, 5.1)), Point(9.2, 4.773), Point(-7.01, -4.9234))
+  WKT: GEOMETRYCOLLECTION (LINESTRING (4 2.23, 0.25 5.1), POINT (9.2 4.773), POINT (-7.01 -4.9234))
+
+===== STILL SINGLE POLYGON =====
+MySQL: Polygon(Linestring(Point(0.5, 2), Point(11, 4.4), Point(12, 8.1), Point(0.005, 2)), Linestring(Point(1, 2), Point(3.2, 4.5), Point(8.8, 7.7), Point(1, 2)))
+  WKT: POLYGON (((0.5 2, 11 4.4, 12 8.1, 0.005 2), (1 2, 3.2 4.5, 8.8 7.7, 1 2)))
+
+===== POLYGON COLLECTION #1 =====
+MySQL: MultiPolygon(Polygon(Linestring(Point(0.5, 2), Point(11, 4.4), Point(12, 8.1), Point(0.005, 2)), Linestring(Point(1, 2), Point(3.2, 4.5), Point(8.8, 7.7), Point(1, 2))), Polygon(Linestring(Point(5, 6), Point(1.4, 2.2), Point(18.1, 24), Point(5, 6))))
+  WKT: MULTIPOLYGON (((0.5 2, 11 4.4, 12 8.1, 0.005 2), (1 2, 3.2 4.5, 8.8 7.7, 1 2)), ((5 6, 1.4 2.2, 18.1 24, 5 6)))
+
+===== MIXED COLLECTION #3 =====
+MySQL: GeometryCollection(Polygon(Linestring(Point(0.5, 2), Point(11, 4.4), Point(12, 8.1), Point(0.005, 2)), Linestring(Point(1, 2), Point(3.2, 4.5), Point(8.8, 7.7), Point(1, 2))), Polygon(Linestring(Point(5, 6), Point(1.4, 2.2), Point(18.1, 24), Point(5, 6))), Point(9.2, 4.773), Point(-7.01, -4.9234))
+  WKT: GEOMETRYCOLLECTION (POLYGON ((0.5 2, 11 4.4, 12 8.1, 0.005 2), (1 2, 3.2 4.5, 8.8 7.7, 1 2)), POLYGON ((5 6, 1.4 2.2, 18.1 24, 5 6)), POINT (9.2 4.773), POINT (-7.01 -4.9234))
+

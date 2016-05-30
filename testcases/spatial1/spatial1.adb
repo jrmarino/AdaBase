@@ -55,6 +55,11 @@ begin
       print (my_line, "MIXED COLLECTION #2");
 
       append_polygon_hole  (my_polygon, ((1.0, 2.0), (3.2, 4.5), (8.8, 7.7), (1.0, 2.0)));
+      print (my_polygon, "STILL SINGLE POLYGON");
+
+      append_polygon (my_polygon, ((5.0, 6.0), (1.4, 2.2), (18.1, 24.0), (5.0, 6.0)));
+      print (my_polygon, "POLYGON COLLECTION #1");
+
       append_point (my_polygon, pt1);
       append_point (my_polygon, pt2);
       print (my_polygon, "MIXED COLLECTION #3");
