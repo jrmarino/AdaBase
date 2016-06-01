@@ -423,7 +423,7 @@ package body Spatial_Data is
                for x in collection.line_string'Range loop
                   HC (x).shape_id  := 1;
                   HC (x).shape     := line_string_shape;
-                  HC (x).point     := collection.polygon (x);
+                  HC (x).point     := collection.line_string (x);
                   HC (x).component := 1;
                end loop;
                for x in polygon'Range loop
