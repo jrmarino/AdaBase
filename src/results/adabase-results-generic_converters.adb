@@ -177,6 +177,95 @@ package body AdaBase.Results.Generic_Converters is
    end convert4st2;
 
 
+   --------------------
+   --  convert2bits  --
+   --------------------
+   function convert2bits (nv : ModType) return Bits
+   is
+      result : Bits (0 .. width) := (others => 0);
+      mask   : ModType;
+   begin
+      for x in result'Range loop
+         mask := 2 ** x;
+         if (nv and mask) > 0 then
+            result (x) := 1;
+         end if;
+      end loop;
+      return result;
+   end convert2bits;
+
+
+   ---------------------
+   --  convert2chain  --
+   ---------------------
+   function convert2chain (nv : ModType) return Chain
+   is
+      bitwidth : constant Natural := (width * 8) - 1;
+      result : Chain (1 .. width) := (others => 0);
+      asbits : Bits (0 .. bitwidth) := (others => 0);
+      arrow  : Natural := 0;
+      mask   : ModType;
+   begin
+      --  convert to bits first
+      for x in asbits'Range loop
+         mask := 2 ** x;
+         if (nv and mask) > 0 then
+            result (x) := 1;
+         end if;
+      end loop;
+      --  convert from bits to nbyte1
+      for x in result'Range loop
+         for y in Natural range 0 .. 7 loop
+            if asbits (arrow + y) = 1 then
+               result (x) := result (x) + (2 ** y);
+            end if;
+         end loop;
+         arrow := arrow + 8;
+      end loop;
+      return result;
+   end convert2chain;
+
+
+   --------------------
+   --  convert_bits  --
+   --------------------
+   function convert_bits (nv : Bits) return ModType
+   is
+      numbits : Natural := nv'Length;
+      asbits : Bits (0 .. numbits - 1) := nv;
+      result : ModType := 0;
+   begin
+      if asbits'Last > MSB then
+         raise TARGET_TYPE_TOO_NARROW;
+      end if;
+      for x in asbits'Range loop
+         result := result + (2 ** x);
+      end loop;
+      return result;
+   end convert_bits;
+
+
+   ---------------------
+   --  convert_chain  --
+   ---------------------
+   function convert_chain (nv : Chain) return ModType
+   is
+      link : NByte1;
+      counter : Natural := 0;
+      result : ModType := 0;
+   begin
+      if nv'Length > width then
+         raise TARGET_TYPE_TOO_NARROW;
+      end if;
+      for x in nv'Range loop
+         link := nv (x);
+         result := result + ModType (link * (2 ** counter));
+         counter := counter + 8;
+      end loop;
+      return result;
+   end convert_chain;
+
+
    ------------------------------
    --  PRIVATE TRIM FUNCTIONS  --
    ------------------------------

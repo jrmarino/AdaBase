@@ -3,18 +3,11 @@
 
 with Ada.Strings;
 with Ada.Characters.Conversions;
-with Interfaces;
-with System;
 
 package body AdaBase.Results.Converters is
 
    package AS  renames Ada.Strings;
    package ACC renames Ada.Characters.Conversions;
-   package BIT renames Interfaces;
-
-   use type System.Bit_Order;
-   Big_Endian : constant Boolean :=
-     (System.Default_Bit_Order = System.High_Order_First);
 
    ---------------------------
    --  CONVERT FROM NBYTE0  --
@@ -141,10 +134,20 @@ package body AdaBase.Results.Converters is
 
    function convert (nv : NByte0) return Chain
    is
-     result : Chain (1 .. 1) := (others => 0);
+     result : Chain (1 .. 1) := (1 => 0);
    begin
       if nv then
          result (1) := 1;
+      end if;
+      return result;
+   end convert;
+
+   function convert (nv : NByte0) return Bits
+   is
+     result : Bits (0 .. 0) := (0 => 0);
+   begin
+      if nv then
+         result (0) := 1;
       end if;
       return result;
    end convert;
@@ -220,13 +223,6 @@ package body AdaBase.Results.Converters is
    function convert (nv : NByte1) return Real18 is
    begin
       return Real18 (nv);
-   end convert;
-
-   function convert (nv : NByte1) return Chain
-   is
-      result : constant Chain (1 .. 1) := (1 => nv);
-   begin
-      return result;
    end convert;
 
 
@@ -310,22 +306,6 @@ package body AdaBase.Results.Converters is
    function convert (nv : NByte2) return Real18 is
    begin
       return Real18 (nv);
-   end convert;
-
-   function convert (nv : NByte2) return Chain
-   is
-      use type NByte2;
-      result : Chain (1 .. 2);
-      block1 : constant NByte1 := NByte1 (nv and 16#FF#);
-      block2 : constant NByte1 := NByte1
-                        (BIT.Shift_Right (BIT.Unsigned_16 (nv), 8));
-   begin
-      if Big_Endian then
-         result := (block2, block1);
-      else
-         result := (block1, block2);
-      end if;
-      return result;
    end convert;
 
 
@@ -419,24 +399,6 @@ package body AdaBase.Results.Converters is
    function convert (nv : NByte3) return Real18 is
    begin
       return Real18 (nv);
-   end convert;
-
-   function convert (nv : NByte3) return Chain
-   is
-      use type NByte3;
-      result : Chain (1 .. 3);
-      block1 : constant NByte1 := NByte1 (nv and 16#FF#);
-      block2 : constant NByte1 := NByte1 (BIT.Shift_Right
-                        (BIT.Unsigned_32 (nv and 16#FF00#), 8));
-      block3 : constant NByte1 := NByte1 (BIT.Shift_Right
-                        (BIT.Unsigned_32 (nv and 16#FF0000#), 16));
-   begin
-      if Big_Endian then
-         result := (block3, block2, block1);
-      else
-         result := (block1, block2, block3);
-      end if;
-      return result;
    end convert;
 
 
@@ -540,26 +502,6 @@ package body AdaBase.Results.Converters is
    function convert (nv : NByte4) return Real18 is
    begin
       return Real18 (nv);
-   end convert;
-
-   function convert (nv : NByte4) return Chain
-   is
-      use type NByte4;
-      result : Chain (1 .. 4);
-      block1 : constant NByte1 := NByte1 (nv and 16#FF#);
-      block2 : constant NByte1 := NByte1 (BIT.Shift_Right
-                        (BIT.Unsigned_32 (nv and 16#FF00#), 8));
-      block3 : constant NByte1 := NByte1 (BIT.Shift_Right
-                        (BIT.Unsigned_32 (nv and 16#FF0000#), 16));
-      block4 : constant NByte1 := NByte1 (BIT.Shift_Right
-                        (BIT.Unsigned_32 (nv and 16#FF000000#), 24));
-   begin
-      if Big_Endian then
-         result := (block4, block3, block2, block1);
-      else
-         result := (block1, block2, block3, block4);
-      end if;
-      return result;
    end convert;
 
 
@@ -673,31 +615,6 @@ package body AdaBase.Results.Converters is
    function convert (nv : NByte8) return Real18 is
    begin
       return Real18 (nv);
-   end convert;
-
-   function convert (nv : NByte8) return Chain
-   is
-      use type NByte8;
-      result : Chain (1 .. 8);
-      b      : Chain (1 .. 8);
-   begin
-      b (1) := NByte1 (nv and 16#FF#);
-      for s in 1 .. 7 loop
-         declare
-            use type BIT.Unsigned_64;
-            shft : constant Natural := s * 8;
-            mask : constant BIT.Unsigned_64 := BIT.Shift_Left (16#FF#, shft);
-            slvr : constant BIT.Unsigned_64 := BIT.Unsigned_64 (nv) and mask;
-         begin
-            b (s + 1) := NByte1 (BIT.Shift_Right (slvr, shft));
-         end;
-      end loop;
-      if Big_Endian then
-         result := (b (8), b (7), b (6), b (5), b (4), b (3), b (2), b (1));
-      else
-         result := b;
-      end if;
-      return result;
    end convert;
 
 
@@ -1487,120 +1404,6 @@ package body AdaBase.Results.Converters is
       end case;
    end convert;
 
-   function convert (nv : Chain) return NByte1 is
-   begin
-      if nv'Length > 1 then
-         raise TARGET_TYPE_TOO_NARROW;
-      end if;
-      return nv (1);
-   end convert;
-
-   function convert (nv : Chain) return NByte2
-   is
-      use type NByte2;
-      cn : Chain (1 .. 2) := (others => 0);
-   begin
-      if nv'Length > 2 then
-         raise TARGET_TYPE_TOO_NARROW;
-      end if;
-      for n in 1 .. nv'Length loop
-         cn (n) := nv (n);
-      end loop;
-      if Big_Endian then
-         return
-           NByte2 (BIT.Shift_Left (BIT.Unsigned_16 (cn (1)), 8)) +
-           NByte2 (cn (2));
-      else
-         return
-           NByte2 (BIT.Shift_Left (BIT.Unsigned_16 (cn (2)), 8)) +
-           NByte2 (cn (1));
-      end if;
-   end convert;
-
-   function convert (nv : Chain) return NByte3
-   is
-      use type NByte3;
-      cn : Chain (1 .. 3) := (others => 0);
-   begin
-      if nv'Length > 3 then
-         raise TARGET_TYPE_TOO_NARROW;
-      end if;
-      for n in 1 .. nv'Length loop
-         cn (n) := nv (n);
-      end loop;
-      if Big_Endian then
-         return
-           NByte3 (BIT.Shift_Left (BIT.Unsigned_32 (cn (1)), 16)) +
-           NByte3 (BIT.Shift_Left (BIT.Unsigned_16 (cn (2)), 8)) +
-           NByte3 (cn (3));
-      else
-         return
-           NByte3 (BIT.Shift_Left (BIT.Unsigned_32 (cn (3)), 16)) +
-           NByte3 (BIT.Shift_Left (BIT.Unsigned_16 (cn (2)), 8)) +
-           NByte3 (cn (1));
-      end if;
-   end convert;
-
-   function convert (nv : Chain) return NByte4
-   is
-      use type NByte4;
-      cn : Chain (1 .. 4) := (others => 0);
-   begin
-      if nv'Length > 4 then
-         raise TARGET_TYPE_TOO_NARROW;
-      end if;
-      for n in 1 .. nv'Length loop
-         cn (n) := nv (n);
-      end loop;
-      if Big_Endian then
-         return
-           NByte4 (BIT.Shift_Left (BIT.Unsigned_32 (cn (1)), 24)) +
-           NByte4 (BIT.Shift_Left (BIT.Unsigned_32 (cn (2)), 16)) +
-           NByte4 (BIT.Shift_Left (BIT.Unsigned_16 (cn (3)), 8)) +
-           NByte4 (cn (4));
-      else
-         return
-           NByte4 (BIT.Shift_Left (BIT.Unsigned_32 (cn (4)), 24)) +
-           NByte4 (BIT.Shift_Left (BIT.Unsigned_32 (cn (3)), 16)) +
-           NByte4 (BIT.Shift_Left (BIT.Unsigned_16 (cn (2)), 8)) +
-           NByte4 (cn (1));
-      end if;
-   end convert;
-
-   function convert (nv : Chain) return NByte8
-   is
-      use type NByte8;
-      cn : Chain (1 .. 8) := (others => 0);
-   begin
-      if nv'Length > 8 then
-         raise TARGET_TYPE_TOO_NARROW;
-      end if;
-      for n in 1 .. nv'Length loop
-         cn (n) := nv (n);
-      end loop;
-      if Big_Endian then
-         return
-           NByte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (1)), 56)) +
-           NByte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (2)), 48)) +
-           NByte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (3)), 40)) +
-           NByte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (4)), 32)) +
-           NByte8 (BIT.Shift_Left (BIT.Unsigned_32 (cn (5)), 24)) +
-           NByte8 (BIT.Shift_Left (BIT.Unsigned_32 (cn (6)), 16)) +
-           NByte8 (BIT.Shift_Left (BIT.Unsigned_16 (cn (7)), 8)) +
-           NByte8 (cn (8));
-      else
-         return
-           NByte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (8)), 56)) +
-           NByte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (7)), 48)) +
-           NByte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (6)), 40)) +
-           NByte8 (BIT.Shift_Left (BIT.Unsigned_64 (cn (5)), 32)) +
-           NByte8 (BIT.Shift_Left (BIT.Unsigned_32 (cn (4)), 24)) +
-           NByte8 (BIT.Shift_Left (BIT.Unsigned_32 (cn (3)), 16)) +
-           NByte8 (BIT.Shift_Left (BIT.Unsigned_16 (cn (2)), 8)) +
-           NByte8 (cn (1));
-      end if;
-   end convert;
-
    function convert (nv : Chain) return String
    is
       payload : String (nv'Range);
@@ -1623,6 +1426,25 @@ package body AdaBase.Results.Converters is
       preview : String := convert (nv);
    begin
       return ACC.To_Wide_Wide_String (preview);
+   end convert;
+
+   function convert (nv : Chain) return Bits
+   is
+      num_bits : Natural := nv'Length * 8;
+      result   : Bits (0 .. num_bits - 1) := (others => 0);
+      counter  : Natural := 0;
+      mask     : NByte1;
+   begin
+      for link in nv'Range loop
+         for x in Natural range 0 .. 7 loop
+            mask := 2 ** x;
+            if (nv (link) and mask) > 0 then
+               result (counter) := 1;
+            end if;
+            counter := counter + 1;
+         end loop;
+      end loop;
+      return result;
    end convert;
 
 
@@ -1764,6 +1586,64 @@ package body AdaBase.Results.Converters is
    end convert;
 
 
+   -------------------------
+   --  CONVERT FROM BITS  --
+   -------------------------
+   function convert (nv : Bits) return NByte0 is
+   begin
+      if nv'Length > 1 then
+         raise TARGET_TYPE_TOO_NARROW;
+      end if;
+      return nv (nv'First) = 1;
+   end convert;
+
+   function convert (nv : Bits) return String
+   is
+      result : String (1 .. nv'Length) := (others => '0');
+      arrow  : Natural := nv'Last;
+   begin
+      for x in nv'Range loop
+         if nv (x) = 1 then
+            result (arrow) := '1';
+         end if;
+         arrow := arrow - 1;
+      end loop;
+      return result;
+   end convert;
+
+   function convert (nv : Bits) return Chain
+   is
+      num_segments : Positive := 1 + ((nv'Length - 1) / 8);
+      result  : Chain (1 .. num_segments) := (others => 0);
+      link    : Positive := 1;
+      counter : Natural := 0;
+   begin
+      for x in nv'Range loop
+         result (link) := result (link) + (2 ** counter);
+         counter := counter + 1;
+         if counter = 8 then
+            counter := 0;
+            link := link + 1;
+         end if;
+      end loop;
+      return result;
+   end convert;
+
+   function convert (nv : Bits) return Wide_String
+   is
+      bitstring : constant String := convert (nv);
+   begin
+      return ACC.To_Wide_String (Item => bitstring);
+   end convert;
+
+   function convert (nv : Bits) return Wide_Wide_String
+   is
+      bitstring : constant String := convert (nv);
+   begin
+      return ACC.To_Wide_Wide_String (Item => bitstring);
+   end convert;
+
+
    ----------------------------------------
    --  Convert all data types to Texual  --
    ----------------------------------------
@@ -1900,5 +1780,11 @@ package body AdaBase.Results.Converters is
       return CT.SUS (hold);
    end convert;
 
+   function convert (nv : Bits) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
 
 end AdaBase.Results.Converters;

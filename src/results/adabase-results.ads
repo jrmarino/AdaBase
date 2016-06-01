@@ -52,7 +52,7 @@ package AdaBase.Results is
    type Enumtype is record enumeration : Textual; end record;
    type Settype is array (Positive range <>) of Enumtype;
    type Chain   is array (Positive range <>) of NByte1;
-   type Bits    is array (Positive range <>) of Bit1;
+   type Bits    is array (Natural range <>)  of Bit1;
 
    type NByte0_Access   is access all NByte0;
    type NByte1_Access   is access all NByte1;
@@ -100,6 +100,7 @@ package AdaBase.Results is
    PARAM_IS_REAL_9    : constant Real9  := 0.0;
    PARAM_IS_REAL_18   : constant Real18 := 0.0;
    PARAM_IS_CHAIN     : constant Chain := (1 .. 1 => 0);
+   PARAM_IS_BITS      : constant Bits  := (0 .. 0 => 0);
    PARAM_IS_ENUM      : constant Enumtype := (enumeration => Blank_String);
    PARAM_IS_SET       : constant Settype := (1 .. 1 => (PARAM_IS_ENUM));
    PARAM_IS_TEXTUAL   : constant Textual := Blank_String;

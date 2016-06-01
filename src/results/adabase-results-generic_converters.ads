@@ -59,6 +59,26 @@ package AdaBase.Results.Generic_Converters is
       type RealType is digits <>;
    function convert4st2 (nv : String) return RealType;
 
+   generic
+      type ModType is mod <>;
+      width : Natural;
+   function convert2bits (nv : ModType) return Bits;
+
+   generic
+      type ModType is mod <>;
+      width : Positive;
+   function convert2chain (nv : ModType) return Chain;
+
+   generic
+      type ModType is mod <>;
+      MSB : Positive;
+   function convert_bits (nv : Bits) return ModType;
+
+   generic
+      type ModType is mod <>;
+      width : Positive;
+   function convert_chain (nv : Chain) return ModType;
+
 private
 
    function ctrim (raw : String) return String;
