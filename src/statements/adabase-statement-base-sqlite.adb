@@ -679,7 +679,8 @@ package body AdaBase.Statement.Base.SQLite is
                   Tout = ft_supertext or else
                   Tout = ft_timestamp or else
                   Tout = ft_enumtype or else
-                  Tout = ft_settype)
+                  Tout = ft_settype or else
+                  Tout = ft_bits)
                then
                   declare
                      ST : String := ARC.convert (dvariant.v13);
@@ -702,6 +703,18 @@ package body AdaBase.Statement.Base.SQLite is
                            end if;
                            dossier.a19.all := ARC.convert (ST, FL);
                         end;
+                     when ft_bits =>
+                        declare
+                           FL    : Natural := dossier.a20.all'Length;
+                           DVLEN : Natural := ST'Length;
+                        begin
+                           if DVLEN > FL then
+                              raise BINDING_SIZE_MISMATCH with "native size : " &
+                                DVLEN'Img & " greater than binding size : " &
+                                FL'Img;
+                           end if;
+                           dossier.a20.all := ARC.convert (ST, FL);
+                        end;
                      when others => null;
                      end case;
                   end;
@@ -720,7 +733,7 @@ package body AdaBase.Statement.Base.SQLite is
                else
                   raise BINDING_TYPE_MISMATCH with "native type " &
                     field_types'Image (Tnative) &
-                    "is incompatible with binding type " &
+                    " is incompatible with binding type " &
                     field_types'Image (Tout);
                end if;
             end;
