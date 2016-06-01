@@ -1201,7 +1201,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
          when 'S' => return ft_textual;
          when 'T' => return ft_textual;  --  Huge, 4/12/16 bytes
          when 'U' => return ft_textual;
-         when 'V' => return ft_textual;  --  String of 1/0 for now
+         when 'V' => return ft_bits;     --  String of 1/0 for now
 
          when 'X' => raise METADATA_FAIL
                      with "Unknown type encountered: " & desc;

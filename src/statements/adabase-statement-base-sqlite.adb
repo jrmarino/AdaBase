@@ -520,9 +520,18 @@ package body AdaBase.Statement.Base.SQLite is
                        (datatype => ft_real18,
                         v12 => conn.retrieve_double (Stmt.stmt_handle, scol));
                   when ft_textual =>
-                     dvariant :=
-                       (datatype => ft_textual,
-                        v13 => conn.retrieve_text (Stmt.stmt_handle, scol));
+                     declare
+                        datatext : AR.Textual :=
+                          conn.retrieve_text (Stmt.stmt_handle, scol);
+                     begin
+                        if seems_like_bit_string (datatext) then
+                           dvariant := (datatype => ft_bits,
+                                        v20 => datatext);
+                        else
+                           dvariant := (datatype => ft_textual,
+                                        v13 => datatext);
+                        end if;
+                     end;
                   when ft_chain   => null;
                   when others => raise INVALID_FOR_RESULT_SET
                        with "Impossible field type (internal bug??)";
@@ -1099,6 +1108,25 @@ package body AdaBase.Statement.Base.SQLite is
       data_fetched := False;
       data_present := False;
    end fetch_next_set;
+
+
+   ------------------
+   --  bit_string  --
+   ------------------
+   function seems_like_bit_string (candidate : CT.Text) return Boolean
+   is
+      canstr : String := CT.USS (candidate);
+   begin
+      if canstr'Length > 64 then
+         return False;
+      end if;
+      for x in canstr'Range loop
+         if canstr (x) /= '0' and then canstr (x) /= '1' then
+            return False;
+         end if;
+      end loop;
+      return True;
+   end seems_like_bit_string;
 
 
 end AdaBase.Statement.Base.SQLite;

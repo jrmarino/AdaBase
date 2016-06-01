@@ -1219,11 +1219,14 @@ package body AdaBase.Results.Converters is
          num_bits := fixed;
       end if;
       declare
+         longvs : String (1 .. num_bits) := (others => '0');
          result : Bits (0 .. num_bits - 1) := (others => 0);
          arrow  : Natural := result'First;
+         rfirst : Natural := 1 + longvs'Length - nv'Length;
       begin
-         for x in nv'Range loop
-            case nv (x) is
+         longvs (rfirst .. longvs'Last) := nv;
+         for x in longvs'Range loop
+            case longvs (x) is
                when '0' => null;
                when '1' => result (arrow) := 1;
                when others =>
@@ -1477,12 +1480,14 @@ package body AdaBase.Results.Converters is
       num_bits : Natural := nv'Length * 8;
       result   : Bits (0 .. num_bits - 1) := (others => 0);
       counter  : Natural := 0;
-      mask     : NByte1;
+      submask  : constant array (0 .. 7) of NByte1 := (2 ** 0, 2 ** 1,
+                                                       2 ** 2, 2 ** 3,
+                                                       2 ** 4, 2 ** 5,
+                                                       2 ** 6, 2 ** 7);
    begin
       for link in nv'Range loop
-         for x in Natural range 0 .. 7 loop
-            mask := 2 ** x;
-            if (nv (link) and mask) > 0 then
+         for x in submask'Range loop
+            if (nv (link) and submask (x)) > 0 then
                result (counter) := 1;
             end if;
             counter := counter + 1;
@@ -1644,7 +1649,7 @@ package body AdaBase.Results.Converters is
    function convert (nv : Bits) return String
    is
       result : String (1 .. nv'Length) := (others => '0');
-      arrow  : Natural := nv'Last;
+      arrow  : Natural := result'Last;
    begin
       for x in nv'Range loop
          if nv (x) = 1 then
@@ -1663,7 +1668,9 @@ package body AdaBase.Results.Converters is
       counter : Natural := 0;
    begin
       for x in nv'Range loop
-         result (link) := result (link) + (2 ** counter);
+         if nv (x) > 0 then
+            result (link) := result (link) + (2 ** counter);
+         end if;
          counter := counter + 1;
          if counter = 8 then
             counter := 0;

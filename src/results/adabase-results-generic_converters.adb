@@ -243,7 +243,9 @@ package body AdaBase.Results.Generic_Converters is
          raise TARGET_TYPE_TOO_NARROW;
       end if;
       for x in asbits'Range loop
-         result := result + (2 ** x);
+         if asbits (x) > 0 then
+            result := result + (2 ** x);
+         end if;
       end loop;
       return result;
    end convert_bits;

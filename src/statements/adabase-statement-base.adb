@@ -1656,7 +1656,8 @@ package body AdaBase.Statement.Base is
                               ARC.convert ("", param.a17.all'Length);
          when ft_settype   => param.a19.all :=
                               ARC.convert ("", param.a19.all'Length);
-         when ft_bits      => param.a20.all := AR.PARAM_IS_BITS;
+         when ft_bits      => param.a20.all :=
+                              ARC.convert ("", param.a20.all'Length);
       end case;
    end set_as_null;
 

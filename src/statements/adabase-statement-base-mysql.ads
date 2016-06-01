@@ -103,7 +103,7 @@ private
    function internal_ps_fetch_bound (Stmt : out MySQL_statement)
                                      return Boolean;
 
-   function convert_to_bitstring (nv : String; width : Natural) return AR.Bits;
+   function convert_to_bitstring (nv : String; width : Natural) return String;
    function num_set_items (nv : String) return Natural;
    function bincopy (data : ABM.ICS.char_array_access;
                      datalen, max_size : Natural)

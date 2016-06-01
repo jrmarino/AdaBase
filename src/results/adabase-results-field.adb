@@ -610,7 +610,12 @@ package body AdaBase.Results.Field is
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_chain     => return ARC.convert (field.native.v17);
-         when ft_bits      => return ARC.convert (field.native.v20);
+         when ft_bits      =>
+            declare
+               target_bits : Bits := ARC.convert (field.native.v20);
+            begin
+               return ARC.convert (target_bits);
+            end;
          when ft_byte1 |
               ft_byte2 |
               ft_byte3 |
@@ -742,17 +747,16 @@ package body AdaBase.Results.Field is
    end spawn_field;
 
 
-   ----------------------
-   --  spawn_field #4  --
-   ----------------------
-   function spawn_field (bitob : Bits) return Std_Field
+   ------------------------
+   --  spawn_bits_field  --
+   ------------------------
+   function spawn_bits_field (bitstring : String) return Std_Field
    is
       result  : Std_Field;
-      bitstr : constant String := ARC.convert (bitob);
    begin
-      result.set (data => (ft_bits, CT.SUS (bitstr)), exnull => False);
+      result.set (data => (ft_bits, CT.SUS (bitstring)), exnull => False);
       return result;
-   end spawn_field;
+   end spawn_bits_field;
 
 
    ------------------------

@@ -1117,7 +1117,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
                when ft_chain =>
                   field := ARF.spawn_field (binob => ARC.convert (ST));
                when ft_bits =>
-                  field := ARF.spawn_field (bitob => ARC.convert (ST));
+                  field := ARF.spawn_bits_field (ST);
                when ft_settype =>
                   field := ARF.spawn_field (enumset => ST);
                when others =>

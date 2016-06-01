@@ -788,9 +788,8 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_chain =>
                      field := ARF.spawn_field (binob => ARC.convert (ST));
                   when ft_bits =>
-                     field := ARF.spawn_field
-                       (bitob => convert_to_bitstring
-                          (ST, colinfo.field_size));
+                     field := ARF.spawn_bits_field
+                       (convert_to_bitstring (ST, colinfo.field_size * 8));
                   when ft_settype =>
                      field := ARF.spawn_field (enumset => ST);
                   when others =>
@@ -1030,10 +1029,10 @@ package body AdaBase.Statement.Base.MySQL is
                        (binob => bincopy (cv.buffer_binary, datalen,
                         Stmt.con_max_blob));
                   when ft_bits =>
-                     field := ARF.spawn_field
-                       (bitob => convert_to_bitstring
+                     field := ARF.spawn_bits_field
+                       (convert_to_bitstring
                           (bincopy (cv.buffer_binary, datalen,
-                           Stmt.con_max_blob), datalen));
+                           Stmt.con_max_blob), datalen * 8));
                   when ft_settype =>
                      field := ARF.spawn_field
                        (enumset => bincopy (cv.buffer_binary, datalen,
@@ -1263,14 +1262,20 @@ package body AdaBase.Statement.Base.MySQL is
                        (cv.buffer_binary, datalen, Stmt.con_max_blob,
                         param.a17.all'Length);
                   when ft_bits =>
-                     if param.a20.all'Length < datalen then
+                     declare
+                        strval : String := bincopy (cv.buffer_binary, datalen,
+                                                    Stmt.con_max_blob);
+                        FL    : Natural := param.a20.all'Length;
+                        DVLEN : Natural := strval'Length * 8;
+                     begin
+                        if FL < DVLEN then
                            raise BINDING_SIZE_MISMATCH with "native size : " &
-                             param.a20.all'Length'Img &
-                             " less than binding size : " & datalen'Img;
-                     end if;
-                     param.a20.all := convert_to_bitstring
-                          (bincopy (cv.buffer_binary, datalen,
-                           Stmt.con_max_blob), datalen);
+                             FL'Img & " less than binding size : " & DVLEN'Img;
+                        end if;
+
+                        param.a20.all :=
+                          ARC.convert (convert_to_bitstring (strval, FL));
+                     end;
                   when ft_enumtype =>
                      param.a18.all :=
                        ARC.convert (CT.SUS (bincopy (cv.buffer_binary, datalen,
@@ -1501,7 +1506,8 @@ package body AdaBase.Statement.Base.MySQL is
                              DVLEN'Img & " greater than binding size : " &
                              FL'Img;
                         end if;
-                        dossier.a20.all := convert_to_bitstring (ST, FL);
+                        dossier.a20.all :=
+                          ARC.convert (convert_to_bitstring (ST, FL));
                      end;
                   when ft_settype =>
                      declare
@@ -2007,10 +2013,10 @@ package body AdaBase.Statement.Base.MySQL is
    ----------------------------
    --  convert_to_bitstring  --
    ----------------------------
-   function convert_to_bitstring (nv : String; width : Natural) return AR.Bits
+   function convert_to_bitstring (nv : String; width : Natural) return String
    is
       use type AR.NByte1;
-      result : AR.Bits (0 .. width * 8 - 1) := (others => 0);
+      result : String (1 .. width) := (others => '0');
       marker : Natural;
       lode   : AR.NByte1;
       mask   : constant array (0 .. 7) of AR.NByte1 := (2 ** 0, 2 ** 1,
@@ -2023,18 +2029,20 @@ package body AdaBase.Statement.Base.MySQL is
       --  return a variable width in multiples of 8.  MySQL doesn't mind
       --  leading zeros.
 
-      marker := 0;
+      marker := result'Last;
 
-      for x in nv'Range loop
+      for x in reverse nv'Range loop
+         lode := AR.NByte1 (Character'Pos (nv (x)));
          for position in mask'Range loop
-            lode := AR.NByte1 (Character'Pos (nv (x)));
             if (lode and mask (position)) > 0 then
-               result (marker) := 1;
+               result (marker) := '1';
             end if;
-            marker := marker + 1;
+            exit when marker = result'First;
+            marker := marker - 1;
          end loop;
       end loop;
       return result;
+
    end convert_to_bitstring;
 
 

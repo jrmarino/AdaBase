@@ -128,6 +128,7 @@ private
    procedure finalize   (Object : in out SQLite_statement);
    procedure scan_column_information (Stmt : out SQLite_statement);
    procedure reclaim_canvas (Stmt : out SQLite_statement);
+   function seems_like_bit_string (candidate : CT.Text) return Boolean;
    function private_execute (Stmt : out SQLite_statement) return Boolean;
    function construct_bind_slot (Stmt : SQLite_statement; marker : Positive)
                                  return sqlite_canvas;
