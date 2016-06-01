@@ -721,13 +721,11 @@ package body AdaBase.Statement.Base.MySQL is
          row := convert (rptr);
          for F in 1 .. maxlen loop
             declare
-               use type ABM.enum_field_types;
                colinfo  : column_info renames Stmt.column_info.Element (F);
                field    : ARF.Std_Field;
                last_one : constant Boolean := (F = maxlen);
                heading  : constant String := CT.USS (colinfo.field_name);
                isnull   : constant Boolean := (row (F) = null);
-               mtype    : ABM.enum_field_types := colinfo.mysql_type;
                sz : constant Natural := field_lengths (F);
                ST : constant String  := db_convert (row (F), sz);
                dvariant : ARF.Variant;
@@ -763,14 +761,7 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_real18 =>
                      dvariant := (datatype => ft_real18, v12 => convert (ST));
                   when ft_textual =>
-                     if mtype = ABM.MYSQL_TYPE_BIT then
-                        dvariant := (datatype => ft_textual,
-                                     v13 => convert_to_bitstring
-                                       (ST, colinfo.field_size));
-                     else
-                        dvariant := (datatype => ft_textual,
-                                     v13 => CT.SUS (ST));
-                     end if;
+                     dvariant := (datatype => ft_textual, v13 => CT.SUS (ST));
                   when ft_widetext =>
                      dvariant := (datatype => ft_widetext,
                                   v14 => convert (ST));
@@ -789,12 +780,16 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_enumtype =>
                      dvariant := (datatype => ft_enumtype,
                                   V18 => ARC.convert (CT.SUS (ST)));
-                  when others =>
-                     null;
+                  when ft_chain =>   null;
+                  when ft_settype => null;
+                  when ft_bits =>    null;
                   end case;
                   case colinfo.field_type is
                   when ft_chain =>
                      field := ARF.spawn_field (binob => ARC.convert (ST));
+                  when ft_bits =>
+                     field := ARF.spawn_bits_field
+                       (convert_to_bitstring (ST, colinfo.field_size * 8));
                   when ft_settype =>
                      field := ARF.spawn_field (enumset => ST);
                   when others =>
@@ -975,16 +970,9 @@ package body AdaBase.Statement.Base.MySQL is
                                      v12 => AR.Real18 (cv.buffer_double));
                      end if;
                   when ft_textual =>
-                     if mtype = ABM.MYSQL_TYPE_BIT then
-                        dvariant := (datatype => ft_textual,
-                                     v13 => convert_to_bitstring
-                                       (bincopy (cv.buffer_binary,
-                                        datalen, Stmt.con_max_blob), datalen));
-                     else
-                        dvariant := (datatype => ft_textual,
-                                     v13 => CT.SUS (bincopy (cv.buffer_binary,
-                                       datalen, Stmt.con_max_blob)));
-                     end if;
+                     dvariant := (datatype => ft_textual,
+                                  v13 => CT.SUS (bincopy (cv.buffer_binary,
+                                    datalen, Stmt.con_max_blob)));
                   when ft_widetext =>
                      dvariant := (datatype => ft_widetext,
                                   v14 => convert (bincopy (cv.buffer_binary,
@@ -1032,13 +1020,19 @@ package body AdaBase.Statement.Base.MySQL is
                                   (CT.SUS (bincopy (cv.buffer_binary, datalen,
                                      Stmt.con_max_blob))));
                   when ft_settype => null;
-                  when ft_chain => null;
+                  when ft_chain   => null;
+                  when ft_bits    => null;
                   end case;
                   case colinfo.field_type is
                   when ft_chain =>
                      field := ARF.spawn_field
                        (binob => bincopy (cv.buffer_binary, datalen,
                         Stmt.con_max_blob));
+                  when ft_bits =>
+                     field := ARF.spawn_bits_field
+                       (convert_to_bitstring
+                          (bincopy (cv.buffer_binary, datalen,
+                           Stmt.con_max_blob), datalen * 8));
                   when ft_settype =>
                      field := ARF.spawn_field
                        (enumset => bincopy (cv.buffer_binary, datalen,
@@ -1218,15 +1212,9 @@ package body AdaBase.Statement.Base.MySQL is
                         param.a12.all := AR.Real18 (cv.buffer_double);
                      end if;
                   when ft_textual =>
-                     if mtype = ABM.MYSQL_TYPE_BIT then
-                        param.a13.all := convert_to_bitstring
-                          (bincopy (cv.buffer_binary, datalen,
-                           Stmt.con_max_blob), datalen);
-                     else
-                        param.a13.all :=
-                          CT.SUS (bincopy (cv.buffer_binary, datalen,
-                                  Stmt.con_max_blob));
-                     end if;
+                     param.a13.all :=
+                       CT.SUS (bincopy (cv.buffer_binary, datalen,
+                               Stmt.con_max_blob));
                   when ft_widetext => param.a14.all :=
                        convert (bincopy (cv.buffer_binary, datalen,
                                 Stmt.con_max_blob));
@@ -1273,6 +1261,21 @@ package body AdaBase.Statement.Base.MySQL is
                      param.a17.all := bincopy
                        (cv.buffer_binary, datalen, Stmt.con_max_blob,
                         param.a17.all'Length);
+                  when ft_bits =>
+                     declare
+                        strval : String := bincopy (cv.buffer_binary, datalen,
+                                                    Stmt.con_max_blob);
+                        FL    : Natural := param.a20.all'Length;
+                        DVLEN : Natural := strval'Length * 8;
+                     begin
+                        if FL < DVLEN then
+                           raise BINDING_SIZE_MISMATCH with "native size : " &
+                             FL'Img & " less than binding size : " & DVLEN'Img;
+                        end if;
+
+                        param.a20.all :=
+                          ARC.convert (convert_to_bitstring (strval, FL));
+                     end;
                   when ft_enumtype =>
                      param.a18.all :=
                        ARC.convert (CT.SUS (bincopy (cv.buffer_binary, datalen,
@@ -1473,12 +1476,7 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_supertext => dossier.a15.all := convert (ST);
                   when ft_enumtype  => dossier.a18.all := ARC.convert (ST);
                   when ft_textual   =>
-                     if mtype = ABM.MYSQL_TYPE_BIT then
-                        dossier.a13.all := convert_to_bitstring
-                          (ST, colinfo.field_size);
-                     else
-                        dossier.a13.all := CT.SUS (ST);
-                     end if;
+                     dossier.a13.all := CT.SUS (ST);
                   when ft_timestamp =>
                      begin
                         dossier.a16.all := ARC.convert (ST);
@@ -1497,6 +1495,19 @@ package body AdaBase.Statement.Base.MySQL is
                              FL'Img;
                         end if;
                         dossier.a17.all := ARC.convert (ST, FL);
+                     end;
+                  when ft_bits =>
+                     declare
+                        FL    : Natural := dossier.a20.all'Length;
+                        DVLEN : Natural := ST'Length * 8;
+                     begin
+                        if DVLEN > FL then
+                           raise BINDING_SIZE_MISMATCH with "native size : " &
+                             DVLEN'Img & " greater than binding size : " &
+                             FL'Img;
+                        end if;
+                        dossier.a20.all :=
+                          ARC.convert (convert_to_bitstring (ST, FL));
                      end;
                   when ft_settype =>
                      declare
@@ -1732,6 +1743,7 @@ package body AdaBase.Statement.Base.MySQL is
       use type AR.Enum_Access;
       use type AR.Chain_Access;
       use type AR.Settype_Access;
+      use type AR.Bits_Access;
 
       procedure set_binary_buffer (Str : String)
       is
@@ -1774,6 +1786,7 @@ package body AdaBase.Statement.Base.MySQL is
          when ft_chain =>      struct.buffer_type := ABM.MYSQL_TYPE_BLOB;
          when ft_enumtype =>   struct.buffer_type := ABM.MYSQL_TYPE_STRING;
          when ft_settype =>    struct.buffer_type := ABM.MYSQL_TYPE_STRING;
+         when ft_bits =>       struct.buffer_type := ABM.MYSQL_TYPE_STRING;
       end case;
       if zone.null_data then
          canvas.is_null := 1;
@@ -1935,6 +1948,12 @@ package body AdaBase.Statement.Base.MySQL is
             else
                set_binary_buffer (ARC.convert (zone.a19.all));
             end if;
+            when ft_bits =>
+            if zone.a20 = null then
+               set_binary_buffer (CT.USS (zone.v20));
+            else
+               set_binary_buffer (ARC.convert (zone.a20.all));
+            end if;
          end case;
       end if;
 
@@ -1994,10 +2013,10 @@ package body AdaBase.Statement.Base.MySQL is
    ----------------------------
    --  convert_to_bitstring  --
    ----------------------------
-   function convert_to_bitstring (nv : String; width : Natural) return CT.Text
+   function convert_to_bitstring (nv : String; width : Natural) return String
    is
       use type AR.NByte1;
-      result : String (1 .. width * 8) := (others => '0');
+      result : String (1 .. width) := (others => '0');
       marker : Natural;
       lode   : AR.NByte1;
       mask   : constant array (0 .. 7) of AR.NByte1 := (2 ** 0, 2 ** 1,
@@ -2010,18 +2029,20 @@ package body AdaBase.Statement.Base.MySQL is
       --  return a variable width in multiples of 8.  MySQL doesn't mind
       --  leading zeros.
 
-      marker := 1 + (width - nv'Length) * 8;
+      marker := result'Last;
 
-      for x in nv'Range loop
-         for position in 0 .. 7 loop
-            lode := AR.NByte1 (Character'Pos (nv (x)));
+      for x in reverse nv'Range loop
+         lode := AR.NByte1 (Character'Pos (nv (x)));
+         for position in mask'Range loop
             if (lode and mask (position)) > 0 then
-               result (marker + 7 - position) := '1';
+               result (marker) := '1';
             end if;
+            exit when marker = result'First;
+            marker := marker - 1;
          end loop;
-         marker := marker + 8;
       end loop;
-      return CT.SUS (result);
+      return result;
+
    end convert_to_bitstring;
 
 

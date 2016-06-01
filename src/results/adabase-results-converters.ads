@@ -25,6 +25,7 @@ package AdaBase.Results.Converters is
    function convert (nv : NByte0) return String;
    function convert (nv : NByte0) return Wide_String;
    function convert (nv : NByte0) return Wide_Wide_String;
+   function convert (nv : NByte0) return Bits;
    function convert (nv : NByte0) return Chain;
    function convert (nv : NByte0) return Textual;
 
@@ -47,7 +48,8 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str1 (IntType => NByte1);
    function convert is new GEN.convert2str2 (IntType => NByte1);
    function convert is new GEN.convert2str3 (IntType => NByte1);
-   function convert (nv : NByte1) return Chain;
+   function convert is new GEN.convert2bits (ModType => NByte1, width => 7);
+   function convert is new GEN.convert2chain (ModType => NByte1, width => 1);
    function convert (nv : NByte1) return Textual;
 
 
@@ -69,7 +71,8 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str1 (IntType => NByte2);
    function convert is new GEN.convert2str2 (IntType => NByte2);
    function convert is new GEN.convert2str3 (IntType => NByte2);
-   function convert (nv : NByte2) return Chain;
+   function convert is new GEN.convert2bits (ModType => NByte2, width => 15);
+   function convert is new GEN.convert2chain (ModType => NByte2, width => 2);
    function convert (nv : NByte2) return Textual;
 
 
@@ -91,7 +94,8 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str1 (IntType => NByte3);
    function convert is new GEN.convert2str2 (IntType => NByte3);
    function convert is new GEN.convert2str3 (IntType => NByte3);
-   function convert (nv : NByte3) return Chain;
+   function convert is new GEN.convert2bits (ModType => NByte3, width => 23);
+   function convert is new GEN.convert2chain (ModType => NByte3, width => 3);
    function convert (nv : NByte3) return Textual;
 
 
@@ -113,7 +117,8 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str1 (IntType => NByte4);
    function convert is new GEN.convert2str2 (IntType => NByte4);
    function convert is new GEN.convert2str3 (IntType => NByte4);
-   function convert (nv : NByte4) return Chain;
+   function convert is new GEN.convert2bits (ModType => NByte4, width => 31);
+   function convert is new GEN.convert2chain (ModType => NByte4, width => 4);
    function convert (nv : NByte4) return Textual;
 
 
@@ -135,7 +140,8 @@ package AdaBase.Results.Converters is
    function convert is new GEN.convert2str1 (IntType => NByte8);
    function convert is new GEN.convert2str2 (IntType => NByte8);
    function convert is new GEN.convert2str3 (IntType => NByte8);
-   function convert (nv : NByte8) return Chain;
+   function convert is new GEN.convert2bits (ModType => NByte8, width => 63);
+   function convert is new GEN.convert2chain (ModType => NByte8, width => 8);
    function convert (nv : NByte8) return Textual;
 
 
@@ -287,10 +293,12 @@ package AdaBase.Results.Converters is
    function convert (nv : Textual) return Chain;
    function convert (nv : Textual) return Enumtype;
    function convert (nv : Textual) return Settype;
+   function convert (nv : Textual) return Bits;
    function convert (nv : String) return AC.Time;
    function convert (nv : String) return Enumtype;
    function convert (nv : String; fixed : Natural := 0) return Chain;
    function convert (nv : String; fixed : Natural := 0) return Settype;
+   function convert (nv : String; fixed : Natural := 0) return Bits;
 
 
    -----------------
@@ -317,6 +325,7 @@ package AdaBase.Results.Converters is
    function convert (nv : Textwide) return Enumtype;
    function convert (nv : Textwide) return Settype;
    function convert (nv : Textwide) return Textual;
+   function convert (nv : Textwide) return Bits;
 
 
    ----------------------
@@ -343,6 +352,7 @@ package AdaBase.Results.Converters is
    function convert (nv : Textsuper) return Enumtype;
    function convert (nv : Textsuper) return Settype;
    function convert (nv : Textsuper) return Textual;
+   function convert (nv : Textsuper) return Bits;
 
 
    ----------
@@ -363,19 +373,36 @@ package AdaBase.Results.Converters is
    function convert (nv : Enumtype) return Textual;
 
 
+   ----------------
+   -- BITS TYPE  --
+   ----------------
+   function convert (nv : Bits) return NByte0;
+   function convert is new GEN.convert_bits (ModType => NByte1, MSB => 7);
+   function convert is new GEN.convert_bits (ModType => NByte2, MSB => 15);
+   function convert is new GEN.convert_bits (ModType => NByte3, MSB => 23);
+   function convert is new GEN.convert_bits (ModType => NByte4, MSB => 31);
+   function convert is new GEN.convert_bits (ModType => NByte8, MSB => 63);
+   function convert (nv : Bits) return String;
+   function convert (nv : Bits) return Wide_String;
+   function convert (nv : Bits) return Wide_Wide_String;
+   function convert (nv : Bits) return Textual;
+   function convert (nv : Bits) return Chain;
+
+
    ------------------------
    --  CHAIN (OF BYTES)  --
    ------------------------
    function convert (nv : Chain) return NByte0;
-   function convert (nv : Chain) return NByte1;
-   function convert (nv : Chain) return NByte2;
-   function convert (nv : Chain) return NByte3;
-   function convert (nv : Chain) return NByte4;
-   function convert (nv : Chain) return NByte8;
+   function convert is new GEN.convert_chain (ModType => NByte1, width => 1);
+   function convert is new GEN.convert_chain (ModType => NByte2, width => 2);
+   function convert is new GEN.convert_chain (ModType => NByte3, width => 3);
+   function convert is new GEN.convert_chain (ModType => NByte4, width => 4);
+   function convert is new GEN.convert_chain (ModType => NByte8, width => 8);
    function convert (nv : Chain) return String;
    function convert (nv : Chain) return Wide_String;
    function convert (nv : Chain) return Wide_Wide_String;
    function convert (nv : Chain) return Textual;
+   function convert (nv : Chain) return Bits;
 
 
    ---------------

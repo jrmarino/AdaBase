@@ -29,6 +29,7 @@ package AdaBase.Results.Field is
             when ft_chain     => v17 : Textual;
             when ft_enumtype  => v18 : Enumtype;
             when ft_settype   => v19 : Textual;
+            when ft_bits      => v20 : Textual;
          end case;
       end record;
 
@@ -56,6 +57,7 @@ package AdaBase.Results.Field is
    function as_chain    (field : Std_Field) return Chain;
    function as_enumtype (field : Std_Field) return Enumtype;
    function as_settype  (field : Std_Field) return Settype;
+   function as_bits     (field : Std_Field) return Bits;
 
    function is_null     (field : Std_Field) return Boolean;
    function native_type (field : Std_Field) return field_types;
@@ -64,6 +66,7 @@ package AdaBase.Results.Field is
                          return Std_Field;
    function spawn_field (binob : Chain) return Std_Field;
    function spawn_field (enumset : String) return Std_Field;
+   function spawn_bits_field (bitstring : String) return Std_Field;
    function spawn_null_field (data_type : field_types) return Std_Field;
 
 private

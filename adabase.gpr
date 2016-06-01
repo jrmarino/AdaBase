@@ -101,7 +101,9 @@ project AdaBase is
                  "adabase-statement-base.ads",
                  "adabase-statement-base.adb",
                  "commontext.ads",
-                 "commontext.adb");
+                 "commontext.adb",
+                 "spatial_data.ads",
+                 "spatial_data.adb");
 
    for Source_Files use Base_list &
                         MySQL_list &

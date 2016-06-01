@@ -109,9 +109,8 @@ package body CommonText is
    function int2str  (A : Integer) return String
    is
       raw : constant String := A'Img;
-      len : constant Natural := raw'Length;
    begin
-      return raw (2 .. len);
+      return trim (raw);
    end int2str;
 
 
@@ -143,6 +142,15 @@ package body CommonText is
    begin
       return SUS (bool2str (A));
    end bool2text;
+
+
+   ----------------
+   --  pinpoint  --
+   ----------------
+   function pinpoint (S : String; fragment : String) return Natural is
+   begin
+      return AS.Fixed.Index (Source => S, Pattern => fragment);
+   end pinpoint;
 
 
    --------------------

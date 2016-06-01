@@ -520,9 +520,18 @@ package body AdaBase.Statement.Base.SQLite is
                        (datatype => ft_real18,
                         v12 => conn.retrieve_double (Stmt.stmt_handle, scol));
                   when ft_textual =>
-                     dvariant :=
-                       (datatype => ft_textual,
-                        v13 => conn.retrieve_text (Stmt.stmt_handle, scol));
+                     declare
+                        datatext : AR.Textual :=
+                          conn.retrieve_text (Stmt.stmt_handle, scol);
+                     begin
+                        if seems_like_bit_string (datatext) then
+                           dvariant := (datatype => ft_bits,
+                                        v20 => datatext);
+                        else
+                           dvariant := (datatype => ft_textual,
+                                        v13 => datatext);
+                        end if;
+                     end;
                   when ft_chain   => null;
                   when others => raise INVALID_FOR_RESULT_SET
                        with "Impossible field type (internal bug??)";
@@ -670,7 +679,8 @@ package body AdaBase.Statement.Base.SQLite is
                   Tout = ft_supertext or else
                   Tout = ft_timestamp or else
                   Tout = ft_enumtype or else
-                  Tout = ft_settype)
+                  Tout = ft_settype or else
+                  Tout = ft_bits)
                then
                   declare
                      ST : String := ARC.convert (dvariant.v13);
@@ -693,6 +703,18 @@ package body AdaBase.Statement.Base.SQLite is
                            end if;
                            dossier.a19.all := ARC.convert (ST, FL);
                         end;
+                     when ft_bits =>
+                        declare
+                           FL    : Natural := dossier.a20.all'Length;
+                           DVLEN : Natural := ST'Length;
+                        begin
+                           if DVLEN > FL then
+                              raise BINDING_SIZE_MISMATCH with "native size : " &
+                                DVLEN'Img & " greater than binding size : " &
+                                FL'Img;
+                           end if;
+                           dossier.a20.all := ARC.convert (ST, FL);
+                        end;
                      when others => null;
                      end case;
                   end;
@@ -711,7 +733,7 @@ package body AdaBase.Statement.Base.SQLite is
                else
                   raise BINDING_TYPE_MISMATCH with "native type " &
                     field_types'Image (Tnative) &
-                    "is incompatible with binding type " &
+                    " is incompatible with binding type " &
                     field_types'Image (Tout);
                end if;
             end;
@@ -872,6 +894,7 @@ package body AdaBase.Statement.Base.SQLite is
       use type AR.Enum_Access;
       use type AR.Chain_Access;
       use type AR.Settype_Access;
+      use type AR.Bits_Access;
    begin
       if zone.null_data then
          if not conn.marker_is_null (Stmt.stmt_handle, marker) then
@@ -1034,6 +1057,14 @@ package body AdaBase.Statement.Base.SQLite is
                   okay := conn.marker_is_blob (Stmt.stmt_handle, marker,
                                                ARC.convert (zone.a17.all), BB);
                end if;
+            when ft_bits =>
+               if zone.a20 = null then
+                  okay := conn.marker_is_blob (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.v20), BB);
+               else
+                  okay := conn.marker_is_blob (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.a20.all), BB);
+               end if;
          end case;
          if not okay then
             Stmt.log_problem (category   => statement_execution,
@@ -1090,6 +1121,25 @@ package body AdaBase.Statement.Base.SQLite is
       data_fetched := False;
       data_present := False;
    end fetch_next_set;
+
+
+   ------------------
+   --  bit_string  --
+   ------------------
+   function seems_like_bit_string (candidate : CT.Text) return Boolean
+   is
+      canstr : String := CT.USS (candidate);
+   begin
+      if canstr'Length > 64 then
+         return False;
+      end if;
+      for x in canstr'Range loop
+         if canstr (x) /= '0' and then canstr (x) /= '1' then
+            return False;
+         end if;
+      end loop;
+      return True;
+   end seems_like_bit_string;
 
 
 end AdaBase.Statement.Base.SQLite;

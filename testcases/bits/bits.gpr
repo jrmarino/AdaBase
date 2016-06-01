@@ -1,0 +1,11 @@
+with "../common.gpr";
+
+project Bits is
+
+   for Main use ("bits");
+   for Object_Dir use "obj/" & Common.driver;
+
+   package Compiler renames Common.Compiler;
+   package Linker renames Common.Linker;
+
+end Bits;

@@ -617,6 +617,18 @@ package body AdaBase.Statement.Base.PostgreSQL is
                         end if;
                         dossier.a19.all := ARC.convert (ST, FL);
                      end;
+                  when ft_bits =>
+                     declare
+                        FL    : Natural := dossier.a20.all'Length;
+                        DVLEN : Natural := ST'Length;
+                     begin
+                        if DVLEN > FL then
+                           raise BINDING_SIZE_MISMATCH with "native size : " &
+                             DVLEN'Img & " greater than binding size : " &
+                             FL'Img;
+                        end if;
+                        dossier.a20.all := ARC.convert (ST, FL);
+                     end;
                end case;
             end;
             <<continue>>
@@ -1097,12 +1109,15 @@ package body AdaBase.Statement.Base.PostgreSQL is
                when ft_enumtype =>
                   dvariant := (datatype => ft_enumtype,
                                V18 => ARC.convert (CT.SUS (ST)));
-               when others =>
-                  null;
+               when ft_chain   => null;
+               when ft_settype => null;
+               when ft_bits    => null;
                end case;
                case colinfo.field_type is
                when ft_chain =>
                   field := ARF.spawn_field (binob => ARC.convert (ST));
+               when ft_bits =>
+                  field := ARF.spawn_bits_field (ST);
                when ft_settype =>
                   field := ARF.spawn_field (enumset => ST);
                when others =>
@@ -1164,6 +1179,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
       use type AR.Enum_Access;
       use type AR.Chain_Access;
       use type AR.Settype_Access;
+      use type AR.Bits_Access;
 
       hold : AR.Textual;
    begin
@@ -1287,6 +1303,12 @@ package body AdaBase.Statement.Base.PostgreSQL is
                hold := zone.v19;
             else
                hold := ARC.convert (zone.a19.all);
+            end if;
+         when ft_bits =>
+            if zone.a20 = null then
+               hold := zone.v20;
+            else
+               hold := ARC.convert (zone.a20.all);
             end if;
       end case;
       return hold;
