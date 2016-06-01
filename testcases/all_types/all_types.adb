@@ -31,6 +31,7 @@ procedure All_Types is
    procedure dump_result;
    procedure run_bind_test (sql_request : String);
    function print_time (timevar : CAL.Time) return String;
+   function print_bits (bitdata : AR.Bits) return String;
    function halfbyte_to_hex (value : halfbyte) return Character;
    function convert_chain (chain : AR.Chain) return String;
    function convert_set (set : AR.Settype) return String;
@@ -81,6 +82,21 @@ procedure All_Types is
       end if;
       return result;
    end convert_chain;
+
+   function print_bits (bitdata : AR.Bits) return String
+   is
+      use type AR.Bit1;
+      result : String (1 .. bitdata'Length) := (others => '0');
+      marker : Natural := result'First;
+   begin
+      for x in bitdata'Range loop
+         if bitdata (x) > 0 then
+            result (marker) := '1';
+         end if;
+         marker := marker + 1;
+      end loop;
+      return result;
+   end print_bits;
 
    function convert_set (set : AR.Settype) return String
    is
@@ -187,7 +203,7 @@ procedure All_Types is
       v_time3  : aliased AR.AC.Time;
       v_time4  : aliased AR.AC.Time;
       v_year   : aliased AR.NByte2;
-      v_bit    : aliased AR.Textual;
+      v_bit    : aliased AR.Bits  := (0 .. 15 => 0);
       v_chain1 : aliased AR.Chain := (1 .. 4 => 0);
       v_chain2 : aliased AR.Chain := (1 .. 6 => 0);
       v_chain3 : aliased AR.Chain := (1 .. 16 => 0);
@@ -250,7 +266,7 @@ procedure All_Types is
             TIO.Put_Line ("12. real9           " & v_real9'Img);
             TIO.Put_Line ("13. real18          " & v_real18'Img);
             TIO.Put_Line ("14. exact           " & v_exact'Img);
-            TIO.Put_Line ("15. bits            " & CT.USS (v_bit));
+            TIO.Put_Line ("15. bits            " & print_bits (v_bit));
             TIO.Put_Line ("16. date            " & print_time (v_time1));
             TIO.Put_Line ("17. datetime        " & print_time (v_time2));
             TIO.Put_Line ("18. timestamp       " & print_time (v_time3));
