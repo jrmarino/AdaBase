@@ -243,7 +243,7 @@ package body AdaBase.Statement.Base is
 
 
    ------------------------------------------------------
-   --  20 bind functions (impossible to make generic)  --
+   --  21 bind functions (impossible to make generic)  --
    ------------------------------------------------------
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
@@ -545,6 +545,21 @@ package body AdaBase.Statement.Base is
       end if;
    end bind;
 
+   procedure bind (Stmt  : out Base_Statement;
+                   index : Positive;
+                   vaxx  : AR.Bits_Access)
+   is
+      use type AR.Bits_Access;
+      absent : Boolean := (vaxx = null);
+   begin
+      check_bound_column_access (absent);
+      if Stmt.bind_proceed (index => index) then
+         Stmt.crate.Replace_Element
+           (index, (output_type => ft_bits, a20 => vaxx,
+                    v20 => CT.blank, bound => True, null_data => False));
+      end if;
+   end bind;
+
 
    ------------------------------------------------------------------
    --  bind via headings  (believe me, generics are not possible)  --
@@ -689,6 +704,12 @@ package body AdaBase.Statement.Base is
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
+   procedure bind (Stmt    : out Base_Statement;
+                   heading : String;
+                   vaxx    : AR.Bits_Access) is
+   begin
+        Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
+   end bind;
 
    --------------------
    --  assign_index  --
@@ -709,7 +730,7 @@ package body AdaBase.Statement.Base is
 
 
    ------------------------------------------------------------------
-   --  assign via moniker (Access, 20)                                        --
+   --  assign via moniker (Access, 21)                                        --
    ------------------------------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
@@ -851,9 +872,16 @@ package body AdaBase.Statement.Base is
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.Bits_Access) is
+   begin
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
 
    ------------------------------------------------------------------
-   --  assign via moniker (Value, 20)                                        --
+   --  assign via moniker (Value, 21)                                        --
    ------------------------------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
@@ -1002,8 +1030,16 @@ package body AdaBase.Statement.Base is
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.Bits) is
+   begin
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+
    ------------------------------------------------------
-   --  20 + 20 = 40 assign functions                   --
+   --  21 + 21 = 42 assign functions                   --
    ------------------------------------------------------
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
@@ -1444,6 +1480,29 @@ package body AdaBase.Statement.Base is
                  v19 => payload, bound => True, null_data => False));
    end assign;
 
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.Bits_Access)
+   is
+      use type AR.Bits_Access;
+      absent : Boolean := (vaxx = null);
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_bits, a20 => vaxx,
+                 v20 => CT.blank, bound => True, null_data => absent));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.Bits)
+   is
+      payload : constant String := ARC.convert (vaxx);
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_bits, a20 => null,
+                 v20 => CT.SUS (payload), bound => True, null_data => False));
+   end assign;
+
 
    ------------------
    --  iterate #1  --
@@ -1524,6 +1583,7 @@ package body AdaBase.Statement.Base is
          when ft_chain     => null;
          when ft_enumtype  => hold := (ft_enumtype, (ARC.convert (ST)));
          when ft_settype   => null;
+         when ft_bits      => null;
       end case;
       case zone.output_type is
          when ft_nbyte0    => Stmt.assign (index, hold.v00);
@@ -1553,6 +1613,12 @@ package body AdaBase.Statement.Base is
          when ft_settype   =>
             declare
                set : AR.Settype := ARC.convert (value);
+            begin
+               Stmt.assign (index, set);
+            end;
+         when ft_bits =>
+            declare
+               set : AR.Bits := ARC.convert (value);
             begin
                Stmt.assign (index, set);
             end;
@@ -1590,6 +1656,7 @@ package body AdaBase.Statement.Base is
                               ARC.convert ("", param.a17.all'Length);
          when ft_settype   => param.a19.all :=
                               ARC.convert ("", param.a19.all'Length);
+         when ft_bits      => param.a20.all := AR.PARAM_IS_BITS;
       end case;
    end set_as_null;
 

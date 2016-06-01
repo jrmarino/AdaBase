@@ -872,6 +872,7 @@ package body AdaBase.Statement.Base.SQLite is
       use type AR.Enum_Access;
       use type AR.Chain_Access;
       use type AR.Settype_Access;
+      use type AR.Bits_Access;
    begin
       if zone.null_data then
          if not conn.marker_is_null (Stmt.stmt_handle, marker) then
@@ -1033,6 +1034,14 @@ package body AdaBase.Statement.Base.SQLite is
                else
                   okay := conn.marker_is_blob (Stmt.stmt_handle, marker,
                                                ARC.convert (zone.a17.all), BB);
+               end if;
+            when ft_bits =>
+               if zone.a20 = null then
+                  okay := conn.marker_is_blob (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.v20), BB);
+               else
+                  okay := conn.marker_is_blob (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.a20.all), BB);
                end if;
          end case;
          if not okay then

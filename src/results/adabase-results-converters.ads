@@ -293,10 +293,12 @@ package AdaBase.Results.Converters is
    function convert (nv : Textual) return Chain;
    function convert (nv : Textual) return Enumtype;
    function convert (nv : Textual) return Settype;
+   function convert (nv : Textual) return Bits;
    function convert (nv : String) return AC.Time;
    function convert (nv : String) return Enumtype;
    function convert (nv : String; fixed : Natural := 0) return Chain;
    function convert (nv : String; fixed : Natural := 0) return Settype;
+   function convert (nv : String; fixed : Natural := 0) return Bits;
 
 
    -----------------
@@ -323,6 +325,7 @@ package AdaBase.Results.Converters is
    function convert (nv : Textwide) return Enumtype;
    function convert (nv : Textwide) return Settype;
    function convert (nv : Textwide) return Textual;
+   function convert (nv : Textwide) return Bits;
 
 
    ----------------------
@@ -349,6 +352,7 @@ package AdaBase.Results.Converters is
    function convert (nv : Textsuper) return Enumtype;
    function convert (nv : Textsuper) return Settype;
    function convert (nv : Textsuper) return Textual;
+   function convert (nv : Textsuper) return Bits;
 
 
    ----------

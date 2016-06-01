@@ -632,7 +632,7 @@ package body AdaBase.Connection.Base.MySQL is
               ABM.MYSQL_TYPE_TIME        |
               ABM.MYSQL_TYPE_DATETIME    |
               ABM.MYSQL_TYPE_NEWDATE     => std_type := ft_timestamp;
-         when ABM.MYSQL_TYPE_BIT         => std_type := ft_textual;
+         when ABM.MYSQL_TYPE_BIT         => std_type := ft_bits;
          when ABM.MYSQL_TYPE_TINY_BLOB   |
               ABM.MYSQL_TYPE_BLOB        |
               ABM.MYSQL_TYPE_MEDIUM_BLOB |

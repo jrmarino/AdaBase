@@ -158,6 +158,10 @@ package AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.Settype_Access);
 
+   procedure bind (Stmt  : out Base_Statement;
+                   index : Positive;
+                   vaxx  : AR.Bits_Access);
+
 
    -------------------------------------------
    --    20 bind using header for index     --
@@ -241,6 +245,10 @@ package AdaBase.Statement.Base is
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
                    vaxx    : AR.Settype_Access);
+
+   procedure bind (Stmt    : out Base_Statement;
+                   heading : String;
+                   vaxx    : AR.Bits_Access);
 
 
    --------------------------------------------
@@ -326,6 +334,11 @@ package AdaBase.Statement.Base is
                      index : Positive;
                      vaxx  : AR.Settype_Access);
 
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.Bits_Access);
+
+
    ------------------------------------------------
    --  20 assign/access using moniker for index  --
    ------------------------------------------------
@@ -408,6 +421,10 @@ package AdaBase.Statement.Base is
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.Settype_Access);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.Bits_Access);
 
 
    -------------------------------------------
@@ -497,6 +514,10 @@ package AdaBase.Statement.Base is
                      index : Positive;
                      vaxx  : AR.Settype);
 
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.Bits);
+
 
    -----------------------------------------------
    --  21 assign/value using moniker for index  --
@@ -585,6 +606,10 @@ package AdaBase.Statement.Base is
                      moniker : String;
                      vaxx    : AR.Settype);
 
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.Bits);
+
 private
 
    logger_access : ALF.LogFacility_access;
@@ -672,6 +697,8 @@ private
                               v18 : AR.Enumtype;
          when ft_settype   => a19 : AR.Settype_Access;
                               v19 : AR.Textual;
+         when ft_bits      => a20 : AR.Bits_Access;
+                              v20 : AR.Textual;
       end case;
    end record;
 

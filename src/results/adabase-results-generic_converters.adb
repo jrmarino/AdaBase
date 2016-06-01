@@ -202,9 +202,13 @@ package body AdaBase.Results.Generic_Converters is
    is
       bitwidth : constant Natural := (width * 8) - 1;
       result : Chain (1 .. width) := (others => 0);
-      asbits : Bits (0 .. bitwidth) := (others => 0);
-      arrow  : Natural := 0;
-      mask   : ModType;
+      asbits  : Bits (0 .. bitwidth) := (others => 0);
+      arrow   : Natural := 0;
+      mask    : ModType;
+      submask : constant array (0 .. 7) of NByte1 := (2 ** 0, 2 ** 1,
+                                                      2 ** 2, 2 ** 3,
+                                                      2 ** 4, 2 ** 5,
+                                                      2 ** 6, 2 ** 7);
    begin
       --  convert to bits first
       for x in asbits'Range loop
@@ -215,9 +219,9 @@ package body AdaBase.Results.Generic_Converters is
       end loop;
       --  convert from bits to nbyte1
       for x in result'Range loop
-         for y in Natural range 0 .. 7 loop
+         for y in submask'Range loop
             if asbits (arrow + y) = 1 then
-               result (x) := result (x) + (2 ** y);
+               result (x) := result (x) + submask (y);
             end if;
          end loop;
          arrow := arrow + 8;

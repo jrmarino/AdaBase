@@ -1211,6 +1211,31 @@ package body AdaBase.Results.Converters is
       end;
    end convert;
 
+   function convert (nv : String; fixed : Natural := 0) return Bits
+   is
+      num_bits : Natural := CT.len (nv);
+   begin
+      if fixed > num_bits then
+         num_bits := fixed;
+      end if;
+      declare
+         result : Bits (0 .. num_bits - 1) := (others => 0);
+         arrow  : Natural := result'First;
+      begin
+         for x in nv'Range loop
+            case nv (x) is
+               when '0' => null;
+               when '1' => result (arrow) := 1;
+               when others =>
+                  raise CONVERSION_FAILED
+                    with "String => bits, '" & nv (x) & "' is not a valid bit";
+            end case;
+            arrow := arrow + 1;
+         end loop;
+         return result;
+      end;
+   end convert;
+
    function convert (nv : String) return Enumtype
    is
       result : Enumtype;
@@ -1228,6 +1253,11 @@ package body AdaBase.Results.Converters is
    end convert;
 
    function convert (nv : Textual) return Chain is
+   begin
+      return convert (CT.USS (nv));
+   end convert;
+
+   function convert (nv : Textual) return Bits is
    begin
       return convert (CT.USS (nv));
    end convert;
@@ -1291,6 +1321,13 @@ package body AdaBase.Results.Converters is
       return result;
    end convert;
 
+   function convert (nv : Textwide) return Bits
+   is
+      nvstr : constant String := convert (nv);
+   begin
+      return convert (nvstr);
+   end convert;
+
    function convert (nv : Textsuper) return String
    is
       nvstr : constant Wide_Wide_String :=
@@ -1340,6 +1377,13 @@ package body AdaBase.Results.Converters is
    begin
       result.enumeration := CT.SUS (enum);
       return result;
+   end convert;
+
+   function convert (nv : Textsuper) return Bits
+   is
+      nvstr : constant String := convert (nv);
+   begin
+      return convert (nvstr);
    end convert;
 
 
