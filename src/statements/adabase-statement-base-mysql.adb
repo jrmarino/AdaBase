@@ -1181,6 +1181,13 @@ package body AdaBase.Statement.Base.MySQL is
                         when others =>
                            raise BINDING_TYPE_MISMATCH with errmsg;
                      end case;
+                  when ft_textual =>
+                     case Tnative is
+                        when ft_textual | ft_utf8 =>
+                           null;
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
                   when others =>
                      if Tnative /= Tout then
                         raise BINDING_TYPE_MISMATCH with errmsg;
@@ -1457,6 +1464,13 @@ package body AdaBase.Statement.Base.MySQL is
                      case Tnative is
                         when ft_real9 | ft_real18 =>
                            null;  -- guaranteed to convert without loss
+                        when others =>
+                           raise BINDING_TYPE_MISMATCH with errmsg;
+                     end case;
+                  when ft_textual =>
+                     case Tnative is
+                        when ft_textual | ft_utf8 =>
+                           null;
                         when others =>
                            raise BINDING_TYPE_MISMATCH with errmsg;
                      end case;

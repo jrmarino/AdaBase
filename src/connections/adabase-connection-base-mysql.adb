@@ -660,7 +660,7 @@ package body AdaBase.Connection.Base.MySQL is
                                                     cs => csinfo'Access);
                   declare
                      setname : constant String :=
-                       ACH.To_Upper (ABM.ICS.Value (Item => csinfo.name));
+                       ACH.To_Upper (ABM.ICS.Value (Item => csinfo.csname));
                   begin
                      if setname = "UTF8" then
                         std_type := ft_utf8;
@@ -1110,17 +1110,22 @@ package body AdaBase.Connection.Base.MySQL is
    ----------------------------------
    procedure establish_uniform_encoding (conn : out MySQL_Connection)
    is
-      sql : constant String := "SET CHARACTER SET " &
-                               CT.USS (conn.character_set);
+      use type ABM.my_int;
+      result : ABM.my_int;
+      charset : String := CT.USS (conn.character_set);
+      csname  : ABM.ICS.chars_ptr := ABM.ICS.New_String (charset);
    begin
       if conn.prop_active then
          if not CT.IsBlank (conn.character_set) then
-            execute (conn => conn, sql => sql);
+            result := ABM.mysql_set_character_set (handle => conn.handle,
+                                                   csname => csname);
+            ABM.ICS.Free (csname);
+            if result /= 0 then
+               raise CHARSET_FAIL
+                 with "Failed to set " & charset & " character set";
+            end if;
          end if;
       end if;
-   exception
-      when QUERY_FAIL =>
-         raise CHARSET_FAIL with sql;
    end establish_uniform_encoding;
 
 

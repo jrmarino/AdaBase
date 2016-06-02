@@ -550,12 +550,14 @@ package body AdaBase.Statement.Base.PostgreSQL is
                            null;  --  No support for Sets in pgsql, conv->str
                         when ft_textual | ft_widetext | ft_supertext =>
                            null;
+                        when ft_utf8 =>
+                           null;  --  UTF8 needs contraints, allow textual
                         when others =>
                            raise BINDING_TYPE_MISMATCH with errmsg;
                      end case;
                   when ft_settype =>
                      case Tnative is
-                        when ft_textual =>
+                        when ft_textual | ft_utf8 =>
                            null; --  No support for Sets in pgsql, conv->set
                         when ft_settype =>
                            null; --  impossible

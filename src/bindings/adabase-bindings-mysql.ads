@@ -389,6 +389,14 @@ package AdaBase.Bindings.MySQL is
    pragma Import (C, mysql_get_character_set_info,
                   "mysql_get_character_set_info");
 
+   function mysql_character_set_name (handle : not null access MYSQL)
+                                      return ICS.chars_ptr;
+   pragma Import (C, mysql_character_set_name);
+
+   function mysql_set_character_set (handle : not null access MYSQL;
+                                     csname : ICS.chars_ptr) return my_int;
+   pragma Import (C, mysql_set_character_set);
+
    function mysql_set_server_option (handle : not null access MYSQL;
                                      option : enum_mysql_set_option)
                                      return my_int;
