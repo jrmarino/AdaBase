@@ -5,6 +5,7 @@ with Ada.Strings.Fixed;
 with Ada.Strings.Wide_Fixed;
 with Ada.Strings.Wide_Wide_Fixed;
 with Ada.Characters.Conversions;
+with Ada.Strings.UTF_Encoding.Strings;
 
 package body AdaBase.Results.Generic_Converters is
 
@@ -99,6 +100,15 @@ package body AdaBase.Results.Generic_Converters is
    end convertst6;
 
 
+   --------------------
+   --  convert2utf8  --
+   --------------------
+   function convert2utf8 (nv : IntType) return Text_UTF8 is
+   begin
+      return SUTF.Strings.Encode (Item => ctrim (nv'Img));
+   end convert2utf8;
+
+
    ----------------------------
    --  GENERIC convert2str1  --
    ----------------------------
@@ -124,6 +134,15 @@ package body AdaBase.Results.Generic_Converters is
    begin
       return strim (nv'Img);
    end convert2str3;
+
+
+   --------------------
+   --  convert3utf8  --
+   --------------------
+   function convert3utf8 (nv : RealType) return Text_UTF8 is
+   begin
+      return SUTF.Strings.Encode (Item => ctrim (nv'Img));
+   end convert3utf8;
 
 
    ----------------------------

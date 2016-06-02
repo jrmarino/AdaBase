@@ -33,11 +33,19 @@ package AdaBase.Results.Generic_Converters is
 
    generic
       type IntType is (<>);
+   function convert2utf8 (nv : IntType) return Text_UTF8;
+
+   generic
+      type IntType is (<>);
    function convert2str2 (nv : IntType) return Wide_String;
 
    generic
       type IntType is (<>);
    function convert2str3 (nv : IntType) return Wide_Wide_String;
+
+   generic
+      type RealType is digits <>;
+   function convert3utf8 (nv : RealType) return Text_UTF8;
 
    generic
       type RealType is digits <>;
