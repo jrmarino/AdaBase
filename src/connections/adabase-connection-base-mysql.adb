@@ -2,9 +2,11 @@
 --  Reference: ../../License.txt
 
 with Ada.Unchecked_Conversion;
+with Ada.Characters.Handling;
 
 package body AdaBase.Connection.Base.MySQL is
 
+   package ACH renames Ada.Characters.Handling;
 
    ---------------------
    --  setCompressed  --

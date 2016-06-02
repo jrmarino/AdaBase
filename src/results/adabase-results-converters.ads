@@ -314,6 +314,7 @@ package AdaBase.Results.Converters is
    function convert (nv : String; fixed : Natural := 0) return Settype;
    function convert (nv : String; fixed : Natural := 0) return Bits;
    function cv2utf8 (nv : String) return Text_UTF8;
+   function cvu2str (nv : Textual) return Textual;
    function cvu2str (nv : Text_UTF8) return String;
    function cvu2str (nv : Text_UTF8) return Wide_String;
    function cvu2str (nv : Text_UTF8) return Wide_Wide_String;

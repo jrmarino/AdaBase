@@ -1874,6 +1874,14 @@ package body AdaBase.Results.Converters is
       return ACC.To_Wide_Wide_String (Item => hold);
    end cvu2str;
 
+   function cvu2str (nv : Textual) return Textual
+   is
+      holdutf8 : Text_UTF8 := CT.USS (nv);
+      holdstr  : String := cvu2str (holdutf8);
+   begin
+      return CT.SUS (holdstr);
+   end cvu2str;
+
    function cv2utf8 (nv : Textual) return Text_UTF8
    is
       hold : String := CT.USS (nv);
