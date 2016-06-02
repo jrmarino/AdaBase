@@ -658,14 +658,27 @@ package body AdaBase.Connection.Base.MySQL is
                else
                   ABM.mysql_get_character_set_info (handle => conn.handle,
                                                     cs => csinfo'Access);
-                  case csinfo.mbmaxlen is
-                     when 1  => std_type := ft_textual;
-                     when 2  => std_type := ft_widetext;
-                     when 4  => std_type := ft_supertext;
-                     when others =>
-                        raise BINDING_FAIL with
-                          "Unexpected character set maximum set";
-                  end case;
+                  declare
+                     setname : constant String :=
+                       ACH.To_Upper (ABM.ICS.Value (Item => csinfo.name));
+                  begin
+                     if setname = "UTF8" then
+                        std_type := ft_utf8;
+                     else
+                        if conn.encoding_is_utf8 then
+                           raise BINDING_FAIL with
+                           "expected UTF8 encoding, found " & setname;
+                        end if;
+                        case csinfo.mbmaxlen is
+                        when 1  => std_type := ft_textual;
+                        when 2  => std_type := ft_widetext;
+                        when 4  => std_type := ft_supertext;
+                        when others =>
+                           raise BINDING_FAIL with
+                             "Unexpected character set maximum set";
+                        end case;
+                     end if;
+                  end;
                end if;
             end;
          when ABM.MYSQL_TYPE_GEOMETRY =>
@@ -674,7 +687,7 @@ package body AdaBase.Connection.Base.MySQL is
          when ABM.MYSQL_TYPE_ENUM | ABM.MYSQL_TYPE_SET =>
             raise BINDING_FAIL with
               "Unexpected type: " & mytype'Img & " (should appear as string)";
-         when ABM.MYSQL_TYPE_NULL     => std_type := ft_textual;
+         when ABM.MYSQL_TYPE_NULL => std_type := ft_textual;
       end case;
       case mytype is
          when ABM.MYSQL_TYPE_BIT         |

@@ -1161,7 +1161,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    --  convert_data_type  --
    -------------------------
    function convert_data_type (pg_type : String; category : Character;
-                               typelen : Integer)
+                               typelen : Integer; encoded_utf8 : Boolean)
                                return field_types
    is
       --  Code Category (typcategory)
@@ -1181,12 +1181,17 @@ package body AdaBase.Connection.Base.PostgreSQL is
       --  X     unknown type
 
       desc : constant String := pg_type & " (" & category & ")";
+      string_type : field_types := ft_textual;
    begin
       --  One User-defined type, bytea, is a chain.  Check for this one first
       --  and treat the reast as strings
 
       if pg_type = "bytea" then
          return ft_chain;
+      end if;
+
+      if encoded_utf8 then
+         string_type := ft_utf8;
       end if;
 
       case category is
@@ -1198,7 +1203,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
          when 'G' => return ft_textual;  --  IMPLEMENT GEOMETRY LATER
          when 'I' => return ft_textual;
          when 'N' => null;               --  Let numerics fall through
-         when 'S' => return ft_textual;
+         when 'S' => return string_type;
          when 'T' => return ft_textual;  --  Huge, 4/12/16 bytes
          when 'U' => return ft_textual;
          when 'V' => return ft_bits;     --  String of 1/0 for now
@@ -1275,8 +1280,9 @@ package body AdaBase.Connection.Base.PostgreSQL is
             s_cons  : constant String := "";
             typcat  : constant Character := s_cat (s_cat'First);
             typelen : constant Integer := Integer'Value (s_tlen);
-            payload : data_type_rec := (data_type => convert_data_type
-                                        (s_name, typcat, typelen));
+            payload : data_type_rec :=
+              (data_type => convert_data_type
+                 (s_name, typcat, typelen, conn.utf8_encoding));
          begin
             conn.data_types.Insert (Key      => Integer'Value (s_oid),
                                     New_Item => payload);
