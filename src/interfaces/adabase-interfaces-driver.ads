@@ -38,6 +38,8 @@ package AdaBase.Interfaces.Driver is
                                   return String is abstract;
    function trait_server_version (driver : iDriver)
                                   return String is abstract;
+   function trait_character_set  (driver : iDriver)
+                                  return String is abstract;
 
    procedure set_trait_autocommit    (driver : iDriver;
                                       trait  : Boolean) is null;
@@ -47,6 +49,8 @@ package AdaBase.Interfaces.Driver is
                                       trait  : Error_Modes) is null;
    procedure set_trait_max_blob_size (driver : iDriver;
                                       trait  : BLOB_Maximum) is null;
+   procedure set_trait_character_set (driver : iDriver;
+                                      trait  : String) is null;
 
    function trait_multiquery_enabled       (driver : iDriver)
                                             return Boolean is abstract;

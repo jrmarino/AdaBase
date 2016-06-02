@@ -8,8 +8,7 @@ package body AdaBase.Driver.Base is
    --  trait_autocommit  --
    ------------------------
    overriding
-   function trait_autocommit (driver : Base_Driver) return Boolean
-   is
+   function trait_autocommit (driver : Base_Driver) return Boolean is
    begin
       return driver.connection.autoCommit;
    end trait_autocommit;
@@ -19,8 +18,7 @@ package body AdaBase.Driver.Base is
    --  trait_column_case  --
    -------------------------
    overriding
-   function trait_column_case (driver : Base_Driver) return Case_Modes
-   is
+   function trait_column_case (driver : Base_Driver) return Case_Modes is
    begin
       return driver.connection.getCaseMode;
    end trait_column_case;
@@ -30,8 +28,7 @@ package body AdaBase.Driver.Base is
    --  trait_error_mode  --
    ------------------------
    overriding
-   function trait_error_mode (driver : Base_Driver) return Error_Modes
-   is
+   function trait_error_mode (driver : Base_Driver) return Error_Modes is
    begin
       return logger.error_mode;
    end trait_error_mode;
@@ -41,8 +38,7 @@ package body AdaBase.Driver.Base is
    --  trait_connected  --
    -----------------------
    overriding
-   function trait_connected (driver : Base_Driver) return Boolean
-   is
+   function trait_connected (driver : Base_Driver) return Boolean is
    begin
       return driver.connection.connected;
    end trait_connected;
@@ -52,8 +48,7 @@ package body AdaBase.Driver.Base is
    --  trait_driver  --
    --------------------
    overriding
-   function trait_driver (driver : Base_Driver) return String
-   is
+   function trait_driver (driver : Base_Driver) return String is
    begin
       return driver.connection.description;
    end trait_driver;
@@ -63,9 +58,7 @@ package body AdaBase.Driver.Base is
    --  trait_client_info  --
    -------------------------
    overriding
-   function trait_client_info (driver : Base_Driver)
-                               return String
-   is
+   function trait_client_info (driver : Base_Driver) return String is
    begin
       return driver.connection.clientInfo;
    end trait_client_info;
@@ -75,9 +68,7 @@ package body AdaBase.Driver.Base is
    --  trait_client_version  --
    ----------------------------
    overriding
-   function trait_client_version (driver : Base_Driver)
-                                  return String
-   is
+   function trait_client_version (driver : Base_Driver) return String is
    begin
       return driver.connection.clientVersion;
    end trait_client_version;
@@ -87,9 +78,7 @@ package body AdaBase.Driver.Base is
    --  trait_server_info  --
    -------------------------
    overriding
-   function trait_server_info (driver : Base_Driver)
-                               return String
-   is
+   function trait_server_info (driver : Base_Driver) return String is
    begin
       return driver.connection.serverInfo;
    end trait_server_info;
@@ -99,9 +88,7 @@ package body AdaBase.Driver.Base is
    --  trait_server_version  --
    ----------------------------
    overriding
-   function trait_server_version (driver : Base_Driver)
-                                  return String
-   is
+   function trait_server_version (driver : Base_Driver) return String is
    begin
       return driver.connection.serverVersion;
    end trait_server_version;
@@ -111,21 +98,27 @@ package body AdaBase.Driver.Base is
    --  trait_max_blob_size  --
    ---------------------------
    overriding
-   function trait_max_blob_size (driver : Base_Driver)
-                                 return BLOB_Maximum
-   is
+   function trait_max_blob_size (driver : Base_Driver) return BLOB_Maximum is
    begin
       return driver.connection.maxBlobSize;
    end trait_max_blob_size;
+
+
+   ---------------------------
+   --  trait_character_set  --
+   ---------------------------
+   overriding
+   function trait_character_set (driver : Base_Driver) return String is
+   begin
+      return driver.connection.character_set;
+   end trait_character_set;
 
 
    ----------------------------
    --  set_trait_autocommit  --
    ----------------------------
    overriding
-   procedure set_trait_autocommit  (driver : Base_Driver;
-                                    trait  : Boolean)
-   is
+   procedure set_trait_autocommit (driver : Base_Driver; trait  : Boolean) is
    begin
       driver.connection.setAutoCommit (auto => trait);
    end set_trait_autocommit;
@@ -135,8 +128,7 @@ package body AdaBase.Driver.Base is
    --  set_trait_column_case  --
    -----------------------------
    overriding
-   procedure set_trait_column_case (driver : Base_Driver;
-                                    trait  : Case_Modes)
+   procedure set_trait_column_case (driver : Base_Driver; trait  : Case_Modes)
    is
    begin
       driver.connection.setCaseMode (mode => trait);
@@ -147,8 +139,7 @@ package body AdaBase.Driver.Base is
    --  set_trait_error_mode  --
    ----------------------------
    overriding
-   procedure set_trait_error_mode  (driver : Base_Driver;
-                                    trait  : Error_Modes)
+   procedure set_trait_error_mode  (driver : Base_Driver; trait  : Error_Modes)
    is
    begin
       logger.set_error_mode (mode => trait);
@@ -160,8 +151,7 @@ package body AdaBase.Driver.Base is
    -------------------------------
    overriding
    procedure set_trait_max_blob_size (driver : Base_Driver;
-                                      trait  : BLOB_Maximum)
-   is
+                                      trait  : BLOB_Maximum) is
    begin
       driver.connection.setMaxBlobSize (maxsize => trait);
    end set_trait_max_blob_size;
@@ -179,12 +169,21 @@ package body AdaBase.Driver.Base is
    end set_trait_multiquery_enabled;
 
 
+   -------------------------------
+   --  set_trait_character_set  --
+   -------------------------------
+   overriding
+   procedure set_trait_character_set (driver : Base_Driver; trait : String) is
+   begin
+      driver.connection.set_character_set (charset => trait);
+   end set_trait_character_set;
+
+
    --------------------------------
    --  trait_multiquery_enabled  --
    --------------------------------
    overriding
-   function trait_multiquery_enabled (driver : Base_Driver) return Boolean
-   is
+   function trait_multiquery_enabled (driver : Base_Driver) return Boolean is
    begin
       return driver.connection.multiquery;
    end trait_multiquery_enabled;
@@ -196,8 +195,7 @@ package body AdaBase.Driver.Base is
    overriding
    procedure command_standard_logger (driver : Base_Driver;
                                       device : ALF.TLogger;
-                                      action : ALF.TAction)
-   is
+                                      action : ALF.TAction) is
    begin
       logger.standard_logger (logger => device, action => action);
    end command_standard_logger;
@@ -217,8 +215,7 @@ package body AdaBase.Driver.Base is
    --  detach_custom_logger  --
    ----------------------------
    overriding
-   procedure detach_custom_logger (driver : Base_Driver)
-   is
+   procedure detach_custom_logger (driver : Base_Driver) is
    begin
       logger.detach_custom_logger;
    end detach_custom_logger;
@@ -230,8 +227,7 @@ package body AdaBase.Driver.Base is
    overriding
    procedure attach_custom_logger
      (driver        : Base_Driver;
-      logger_access : ALF.AL.BaseClass_Logger_access)
-   is
+      logger_access : ALF.AL.BaseClass_Logger_access) is
    begin
       logger.attach_custom_logger (logger_access => logger_access);
    end attach_custom_logger;
@@ -241,8 +237,7 @@ package body AdaBase.Driver.Base is
    --  query_clear_table  --
    -------------------------
    overriding
-   procedure query_clear_table (driver : Base_Driver;
-                                table  : String)
+   procedure query_clear_table (driver : Base_Driver; table  : String)
    is
       sql : constant String := "TRUNCATE " & table;
       AR  : Affected_Rows;

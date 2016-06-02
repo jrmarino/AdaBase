@@ -112,6 +112,10 @@ package AdaBase.Driver.Base is
                                       return Boolean;
 
    overriding
+   function trait_character_set  (driver : Base_Driver)
+                                  return String;
+
+   overriding
    procedure set_trait_multiquery_enabled (driver : Base_Driver;
                                            trait  : Boolean);
 
@@ -130,6 +134,10 @@ package AdaBase.Driver.Base is
    overriding
    procedure set_trait_max_blob_size (driver : Base_Driver;
                                       trait  : BLOB_Maximum);
+
+   overriding
+   procedure set_trait_character_set (driver : Base_Driver;
+                                      trait  : String);
 
    overriding
    procedure query_clear_table       (driver : Base_Driver;
