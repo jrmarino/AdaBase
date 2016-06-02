@@ -81,6 +81,9 @@ package AdaBase.Connection.Base.MySQL is
                            port     : Posix_Port := portless);
 
    overriding
+   procedure set_character_set (conn : out MySQL_Connection; charset : String);
+
+   overriding
    function rows_affected_by_execution (conn : MySQL_Connection)
                                         return Affected_Rows;
 
@@ -226,7 +229,6 @@ private
       info_description : String (1 .. 24) := "MySQL 5.5+ native driver";
 
       handle           : ABM.MYSQL_Access := null;
-      character_set    : CT.Text := CT.blank;
    end record;
 
    function convert_version (mysql_version : Natural)
@@ -235,7 +237,7 @@ private
    function S2P (S : CT.Text) return ABM.ICS.chars_ptr;
    function S2P (S : String)  return ABM.ICS.chars_ptr;
 
-   procedure set_character_set (conn : out MySQL_Connection);
+   procedure establish_uniform_encoding (conn : out MySQL_Connection);
 
    overriding
    procedure finalize (conn : in out MySQL_Connection);

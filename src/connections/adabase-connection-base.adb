@@ -7,8 +7,7 @@ package body AdaBase.Connection.Base is
    --  autoCommit  --
    ------------------
    overriding
-   function autoCommit (conn : Base_Connection) return Boolean
-   is
+   function autoCommit (conn : Base_Connection) return Boolean is
    begin
       return conn.prop_auto_commit;
    end autoCommit;
@@ -18,8 +17,7 @@ package body AdaBase.Connection.Base is
    --  setCaseMode  --
    -------------------
    overriding
-   procedure setCaseMode (conn : out Base_Connection; mode : Case_Modes)
-   is
+   procedure setCaseMode (conn : out Base_Connection; mode : Case_Modes) is
    begin
       conn.prop_case_mode := mode;
    end setCaseMode;
@@ -29,8 +27,7 @@ package body AdaBase.Connection.Base is
    --  caseMode  --
    ----------------
    overriding
-   function getCaseMode (conn : Base_Connection) return Case_Modes
-   is
+   function getCaseMode (conn : Base_Connection) return Case_Modes is
    begin
       return conn.prop_case_mode;
    end getCaseMode;
@@ -41,8 +38,7 @@ package body AdaBase.Connection.Base is
    --------------------
    overriding
    procedure setMaxBlobSize (conn    : out Base_Connection;
-                             maxsize :     BLOB_Maximum)
-   is
+                             maxsize : BLOB_Maximum) is
    begin
       conn.prop_max_blob := maxsize;
    end setMaxBlobSize;
@@ -52,8 +48,7 @@ package body AdaBase.Connection.Base is
    --  maxBlobSize  --
    -------------------
    overriding
-   function maxBlobSize (conn : Base_Connection) return BLOB_Maximum
-   is
+   function maxBlobSize (conn : Base_Connection) return BLOB_Maximum is
    begin
       return conn.prop_max_blob;
    end maxBlobSize;
@@ -64,8 +59,7 @@ package body AdaBase.Connection.Base is
    ----------------------------
    overriding
    function transactionIsolation (conn : Base_Connection)
-                                  return Trax_Isolation
-   is
+                                  return Trax_Isolation is
    begin
       return conn.prop_trax_isolation;
    end transactionIsolation;
@@ -75,8 +69,7 @@ package body AdaBase.Connection.Base is
    --  connected  --
    -----------------
    overriding
-   function connected (conn : Base_Connection) return Boolean
-   is
+   function connected (conn : Base_Connection) return Boolean is
    begin
       return conn.prop_active;
    end connected;
@@ -86,9 +79,7 @@ package body AdaBase.Connection.Base is
    --  serverVersion  --
    ---------------------
    overriding
-   function serverVersion (conn : Base_Connection)
-                           return String
-   is
+   function serverVersion (conn : Base_Connection) return String is
    begin
       return CT.USS (conn.info_server_version);
    end serverVersion;
@@ -98,8 +89,7 @@ package body AdaBase.Connection.Base is
    --  serverInfo  --
    ------------------
    overriding
-   function serverInfo (conn : Base_Connection) return String
-   is
+   function serverInfo (conn : Base_Connection) return String is
    begin
       return CT.USS (conn.info_server);
    end serverInfo;
@@ -109,9 +99,7 @@ package body AdaBase.Connection.Base is
    --   clientVersion  --
    ----------------------
    overriding
-   function clientVersion (conn : Base_Connection)
-                           return String
-   is
+   function clientVersion (conn : Base_Connection) return String is
    begin
       return CT.USS (conn.info_client_version);
    end clientVersion;
@@ -121,11 +109,20 @@ package body AdaBase.Connection.Base is
    --  clientInfo  --
    ------------------
    overriding
-   function clientInfo (conn : Base_Connection) return String
-   is
+   function clientInfo (conn : Base_Connection) return String is
    begin
       return CT.USS (conn.info_client);
    end clientInfo;
+
+
+   ---------------------
+   --  character_set  --
+   ---------------------
+   overriding
+   function character_set (conn : Base_Connection) return String is
+   begin
+      return CT.USS (conn.character_set);
+   end character_set;
 
 
    ------------------------------------------------------------------------

@@ -52,6 +52,9 @@ package AdaBase.Connection.Base is
    overriding
    function connected     (conn : Base_Connection) return Boolean;
 
+   overriding
+   function character_set (conn : Base_Connection) return String;
+
 private
 
    type Base_Connection is abstract new Base_Pure and AIC.iConnection with
@@ -62,6 +65,7 @@ private
          prop_case_mode      : Case_Modes       := natural_case;
          prop_max_blob       : BLOB_Maximum     := 2 ** 12;  -- 4kb
 
+         character_set       : CT.Text := CT.SUS ("UTF8");
          info_server         : CT.Text := CT.blank;
          info_server_version : CT.Text := CT.blank;
          info_client         : CT.Text := CT.blank;

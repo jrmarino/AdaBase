@@ -86,6 +86,10 @@ package AdaBase.Connection.Base.SQLite is
    procedure setTransactionIsolation (conn : out SQLite_Connection;
                                       isolation : Trax_Isolation);
 
+   overriding
+   procedure set_character_set (conn : out SQLite_Connection;
+                                charset : String);
+
    -----------------------------------------------
    --  SUBROUTINES PARTICULAR TO SQLITE DRIVER  --
    -----------------------------------------------

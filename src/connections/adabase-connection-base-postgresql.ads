@@ -101,6 +101,10 @@ package AdaBase.Connection.Base.PostgreSQL is
    procedure setTransactionIsolation (conn : out PostgreSQL_Connection;
                                       isolation : Trax_Isolation);
 
+   overriding
+   procedure set_character_set (conn : out PostgreSQL_Connection;
+                                charset : String);
+
 
    ---------------------------------------------------
    --  SUBROUTINES PARTICULAR TO POSTGRESQL DRIVER  --
@@ -229,6 +233,7 @@ package AdaBase.Connection.Base.PostgreSQL is
    ROLLBACK_FAIL         : exception;
    COMMIT_FAIL           : exception;
    QUERY_FAIL            : exception;
+   CHARSET_FAIL          : exception;
    METADATA_FAIL         : exception;
    STMT_NOT_VALID        : exception;
    STMT_RESET_FAIL       : exception;
@@ -307,6 +312,8 @@ private
 
    procedure free_binary is new Ada.Unchecked_Deallocation
      (BND.IC.char_array, BND.ICS.char_array_access);
+
+   procedure establish_uniform_encoding (conn : out PostgreSQL_Connection);
 
    overriding
    procedure finalize (conn : in out PostgreSQL_Connection);

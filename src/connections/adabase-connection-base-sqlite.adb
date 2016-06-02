@@ -888,4 +888,21 @@ package body AdaBase.Connection.Base.SQLite is
       return (result = BND.SQLITE_OK);
    end marker_is_blob;
 
+
+   -------------------------
+   --  set_character_set  --
+   -------------------------
+   overriding
+   procedure set_character_set (conn : out SQLite_Connection; charset : String)
+   is
+      charsetuc : String := ACH.To_Upper (charset);
+   begin
+      if charsetuc /= "UTF8" then
+         raise UNSUPPORTED_BY_SQLITE
+           with "Only UTF-8 encoded databases are supported by SQLite driver";
+      end if;
+      conn.character_set := CT.SUS (charsetuc);
+   end set_character_set;
+
+
 end AdaBase.Connection.Base.SQLite;

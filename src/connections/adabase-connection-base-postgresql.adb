@@ -769,7 +769,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
       conn.info_server_version := convert_version (conn.get_server_version);
       conn.info_server         := conn.get_server_info;
 
-      --  not yet implemented  conn.set_character_set;
+      conn.establish_uniform_encoding;
       conn.setTransactionIsolation (conn.prop_trax_isolation);
       if not conn.prop_auto_commit then
          conn.begin_transaction;
@@ -1585,6 +1585,41 @@ package body AdaBase.Connection.Base.PostgreSQL is
       return Character'Val (digit (before (2)) +
                             digit (before (1)) * 16);
    end convert_hexbyte_to_char;
+
+
+   ----------------------------------
+   --  establish_uniform_encoding  --
+   ----------------------------------
+   procedure establish_uniform_encoding (conn : out PostgreSQL_Connection)
+   is
+      sql : constant String := "SET CLIENT_ENCODING TO '" &
+                               CT.USS (conn.character_set) & "'";
+   begin
+      if conn.prop_active then
+         if not CT.IsBlank (conn.character_set) then
+            execute (conn => conn, sql => sql);
+         end if;
+      end if;
+   exception
+      when QUERY_FAIL =>
+         raise CHARSET_FAIL with sql;
+   end establish_uniform_encoding;
+
+
+   -------------------------
+   --  set_character_set  --
+   -------------------------
+   overriding
+   procedure set_character_set (conn : out PostgreSQL_Connection;
+                                charset : String)
+   is
+   begin
+      if conn.prop_active then
+         raise NOT_WHILE_CONNECTED
+           with "You may only alter the character set prior to connection";
+      end if;
+      conn.character_set := CT.SUS (charset);
+   end set_character_set;
 
 
 end AdaBase.Connection.Base.PostgreSQL;

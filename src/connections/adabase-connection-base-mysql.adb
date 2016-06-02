@@ -326,7 +326,7 @@ package body AdaBase.Connection.Base.MySQL is
          conn.info_server := CT.SUS (ABM.ICS.Value (Item => result));
       end;
 
-      conn.set_character_set;
+      conn.establish_uniform_encoding;
       conn.setTransactionIsolation (conn.prop_trax_isolation);
       conn.setAutoCommit (conn.prop_auto_commit);
 
@@ -1090,10 +1090,10 @@ package body AdaBase.Connection.Base.MySQL is
    end S2P;
 
 
-   -------------------------
-   --  set_character_set  --
-   -------------------------
-   procedure set_character_set (conn : out MySQL_Connection)
+   ----------------------------------
+   --  establish_uniform_encoding  --
+   ----------------------------------
+   procedure establish_uniform_encoding (conn : out MySQL_Connection)
    is
       sql : constant String := "SET CHARACTER SET " &
                                CT.USS (conn.character_set);
@@ -1106,6 +1106,21 @@ package body AdaBase.Connection.Base.MySQL is
    exception
       when QUERY_FAIL =>
          raise CHARSET_FAIL with sql;
+   end establish_uniform_encoding;
+
+
+   -------------------------
+   --  set_character_set  --
+   -------------------------
+   overriding
+   procedure set_character_set (conn : out MySQL_Connection; charset : String)
+   is
+   begin
+      if conn.prop_active then
+         raise NOT_WHILE_CONNECTED
+           with "You may only alter the character set prior to connection";
+      end if;
+      conn.character_set := CT.SUS (charset);
    end set_character_set;
 
 
