@@ -768,6 +768,8 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_supertext =>
                      dvariant := (datatype => ft_supertext,
                                   v15 => convert (ST));
+                 when ft_utf8 =>
+                     dvariant := (datatype => ft_utf8, v21 => CT.SUS (ST));
                   when ft_timestamp =>
                      begin
                         dvariant := (datatype => ft_timestamp,
@@ -980,6 +982,10 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_supertext =>
                      dvariant := (datatype => ft_supertext,
                                   v15 => convert (bincopy (cv.buffer_binary,
+                                    datalen, Stmt.con_max_blob)));
+                  when ft_utf8 =>
+                     dvariant := (datatype => ft_utf8,
+                                  v21 => CT.SUS (bincopy (cv.buffer_binary,
                                     datalen, Stmt.con_max_blob)));
                   when ft_timestamp =>
                      declare
@@ -1211,8 +1217,7 @@ package body AdaBase.Statement.Base.MySQL is
                      else
                         param.a12.all := AR.Real18 (cv.buffer_double);
                      end if;
-                  when ft_textual =>
-                     param.a13.all :=
+                  when ft_textual => param.a13.all :=
                        CT.SUS (bincopy (cv.buffer_binary, datalen,
                                Stmt.con_max_blob));
                   when ft_widetext => param.a14.all :=
@@ -1221,6 +1226,9 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_supertext => param.a15.all :=
                        convert (bincopy (cv.buffer_binary, datalen,
                                 Stmt.con_max_blob));
+                  when ft_utf8 => param.a21.all :=
+                       bincopy (cv.buffer_binary, datalen,
+                               Stmt.con_max_blob);
                   when ft_timestamp =>
                      declare
                         year  : Natural := Natural (cv.buffer_time.year);
@@ -1475,8 +1483,8 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_widetext  => dossier.a14.all := convert (ST);
                   when ft_supertext => dossier.a15.all := convert (ST);
                   when ft_enumtype  => dossier.a18.all := ARC.convert (ST);
-                  when ft_textual   =>
-                     dossier.a13.all := CT.SUS (ST);
+                  when ft_textual   => dossier.a13.all := CT.SUS (ST);
+                  when ft_utf8      => dossier.a21.all := ST;
                   when ft_timestamp =>
                      begin
                         dossier.a16.all := ARC.convert (ST);
@@ -1744,6 +1752,7 @@ package body AdaBase.Statement.Base.MySQL is
       use type AR.Chain_Access;
       use type AR.Settype_Access;
       use type AR.Bits_Access;
+      use type AR.S_UTF8_Access;
 
       procedure set_binary_buffer (Str : String)
       is
@@ -1787,6 +1796,7 @@ package body AdaBase.Statement.Base.MySQL is
          when ft_enumtype =>   struct.buffer_type := ABM.MYSQL_TYPE_STRING;
          when ft_settype =>    struct.buffer_type := ABM.MYSQL_TYPE_STRING;
          when ft_bits =>       struct.buffer_type := ABM.MYSQL_TYPE_STRING;
+         when ft_utf8 =>       struct.buffer_type := ABM.MYSQL_TYPE_STRING;
       end case;
       if zone.null_data then
          canvas.is_null := 1;
@@ -1907,6 +1917,12 @@ package body AdaBase.Statement.Base.MySQL is
                set_binary_buffer (ARC.convert (zone.v15));
             else
                set_binary_buffer (ARC.convert (zone.a15.all));
+            end if;
+         when ft_utf8 =>
+            if zone.a21 = null then
+               set_binary_buffer (ARC.convert (zone.v21));
+            else
+               set_binary_buffer (zone.a21.all);
             end if;
          when ft_timestamp =>
             struct.buffer := canvas.buffer_time'Address;

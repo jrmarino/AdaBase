@@ -560,6 +560,21 @@ package body AdaBase.Statement.Base is
       end if;
    end bind;
 
+   procedure bind (Stmt  : out Base_Statement;
+                   index : Positive;
+                   vaxx  : AR.S_UTF8_Access)
+   is
+      use type AR.S_UTF8_Access;
+      absent : Boolean := (vaxx = null);
+   begin
+      check_bound_column_access (absent);
+      if Stmt.bind_proceed (index => index) then
+         Stmt.crate.Replace_Element
+           (index, (output_type => ft_utf8, a21 => vaxx,
+                    v21 => CT.blank, bound => True, null_data => False));
+      end if;
+   end bind;
+
 
    ------------------------------------------------------------------
    --  bind via headings  (believe me, generics are not possible)  --
@@ -711,6 +726,14 @@ package body AdaBase.Statement.Base is
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
+   procedure bind (Stmt    : out Base_Statement;
+                   heading : String;
+                   vaxx    : AR.S_UTF8_Access) is
+   begin
+        Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
+   end bind;
+
+
    --------------------
    --  assign_index  --
    --------------------
@@ -730,7 +753,7 @@ package body AdaBase.Statement.Base is
 
 
    ------------------------------------------------------------------
-   --  assign via moniker (Access, 21)                                        --
+   --  assign via moniker (Access, 22)                                        --
    ------------------------------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
@@ -880,8 +903,16 @@ package body AdaBase.Statement.Base is
    end assign;
 
 
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.S_UTF8_Access) is
+   begin
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
+
    ------------------------------------------------------------------
-   --  assign via moniker (Value, 21)                                        --
+   --  assign via moniker (Value, 22)                                        --
    ------------------------------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
@@ -976,13 +1007,6 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : String) is
-   begin
-      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
-   end assign;
-
-   procedure assign (Stmt    : out Base_Statement;
-                     moniker : String;
                      vaxx    : AR.Textual) is
    begin
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
@@ -1037,9 +1061,16 @@ package body AdaBase.Statement.Base is
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.Text_UTF8) is
+   begin
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
 
    ------------------------------------------------------
-   --  21 + 21 = 42 assign functions                   --
+   --  22 + 22 = 44 assign functions                   --
    ------------------------------------------------------
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
@@ -1328,15 +1359,6 @@ package body AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : String) is
-   begin
-      Stmt.realmccoy.Replace_Element
-        (index, (output_type => ft_textual, a13 => null, v13 => CT.SUS (vaxx),
-                 bound => True, null_data => False));
-   end assign;
-
-   procedure assign (Stmt  : out Base_Statement;
-                     index : Positive;
                      vaxx  : AR.Textual) is
    begin
       Stmt.realmccoy.Replace_Element
@@ -1503,6 +1525,28 @@ package body AdaBase.Statement.Base is
                  v20 => CT.SUS (payload), bound => True, null_data => False));
    end assign;
 
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.S_UTF8_Access)
+   is
+      use type AR.S_UTF8_Access;
+      absent : Boolean := (vaxx = null);
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_utf8, a21 => vaxx,
+                 v21 => CT.blank, bound => True, null_data => absent));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.Text_UTF8)
+   is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_utf8, a21 => null,
+                 v21 => CT.SUS (vaxx), bound => True, null_data => False));
+   end assign;
+
 
    ------------------
    --  iterate #1  --
@@ -1584,6 +1628,7 @@ package body AdaBase.Statement.Base is
          when ft_enumtype  => hold := (ft_enumtype, (ARC.convert (ST)));
          when ft_settype   => null;
          when ft_bits      => null;
+         when ft_utf8      => hold := (ft_utf8, ST);
       end case;
       case zone.output_type is
          when ft_nbyte0    => Stmt.assign (index, hold.v00);
@@ -1604,6 +1649,7 @@ package body AdaBase.Statement.Base is
          when ft_supertext => Stmt.assign (index, hold.v15);
          when ft_timestamp => Stmt.assign (index, hold.v16);
          when ft_enumtype  => Stmt.assign (index, hold.v18);
+         when ft_utf8      => Stmt.assign (index, hold.v21);
          when ft_chain     =>
             declare
                my_chain : AR.Chain := ARC.convert (value);
@@ -1658,6 +1704,7 @@ package body AdaBase.Statement.Base is
                               ARC.convert ("", param.a19.all'Length);
          when ft_bits      => param.a20.all :=
                               ARC.convert ("", param.a20.all'Length);
+         when ft_utf8      => param.a21.all := AR.PARAM_IS_TEXT_UTF8;
       end case;
    end set_as_null;
 

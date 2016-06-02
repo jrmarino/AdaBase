@@ -75,8 +75,9 @@ package AdaBase.Statement.Base is
    procedure iterate (Stmt    : out Base_Statement;
                       process : not null access procedure (row : ARS.Datarow));
 
+
    -------------------------------------------
-   --      20 bind using integer index      --
+   --      22 bind using integer index      --
    -------------------------------------------
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
@@ -162,9 +163,13 @@ package AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.Bits_Access);
 
+   procedure bind (Stmt  : out Base_Statement;
+                   index : Positive;
+                   vaxx  : AR.S_UTF8_Access);
+
 
    -------------------------------------------
-   --    20 bind using header for index     --
+   --    22 bind using header for index     --
    -------------------------------------------
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
@@ -250,9 +255,13 @@ package AdaBase.Statement.Base is
                    heading : String;
                    vaxx    : AR.Bits_Access);
 
+   procedure bind (Stmt    : out Base_Statement;
+                   heading : String;
+                   vaxx    : AR.S_UTF8_Access);
+
 
    --------------------------------------------
-   --  20 assign/access using integer index  --
+   --  22 assign/access using integer index  --
    --------------------------------------------
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
@@ -338,9 +347,13 @@ package AdaBase.Statement.Base is
                      index : Positive;
                      vaxx  : AR.Bits_Access);
 
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.S_UTF8_Access);
+
 
    ------------------------------------------------
-   --  20 assign/access using moniker for index  --
+   --  22 assign/access using moniker for index  --
    ------------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
@@ -426,9 +439,13 @@ package AdaBase.Statement.Base is
                      moniker : String;
                      vaxx    : AR.Bits_Access);
 
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.S_UTF8_Access);
+
 
    -------------------------------------------
-   --  21 assign/value using integer index  --
+   --  22 assign/value using integer index  --
    -------------------------------------------
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
@@ -484,10 +501,6 @@ package AdaBase.Statement.Base is
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
-                     vaxx  : String);
-
-   procedure assign (Stmt  : out Base_Statement;
-                     index : Positive;
                      vaxx  : AR.Textual);
 
    procedure assign (Stmt  : out Base_Statement;
@@ -518,9 +531,13 @@ package AdaBase.Statement.Base is
                      index : Positive;
                      vaxx  : AR.Bits);
 
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.Text_UTF8);
+
 
    -----------------------------------------------
-   --  21 assign/value using moniker for index  --
+   --  22 assign/value using moniker for index  --
    -----------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
@@ -576,10 +593,6 @@ package AdaBase.Statement.Base is
 
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
-                     vaxx    : String);
-
-   procedure assign (Stmt    : out Base_Statement;
-                     moniker : String;
                      vaxx    : AR.Textual);
 
    procedure assign (Stmt    : out Base_Statement;
@@ -609,6 +622,10 @@ package AdaBase.Statement.Base is
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.Bits);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.Text_UTF8);
 
 private
 
@@ -699,6 +716,8 @@ private
                               v19 : AR.Textual;
          when ft_bits      => a20 : AR.Bits_Access;
                               v20 : AR.Textual;
+         when ft_utf8      => a21 : AR.S_UTF8_Access;
+                              v21 : AR.Textual;
       end case;
    end record;
 

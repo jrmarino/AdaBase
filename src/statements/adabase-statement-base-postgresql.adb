@@ -586,6 +586,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
                   when ft_widetext  => dossier.a14.all := convert (ST);
                   when ft_supertext => dossier.a15.all := convert (ST);
                   when ft_enumtype  => dossier.a18.all := ARC.convert (ST);
+                  when ft_utf8      => dossier.a21.all := ST;
                   when ft_timestamp =>
                      begin
                         dossier.a16.all := ARC.convert (ST);
@@ -1097,6 +1098,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
                   dvariant := (datatype => ft_widetext, v14 => convert (ST));
                when ft_supertext =>
                   dvariant := (datatype => ft_supertext, v15 => convert (ST));
+               when ft_utf8 =>
+                  dvariant := (datatype => ft_utf8, v21 => CT.SUS (ST));
                when ft_timestamp =>
                   begin
                      dvariant := (datatype => ft_timestamp,
@@ -1180,6 +1183,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
       use type AR.Chain_Access;
       use type AR.Settype_Access;
       use type AR.Bits_Access;
+      use type AR.S_UTF8_Access;
 
       hold : AR.Textual;
    begin
@@ -1309,6 +1313,12 @@ package body AdaBase.Statement.Base.PostgreSQL is
                hold := zone.v20;
             else
                hold := ARC.convert (zone.a20.all);
+            end if;
+         when ft_utf8 =>
+            if zone.a21 = null then
+               hold := zone.v21;
+            else
+               hold := CT.SUS (zone.a21.all);
             end if;
       end case;
       return hold;

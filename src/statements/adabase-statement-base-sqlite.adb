@@ -895,6 +895,7 @@ package body AdaBase.Statement.Base.SQLite is
       use type AR.Chain_Access;
       use type AR.Settype_Access;
       use type AR.Bits_Access;
+      use type AR.S_UTF8_Access;
    begin
       if zone.null_data then
          if not conn.marker_is_null (Stmt.stmt_handle, marker) then
@@ -1064,6 +1065,14 @@ package body AdaBase.Statement.Base.SQLite is
                else
                   okay := conn.marker_is_blob (Stmt.stmt_handle, marker,
                                                ARC.convert (zone.a20.all), BB);
+               end if;
+            when ft_utf8 =>
+               if zone.a21 = null then
+                  okay := conn.marker_is_text (Stmt.stmt_handle, marker,
+                                               ARC.convert (zone.v21), BT);
+               else
+                  okay := conn.marker_is_text (Stmt.stmt_handle, marker,
+                                               zone.a21.all, BT);
                end if;
          end case;
          if not okay then
