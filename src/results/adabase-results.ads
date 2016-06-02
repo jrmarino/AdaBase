@@ -101,11 +101,12 @@ package AdaBase.Results is
    PARAM_IS_REAL_18   : constant Real18 := 0.0;
    PARAM_IS_CHAIN     : constant Chain := (1 .. 1 => 0);
    PARAM_IS_BITS      : constant Bits  := (0 .. 0 => 0);
-   PARAM_IS_ENUM      : constant Enumtype := (enumeration => Blank_String);
-   PARAM_IS_SET       : constant Settype := (1 .. 1 => (PARAM_IS_ENUM));
-   PARAM_IS_TEXTUAL   : constant Textual := Blank_String;
-   PARAM_IS_TEXTWIDE  : constant Textwide := Blank_WString;
+   PARAM_IS_ENUM      : constant Enumtype  := (enumeration => Blank_String);
+   PARAM_IS_SET       : constant Settype   := (1 .. 1 => (PARAM_IS_ENUM));
+   PARAM_IS_TEXTUAL   : constant Textual   := Blank_String;
+   PARAM_IS_TEXTWIDE  : constant Textwide  := Blank_WString;
    PARAM_IS_TEXTSUPER : constant Textsuper := Blank_WWString;
+   PARAM_IS_TEXT_UTF8 : constant Text_UTF8 := blankstring;
    PARAM_IS_GEOMETRY  : constant SPAT.Geometry :=
                         SPAT.initialize_as_point ((0.0, 0.0));
    PARAM_IS_TIMESTAMP : constant AC.Time :=

@@ -29,6 +29,7 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_utf8      => return ARC.convert (field.native.v21);
          when ft_chain     =>
             declare
                cadena : Chain := ARC.convert (field.native.v17);
@@ -70,6 +71,7 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_utf8      => return ARC.convert (field.native.v21);
          when ft_chain     =>
             declare
                cadena : Chain := ARC.convert (field.native.v17);
@@ -112,6 +114,7 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_utf8      => return ARC.convert (field.native.v21);
          when ft_chain     =>
             declare
                cadena : Chain := ARC.convert (field.native.v17);
@@ -154,6 +157,7 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_utf8      => return ARC.convert (field.native.v21);
          when ft_chain     =>
             declare
                cadena : Chain := ARC.convert (field.native.v17);
@@ -196,6 +200,7 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_utf8      => return ARC.convert (field.native.v21);
          when ft_chain     =>
             declare
                cadena : Chain := ARC.convert (field.native.v17);
@@ -238,6 +243,7 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_utf8      => return ARC.convert (field.native.v21);
          when ft_chain     =>
             declare
                cadena : Chain := ARC.convert (field.native.v17);
@@ -280,6 +286,7 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_utf8      => return ARC.convert (field.native.v21);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
@@ -312,6 +319,7 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_utf8      => return ARC.convert (field.native.v21);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
@@ -344,6 +352,7 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_utf8      => return ARC.convert (field.native.v21);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
@@ -376,6 +385,7 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_utf8      => return ARC.convert (field.native.v21);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
@@ -408,6 +418,7 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_utf8      => return ARC.convert (field.native.v21);
          when ft_real9     |
               ft_real18    |
               ft_timestamp |
@@ -442,6 +453,7 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_utf8      => return ARC.convert (field.native.v21);
          when ft_timestamp |
               ft_chain     |
               ft_bits      |
@@ -474,6 +486,7 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_utf8      => return ARC.convert (field.native.v21);
          when ft_timestamp |
               ft_chain     |
               ft_bits      |
@@ -511,6 +524,7 @@ package body AdaBase.Results.Field is
          when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_settype   => return ARC.convert (field.native.v19);
          when ft_bits      => return ARC.convert (field.native.v20);
+         when ft_utf8      => return ARC.cvu2str (CT.USS (field.native.v21));
       end case;
    end as_string;
 
@@ -543,6 +557,7 @@ package body AdaBase.Results.Field is
          when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_settype   => return ARC.convert (field.native.v19);
          when ft_bits      => return ARC.convert (field.native.v20);
+         when ft_utf8      => return ARC.cvu2str (CT.USS (field.native.v21));
       end case;
    end as_wstring;
 
@@ -575,6 +590,7 @@ package body AdaBase.Results.Field is
          when ft_enumtype  => return ARC.convert (field.native.v18);
          when ft_settype   => return ARC.convert (field.native.v19);
          when ft_bits      => return ARC.convert (field.native.v20);
+         when ft_utf8      => return ARC.cvu2str (CT.USS (field.native.v21));
       end case;
    end as_wwstring;
 
@@ -623,6 +639,7 @@ package body AdaBase.Results.Field is
               ft_byte8 |
               ft_real9 |
               ft_real18 |
+              ft_utf8 |
               ft_enumtype |
               ft_settype |
               ft_timestamp => raise UNSUPPORTED_CONVERSION;
@@ -641,6 +658,7 @@ package body AdaBase.Results.Field is
          when ft_textual   => return ARC.convert (field.native.v13);
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_utf8      => return ARC.convert (field.native.v21);
          when others => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_enumtype;
@@ -653,15 +671,19 @@ package body AdaBase.Results.Field is
    is
    begin
       case field.native.datatype is
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
          when ft_settype   => return ARC.convert (field.native.v19);
+         when ft_utf8      => return ARC.convert (field.native.v21);
          when others => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_settype;
 
 
-   ----------------
-   --  as_chain  --
-   ----------------
+   ---------------
+   --  as_bits  --
+   ---------------
    function as_bits (field : Std_Field) return Bits
    is
    begin
@@ -684,11 +706,46 @@ package body AdaBase.Results.Field is
               ft_byte8 |
               ft_real9 |
               ft_real18 |
+              ft_utf8 |
               ft_enumtype |
               ft_settype |
               ft_timestamp => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_bits;
+
+
+   ---------------
+   --  as_utf8  --
+   ---------------
+   function as_utf8 (field : Std_Field) return Text_UTF8
+   is
+   begin
+      case field.native.datatype is
+         when ft_nbyte0    => return ARC.convert (field.native.v00);
+         when ft_nbyte1    => return ARC.cv2utf8 (field.native.v01);
+         when ft_nbyte2    => return ARC.cv2utf8 (field.native.v02);
+         when ft_nbyte3    => return ARC.cv2utf8 (field.native.v03);
+         when ft_nbyte4    => return ARC.cv2utf8 (field.native.v04);
+         when ft_nbyte8    => return ARC.cv2utf8 (field.native.v05);
+         when ft_byte1     => return ARC.cv2utf8 (field.native.v06);
+         when ft_byte2     => return ARC.cv2utf8 (field.native.v07);
+         when ft_byte3     => return ARC.cv2utf8 (field.native.v08);
+         when ft_byte4     => return ARC.cv2utf8 (field.native.v09);
+         when ft_byte8     => return ARC.cv2utf8 (field.native.v10);
+         when ft_real9     => return ARC.cv2utf8 (field.native.v11);
+         when ft_real18    => return ARC.cv2utf8 (field.native.v12);
+         when ft_textual   => return ARC.cv2utf8 (field.native.v13);
+         when ft_widetext  => return ARC.cv2utf8 (field.native.v14);
+         when ft_supertext => return ARC.cv2utf8 (field.native.v15);
+         when ft_timestamp => return ARC.cv2utf8 (field.native.v16);
+         when ft_enumtype  => return ARC.cv2utf8 (field.native.v18);
+         when ft_settype   => return ARC.cv2utf8 (field.native.v19);
+         when ft_utf8      => return Text_UTF8 (CT.USS (field.native.v21));
+         when ft_chain     |
+              ft_bits      => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_utf8;
+
 
 
    ---------------
@@ -788,6 +845,7 @@ package body AdaBase.Results.Field is
          when ft_enumtype => result.set ((ft_enumtype, PARAM_IS_ENUM), True);
          when ft_settype  => result.set ((ft_settype, PARAM_IS_TEXTUAL), True);
          when ft_bits => result.set ((ft_bits, PARAM_IS_TEXTUAL), True);
+         when ft_utf8 => result.set ((ft_utf8, PARAM_IS_TEXTUAL), True);
       end case;
       return result;
    end spawn_null_field;
@@ -820,6 +878,7 @@ package body AdaBase.Results.Field is
          when ft_enumtype  => field.native := (ft_enumtype, data.v18);
          when ft_settype   => field.native := (ft_settype, data.v19);
          when ft_bits      => field.native := (ft_bits, data.v20);
+         when ft_utf8      => field.native := (ft_utf8, data.v21);
       end case;
       field.explicit_null := exnull;
    end set;

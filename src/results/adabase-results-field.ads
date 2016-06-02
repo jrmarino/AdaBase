@@ -30,6 +30,7 @@ package AdaBase.Results.Field is
             when ft_enumtype  => v18 : Enumtype;
             when ft_settype   => v19 : Textual;
             when ft_bits      => v20 : Textual;
+            when ft_utf8      => v21 : Textual;
          end case;
       end record;
 
@@ -58,6 +59,7 @@ package AdaBase.Results.Field is
    function as_enumtype (field : Std_Field) return Enumtype;
    function as_settype  (field : Std_Field) return Settype;
    function as_bits     (field : Std_Field) return Bits;
+   function as_utf8     (field : Std_Field) return Text_UTF8;
 
    function is_null     (field : Std_Field) return Boolean;
    function native_type (field : Std_Field) return field_types;
