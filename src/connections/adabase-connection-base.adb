@@ -125,8 +125,13 @@ package body AdaBase.Connection.Base is
    end character_set;
 
 
-   ------------------------------------------------------------------------
-   --  PRIVATE ROUTINES NOT COVERED BY INTERFACES                        --
-   ------------------------------------------------------------------------
+   -----------------------------------------------------------------------
+   --  PUBLIC ROUTINES NOT COVERED BY INTERFACES                        --
+   -----------------------------------------------------------------------
+
+   function utf8_encoding (conn : Base_Connection) return Boolean is
+   begin
+      return conn.encoding_is_utf8;
+   end utf8_encoding;
 
 end AdaBase.Connection.Base;

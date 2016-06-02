@@ -1115,12 +1115,14 @@ package body AdaBase.Connection.Base.MySQL is
    overriding
    procedure set_character_set (conn : out MySQL_Connection; charset : String)
    is
+      charsetuc : String := ACH.To_Upper (charset);
    begin
       if conn.prop_active then
          raise NOT_WHILE_CONNECTED
            with "You may only alter the character set prior to connection";
       end if;
       conn.character_set := CT.SUS (charset);
+      conn.encoding_is_utf8 := (charsetuc = "UTF8");
    end set_character_set;
 
 
