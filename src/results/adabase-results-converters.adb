@@ -3,6 +3,7 @@
 
 with Ada.Strings;
 with Ada.Characters.Conversions;
+with Ada.Strings.UTF_Encoding.Strings;
 
 package body AdaBase.Results.Converters is
 
@@ -151,6 +152,14 @@ package body AdaBase.Results.Converters is
       end if;
       return result;
    end convert;
+
+   function cv2utf8 (nv : NByte0) return Text_UTF8 is
+   begin
+      case nv is
+         when True  => return "1";
+         when False => return "0";
+      end case;
+   end cv2utf8;
 
 
    ---------------------------
@@ -1817,6 +1826,13 @@ package body AdaBase.Results.Converters is
       return CT.SUS (hold);
    end convert;
 
+   function convert (nv : Bits) return Textual
+   is
+      hold : String := convert (nv);
+   begin
+      return CT.SUS (hold);
+   end convert;
+
    function convert (nv : Chain) return Textual
    is
       hold : String := convert (nv);
@@ -1831,11 +1847,73 @@ package body AdaBase.Results.Converters is
       return CT.SUS (hold);
    end convert;
 
-   function convert (nv : Bits) return Textual
+   ---------------------------------------
+   --  Convert some data types to UTF8  --
+   ---------------------------------------
+   function cv2utf8 (nv : String) return Text_UTF8 is
+   begin
+      return SUTF.Strings.Encode (Item => nv);
+   end cv2utf8;
+
+   function cvu2str (nv : Text_UTF8) return String is
+   begin
+      return SUTF.Strings.Decode (Item => nv);
+   end cvu2str;
+
+   function cvu2str (nv : Text_UTF8) return Wide_String
+   is
+      hold : String := SUTF.Strings.Decode (Item => nv);
+   begin
+      return ACC.To_Wide_String (Item => hold);
+   end cvu2str;
+
+   function cvu2str (nv : Text_UTF8) return Wide_Wide_String
+   is
+      hold : String := SUTF.Strings.Decode (Item => nv);
+   begin
+      return ACC.To_Wide_Wide_String (Item => hold);
+   end cvu2str;
+
+   function cv2utf8 (nv : Textual) return Text_UTF8
+   is
+      hold : String := CT.USS (nv);
+   begin
+      return cv2utf8 (hold);
+   end cv2utf8;
+
+   function cv2utf8 (nv : Textwide) return Text_UTF8
    is
       hold : String := convert (nv);
    begin
-      return CT.SUS (hold);
-   end convert;
+      return cv2utf8 (hold);
+   end cv2utf8;
+
+   function cv2utf8 (nv : Textsuper) return Text_UTF8
+   is
+      hold : String := convert (nv);
+   begin
+      return cv2utf8 (hold);
+   end cv2utf8;
+
+   function cv2utf8 (nv : AC.Time) return Text_UTF8
+   is
+      hold : String := convert (nv);
+   begin
+      return cv2utf8 (hold);
+   end cv2utf8;
+
+   function cv2utf8 (nv : Enumtype) return Text_UTF8
+   is
+      hold : String := convert (nv);
+   begin
+      return cv2utf8 (hold);
+   end cv2utf8;
+
+   function cv2utf8 (nv : Settype) return Text_UTF8
+   is
+      hold : String := convert (nv);
+   begin
+      return cv2utf8 (hold);
+   end cv2utf8;
 
 end AdaBase.Results.Converters;
