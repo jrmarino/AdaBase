@@ -912,14 +912,18 @@ package body AdaBase.Connection.Base.SQLite is
    function character_set (conn : out SQLite_Connection) return String
    is
       stmt_handle : aliased BND.sqlite3_stmt_Access;
-      field : CT.Text;
-      final_res : Boolean;
+      field       : CT.Text;
+      final_res   : Boolean;
    begin
       if conn.prop_active then
          if conn.prepare_statement (stmt => stmt_handle,
                                     sql  => "PRAGMA encoding")
          then
-            field := conn.retrieve_text (stmt  => stmt_handle, index => 0);
+            if conn.prep_fetch_next (stmt => stmt_handle) then
+               field := conn.retrieve_text (stmt => stmt_handle, index => 0);
+            else
+               field := CT.SUS ("Error: Charset empty");
+            end if;
             final_res := conn.prep_finalize (stmt => stmt_handle);
             return CT.USS (field);
          else
