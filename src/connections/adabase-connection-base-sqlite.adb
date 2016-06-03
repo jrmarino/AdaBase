@@ -897,7 +897,7 @@ package body AdaBase.Connection.Base.SQLite is
    is
       charsetuc : String := ACH.To_Upper (charset);
    begin
-      if charsetuc /= "UTF8" then
+      if charsetuc /= "UTF8" and not IsBlank (charsetuc) then
          raise UNSUPPORTED_BY_SQLITE
            with "Only UTF-8 encoded databases are supported by SQLite driver";
       end if;

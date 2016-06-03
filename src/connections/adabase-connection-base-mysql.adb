@@ -1160,7 +1160,7 @@ package body AdaBase.Connection.Base.MySQL is
             setstr : String := ABM.ICS.Value (Item => set);
          begin
             ABM.ICS.Free (set);
-            return setstr;
+            return ACH.To_Upper (setstr);
          end;
       else
          return CT.USS (conn.character_set);
