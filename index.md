@@ -44,11 +44,11 @@ title: AdaBase by jrmarino
 <li>{{ page.f_trait_server_version }}</li>
 <li>{{ page.f_trait_driver }}</li>
 <li>{{ page.f_trait_autocommit }}</li>
+<li>{{ page.f_trait_blob_size }}</li>
+<li>{{ page.f_trait_charset }}</li>
 <li>{{ page.f_trait_column_case }}</li>
 <li>{{ page.f_trait_error_mode }}</li>
-<li>{{ page.f_trait_blob_size }}</li>
 <li>{{ page.f_trait_multiquery }}</li>
-<li>{{ page.f_trait_charset }}</li>
 <li>{{ page.f_trait_compressed }}</li>
 <li>{{ page.f_trait_buffers }}</li>
 </ul>
