@@ -298,7 +298,7 @@ Dumping Result from direct statement ...
 11. my_timestamp    FT_TIMESTAMP   2000-03-25 15:15:00
 12. my_time         FT_TIMESTAMP   1901-01-01 20:18:13
 13. my_year         FT_NBYTE2      1986
-14. my_tinytext     FT_TEXTUAL     AdaBase is so cool!
+14. my_tinytext     FT_UTF8        AdaBase is so cool!
 15. enumtype        FT_ENUMTYPE    green
 16. settype         FT_SETTYPE     black,yellow
 17. my_varbinary    FT_CHAIN       20 30 31 32 33
@@ -317,7 +317,7 @@ Dumping Result from direct statement ...
 11. my_timestamp    FT_TIMESTAMP   2030-12-25 11:59:59
 12. my_time         FT_TIMESTAMP   1901-01-01 04:00:45
 13. my_year         FT_NBYTE2      1945
-14. my_tinytext     FT_TEXTUAL     This is what it sounds like when doves cry
+14. my_tinytext     FT_UTF8        This is what it sounds like when doves cry
 15. enumtype        FT_ENUMTYPE    red
 16. settype         FT_SETTYPE     blue,white
 17. my_varbinary    FT_CHAIN       51 7C 45 52
@@ -338,7 +338,7 @@ Dumping Result from prepared statement ...
 11. my_timestamp    FT_TIMESTAMP   2000-03-25 15:15:00
 12. my_time         FT_TIMESTAMP   1901-01-01 20:18:13
 13. my_year         FT_NBYTE2      1986
-14. my_tinytext     FT_TEXTUAL     AdaBase is so cool!
+14. my_tinytext     FT_UTF8        AdaBase is so cool!
 15. enumtype        FT_ENUMTYPE    green
 16. settype         FT_SETTYPE     black,yellow
 17. my_varbinary    FT_CHAIN       20 30 31 32 33
@@ -357,7 +357,7 @@ Dumping Result from prepared statement ...
 11. my_timestamp    FT_TIMESTAMP   2030-12-25 11:59:59
 12. my_time         FT_TIMESTAMP   1901-01-01 04:00:45
 13. my_year         FT_NBYTE2      1945
-14. my_tinytext     FT_TEXTUAL     This is what it sounds like when doves cry
+14. my_tinytext     FT_UTF8        This is what it sounds like when doves cry
 15. enumtype        FT_ENUMTYPE    red
 16. settype         FT_SETTYPE     blue,white
 17. my_varbinary    FT_CHAIN       51 7C 45 52
@@ -381,13 +381,13 @@ Dumping Result from direct statement ...
 07. real9           FT_REAL18      8.72340999999999980E+01
 08. real18          FT_REAL18      1.55552137928312131E+04
 09. exact_decimal   FT_REAL18      8.75440000000000055E+02
-10. my_date         FT_TEXTUAL     2014-10-20 00:00:00
-11. my_timestamp    FT_TEXTUAL     2000-03-25 15:15:00
-12. my_time         FT_TEXTUAL     1901-01-01 20:18:13
+10. my_date         FT_UTF8        2014-10-20 00:00:00
+11. my_timestamp    FT_UTF8        2000-03-25 15:15:00
+12. my_time         FT_UTF8        1901-01-01 20:18:13
 13. my_year         FT_BYTE8       1986
-14. my_tinytext     FT_TEXTUAL     AdaBase is so cool!
-15. enumtype        FT_TEXTUAL     green
-16. settype         FT_TEXTUAL     yellow,black
+14. my_tinytext     FT_UTF8        AdaBase is so cool!
+15. enumtype        FT_UTF8        green
+16. settype         FT_UTF8        yellow,black
 17. my_varbinary    FT_CHAIN       20 30 31 32 33
 18. my_blob         FT_CHAIN       34 35 36 37 38 39 41 42 43 2E 2C 7A 5B 5D
 
@@ -400,13 +400,13 @@ Dumping Result from direct statement ...
 07. real9           FT_REAL18      4.84324981999999959E+00
 08. real18          FT_REAL18      9.23496312323598750E+06
 09. exact_decimal   FT_REAL18      1.57899999999999991E+01
-10. my_date         FT_TEXTUAL     1910-11-05 00:00:00
-11. my_timestamp    FT_TEXTUAL     2030-12-25 11:59:59
-12. my_time         FT_TEXTUAL     1901-01-01 04:00:45
+10. my_date         FT_UTF8        1910-11-05 00:00:00
+11. my_timestamp    FT_UTF8        2030-12-25 11:59:59
+12. my_time         FT_UTF8        1901-01-01 04:00:45
 13. my_year         FT_BYTE8       1945
-14. my_tinytext     FT_TEXTUAL     This is what it sounds like when doves cry
-15. enumtype        FT_TEXTUAL     red
-16. settype         FT_TEXTUAL     blue,white
+14. my_tinytext     FT_UTF8        This is what it sounds like when doves cry
+15. enumtype        FT_UTF8        red
+16. settype         FT_UTF8        blue,white
 17. my_varbinary    FT_CHAIN       51 7C 45 52
 18. my_blob         FT_CHAIN       30 31 32 33 34 00 0A 37 38 39
 
@@ -421,13 +421,13 @@ Dumping Result from prepared statement ...
 07. real9           FT_REAL18      8.72340999999999980E+01
 08. real18          FT_REAL18      1.55552137928312131E+04
 09. exact_decimal   FT_REAL18      8.75440000000000055E+02
-10. my_date         FT_TEXTUAL     2014-10-20 00:00:00
-11. my_timestamp    FT_TEXTUAL     2000-03-25 15:15:00
-12. my_time         FT_TEXTUAL     1901-01-01 20:18:13
+10. my_date         FT_UTF8        2014-10-20 00:00:00
+11. my_timestamp    FT_UTF8        2000-03-25 15:15:00
+12. my_time         FT_UTF8        1901-01-01 20:18:13
 13. my_year         FT_BYTE8       1986
-14. my_tinytext     FT_TEXTUAL     AdaBase is so cool!
-15. enumtype        FT_TEXTUAL     green
-16. settype         FT_TEXTUAL     yellow,black
+14. my_tinytext     FT_UTF8        AdaBase is so cool!
+15. enumtype        FT_UTF8        green
+16. settype         FT_UTF8        yellow,black
 17. my_varbinary    FT_CHAIN       20 30 31 32 33
 18. my_blob         FT_CHAIN       34 35 36 37 38 39 41 42 43 2E 2C 7A 5B 5D
 
@@ -440,13 +440,13 @@ Dumping Result from prepared statement ...
 07. real9           FT_REAL18      4.84324981999999959E+00
 08. real18          FT_REAL18      9.23496312323598750E+06
 09. exact_decimal   FT_REAL18      1.57899999999999991E+01
-10. my_date         FT_TEXTUAL     1910-11-05 00:00:00
-11. my_timestamp    FT_TEXTUAL     2030-12-25 11:59:59
-12. my_time         FT_TEXTUAL     1901-01-01 04:00:45
+10. my_date         FT_UTF8        1910-11-05 00:00:00
+11. my_timestamp    FT_UTF8        2030-12-25 11:59:59
+12. my_time         FT_UTF8        1901-01-01 04:00:45
 13. my_year         FT_BYTE8       1945
-14. my_tinytext     FT_TEXTUAL     This is what it sounds like when doves cry
-15. enumtype        FT_TEXTUAL     red
-16. settype         FT_TEXTUAL     blue,white
+14. my_tinytext     FT_UTF8        This is what it sounds like when doves cry
+15. enumtype        FT_UTF8        red
+16. settype         FT_UTF8        blue,white
 17. my_varbinary    FT_CHAIN       51 7C 45 52
 18. my_blob         FT_CHAIN       30 31 32 33 34 00 0A 37 38 39
 
@@ -472,9 +472,9 @@ Dumping Result from direct statement ...
 11. my_timestamp    FT_TIMESTAMP   2000-03-25 15:15:00
 12. my_time         FT_TIMESTAMP   1901-01-01 20:18:13
 13. my_year         FT_BYTE2       1986
-14. my_tinytext     FT_TEXTUAL     AdaBase is so cool!
+14. my_tinytext     FT_UTF8        AdaBase is so cool!
 15. enumtype        FT_ENUMTYPE    green
-16. settype         FT_TEXTUAL     yellow,black
+16. settype         FT_UTF8        yellow,black
 17. my_varbinary    FT_CHAIN       20 30 31 32 33
 18. my_blob         FT_CHAIN       34 35 36 37 38 39 41 42 43 2E 2C 7A 5B 5D
 
@@ -491,9 +491,9 @@ Dumping Result from direct statement ...
 11. my_timestamp    FT_TIMESTAMP   2030-12-25 11:59:59
 12. my_time         FT_TIMESTAMP   1901-01-01 04:00:45
 13. my_year         FT_BYTE2       1945
-14. my_tinytext     FT_TEXTUAL     This is what it sounds like when doves cry
+14. my_tinytext     FT_UTF8        This is what it sounds like when doves cry
 15. enumtype        FT_ENUMTYPE    red
-16. settype         FT_TEXTUAL     blue,white
+16. settype         FT_UTF8        blue,white
 17. my_varbinary    FT_CHAIN       51 7C 45 52
 18. my_blob         FT_CHAIN       30 31 32 33 34 00 0A 37 38 39
 
@@ -512,9 +512,9 @@ Dumping Result from prepared statement ...
 11. my_timestamp    FT_TIMESTAMP   2000-03-25 15:15:00
 12. my_time         FT_TIMESTAMP   1901-01-01 20:18:13
 13. my_year         FT_BYTE2       1986
-14. my_tinytext     FT_TEXTUAL     AdaBase is so cool!
+14. my_tinytext     FT_UTF8        AdaBase is so cool!
 15. enumtype        FT_ENUMTYPE    green
-16. settype         FT_TEXTUAL     yellow,black
+16. settype         FT_UTF8        yellow,black
 17. my_varbinary    FT_CHAIN       20 30 31 32 33
 18. my_blob         FT_CHAIN       34 35 36 37 38 39 41 42 43 2E 2C 7A 5B 5D
 
@@ -531,9 +531,9 @@ Dumping Result from prepared statement ...
 11. my_timestamp    FT_TIMESTAMP   2030-12-25 11:59:59
 12. my_time         FT_TIMESTAMP   1901-01-01 04:00:45
 13. my_year         FT_BYTE2       1945
-14. my_tinytext     FT_TEXTUAL     This is what it sounds like when doves cry
+14. my_tinytext     FT_UTF8        This is what it sounds like when doves cry
 15. enumtype        FT_ENUMTYPE    red
-16. settype         FT_TEXTUAL     blue,white
+16. settype         FT_UTF8        blue,white
 17. my_varbinary    FT_CHAIN       51 7C 45 52
 18. my_blob         FT_CHAIN       30 31 32 33 34 00 0A 37 38 39
 
