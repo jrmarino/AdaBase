@@ -32,6 +32,8 @@ procedure Traits is
       TIO.Put_Line ("   column case: " & driver.trait_column_case'Img);
       TIO.Put_Line ("    error_mode: " & driver.trait_error_mode'Img);
       TIO.Put_Line ("     blob_size: " & driver.trait_max_blob_size'Img);
+      TIO.Put_Line (" multiquery on: " & driver.trait_multiquery_enabled'Img);
+      TIO.Put_Line ("      encoding: " & driver.trait_character_set);
    end display_traits;
 
 begin
@@ -41,11 +43,17 @@ begin
    display_versions (driver => CON.DR);
    display_traits   (driver => CON.DR);
 
+   CON.DR.disconnect;
+
    CON.DR.set_trait_autocommit    (trait => True);
    CON.DR.set_trait_column_case   (trait => AdaBase.upper_case);
    CON.DR.set_trait_error_mode    (trait => AdaBase.silent);
    CON.DR.set_trait_max_blob_size (trait => 2 ** 16);
 
+   CON.DR.set_trait_multiquery_enabled (True);
+   CON.DR.set_trait_character_set ("");
+
+   CON.connect_database;
    display_traits   (driver => CON.DR);
    CON.DR.disconnect;
 
