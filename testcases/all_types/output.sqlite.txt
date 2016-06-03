@@ -13,20 +13,20 @@ Dumping Result from direct statement ...
 12. real9           FT_REAL18      7.98399999999999999E+00
 13. real18          FT_REAL18      5.31234234342299985E+01
 14. exact_decimal   FT_REAL18      1.23450000000000003E+02
-15. bit_type        FT_TEXTUAL     110010010011
-16. my_date         FT_TEXTUAL     1993-01-15
-17. my_datetime     FT_TEXTUAL     1972-08-01 08:00:05
-18. my_timestamp    FT_TEXTUAL     2016-05-03 20:17:51
-19. my_time         FT_TEXTUAL     04:30:02
+15. bit_type        FT_UTF8        110010010011
+16. my_date         FT_UTF8        1993-01-15
+17. my_datetime     FT_UTF8        1972-08-01 08:00:05
+18. my_timestamp    FT_UTF8        2016-05-03 20:17:51
+19. my_time         FT_UTF8        04:30:02
 20. my_year         FT_BYTE8       1988
-21. fixed_string    FT_TEXTUAL     ABCD1234EFGH5678
-22. variable_string FT_TEXTUAL     The quick brown fox jumped over the lazy dogs
-23. my_tinytext     FT_TEXTUAL     You're going to need a bigger boat.
-24. my_text         FT_TEXTUAL     Take your stinkin' paws off me, you damn dirty ape!
-25. my_mediumtext   FT_TEXTUAL     Toto, I've a feeling we're not in Kansas anymore.
-26. my_longtext     FT_TEXTUAL     I ate his liver with some fava beans and a nice chianti.
-27. enumtype        FT_TEXTUAL     red
-28. settype         FT_TEXTUAL     blue,black,white,yellow
+21. fixed_string    FT_UTF8        ABCD1234EFGH5678
+22. variable_string FT_UTF8        The quick brown fox jumped over the lazy dogs
+23. my_tinytext     FT_UTF8        You're going to need a bigger boat.
+24. my_text         FT_UTF8        Take your stinkin' paws off me, you damn dirty ape!
+25. my_mediumtext   FT_UTF8        Toto, I've a feeling we're not in Kansas anymore.
+26. my_longtext     FT_UTF8        I ate his liver with some fava beans and a nice chianti.
+27. enumtype        FT_UTF8        red
+28. settype         FT_UTF8        blue,black,white,yellow
 29. my_binary       FT_CHAIN       61 24 26 25
 30. my_varbinary    FT_CHAIN       64 6F 67
 31. my_tinyblob     FT_CHAIN       61 62 63 64 65 66 67
@@ -49,20 +49,20 @@ Dumping Result from prepared statement ...
 12. real9           FT_REAL18      7.98399999999999999E+00
 13. real18          FT_REAL18      5.31234234342299985E+01
 14. exact_decimal   FT_REAL18      1.23450000000000003E+02
-15. bit_type        FT_TEXTUAL     110010010011
-16. my_date         FT_TEXTUAL     1993-01-15
-17. my_datetime     FT_TEXTUAL     1972-08-01 08:00:05
-18. my_timestamp    FT_TEXTUAL     2016-05-03 20:17:51
-19. my_time         FT_TEXTUAL     04:30:02
+15. bit_type        FT_UTF8        110010010011
+16. my_date         FT_UTF8        1993-01-15
+17. my_datetime     FT_UTF8        1972-08-01 08:00:05
+18. my_timestamp    FT_UTF8        2016-05-03 20:17:51
+19. my_time         FT_UTF8        04:30:02
 20. my_year         FT_BYTE8       1988
-21. fixed_string    FT_TEXTUAL     ABCD1234EFGH5678
-22. variable_string FT_TEXTUAL     The quick brown fox jumped over the lazy dogs
-23. my_tinytext     FT_TEXTUAL     You're going to need a bigger boat.
-24. my_text         FT_TEXTUAL     Take your stinkin' paws off me, you damn dirty ape!
-25. my_mediumtext   FT_TEXTUAL     Toto, I've a feeling we're not in Kansas anymore.
-26. my_longtext     FT_TEXTUAL     I ate his liver with some fava beans and a nice chianti.
-27. enumtype        FT_TEXTUAL     red
-28. settype         FT_TEXTUAL     blue,black,white,yellow
+21. fixed_string    FT_UTF8        ABCD1234EFGH5678
+22. variable_string FT_UTF8        The quick brown fox jumped over the lazy dogs
+23. my_tinytext     FT_UTF8        You're going to need a bigger boat.
+24. my_text         FT_UTF8        Take your stinkin' paws off me, you damn dirty ape!
+25. my_mediumtext   FT_UTF8        Toto, I've a feeling we're not in Kansas anymore.
+26. my_longtext     FT_UTF8        I ate his liver with some fava beans and a nice chianti.
+27. enumtype        FT_UTF8        red
+28. settype         FT_UTF8        blue,black,white,yellow
 29. my_binary       FT_CHAIN       61 24 26 25
 30. my_varbinary    FT_CHAIN       64 6F 67
 31. my_tinyblob     FT_CHAIN       61 62 63 64 65 66 67
@@ -125,20 +125,20 @@ Dumping Result from last insert ...
 12. real9           FT_REAL18      8.72340999999999980E+01
 13. real18          FT_REAL18      1.55552137928312131E+04
 14. exact_decimal   FT_REAL18      8.75440000000000055E+02
-15. bit_type        FT_TEXTUAL     <null>
-16. my_date         FT_TEXTUAL     2014-10-20 00:00:00
-17. my_datetime     FT_TEXTUAL     <null>
-18. my_timestamp    FT_TEXTUAL     2000-03-25 15:15:00
-19. my_time         FT_TEXTUAL     1901-01-01 20:18:13
+15. bit_type        FT_UTF8        <null>
+16. my_date         FT_UTF8        2014-10-20 00:00:00
+17. my_datetime     FT_UTF8        <null>
+18. my_timestamp    FT_UTF8        2000-03-25 15:15:00
+19. my_time         FT_UTF8        1901-01-01 20:18:13
 20. my_year         FT_BYTE8       1986
-21. fixed_string    FT_TEXTUAL     <null>
-22. variable_string FT_TEXTUAL     <null>
-23. my_tinytext     FT_TEXTUAL     AdaBase is so cool!
-24. my_text         FT_TEXTUAL     <null>
-25. my_mediumtext   FT_TEXTUAL     <null>
-26. my_longtext     FT_TEXTUAL     <null>
-27. enumtype        FT_TEXTUAL     green
-28. settype         FT_TEXTUAL     yellow,black
+21. fixed_string    FT_UTF8        <null>
+22. variable_string FT_UTF8        <null>
+23. my_tinytext     FT_UTF8        AdaBase is so cool!
+24. my_text         FT_UTF8        <null>
+25. my_mediumtext   FT_UTF8        <null>
+26. my_longtext     FT_UTF8        <null>
+27. enumtype        FT_UTF8        green
+28. settype         FT_UTF8        yellow,black
 29. my_binary       FT_CHAIN       <null>
 30. my_varbinary    FT_CHAIN       20 30 31 32 33
 31. my_tinyblob     FT_CHAIN       <null>
