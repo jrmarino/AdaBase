@@ -45,6 +45,10 @@ defaults:
        trait_buffers: '<a href="trait_buffers.html">query buffer settings [DS]</a>'
        f_trait_buffers: '<a href="trait_buffers.html">func trait_query_buffers_used [DS]</a>'
        p_trait_buffers: '<a href="trait_buffers.html">proc set_trait_query_buffers_used [DS]</a>'
+       
+       trait_charset: '<a href="trait_character_set.html">character encoding</a>'
+       f_trait_charset: '<a href="trait_multiquery.html">func trait_character_set</a>'
+       p_trait_charset: '<a href="trait_multiquery.html">proc set_trait_character_set</a>'
 
        standard_logger: '<a href="standard_logger.html">standard loggers</a>'
        p_standard_logger: '<a href="standard_logger.html">proc command_standard_logger</a>'

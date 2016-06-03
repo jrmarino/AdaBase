@@ -15,13 +15,17 @@ information about the the database client, such as the client library version
 number.</p>
 <pre class="code">
 with Ada.Text_IO;
+with Ada.Exceptions;
 with AdaBase;
 with Connect;
+with GNAT.Traceback.Symbolic;
 
 procedure Traits is
 
+   package SYM renames GNAT.Traceback.Symbolic;
    package TIO renames Ada.Text_IO;
    package CON renames Connect;
+   package EX  renames Ada.Exceptions;
 
    --  Database_Driver renames specific driver using subtype
 
@@ -44,6 +48,8 @@ procedure Traits is
       TIO.Put_Line ("   column case: " & driver.trait_column_case'Img);
       TIO.Put_Line ("    error_mode: " & driver.trait_error_mode'Img);
       TIO.Put_Line ("     blob_size: " & driver.trait_max_blob_size'Img);
+      TIO.Put_Line (" multiquery on: " & driver.trait_multiquery_enabled'Img);
+      TIO.Put_Line ("      encoding: " & driver.trait_character_set);
    end display_traits;
 
 begin
@@ -53,21 +59,35 @@ begin
    display_versions (driver => CON.DR);
    display_traits   (driver => CON.DR);
 
+   CON.DR.disconnect;
+
    CON.DR.set_trait_autocommit    (trait => True);
    CON.DR.set_trait_column_case   (trait => AdaBase.upper_case);
    CON.DR.set_trait_error_mode    (trait => AdaBase.silent);
    CON.DR.set_trait_max_blob_size (trait => 2 ** 16);
 
+   CON.DR.set_trait_multiquery_enabled (True);
+   CON.DR.set_trait_character_set ("");
+
+   CON.connect_database;
    display_traits   (driver => CON.DR);
    CON.DR.disconnect;
+
+exception
+   when E : others =>
+      TIO.Put_Line ("");
+      TIO.Put_Line ("exception name: " & EX.Exception_Name (E));
+      TIO.Put_Line ("exception msg : " & EX.Exception_Message (E));
+      TIO.Put_Line ("Traceback:");
+      TIO.Put_Line (SYM.Symbolic_Traceback (E));
 
 end Traits;
 </pre>
 <p class="caption">Example code: testcases/traits/traits.adb</p>
 <br/>
 <pre class="output">
-   client info: 5.6.27
-client version: 5.06.27
+   client info: 5.6.30
+client version: 5.06.30
    server info: 5.6.27
 server version: 5.06.27
         driver: MySQL 5.5+ native driver
@@ -76,17 +96,21 @@ server version: 5.06.27
    column case: NATURAL_CASE
     error_mode: WARNING
      blob_size:  4096
+ multiquery on: FALSE
+      encoding: UTF8
 
     autocommit: TRUE
    column case: UPPER_CASE
     error_mode: SILENT
      blob_size:  65536
+ multiquery on: TRUE
+      encoding: LATIN1
 </pre>
 <p class="caption">Output using the MySQL driver</p>
 <br/>
 <pre class="output">
-   client info: 2016-04-08 15:09:49 fe7d3b75fe1bde41511b323925af8ae1b910bc4d
-client version: 3.12.1
+   client info: 2016-05-18 10:57:30 fc49f556e48970561d7ab6a2f24fdd7d9eb81ff2
+client version: 3.13.0
    server info: Not applicable
 server version: Not applicable
         driver: SQLite3 native driver
@@ -95,17 +119,21 @@ server version: Not applicable
    column case: NATURAL_CASE
     error_mode: WARNING
      blob_size:  4096
+ multiquery on: FALSE
+      encoding: UTF-8
 
     autocommit: TRUE
    column case: UPPER_CASE
     error_mode: SILENT
      blob_size:  65536
+ multiquery on: TRUE
+      encoding: UTF-8
 </pre>
 <p class="caption">Output using the SQLite driver</p>
 <br/>
 <pre class="output">
-   client info: 9.05.02
-client version: 9.05.02
+   client info: 9.05.03
+client version: 9.05.03
    server info: Protocol 3.0
 server version: 9.05.02
         driver: PostgreSQL 9.1+ native driver
@@ -114,11 +142,15 @@ server version: 9.05.02
    column case: NATURAL_CASE
     error_mode: WARNING
      blob_size:  4096
+ multiquery on: FALSE
+      encoding: UTF8
 
     autocommit: TRUE
    column case: UPPER_CASE
     error_mode: SILENT
      blob_size:  65536
+ multiquery on: TRUE
+      encoding: UTF8
 </pre>
 <p class="caption">Output using the PostgreSQL driver</p>
 <br/>
@@ -136,5 +168,6 @@ server version: 9.05.02
     <li>{{ page.trait_compressed }}</li>
     <li>{{ page.trait_multiquery }}</li>
     <li>{{ page.trait_buffers }}</li>
+    <li>{{ page.trait_charset }}</li>
   </ul>
 </div>
