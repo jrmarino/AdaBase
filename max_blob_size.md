@@ -35,8 +35,9 @@ anytime.</p>
     <li>{{ page.trait_autocommit }}</li>
     <li>{{ page.trait_column_case}}</li>
     <li>{{ page.trait_error_mode }}</li>
-    <li>{{ page.trait_compressed }}</li>
     <li>{{ page.trait_multiquery }}</li>
+    <li>{{ page.trait_charset }}</li>
+    <li>{{ page.trait_compressed }}</li>
     <li>{{ page.trait_buffers }}</li>
   </ul>
 </div>
