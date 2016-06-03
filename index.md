@@ -56,11 +56,11 @@ title: AdaBase by jrmarino
 <h3>AdaBase.Driver (set attributes)</h3>
 <ul>
 <li>{{ page.p_trait_autocommit }}</li>
+<li>{{ page.p_trait_blob_size }}</li>
+<li>{{ page.p_trait_charset }}</li>
 <li>{{ page.p_trait_column_case }}</li>
 <li>{{ page.p_trait_error_mode }}</li>
-<li>{{ page.p_trait_blob_size }}</li>
 <li>{{ page.p_trait_multiquery }}</li>
-<li>{{ page.p_trait_charset }}</li>
 <li>{{ page.p_trait_compressed }}</li>
 <li>{{ page.p_trait_buffers }}</li>
 </ul>
@@ -130,6 +130,8 @@ title: AdaBase by jrmarino
 <li>{{ page.f_field_as_chain }}</li>
 <li>{{ page.f_field_as_enumtype }}</li>
 <li>{{ page.f_field_as_settype }}</li>
+<li>{{ page.f_field_as_bits }}</li>
+<li>{{ page.f_field_as_utf8 }}</li>
 <li>{{ page.f_field_is_null }}</li>
 <li>{{ page.f_field_native_type }}</li>
 <li>{{ page.f_spawn_field }}</li>

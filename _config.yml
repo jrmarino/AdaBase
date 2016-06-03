@@ -171,6 +171,8 @@ defaults:
        f_field_as_chain: '<a href="res_std_field.html">func as_chain</a>'
        f_field_as_enumtype: '<a href="res_std_field.html">func as_enumtype</a>'
        f_field_as_settype: '<a href="res_std_field.html">func as_settype</a>'
+       f_field_as_bits: '<a href="res_std_field.html">func as_bits</a>'
+       f_field_as_utf8: '<a href="res_std_field.html">func as_utf8</a>'
        f_field_is_null: '<a href="res_std_field.html">func is_null</a>'
        f_field_native_type: '<a href="res_std_field.html">func native_type</a>'
 
