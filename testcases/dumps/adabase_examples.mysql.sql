@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 5.6.27, for DragonFly (x86_64)
+-- MySQL dump 10.13  Distrib 5.6.30, for DragonFly (x86_64)
 --
 -- Host: localhost    Database: adabase_examples
 -- ------------------------------------------------------
@@ -106,6 +106,31 @@ INSERT INTO `fruits` VALUES (1,'apple','red',95),(2,'apricot','orange',30),(3,'a
 UNLOCK TABLES;
 
 --
+-- Table structure for table `funny_names`
+--
+
+DROP TABLE IF EXISTS `funny_names`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `funny_names` (
+  `id` int(10) unsigned NOT NULL,
+  `surname` varchar(45) DEFAULT NULL,
+  `first_name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `funny_names`
+--
+
+LOCK TABLES `funny_names` WRITE;
+/*!40000 ALTER TABLE `funny_names` DISABLE KEYS */;
+INSERT INTO `funny_names` VALUES (1,'Björnstjerna','Köl'),(2,'Lång','Söderlund'),(3,'NÚÑEZ','José Antonio'),(4,'بهخێربێن','ترحيب');
+/*!40000 ALTER TABLE `funny_names` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `nhl_schedule`
 --
 
@@ -199,4 +224,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-05-26 17:37:46
+-- Dump completed on 2016-06-03 20:14:54

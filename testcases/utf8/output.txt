@@ -1,0 +1,22 @@
+Use terminal encoding UTF-8 or ISO8859-1
+Either UTF8 fields or string fields will look right, but not both
+
+    UTF8: KÃ¶l BjÃ¶rnstjerna
+  STRING: Köl Björnstjerna
+ WSTRING: Köl Björnstjerna
+WWSTRING: Köl Björnstjerna
+
+    UTF8: SÃ¶derlund LÃ¥ng
+  STRING: Söderlund Lång
+ WSTRING: Söderlund Lång
+WWSTRING: Söderlund Lång
+
+    UTF8: JosÃ© Antonio NÃšÃ‘EZ
+  STRING: José Antonio NÚÑEZ
+ WSTRING: José Antonio NÚÑEZ
+WWSTRING: José Antonio NÚÑEZ
+
+    UTF8: ØªØ±Ø­ÙŠØ¨ Ø¨Ù‡Ø®ÛŽØ±Ø¨ÛŽÙ†
+  STRING:               
+ WSTRING: ["062A"]["0631"]["062D"]["064A"]["0628"] ["0628"]["0647"]["062E"]["06CE"]["0631"]["0628"]["06CE"]["0646"]
+WWSTRING: ["062A"]["0631"]["062D"]["064A"]["0628"] ["0628"]["0647"]["062E"]["06CE"]["0631"]["0628"]["06CE"]["0646"]
