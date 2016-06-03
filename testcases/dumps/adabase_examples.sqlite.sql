@@ -69,4 +69,12 @@ CREATE TABLE nhl_teams (
 INSERT INTO nhl_teams VALUES (0,'-','-','-'),(1,'NJ','New Jersey','Devils'),(2,'NYI','New York','Islanders'),(3,'NYR','New York','Rangers'),(4,'PHI','Philadelphia','Flyers'),(5,'PIT','Pittsburg','Penguins'),(6,'BOS','Boston','Bruins'),(7,'BUF','Buffalo','Sabres'),(8,'MON','Montreal','Canadiens'),(9,'OTT','Ottawa','Senators'),(10,'TOR','Toronto','Maple Leafs'),(11,'ATL','Atlanta','Thrashers'),(12,'CAR','Carolina','Hurricanes'),(13,'FL','Florida','Panthers'),(15,'WAS','Washington','Capitols'),(16,'CHI','Chicago','Blackhawks'),(17,'CLM','Columbus','Blue Jackets'),(18,'DET','Detroit','Red Wings'),(19,'NAS','Nashville','Predators'),(20,'STL','St. Louis','Blues'),(21,'CAL','Calgary','Flames'),(22,'COL','Colorado','Avalanche'),(23,'EDM','Edmunton','Oilers'),(24,'MIN','Minnesota','Wild'),(25,'VAN','Vancouver','Canucks'),(26,'ANA','Anaheim','Ducks'),(27,'DAL','Dallas','Stars'),(28,'LA','Los Angeles','Kings'),(29,'PHO','Phoenix','Coyotes'),(30,'SJ','San Jose','Sharks'),(31,'WIN','Winnepeg','Jets');
 CREATE INDEX "idx_nhl_schedule_yyyswww~gametime" ON "nhl_schedule" (yyyswww,gametime);
 CREATE INDEX "idx_nhl_schedule_mfc_index" ON "nhl_schedule" (mfc_index);
+
+CREATE TABLE `funny_names` (
+  id integer  NOT NULL
+,  surname varchar(45) DEFAULT NULL
+,  first_name varchar(45) DEFAULT NULL
+,  PRIMARY KEY (`id`)
+);
+INSERT INTO `funny_names` VALUES (1,'Björnstjerna','Köl'),(2,'Lång','Söderlund'),(3,'NÚÑEZ','José Antonio'),(4,'بهخێربێن','ترحيب');
 END TRANSACTION;

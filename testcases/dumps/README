@@ -17,3 +17,11 @@ alter table fruits auto_increment = 30
 
 postgresql example:
 ALTER SEQUENCE fruits_id_seq RESTART WITH 30
+
+
+--------------
+--  IMPORT  --
+--------------
+sqite3:
+sqlite3 adabase.sqlite < adabase_examples.sqlite.sql
+mv adabase.sqlite /home/marino/
