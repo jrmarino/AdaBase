@@ -134,9 +134,9 @@ package body AdaBase.Connection.Base.SQLite is
    ---------------
    function PUTF82S (cstr : BND.ICS.chars_ptr) return String
    is
-      rawstr : String := BND.ICS.Value (cstr);
+      rawstr : CT.UTF8 := BND.ICS.Value (cstr);
    begin
-      return CT.UTF8S (CT.UTF8 (rawstr));
+      return CT.UTF8S (rawstr);
    end PUTF82S;
 
 
@@ -685,9 +685,9 @@ package body AdaBase.Connection.Base.SQLite is
          return CT.blank;
       end if;
       declare
-         asString : String := BND.ICS.Value (result);
+         asString : CT.UTF8 := BND.ICS.Value (result);
       begin
-         return CT.SUS (CT.SUTF8 (asString));
+         return CT.SUS (asString);
       end;
    end retrieve_text;
 
