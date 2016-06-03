@@ -195,6 +195,7 @@ Column 4:
     <li>{{ page.res_data_exhausted }}</li>
     <li>{{ page.res_column }}</li>
     <li>{{ page.res_std_field }}</li>
+    <li>{{ page.trait_charset }}</li>
     <li>{{ page.connect }}</li>
     <li>{{ page.disconnect }}</li>
   </ul>
