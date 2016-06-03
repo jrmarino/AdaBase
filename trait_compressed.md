@@ -134,6 +134,7 @@ server version: 5.06.27
     <li>{{ page.trait_error_mode }}</li>
     <li>{{ page.trait_blob_size }}</li>
     <li>{{ page.trait_multiquery }}</li>
+    <li>{{ page.trait_charset }}</li>
     <li>{{ page.trait_buffers }}</li>
     <li>{{ page.standard_logger }}</li>
   </ul>
