@@ -13,6 +13,7 @@ procedure DS_Fetch is
 
 begin
 
+   CON.DR.set_trait_character_set ("");  --  Native charset (Latin1), not UTF-8
    CON.connect_database;
 
    declare
