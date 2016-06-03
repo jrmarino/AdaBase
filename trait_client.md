@@ -162,11 +162,11 @@ server version: 9.05.02
     <li>{{ page.trait_server }}</li>
     <li>{{ page.trait_driver }}</li>
     <li>{{ page.trait_autocommit }}</li>
+    <li>{{ page.trait_blob_size }}</li>
+    <li>{{ page.trait_charset }}</li>
     <li>{{ page.trait_column_case}}</li>
     <li>{{ page.trait_error_mode }}</li>
-    <li>{{ page.trait_blob_size }}</li>
     <li>{{ page.trait_multiquery }}</li>
-    <li>{{ page.trait_charset }}</li>
     <li>{{ page.trait_compressed }}</li>
     <li>{{ page.trait_buffers }}</li>
   </ul>

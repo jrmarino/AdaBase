@@ -40,9 +40,9 @@ for usage examples.</p>
     <li>{{ page.trait_driver }}</li>
     <li>{{ page.trait_autocommit }}</li>
     <li>{{ page.trait_blob_size }}</li>
+    <li>{{ page.trait_charset }}</li>
     <li>{{ page.trait_column_case}}</li>
     <li>{{ page.trait_multiquery }}</li>
-    <li>{{ page.trait_charset }}</li>
     <li>{{ page.trait_compressed }}</li>
     <li>{{ page.trait_buffers }}</li>
   </ul>
