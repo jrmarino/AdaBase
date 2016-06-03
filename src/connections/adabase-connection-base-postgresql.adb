@@ -1630,4 +1630,34 @@ package body AdaBase.Connection.Base.PostgreSQL is
    end set_character_set;
 
 
+   ---------------------
+   --  character_set  --
+   ---------------------
+   overriding
+   function character_set (conn : PostgreSQL_Connection) return String is
+   begin
+      if conn.prop_active then
+         declare
+            pgres   : BND.PGresult_Access;
+         begin
+            --  private_select can raise exception, but don't catch it
+            pgres := conn.private_select ("SHOW CLIENT_ENCODING");
+            if conn.field_is_null (pgres, 0, 0) then
+               --  This should never happen
+               BND.PQclear (pgres);
+               return "UNEXPECTED: encoding not set";
+            end if;
+            declare
+               field : constant String := conn.field_string (pgres, 0, 0);
+            begin
+               BND.PQclear (pgres);
+               return field;
+            end;
+         end;
+      else
+         return CT.USS (conn.character_set);
+      end if;
+   end character_set;
+
+
 end AdaBase.Connection.Base.PostgreSQL;

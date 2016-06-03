@@ -1146,4 +1146,25 @@ package body AdaBase.Connection.Base.MySQL is
    end set_character_set;
 
 
+   ---------------------
+   --  character_set  --
+   ---------------------
+   overriding
+   function character_set (conn : MySQL_Connection) return String is
+   begin
+      if conn.prop_active then
+         declare
+            set    : ABM.ICS.chars_ptr :=
+                     ABM.mysql_character_set_name (handle => conn.handle);
+            setstr : String := ABM.ICS.Value (Item => set);
+         begin
+            ABM.ICS.Free (set);
+            return setstr;
+         end;
+      else
+         return CT.USS (conn.character_set);
+      end if;
+   end character_set;
+
+
 end AdaBase.Connection.Base.MySQL;
