@@ -317,6 +317,7 @@ private
      (BND.IC.char_array, BND.ICS.char_array_access);
 
    procedure establish_uniform_encoding (conn : out PostgreSQL_Connection);
+   procedure retrieve_uniform_encoding  (conn : out PostgreSQL_Connection);
 
    overriding
    procedure finalize (conn : in out PostgreSQL_Connection);

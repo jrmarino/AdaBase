@@ -329,6 +329,7 @@ package body AdaBase.Connection.Base.MySQL is
       end;
 
       conn.establish_uniform_encoding;
+      conn.retrieve_uniform_encoding;
       conn.setTransactionIsolation (conn.prop_trax_isolation);
       conn.setAutoCommit (conn.prop_auto_commit);
 
@@ -1135,14 +1136,12 @@ package body AdaBase.Connection.Base.MySQL is
    overriding
    procedure set_character_set (conn : out MySQL_Connection; charset : String)
    is
-      charsetuc : String := ACH.To_Upper (charset);
    begin
       if conn.prop_active then
          raise NOT_WHILE_CONNECTED
            with "You may only alter the character set prior to connection";
       end if;
       conn.character_set := CT.SUS (charset);
-      conn.encoding_is_utf8 := (charsetuc = "UTF8");
    end set_character_set;
 
 
@@ -1166,6 +1165,19 @@ package body AdaBase.Connection.Base.MySQL is
          return CT.USS (conn.character_set);
       end if;
    end character_set;
+
+
+   ---------------------------------
+   --  retrieve_uniform_encoding  --
+   ---------------------------------
+   procedure retrieve_uniform_encoding (conn : out MySQL_Connection)
+   is
+      charset   : String := character_set (conn => conn);
+      charsetuc : String := ACH.To_Upper (charset);
+   begin
+      conn.encoding_is_utf8 := (charsetuc = "UTF8");
+      conn.character_set := CT.SUS (charset);
+   end retrieve_uniform_encoding;
 
 
 end AdaBase.Connection.Base.MySQL;

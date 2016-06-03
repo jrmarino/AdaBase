@@ -241,6 +241,7 @@ private
    function S2P (S : String)  return ABM.ICS.chars_ptr;
 
    procedure establish_uniform_encoding (conn : out MySQL_Connection);
+   procedure retrieve_uniform_encoding  (conn : out MySQL_Connection);
 
    overriding
    procedure finalize (conn : in out MySQL_Connection);

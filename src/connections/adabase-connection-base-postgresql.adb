@@ -770,6 +770,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
       conn.info_server         := conn.get_server_info;
 
       conn.establish_uniform_encoding;
+      conn.retrieve_uniform_encoding;
       conn.setTransactionIsolation (conn.prop_trax_isolation);
       if not conn.prop_auto_commit then
          conn.begin_transaction;
@@ -1282,7 +1283,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
             typelen : constant Integer := Integer'Value (s_tlen);
             payload : data_type_rec :=
               (data_type => convert_data_type
-                 (s_name, typcat, typelen, conn.utf8_encoding));
+                 (s_name, typcat, typelen, conn.encoding_is_utf8));
          begin
             conn.data_types.Insert (Key      => Integer'Value (s_oid),
                                     New_Item => payload);
@@ -1617,16 +1618,13 @@ package body AdaBase.Connection.Base.PostgreSQL is
    -------------------------
    overriding
    procedure set_character_set (conn : out PostgreSQL_Connection;
-                                charset : String)
-   is
-      charsetuc : String := ACH.To_Upper (charset);
+                                charset : String) is
    begin
       if conn.prop_active then
          raise NOT_WHILE_CONNECTED
            with "You may only alter the character set prior to connection";
       end if;
       conn.character_set := CT.SUS (charset);
-      conn.encoding_is_utf8 := (charsetuc = "UTF8");
    end set_character_set;
 
 
@@ -1659,6 +1657,19 @@ package body AdaBase.Connection.Base.PostgreSQL is
          return CT.USS (conn.character_set);
       end if;
    end character_set;
+
+
+   ---------------------------------
+   --  retrieve_uniform_encoding  --
+   ---------------------------------
+   procedure retrieve_uniform_encoding (conn : out PostgreSQL_Connection)
+   is
+      charset   : String := character_set (conn => conn);
+      charsetuc : String := ACH.To_Upper (charset);
+   begin
+      conn.encoding_is_utf8 := (charsetuc = "UTF8");
+      conn.character_set := CT.SUS (charset);
+   end retrieve_uniform_encoding;
 
 
 end AdaBase.Connection.Base.PostgreSQL;
