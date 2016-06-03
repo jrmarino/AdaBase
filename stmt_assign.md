@@ -5,25 +5,32 @@ title: Assign values and variables to markers of Prepared Statements
 <div class="leftside">
 <pre class="code">
 with CommonText;
-with Ada.Calendar;
+with Spatial_Data;
+with Ada.Calendar.Formatting;
 with Ada.Strings.Wide_Unbounded;
 with Ada.Strings.Wide_Wide_Unbounded;
+with Ada.Strings.UTF_Encoding;
 
 package AdaBase.Results is
 
    package CT   renames CommonText;
    package AC   renames Ada.Calendar;
+   package ACF  renames Ada.Calendar.Formatting;
    package SUW  renames Ada.Strings.Wide_Unbounded;
    package SUWW renames Ada.Strings.Wide_Wide_Unbounded;
+   package SUTF renames Ada.Strings.UTF_Encoding;
+   package SPAT  renames Spatial_Data;
 
    subtype Textual   is CT.Text;
    subtype Textwide  is SUW.Unbounded_Wide_String;
    subtype Textsuper is SUWW.Unbounded_Wide_Wide_String;
+   subtype Text_UTF8 is SUTF.UTF_8_String;
 
    -------------------------------------------
    --  Supported Field Types (Standardized) --
    -------------------------------------------
 
+   type Bit1   is mod 2 ** 1;
    type NByte1 is mod 2 ** 8;
    type NByte2 is mod 2 ** 16;
    type NByte3 is mod 2 ** 24;
@@ -41,48 +48,51 @@ package AdaBase.Results is
 
    type Enumtype is record enumeration : Textual; end record;
    type Settype is array (Positive range <>) of Enumtype;
-   type Chain is array (Positive range <>) of NByte1;
+   type Chain   is array (Positive range <>) of NByte1;
+   type Bits    is array (Natural range <>)  of Bit1;
 
-   type NByte0_Access  is access all NByte0;
-   type NByte1_Access  is access all NByte1;
-   type NByte2_Access  is access all NByte2;
-   type NByte3_Access  is access all NByte3;
-   type NByte4_Access  is access all NByte4;
-   type NByte8_Access  is access all NByte8;
-   type Byte1_Access   is access all Byte1;
-   type Byte2_Access   is access all Byte2;
-   type Byte3_Access   is access all Byte3;
-   type Byte4_Access   is access all Byte4;
-   type Byte8_Access   is access all Byte8;
-   type Real9_Access   is access all Real9;
-   type Real18_Access  is access all Real18;
-   type Str1_Access    is access all Textual;
-   type Str2_Access    is access all Textwide;
-   type Str4_Access    is access all Textsuper;
-   type Time_Access    is access all AC.Time;
-   type Chain_Access   is access all Chain;
-   type Enum_Access    is access all Enumtype;
-   type Settype_Access is access all Settype;
+   type NByte0_Access   is access all NByte0;
+   type NByte1_Access   is access all NByte1;
+   type NByte2_Access   is access all NByte2;
+   type NByte3_Access   is access all NByte3;
+   type NByte4_Access   is access all NByte4;
+   type NByte8_Access   is access all NByte8;
+   type Byte1_Access    is access all Byte1;
+   type Byte2_Access    is access all Byte2;
+   type Byte3_Access    is access all Byte3;
+   type Byte4_Access    is access all Byte4;
+   type Byte8_Access    is access all Byte8;
+   type Real9_Access    is access all Real9;
+   type Real18_Access   is access all Real18;
+   type Str1_Access     is access all Textual;
+   type Str2_Access     is access all Textwide;
+   type Str4_Access     is access all Textsuper;
+   type Time_Access     is access all AC.Time;
+   type Chain_Access    is access all Chain;
+   type Enum_Access     is access all Enumtype;
+   type Settype_Access  is access all Settype;
+   type Geometry_Access is access all SPAT.Geometry;
+   type Bits_Access     is access all Bits;
+   type S_UTF8_Access   is access all Text_UTF8;
 
 end AdaBase.Results;
 </pre>
 <p>
-This page documents 82 overloaded assign functions, four for each standard
-data type and two additional ones for <i>String</i> variables which are
-automatically converted to <i>textual</i> types.  These functions bind to the
+This page documents 88 overloaded assign functions, four for each standard
+data type.  These functions bind to the
 markers of a previously prepared statement.
 </p>
 <p>
-The first 20 functions reference the marker by its numeric index starting from 1
+The first 22 functions reference the marker by its numeric index starting from 1
 and bind the marker to a variable matching the data type of the marker.
-The next 20 functions do the same thing except they reference the marker by its
+The next 22 functions do the same thing except they reference the marker by its
 name, which requires the use of named parameters instead of question marks.
-The values of the variables involved in these 40 functions are not evaluated until
+The values of the variables involved in these 44 functions are not evaluated until
 the <b>execute</b> command is issued.
 </p>
 <p>
-The next 21 functions reference the marker by its numeric index and define its
-value with a constant of the same data type of the marker.  The final 21
+The next 22 functions reference the marker by its numeric index and define its
+value with a constant of the same data type of the marker.  The final 22
 functions are similar, but reference the marker by their names.
 </p>
 <h3>Boolean function<br/>
@@ -125,12 +135,16 @@ AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Chain_Access)<
 AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Enum_Access)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Settype_Access)</h3>
+<h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Bits_Access)</h3>
+<h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.S_UTF8_Access)</h3>
 <p>
 Prior to issuing the <b>execute</b> command of the statement object, the values of
 the markers must be defined.  One method is to pass access to a variable of the same
-type as the marker.  The first 20 of the 80 overloaded bind functions accept an index
+type as the marker.  The first 22 of the 88 overloaded bind functions accept an index
 starting with 1 that matches the column number of the result row.  The <i>vaxx</i>
-argument accepts a pointer to one of the 20 native data type.  If the access type
+argument accepts a pointer to one of the 22 native data type.  If the access type
 assigned to <i>vaxx</i> is set to null, the driver will attempt to set the parameter
 to NULL, e.g. insert NULL into a record's field rather than a value.
 </p>
@@ -180,8 +194,12 @@ AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Chain_Access)<
 AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Enum_Access)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Settype_Access)</h3>
+<h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Bits_Access)</h3>
+<h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.S_UTF8_Access)</h3>
 <p>
-The next set of 21 functions are similar, but rather than referring to the marker
+The next set of 22 functions are similar, but rather than referring to the marker
 position with a numeric index, it accepts a String which must match of the name of the
 parameter defined in the original SQL string.  For example, if the SQL given to the
 <b>prepare</b> function is "SELECT ALL * FROM fruits WHERE color = :color", the name
@@ -214,8 +232,6 @@ AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Real9)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Real18)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : String)</h3>
-<h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Textual)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Textwide)</h3>
@@ -229,8 +245,12 @@ AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Chain)</h3>
 AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Enum)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Settype)</h3>
+<h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Bits)</h3>
+<h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].assign (index : Positive; vaxx : AR.Text_UTF8)</h3>
 <p>
-These 21 functions assign values immediately to markers referenced by their
+These 22 functions assign values immediately to markers referenced by their
 numeric index.
 </p>
 <h3>Boolean function<br/>
@@ -260,8 +280,6 @@ AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Real9)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Real18)</h3>
 <h3>Boolean function<br/>
-AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : String)</h3>
-<h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Textual)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Textwide)</h3>
@@ -275,8 +293,12 @@ AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Chain)</h3>
 AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Enum)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Settype)</h3>
+<h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.Bits)</h3>
+<h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].assign (moniker : String; vaxx : AR.S_UTF8_Access)</h3>
 <p>
-These 20 functions assign values immediately to markers referenced by their
+These 22 functions assign values immediately to markers referenced by their
 names.
 </p>
 <br/>

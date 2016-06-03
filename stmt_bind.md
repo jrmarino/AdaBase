@@ -5,25 +5,32 @@ title: Bind variables to specific columns for Fetching
 <div class="leftside">
 <pre class="code">
 with CommonText;
-with Ada.Calendar;
+with Spatial_Data;
+with Ada.Calendar.Formatting;
 with Ada.Strings.Wide_Unbounded;
 with Ada.Strings.Wide_Wide_Unbounded;
+with Ada.Strings.UTF_Encoding;
 
 package AdaBase.Results is
 
    package CT   renames CommonText;
    package AC   renames Ada.Calendar;
+   package ACF  renames Ada.Calendar.Formatting;
    package SUW  renames Ada.Strings.Wide_Unbounded;
    package SUWW renames Ada.Strings.Wide_Wide_Unbounded;
+   package SUTF renames Ada.Strings.UTF_Encoding;
+   package SPAT  renames Spatial_Data;
 
    subtype Textual   is CT.Text;
    subtype Textwide  is SUW.Unbounded_Wide_String;
    subtype Textsuper is SUWW.Unbounded_Wide_Wide_String;
+   subtype Text_UTF8 is SUTF.UTF_8_String;
 
    -------------------------------------------
    --  Supported Field Types (Standardized) --
    -------------------------------------------
 
+   type Bit1   is mod 2 ** 1;
    type NByte1 is mod 2 ** 8;
    type NByte2 is mod 2 ** 16;
    type NByte3 is mod 2 ** 24;
@@ -41,35 +48,39 @@ package AdaBase.Results is
 
    type Enumtype is record enumeration : Textual; end record;
    type Settype is array (Positive range <>) of Enumtype;
-   type Chain is array (Positive range <>) of NByte1;
+   type Chain   is array (Positive range <>) of NByte1;
+   type Bits    is array (Natural range <>)  of Bit1;
 
-   type NByte0_Access  is access all NByte0;
-   type NByte1_Access  is access all NByte1;
-   type NByte2_Access  is access all NByte2;
-   type NByte3_Access  is access all NByte3;
-   type NByte4_Access  is access all NByte4;
-   type NByte8_Access  is access all NByte8;
-   type Byte1_Access   is access all Byte1;
-   type Byte2_Access   is access all Byte2;
-   type Byte3_Access   is access all Byte3;
-   type Byte4_Access   is access all Byte4;
-   type Byte8_Access   is access all Byte8;
-   type Real9_Access   is access all Real9;
-   type Real18_Access  is access all Real18;
-   type Str1_Access    is access all Textual;
-   type Str2_Access    is access all Textwide;
-   type Str4_Access    is access all Textsuper;
-   type Time_Access    is access all AC.Time;
-   type Chain_Access   is access all Chain;
-   type Enum_Access    is access all Enumtype;
-   type Settype_Access is access all Settype;
+   type NByte0_Access   is access all NByte0;
+   type NByte1_Access   is access all NByte1;
+   type NByte2_Access   is access all NByte2;
+   type NByte3_Access   is access all NByte3;
+   type NByte4_Access   is access all NByte4;
+   type NByte8_Access   is access all NByte8;
+   type Byte1_Access    is access all Byte1;
+   type Byte2_Access    is access all Byte2;
+   type Byte3_Access    is access all Byte3;
+   type Byte4_Access    is access all Byte4;
+   type Byte8_Access    is access all Byte8;
+   type Real9_Access    is access all Real9;
+   type Real18_Access   is access all Real18;
+   type Str1_Access     is access all Textual;
+   type Str2_Access     is access all Textwide;
+   type Str4_Access     is access all Textsuper;
+   type Time_Access     is access all AC.Time;
+   type Chain_Access    is access all Chain;
+   type Enum_Access     is access all Enumtype;
+   type Settype_Access  is access all Settype;
+   type Geometry_Access is access all SPAT.Geometry;
+   type Bits_Access     is access all Bits;
+   type S_UTF8_Access   is access all Text_UTF8;
 
 end AdaBase.Results;
 </pre>
 <p>
-This page documents 40 similar bind functions, two for each standard data type.
-These functions bind to the columns of fetched data rows.  The first 20 functions
-reference the column by its numeric index, and the last 20 functions reference
+This page documents 44 similar bind functions, two for each standard data type.
+These functions bind to the columns of fetched data rows.  The first 22 functions
+reference the column by its numeric index, and the last 22 functions reference
 the column through an associative array of the column's name.
 </p>
 <h3>Boolean function<br/>
@@ -112,14 +123,18 @@ AdaBase.Statement.Base.[STMT].bind (index : Positive; vaxx : AR.Chain_Access)</h
 AdaBase.Statement.Base.[STMT].bind (index : Positive; vaxx : AR.Enum_Access)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].bind (index : Positive; vaxx : AR.Settype_Access)</h3>
+<h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].bind (index : Positive; vaxx : AR.Bits_Access)</h3>
+<h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].bind (index : Positive; vaxx : AR.S_UTF8_Access)</h3>
 <p>
 Prior to issuing the <b>fetch_bound</b> command and after the query has been
 executed, the desired columns must be bound to variables.  The data from unbound
 columns is not accessible.  The variables to be bound must be the exact same
 datatype as native type of the column itself (this can be determined with the
-<b>native_type</b> function.  The first 20 of the 40 overloaded bind functions
+<b>native_type</b> function.  The first 22 of the 44 overloaded bind functions
 accept an index starting with 1 that matches the column number of the result
-row.  The <i>vaxx</i> argument accepts a pointer to one of the 20 native
+row.  The <i>vaxx</i> argument accepts a pointer to one of the 22 native
 data type.
 </p>
 <p>Binding is something that only has to be done once per query, regardless of
@@ -170,10 +185,26 @@ AdaBase.Statement.Base.[STMT].bind (heading : String; vaxx : AR.Chain_Access)</h
 AdaBase.Statement.Base.[STMT].bind (heading : String; vaxx : AR.Enum_Access)</h3>
 <h3>Boolean function<br/>
 AdaBase.Statement.Base.[STMT].bind (heading : String; vaxx : AR.Settype_Access)</h3>
+<h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].bind (heading : String; vaxx : AR.Bits_Access)</h3>
+<h3>Boolean function<br/>
+AdaBase.Statement.Base.[STMT].bind (heading : String; vaxx : AR.S_UTF8_Access)</h3>
 <p>
-The second set of 20 functions are similar, but rather than referring to the column
+The second set of 22 functions are similar, but rather than referring to the column
 position with a numeric index, it accepts a String which must match of the column
 names of the result set.
+</p>
+<p>
+Note that while the data type of the bound variable must normally exactly match that
+of the data field, there is some flexibility.  For example, if the field is an unsigned
+single byte, you could bind a 2, 3, 4, or 8 byte variable to it because it will alway
+fit.</p>
+<p>
+Another case is binding an ft_textual type to a Text_UTF8 field.  The former
+is an unbounded type while the latter is a fixed string -- unless the field length
+is exactly fixed in all cases, it's not practical to bind to a Text_UTF8 field.  Thus
+an ft_textual variable can be used instead, but the user has to be aware that its
+contents are UTF-8 encoded, not standard ASCII.
 </p>
 <br/>
 <p class="caption">See {{ page.query_select }} and {{ page.stmt_iterate }}
