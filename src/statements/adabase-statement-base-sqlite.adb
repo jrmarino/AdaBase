@@ -212,7 +212,7 @@ package body AdaBase.Statement.Base.SQLite is
 
             case info.sqlite_type is
                when BND.SQLITE_INTEGER => info.field_type := ft_byte8;
-               when BND.SQLITE_TEXT    => info.field_type := ft_textual;
+               when BND.SQLITE_TEXT    => info.field_type := ft_utf8;
                when BND.SQLITE_BLOB    => info.field_type := ft_chain;
                when BND.SQLITE_FLOAT   => info.field_type := ft_real18;
                when BND.SQLITE_NULL    => info.field_type := ft_nbyte0;
@@ -519,7 +519,7 @@ package body AdaBase.Statement.Base.SQLite is
                      dvariant :=
                        (datatype => ft_real18,
                         v12 => conn.retrieve_double (Stmt.stmt_handle, scol));
-                  when ft_textual =>
+                  when ft_utf8 =>
                      declare
                         datatext : AR.Textual :=
                           conn.retrieve_text (Stmt.stmt_handle, scol);
@@ -528,8 +528,8 @@ package body AdaBase.Statement.Base.SQLite is
                            dvariant := (datatype => ft_bits,
                                         v20 => datatext);
                         else
-                           dvariant := (datatype => ft_textual,
-                                        v13 => datatext);
+                           dvariant := (datatype => ft_utf8,
+                                        v21 => datatext);
                         end if;
                      end;
                   when ft_chain   => null;
@@ -544,7 +544,7 @@ package body AdaBase.Statement.Base.SQLite is
                                (stmt  => Stmt.stmt_handle,
                                 index => scol,
                                 maxsz => Stmt.con_max_blob)));
-                  when ft_nbyte0 | ft_byte8 | ft_real18 | ft_textual =>
+                  when ft_nbyte0 | ft_byte8 | ft_real18 | ft_utf8 =>
                      field := ARF.spawn_field (data => dvariant,
                                                null_data => isnull);
                   when others => null;
@@ -607,10 +607,10 @@ package body AdaBase.Statement.Base.SQLite is
                      dvariant :=
                        (datatype => ft_real18,
                         v12 => conn.retrieve_double (Stmt.stmt_handle, scol));
-                  when ft_textual =>
+                  when ft_utf8 =>
                      dvariant :=
-                       (datatype => ft_textual,
-                        v13 => conn.retrieve_text (Stmt.stmt_handle, scol));
+                       (datatype => ft_utf8,
+                        v21 => conn.retrieve_text (Stmt.stmt_handle, scol));
                   when ft_chain =>
                      declare
                         bin : String :=
@@ -673,13 +673,14 @@ package body AdaBase.Statement.Base.SQLite is
                   else
                      dossier.a11.all := ARC.convert (dvariant.v12);
                   end if;
-               elsif Tnative = ft_textual and then
+               elsif Tnative = ft_utf8 and then
                  (Tout = ft_textual or else
                   Tout = ft_widetext or else
                   Tout = ft_supertext or else
                   Tout = ft_timestamp or else
                   Tout = ft_enumtype or else
                   Tout = ft_settype or else
+                  Tout = ft_utf8 or else
                   Tout = ft_bits)
                then
                   declare
@@ -691,6 +692,8 @@ package body AdaBase.Statement.Base.SQLite is
                      when ft_supertext => dossier.a15.all := convert (ST);
                      when ft_timestamp => dossier.a16.all := ARC.convert (ST);
                      when ft_enumtype  => dossier.a18.all := ARC.convert (ST);
+                     when ft_utf8      =>
+                        dossier.a21.all := CT.USS (dvariant.v21);
                      when ft_settype =>
                         declare
                            FL    : Natural := dossier.a19.all'Length;
