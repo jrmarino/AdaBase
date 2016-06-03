@@ -1,3 +1,19 @@
+---------------------
+--  DUMP COMMANDS  --
+---------------------
 Command to dump mysql:
-
 mysqldump -u root --routines --databases adabase_examples > adabase_examples.mysql.sql
+
+
+Command to dump postgresql:
+pg_dump adabase_examples -U adabaser > adabase_examples.postgresql.sql
+
+
+-------------------------------------
+--  RESET AUTO INCREMENT COMMANDS  --
+-------------------------------------
+mysql example:
+alter table fruits auto_increment = 30
+
+postgresql example:
+ALTER SEQUENCE fruits_id_seq RESTART WITH 30

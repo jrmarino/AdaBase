@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 9.5.2
--- Dumped by pg_dump version 9.5.2
+-- Dumped by pg_dump version 9.5.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -197,6 +197,19 @@ ALTER SEQUENCE fruits_id_seq OWNED BY fruits.id;
 
 
 --
+-- Name: funny_names; Type: TABLE; Schema: public; Owner: adabaser
+--
+
+CREATE TABLE funny_names (
+    id integer NOT NULL,
+    surname character varying(45),
+    first_name character varying(45)
+);
+
+
+ALTER TABLE funny_names OWNER TO adabaser;
+
+--
 -- Name: nhl_schedule; Type: TABLE; Schema: public; Owner: adabaser
 --
 
@@ -302,6 +315,18 @@ COPY fruits (id, fruit, color, calories) FROM stdin;
 --
 
 SELECT pg_catalog.setval('fruits_id_seq', 30, true);
+
+
+--
+-- Data for Name: funny_names; Type: TABLE DATA; Schema: public; Owner: adabaser
+--
+
+COPY funny_names (id, surname, first_name) FROM stdin;
+1	Björnstjerna	Köl
+2	Lång	Söderlund
+3	NÚÑEZ	José Antonio
+4	بهخێربێن	ترحيب
+\.
 
 
 --
@@ -600,6 +625,14 @@ ALTER TABLE ONLY all_types
 
 ALTER TABLE ONLY fruits
     ADD CONSTRAINT fruits_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: funny_pkey; Type: CONSTRAINT; Schema: public; Owner: adabaser
+--
+
+ALTER TABLE ONLY funny_names
+    ADD CONSTRAINT funny_pkey PRIMARY KEY (id);
 
 
 --
