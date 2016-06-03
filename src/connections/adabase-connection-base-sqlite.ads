@@ -90,6 +90,9 @@ package AdaBase.Connection.Base.SQLite is
    procedure set_character_set (conn : out SQLite_Connection;
                                 charset : String);
 
+   overriding
+   function character_set (conn : out SQLite_Connection) return String;
+
    -----------------------------------------------
    --  SUBROUTINES PARTICULAR TO SQLITE DRIVER  --
    -----------------------------------------------

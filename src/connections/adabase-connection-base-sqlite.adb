@@ -905,4 +905,35 @@ package body AdaBase.Connection.Base.SQLite is
    end set_character_set;
 
 
+   ---------------------
+   --  character_set  --
+   ---------------------
+   overriding
+   function character_set (conn : out SQLite_Connection) return String
+   is
+      stmt_handle : aliased BND.sqlite3_stmt_Access;
+      field : CT.Text;
+      final_res : Boolean;
+   begin
+      if conn.prop_active then
+         if conn.prepare_statement (stmt => stmt_handle,
+                                    sql  => "PRAGMA encoding")
+         then
+            field := conn.retrieve_text (stmt  => stmt_handle, index => 0);
+            final_res := conn.prep_finalize (stmt => stmt_handle);
+            return CT.USS (field);
+         else
+            declare
+               msg : String := conn.driverMessage;
+            begin
+               final_res := conn.prep_finalize (stmt => stmt_handle);
+               return "Charset retrieval error : " & msg;
+            end;
+         end if;
+      else
+         return CT.USS (conn.character_set);
+      end if;
+   end character_set;
+
+
 end AdaBase.Connection.Base.SQLite;

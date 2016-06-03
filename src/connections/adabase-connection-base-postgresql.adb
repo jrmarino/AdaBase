@@ -1634,9 +1634,10 @@ package body AdaBase.Connection.Base.PostgreSQL is
    --  character_set  --
    ---------------------
    overriding
-   function character_set (conn : PostgreSQL_Connection) return String is
+   function character_set (conn : out PostgreSQL_Connection) return String is
    begin
       if conn.prop_active then
+         conn.dummy := True;
          declare
             pgres   : BND.PGresult_Access;
          begin

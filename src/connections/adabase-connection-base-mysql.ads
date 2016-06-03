@@ -84,7 +84,7 @@ package AdaBase.Connection.Base.MySQL is
    procedure set_character_set (conn : out MySQL_Connection; charset : String);
 
    overriding
-   function character_set (conn : MySQL_Connection) return String;
+   function character_set (conn : out MySQL_Connection) return String;
 
    overriding
    function rows_affected_by_execution (conn : MySQL_Connection)

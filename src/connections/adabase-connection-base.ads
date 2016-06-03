@@ -52,9 +52,6 @@ package AdaBase.Connection.Base is
    overriding
    function connected     (conn : Base_Connection) return Boolean;
 
-   overriding
-   function character_set (conn : Base_Connection) return String;
-
    function utf8_encoding (conn : Base_Connection) return Boolean;
 
 private

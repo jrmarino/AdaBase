@@ -115,16 +115,6 @@ package body AdaBase.Connection.Base is
    end clientInfo;
 
 
-   ---------------------
-   --  character_set  --
-   ---------------------
-   overriding
-   function character_set (conn : Base_Connection) return String is
-   begin
-      return CT.USS (conn.character_set);
-   end character_set;
-
-
    -----------------------------------------------------------------------
    --  PUBLIC ROUTINES NOT COVERED BY INTERFACES                        --
    -----------------------------------------------------------------------

@@ -52,7 +52,7 @@ package AdaBase.Interfaces.Connection is
    --  Set Character Set (only prior to connection) --
    procedure set_character_set (conn : out iConnection;
                                 charset : String) is null;
-   function      character_set (conn : iConnection)
+   function      character_set (conn : out iConnection)
                                 return String is abstract;
 
    --  properties

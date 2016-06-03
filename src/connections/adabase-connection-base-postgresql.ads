@@ -106,7 +106,7 @@ package AdaBase.Connection.Base.PostgreSQL is
                                 charset : String);
 
    overriding
-   function character_set (conn : PostgreSQL_Connection) return String;
+   function character_set (conn : out PostgreSQL_Connection) return String;
 
    ---------------------------------------------------
    --  SUBROUTINES PARTICULAR TO POSTGRESQL DRIVER  --
