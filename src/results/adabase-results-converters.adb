@@ -3,7 +3,7 @@
 
 with Ada.Strings;
 with Ada.Characters.Conversions;
-with Ada.Strings.UTF_Encoding.Strings;
+with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
 
 package body AdaBase.Results.Converters is
 
@@ -1850,28 +1850,30 @@ package body AdaBase.Results.Converters is
    ---------------------------------------
    --  Convert some data types to UTF8  --
    ---------------------------------------
-   function cv2utf8 (nv : String) return Text_UTF8 is
+   function cv2utf8 (nv : String) return Text_UTF8
+   is
+      WWS : Wide_Wide_String := ACC.To_Wide_Wide_String (nv);
    begin
-      return SUTF.Strings.Encode (Item => nv);
+      return SUTF.Wide_Wide_Strings.Encode (Item => WWS);
    end cv2utf8;
 
-   function cvu2str (nv : Text_UTF8) return String is
+   function cvu2str (nv : Text_UTF8) return String
+   is
+      WWS : Wide_Wide_String := SUTF.Wide_Wide_Strings.Decode (Item => nv);
    begin
-      return SUTF.Strings.Decode (Item => nv);
+      return ACC.To_String (WWS);
    end cvu2str;
 
    function cvu2str (nv : Text_UTF8) return Wide_String
    is
-      hold : String := SUTF.Strings.Decode (Item => nv);
+      WWS : Wide_Wide_String := SUTF.Wide_Wide_Strings.Decode (Item => nv);
    begin
-      return ACC.To_Wide_String (Item => hold);
+      return ACC.To_Wide_String (WWS);
    end cvu2str;
 
-   function cvu2str (nv : Text_UTF8) return Wide_Wide_String
-   is
-      hold : String := SUTF.Strings.Decode (Item => nv);
+   function cvu2str (nv : Text_UTF8) return Wide_Wide_String is
    begin
-      return ACC.To_Wide_Wide_String (Item => hold);
+      return SUTF.Wide_Wide_Strings.Decode (Item => nv);
    end cvu2str;
 
    function cvu2str (nv : Textual) return Textual
