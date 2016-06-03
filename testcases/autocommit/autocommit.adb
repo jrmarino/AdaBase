@@ -152,4 +152,6 @@ begin
    CON.DR.set_trait_autocommit (False);
    test_dos (3, True);
 
+   clear_table;
+
 end Autocommit;
