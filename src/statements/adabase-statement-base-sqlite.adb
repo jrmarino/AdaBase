@@ -684,39 +684,39 @@ package body AdaBase.Statement.Base.SQLite is
                   Tout = ft_bits)
                then
                   declare
-                     ST : String := ARC.convert (dvariant.v13);
+                     STU : String := ARC.convert (dvariant.v21);
+                     STA : String := ARC.cvu2str (CT.USS (dvariant.v21));
                   begin
                      case Tout is
-                     when ft_textual   => dossier.a13.all := dvariant.v13;
-                     when ft_widetext  => dossier.a14.all := convert (ST);
-                     when ft_supertext => dossier.a15.all := convert (ST);
-                     when ft_timestamp => dossier.a16.all := ARC.convert (ST);
-                     when ft_enumtype  => dossier.a18.all := ARC.convert (ST);
-                     when ft_utf8      =>
-                        dossier.a21.all := CT.USS (dvariant.v21);
+                     when ft_textual   => dossier.a13.all := CT.SUS (STA);
+                     when ft_widetext  => dossier.a14.all := convert (STA);
+                     when ft_supertext => dossier.a15.all := convert (STA);
+                     when ft_timestamp => dossier.a16.all := ARC.convert (STU);
+                     when ft_enumtype  => dossier.a18.all := ARC.convert (STU);
+                     when ft_utf8      => dossier.a21.all := STU;
                      when ft_settype =>
                         declare
                            FL    : Natural := dossier.a19.all'Length;
-                           items : constant Natural := CT.num_set_items (ST);
+                           items : constant Natural := CT.num_set_items (STU);
                         begin
                            if items > FL then
                               raise BINDING_SIZE_MISMATCH with
                                 "native size : " & items'Img &
                                 " greater than binding size : " & FL'Img;
                            end if;
-                           dossier.a19.all := ARC.convert (ST, FL);
+                           dossier.a19.all := ARC.convert (STU, FL);
                         end;
                      when ft_bits =>
                         declare
                            FL    : Natural := dossier.a20.all'Length;
-                           DVLEN : Natural := ST'Length;
+                           DVLEN : Natural := STA'Length;
                         begin
                            if DVLEN > FL then
                               raise BINDING_SIZE_MISMATCH with "native size : " &
                                 DVLEN'Img & " greater than binding size : " &
                                 FL'Img;
                            end if;
-                           dossier.a20.all := ARC.convert (ST, FL);
+                           dossier.a20.all := ARC.convert (STA, FL);
                         end;
                      when others => null;
                      end case;
