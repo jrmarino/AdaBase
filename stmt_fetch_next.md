@@ -124,11 +124,11 @@ Column 1:
 Column 2:
    TABLE: fruits
     NAME: fruit
-    TYPE: FT_TEXTUAL
+    TYPE: FT_UTF8
 Column 3:
    TABLE: fruits
     NAME: color
-    TYPE: FT_TEXTUAL
+    TYPE: FT_UTF8
 Column 4:
    TABLE: fruits
     NAME: calories
