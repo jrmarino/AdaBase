@@ -543,7 +543,7 @@ package body AdaBase.Results.Field is
          when ft_settype   => return ARC.convert (field.native.v19);
          when ft_bits      => return ARC.convert (field.native.v20);
          when ft_utf8      => return ARC.cvu2str (CT.USS (field.native.v21));
-         when ft_geometry  => return GEO.Well_Known_Text (field.native.v22);
+         when ft_geometry  => return WKB.produce_WKT (field.native.v22);
       end case;
    end as_string;
 
@@ -578,7 +578,7 @@ package body AdaBase.Results.Field is
          when ft_bits      => return ARC.convert (field.native.v20);
          when ft_utf8      => return ARC.cvu2str (CT.USS (field.native.v21));
          when ft_geometry  =>
-            return ARC.convert (GEO.Well_Known_Text (field.native.v22));
+            return ARC.convert (WKB.produce_WKT (field.native.v22));
       end case;
    end as_wstring;
 
@@ -613,7 +613,7 @@ package body AdaBase.Results.Field is
          when ft_bits      => return ARC.convert (field.native.v20);
          when ft_utf8      => return ARC.cvu2str (CT.USS (field.native.v21));
          when ft_geometry  =>
-            return ARC.convert (GEO.Well_Known_Text (field.native.v22));
+            return ARC.convert (WKB.produce_WKT (field.native.v22));
       end case;
    end as_wwstring;
 
@@ -640,7 +640,8 @@ package body AdaBase.Results.Field is
    function as_geometry (field : Std_Field) return GEO.Geometry is
    begin
       case field.native.datatype is
-         when ft_geometry => return field.native.v22;
+         when ft_geometry =>
+            return WKB.Translate_WKB (CT.USS (field.native.v22));
          when others => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_geometry;
@@ -791,7 +792,7 @@ package body AdaBase.Results.Field is
          when ft_settype   => return ARC.cv2utf8 (field.native.v19);
          when ft_utf8      => return Text_UTF8 (CT.USS (field.native.v21));
          when ft_geometry  =>
-            return ARC.cv2utf8 (GEO.Well_Known_Text (field.native.v22));
+            return ARC.cv2utf8 (WKB.produce_WKT (field.native.v22));
          when ft_chain     |
               ft_bits      => raise UNSUPPORTED_CONVERSION;
       end case;
@@ -897,7 +898,7 @@ package body AdaBase.Results.Field is
          when ft_settype  => result.set ((ft_settype, PARAM_IS_TEXTUAL), True);
          when ft_bits => result.set ((ft_bits, PARAM_IS_TEXTUAL), True);
          when ft_utf8 => result.set ((ft_utf8, PARAM_IS_TEXTUAL), True);
-         when ft_geometry => result.set ((ft_geometry, PARAM_IS_GEOMETRY), True);
+         when ft_geometry => result.set ((ft_geometry, PARAM_IS_TEXTUAL), True);
       end case;
       return result;
    end spawn_null_field;

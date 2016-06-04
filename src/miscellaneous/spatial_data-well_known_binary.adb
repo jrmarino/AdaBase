@@ -4,11 +4,23 @@
 package body Spatial_Data.Well_Known_Binary is
 
 
+   -------------------
+   --  produce_WKT  --
+   -------------------
+   function produce_WKT (WKBinary : CT.Text) return String
+   is
+      shape : Geometry := Translate_WKB (CT.USS (WKBinary));
+   begin
+      return Well_Known_Text (shape);
+   end produce_WKT;
+
+
    ---------------------
    --  Translate_WKB  --
    ---------------------
-   function Translate_WKB (binary : WKB_Chain) return Geometry
+   function Translate_WKB (WKBinary : String) return Geometry
    is
+      binary   : WKB_Chain := convert (WKBinary);
       chainlen : WKB_Hex32 := WKB_Hex32 (binary'Length);
       required : WKB_Hex32 := 21;
    begin
@@ -60,6 +72,15 @@ package body Spatial_Data.Well_Known_Binary is
       raise WKB_INVALID
         with "Chain is smaller than required" & required'Img & " links";
    end Translate_WKB;
+
+
+   ---------------------
+   --  Construct_WKB  --
+   ---------------------
+   function Construct_WKB (shape : Geometry) return String is
+   begin
+      return "IMPLEMENT, PLEASE";
+   end Construct_WKB;
 
 
    --------------------
@@ -363,6 +384,23 @@ package body Spatial_Data.Well_Known_Binary is
       end case;
       return result;
    end convert_to_IEEE754;
+
+
+   ---------------
+   --  convert  --
+   ---------------
+   function convert (nv : String) return WKB_Chain
+   is
+      Chainlen : Natural := nv'Length;
+      result : WKB_Chain (1 .. Chainlen) := (others => 0);
+      arrow  : Natural := result'First;
+   begin
+      for x in nv'Range loop
+         result (arrow) := WKB_Byte (Character'Pos (nv (x)));
+         arrow := arrow + 1;
+      end loop;
+      return result;
+   end convert;
 
 
 end Spatial_Data.Well_Known_Binary;

@@ -586,8 +586,7 @@ package body AdaBase.Statement.Base is
       if Stmt.bind_proceed (index => index) then
          Stmt.crate.Replace_Element
            (index, (output_type => ft_geometry, a22 => vaxx,
-                    v22 => Spatial_Data.Blank_Geometry,
-                    bound => True, null_data => False));
+                    v22 => CT.blank, bound => True, null_data => False));
       end if;
    end bind;
 
@@ -1593,18 +1592,18 @@ package body AdaBase.Statement.Base is
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_geometry, a22 => vaxx,
-                 v22 => Spatial_Data.Blank_Geometry,
-                 bound => True, null_data => absent));
+                 v22 => CT.blank, bound => True, null_data => absent));
    end assign;
 
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
                      vaxx  : Spatial_Data.Geometry)
    is
+      shape : String := WKB.Construct_WKB (vaxx);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_geometry, a22 => null,
-                 v22 => vaxx, bound => True, null_data => False));
+                 v22 => CT.SUS (shape), bound => True, null_data => False));
    end assign;
 
 
@@ -1690,15 +1689,7 @@ package body AdaBase.Statement.Base is
          when ft_settype   => null;
          when ft_bits      => null;
          when ft_utf8      => hold := (ft_utf8, ST);
-         when ft_geometry  =>
-            --  There's currently no easy way to go from text to geometry
-            --  At best we can go from text => WKB => geometry right now
-            declare
-               binary : WKB.WKB_Chain := ARC.convert (value);
-               shapes : Spatial_Data.Geometry := WKB.Translate_WKB (binary);
-            begin
-               hold := (ft_geometry, shapes);
-            end;
+         when ft_geometry  => hold := (ft_geometry, ST);  -- ST=WKB
       end case;
       case zone.output_type is
          when ft_nbyte0    => Stmt.assign (index, hold.v00);
@@ -1776,7 +1767,7 @@ package body AdaBase.Statement.Base is
          when ft_bits      => param.a20.all :=
                               ARC.convert ("", param.a20.all'Length);
          when ft_utf8      => param.a21.all := AR.PARAM_IS_TEXT_UTF8;
-         when ft_geometry  => param.a22.all := AR.PARAM_IS_GEOMETRY;
+         when ft_geometry  => param.a22.all := GEO.Blank_Geometry;
       end case;
    end set_as_null;
 

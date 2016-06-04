@@ -589,8 +589,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
                   when ft_supertext => dossier.a15.all := convert (ST);
                   when ft_enumtype  => dossier.a18.all := ARC.convert (ST);
                   when ft_utf8      => dossier.a21.all := ST;
-                  when ft_geometry  =>
-                     dossier.a22.all := WKB.Translate_WKB (ARC.convert (ST));
+                  when ft_geometry  => dossier.a22.all :=
+                                       WKB.Translate_WKB (ST);
                   when ft_timestamp =>
                      begin
                         dossier.a16.all := ARC.convert (ST);
@@ -1104,6 +1104,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
                   dvariant := (datatype => ft_supertext, v15 => convert (ST));
                when ft_utf8 =>
                   dvariant := (datatype => ft_utf8, v21 => CT.SUS (ST));
+               when ft_geometry =>
+                  dvariant := (datatype => ft_geometry, v22 => CT.SUS (ST));
                when ft_timestamp =>
                   begin
                      dvariant := (datatype => ft_timestamp,
@@ -1116,9 +1118,6 @@ package body AdaBase.Statement.Base.PostgreSQL is
                when ft_enumtype =>
                   dvariant := (datatype => ft_enumtype,
                                V18 => ARC.convert (CT.SUS (ST)));
-               when ft_geometry =>
-                  dvariant := (datatype => ft_geometry,
-                               v22 => WKB.Translate_WKB (ARC.convert (ST)));
                when ft_chain   => null;
                when ft_settype => null;
                when ft_bits    => null;
@@ -1330,9 +1329,9 @@ package body AdaBase.Statement.Base.PostgreSQL is
             end if;
          when ft_geometry =>
             if zone.a22 = null then
-               hold := CT.SUS (GEO.Well_Known_Text (zone.v22));
+               hold := zone.v22;
             else
-               hold := CT.SUS (GEO.Well_Known_Text (zone.a22.all));
+               hold := CT.SUS (WKB.Construct_WKB (zone.a22.all));
             end if;
       end case;
       return hold;

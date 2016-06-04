@@ -746,7 +746,7 @@ private
          when ft_utf8      => a21 : AR.S_UTF8_Access;
                               v21 : AR.Textual;
          when ft_geometry  => a22 : AR.Geometry_Access;
-                              v22 : GEO.Geometry;
+                              v22 : AR.Textual;
       end case;
    end record;
 

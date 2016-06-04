@@ -31,7 +31,7 @@ package AdaBase.Results.Field is
             when ft_settype   => v19 : Textual;
             when ft_bits      => v20 : Textual;
             when ft_utf8      => v21 : Textual;
-            when ft_geometry  => v22 : GEO.Geometry;
+            when ft_geometry  => v22 : Textual;
          end case;
       end record;
 

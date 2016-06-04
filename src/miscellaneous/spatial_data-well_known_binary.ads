@@ -8,7 +8,9 @@ package Spatial_Data.Well_Known_Binary is
 
    WKB_INVALID : exception;
 
-   function Translate_WKB (binary : WKB_Chain) return Geometry;
+   function Translate_WKB (WKBinary : String) return Geometry;
+   function Construct_WKB (shape : Geometry) return String;
+   function produce_WKT (WKBinary : CT.Text) return String;
 
 private
 
@@ -21,6 +23,7 @@ private
    subtype WKB_Double_Precision_Chain is WKB_Chain (1 .. 8);
    subtype WKB_Shape_Point_Chain is WKB_Chain (1 .. 16);
 
+   function convert (nv : String) return WKB_Chain;
    function decode_endianness (value : WKB_Byte) return WKB_Endianness;
    function decode_hex32      (direction : WKB_Endianness;
                                value : WKB_Identifier_Chain) return WKB_Hex32;

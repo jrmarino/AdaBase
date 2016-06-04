@@ -1,11 +1,7 @@
 --  This file is covered by the Internet Software Consortium (ISC) License
 --  Reference: ../../License.txt
 
-with CommonText;
-
 package body Spatial_Data is
-
-   package CT renames CommonText;
 
    ---------------------------
    --  initialize_as_point  --

@@ -108,8 +108,6 @@ package AdaBase.Results is
    PARAM_IS_TEXTWIDE  : constant Textwide  := Blank_WString;
    PARAM_IS_TEXTSUPER : constant Textsuper := Blank_WWString;
    PARAM_IS_TEXT_UTF8 : constant Text_UTF8 := blankstring;
-   PARAM_IS_GEOMETRY  : constant GEO.Geometry :=
-                        GEO.initialize_as_point ((0.0, 0.0));
    PARAM_IS_TIMESTAMP : constant AC.Time :=
                         ACF.Time_Of (Year       => AC.Year_Number'First,
                                      Month      => AC.Month_Number'First,
