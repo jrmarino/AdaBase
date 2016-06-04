@@ -31,7 +31,7 @@ package AdaBase.Results.Field is
             when ft_settype   => v19 : Textual;
             when ft_bits      => v20 : Textual;
             when ft_utf8      => v21 : Textual;
-            when ft_geometry  => v22 : SPAT.Geometry;
+            when ft_geometry  => v22 : GEO.Geometry;
          end case;
       end record;
 
@@ -61,7 +61,7 @@ package AdaBase.Results.Field is
    function as_settype  (field : Std_Field) return Settype;
    function as_bits     (field : Std_Field) return Bits;
    function as_utf8     (field : Std_Field) return Text_UTF8;
-   function as_geometry (field : Std_Field) return SPAT.Geometry;
+   function as_geometry (field : Std_Field) return GEO.Geometry;
 
    function is_null     (field : Std_Field) return Boolean;
    function native_type (field : Std_Field) return field_types;

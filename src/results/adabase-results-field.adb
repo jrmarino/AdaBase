@@ -543,7 +543,7 @@ package body AdaBase.Results.Field is
          when ft_settype   => return ARC.convert (field.native.v19);
          when ft_bits      => return ARC.convert (field.native.v20);
          when ft_utf8      => return ARC.cvu2str (CT.USS (field.native.v21));
-         when ft_geometry  => return SPAT.Well_Known_Text (field.native.v22);
+         when ft_geometry  => return GEO.Well_Known_Text (field.native.v22);
       end case;
    end as_string;
 
@@ -578,7 +578,7 @@ package body AdaBase.Results.Field is
          when ft_bits      => return ARC.convert (field.native.v20);
          when ft_utf8      => return ARC.cvu2str (CT.USS (field.native.v21));
          when ft_geometry  =>
-            return ARC.convert (SPAT.Well_Known_Text (field.native.v22));
+            return ARC.convert (GEO.Well_Known_Text (field.native.v22));
       end case;
    end as_wstring;
 
@@ -613,7 +613,7 @@ package body AdaBase.Results.Field is
          when ft_bits      => return ARC.convert (field.native.v20);
          when ft_utf8      => return ARC.cvu2str (CT.USS (field.native.v21));
          when ft_geometry  =>
-            return ARC.convert (SPAT.Well_Known_Text (field.native.v22));
+            return ARC.convert (GEO.Well_Known_Text (field.native.v22));
       end case;
    end as_wwstring;
 
@@ -637,7 +637,7 @@ package body AdaBase.Results.Field is
    ------------------
    --  as_geometry --
    ------------------
-   function as_geometry (field : Std_Field) return SPAT.Geometry is
+   function as_geometry (field : Std_Field) return GEO.Geometry is
    begin
       case field.native.datatype is
          when ft_geometry => return field.native.v22;
@@ -791,7 +791,7 @@ package body AdaBase.Results.Field is
          when ft_settype   => return ARC.cv2utf8 (field.native.v19);
          when ft_utf8      => return Text_UTF8 (CT.USS (field.native.v21));
          when ft_geometry  =>
-            return ARC.cv2utf8 (SPAT.Well_Known_Text (field.native.v22));
+            return ARC.cv2utf8 (GEO.Well_Known_Text (field.native.v22));
          when ft_chain     |
               ft_bits      => raise UNSUPPORTED_CONVERSION;
       end case;

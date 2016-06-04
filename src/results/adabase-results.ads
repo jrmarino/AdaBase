@@ -2,7 +2,6 @@
 --  Reference: ../../License.txt
 
 with CommonText;
-with Spatial_Data;
 with Spatial_Data.Well_Known_Binary;
 with Ada.Calendar.Formatting;
 with Ada.Strings.Wide_Unbounded;
@@ -17,7 +16,7 @@ package AdaBase.Results is
    package SUW  renames Ada.Strings.Wide_Unbounded;
    package SUWW renames Ada.Strings.Wide_Wide_Unbounded;
    package SUTF renames Ada.Strings.UTF_Encoding;
-   package SPAT renames Spatial_Data;
+   package GEO  renames Spatial_Data;
    package WKB  renames Spatial_Data.Well_Known_Binary;
 
    subtype Textual   is CT.Text;
@@ -76,7 +75,7 @@ package AdaBase.Results is
    type Chain_Access    is access all Chain;
    type Enum_Access     is access all Enumtype;
    type Settype_Access  is access all Settype;
-   type Geometry_Access is access all SPAT.Geometry;
+   type Geometry_Access is access all GEO.Geometry;
    type Bits_Access     is access all Bits;
    type S_UTF8_Access   is access all Text_UTF8;
 
@@ -109,8 +108,8 @@ package AdaBase.Results is
    PARAM_IS_TEXTWIDE  : constant Textwide  := Blank_WString;
    PARAM_IS_TEXTSUPER : constant Textsuper := Blank_WWString;
    PARAM_IS_TEXT_UTF8 : constant Text_UTF8 := blankstring;
-   PARAM_IS_GEOMETRY  : constant SPAT.Geometry :=
-                        SPAT.initialize_as_point ((0.0, 0.0));
+   PARAM_IS_GEOMETRY  : constant GEO.Geometry :=
+                        GEO.initialize_as_point ((0.0, 0.0));
    PARAM_IS_TIMESTAMP : constant AC.Time :=
                         ACF.Time_Of (Year       => AC.Year_Number'First,
                                      Month      => AC.Month_Number'First,
