@@ -103,7 +103,9 @@ project AdaBase is
                  "commontext.ads",
                  "commontext.adb",
                  "spatial_data.ads",
-                 "spatial_data.adb");
+                 "spatial_data.adb",
+                 "spatial_data-well_known_binary.ads",
+                 "spatial_data-well_known_binary.adb");
 
    for Source_Files use Base_list &
                         MySQL_list &
