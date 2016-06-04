@@ -4,7 +4,6 @@
 with Ada.Exceptions;
 with Ada.Calendar.Time_Zones;
 with Ada.Unchecked_Conversion;
-with Ada.Text_IO; use Ada.Text_IO;
 
 package body AdaBase.Statement.Base.MySQL is
 

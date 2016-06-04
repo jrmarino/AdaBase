@@ -682,8 +682,7 @@ package body AdaBase.Connection.Base.MySQL is
                   end;
                end if;
             end;
-         when ABM.MYSQL_TYPE_GEOMETRY =>
-            std_type := ft_chain;
+         when ABM.MYSQL_TYPE_GEOMETRY => std_type := ft_geometry;
          when ABM.MYSQL_TYPE_ENUM | ABM.MYSQL_TYPE_SET =>
             raise BINDING_FAIL with
               "Unexpected type: " & mytype'Img & " (should appear as string)";
@@ -699,6 +698,7 @@ package body AdaBase.Connection.Base.MySQL is
               ABM.MYSQL_TYPE_VAR_STRING  |
               ABM.MYSQL_TYPE_STRING      |
               ABM.MYSQL_TYPE_DECIMAL     |
+              ABM.MYSQL_TYPE_GEOMETRY    |
               ABM.MYSQL_TYPE_NEWDECIMAL  => size := bestlen;
          when others                     => size := 0;
       end case;
