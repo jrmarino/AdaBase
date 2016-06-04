@@ -18,6 +18,7 @@ with Ada.Strings.Wide_Unbounded;
 with Ada.Strings.Wide_Wide_Unbounded;
 with Ada.Characters.Conversions;
 with Ada.Unchecked_Deallocation;
+with Spatial_Data.Well_Known_Binary;
 
 package AdaBase.Statement.Base is
 
@@ -36,6 +37,8 @@ package AdaBase.Statement.Base is
    package ARF renames AdaBase.Results.Field;
    package ARS renames AdaBase.Results.Sets;
    package ACH renames Ada.Characters.Handling;
+   package GEO renames Spatial_Data;
+   package WKB renames Spatial_Data.Well_Known_Binary;
 
 
    type SQL_Access is access all String;
@@ -77,7 +80,7 @@ package AdaBase.Statement.Base is
 
 
    -------------------------------------------
-   --      22 bind using integer index      --
+   --      23 bind using integer index      --
    -------------------------------------------
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
@@ -167,9 +170,13 @@ package AdaBase.Statement.Base is
                    index : Positive;
                    vaxx  : AR.S_UTF8_Access);
 
+   procedure bind (Stmt  : out Base_Statement;
+                   index : Positive;
+                   vaxx  : AR.Geometry_Access);
+
 
    -------------------------------------------
-   --    22 bind using header for index     --
+   --    23 bind using header for index     --
    -------------------------------------------
    procedure bind (Stmt    : out Base_Statement;
                    heading : String;
@@ -259,9 +266,13 @@ package AdaBase.Statement.Base is
                    heading : String;
                    vaxx    : AR.S_UTF8_Access);
 
+   procedure bind (Stmt    : out Base_Statement;
+                   heading : String;
+                   vaxx    : AR.Geometry_Access);
+
 
    --------------------------------------------
-   --  22 assign/access using integer index  --
+   --  23 assign/access using integer index  --
    --------------------------------------------
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
@@ -351,9 +362,13 @@ package AdaBase.Statement.Base is
                      index : Positive;
                      vaxx  : AR.S_UTF8_Access);
 
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.Geometry_Access);
+
 
    ------------------------------------------------
-   --  22 assign/access using moniker for index  --
+   --  23 assign/access using moniker for index  --
    ------------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
@@ -442,6 +457,10 @@ package AdaBase.Statement.Base is
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.S_UTF8_Access);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.Geometry_Access);
 
 
    -------------------------------------------
@@ -535,9 +554,13 @@ package AdaBase.Statement.Base is
                      index : Positive;
                      vaxx  : AR.Text_UTF8);
 
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : Spatial_Data.Geometry);
+
 
    -----------------------------------------------
-   --  22 assign/value using moniker for index  --
+   --  23 assign/value using moniker for index  --
    -----------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
@@ -626,6 +649,10 @@ package AdaBase.Statement.Base is
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
                      vaxx    : AR.Text_UTF8);
+
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : Spatial_Data.Geometry);
 
 private
 
@@ -718,6 +745,8 @@ private
                               v20 : AR.Textual;
          when ft_utf8      => a21 : AR.S_UTF8_Access;
                               v21 : AR.Textual;
+         when ft_geometry  => a22 : AR.Geometry_Access;
+                              v22 : GEO.Geometry;
       end case;
    end record;
 

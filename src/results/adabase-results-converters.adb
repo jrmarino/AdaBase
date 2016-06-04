@@ -1201,6 +1201,16 @@ package body AdaBase.Results.Converters is
       return ACC.To_Wide_Wide_String (Item => nvstr);
    end convert;
 
+   function convert (nv : String) return Wide_String is
+   begin
+      return ACC.To_Wide_String (nv);
+   end convert;
+
+   function convert (nv : String) return Wide_Wide_String is
+   begin
+      return ACC.To_Wide_Wide_String (nv);
+   end convert;
+
    function convert (nv : String; fixed : Natural := 0) return Chain
    is
       Chainlen : Natural := CT.len (nv);
@@ -1218,6 +1228,19 @@ package body AdaBase.Results.Converters is
          end loop;
          return result;
       end;
+   end convert;
+
+   function convert (nv : String) return WKB.WKB_Chain
+   is
+      Chainlen : Natural := CT.len (nv);
+      result : WKB.WKB_Chain (1 .. Chainlen) := (others => 0);
+      arrow  : Natural := result'First;
+   begin
+      for x in nv'Range loop
+         result (arrow) := WKB.WKB_Byte (Character'Pos (nv (x)));
+         arrow := arrow + 1;
+      end loop;
+      return result;
    end convert;
 
    function convert (nv : String; fixed : Natural := 0) return Bits

@@ -38,7 +38,7 @@ package AdaBase is
                         ft_nbyte8, ft_byte1, ft_byte2, ft_byte3, ft_byte4,
                         ft_byte8, ft_real9, ft_real18, ft_textual, ft_widetext,
                         ft_supertext, ft_timestamp, ft_chain, ft_enumtype,
-                        ft_settype, ft_bits, ft_utf8);
+                        ft_settype, ft_bits, ft_utf8, ft_geometry);
 
    ERRMODE_EXCEPTION : exception;
 

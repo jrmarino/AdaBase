@@ -3,6 +3,7 @@
 
 with CommonText;
 with Spatial_Data;
+with Spatial_Data.Well_Known_Binary;
 with Ada.Calendar.Formatting;
 with Ada.Strings.Wide_Unbounded;
 with Ada.Strings.Wide_Wide_Unbounded;
@@ -16,7 +17,8 @@ package AdaBase.Results is
    package SUW  renames Ada.Strings.Wide_Unbounded;
    package SUWW renames Ada.Strings.Wide_Wide_Unbounded;
    package SUTF renames Ada.Strings.UTF_Encoding;
-   package SPAT  renames Spatial_Data;
+   package SPAT renames Spatial_Data;
+   package WKB  renames Spatial_Data.Well_Known_Binary;
 
    subtype Textual   is CT.Text;
    subtype Textwide  is SUW.Unbounded_Wide_String;

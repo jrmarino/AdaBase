@@ -589,6 +589,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
                   when ft_supertext => dossier.a15.all := convert (ST);
                   when ft_enumtype  => dossier.a18.all := ARC.convert (ST);
                   when ft_utf8      => dossier.a21.all := ST;
+                  when ft_geometry  =>
+                     dossier.a22.all := WKB.Translate_WKB (ARC.convert (ST));
                   when ft_timestamp =>
                      begin
                         dossier.a16.all := ARC.convert (ST);
@@ -1114,6 +1116,9 @@ package body AdaBase.Statement.Base.PostgreSQL is
                when ft_enumtype =>
                   dvariant := (datatype => ft_enumtype,
                                V18 => ARC.convert (CT.SUS (ST)));
+               when ft_geometry =>
+                  dvariant := (datatype => ft_geometry,
+                               v22 => WKB.Translate_WKB (ARC.convert (ST)));
                when ft_chain   => null;
                when ft_settype => null;
                when ft_bits    => null;
@@ -1186,6 +1191,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
       use type AR.Settype_Access;
       use type AR.Bits_Access;
       use type AR.S_UTF8_Access;
+      use type AR.Geometry_Access;
 
       hold : AR.Textual;
    begin
@@ -1321,6 +1327,12 @@ package body AdaBase.Statement.Base.PostgreSQL is
                hold := zone.v21;
             else
                hold := CT.SUS (zone.a21.all);
+            end if;
+         when ft_geometry =>
+            if zone.a22 = null then
+               hold := CT.SUS (GEO.Well_Known_Text (zone.v22));
+            else
+               hold := CT.SUS (GEO.Well_Known_Text (zone.a22.all));
             end if;
       end case;
       return hold;

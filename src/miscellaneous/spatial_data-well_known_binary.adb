@@ -34,18 +34,18 @@ package body Spatial_Data.Well_Known_Binary is
                declare
                   num_points : WKB_Hex32 :=
                     decode_hex32 (endianness, binary (6 .. 9));
-                  marker : Natural := 18;
+                  marker : Natural := 26;
                begin
-                  required := 9 + (num_points * 8);
+                  required := 9 + (num_points * 16);
                   if required > chainlen then
                      goto crash;
                   end if;
                   product := initialize_as_point
-                    (handle_point (endianness, binary (10 .. 17)));
+                    (handle_point (endianness, binary (10 .. 25)));
                   for x in 2 .. num_points loop
                      append_point (product, (handle_point (endianness,
-                       binary (marker .. marker + 7))));
-                     marker := marker + 8;
+                       binary (marker .. marker + 15))));
+                     marker := marker + 16;
                   end loop;
                   return product;
                end;

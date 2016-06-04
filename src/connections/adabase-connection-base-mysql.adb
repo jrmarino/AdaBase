@@ -683,8 +683,7 @@ package body AdaBase.Connection.Base.MySQL is
                end if;
             end;
          when ABM.MYSQL_TYPE_GEOMETRY =>
-            raise BINDING_FAIL with
-              "Geometry type not currently supported";
+            std_type := ft_chain;
          when ABM.MYSQL_TYPE_ENUM | ABM.MYSQL_TYPE_SET =>
             raise BINDING_FAIL with
               "Unexpected type: " & mytype'Img & " (should appear as string)";

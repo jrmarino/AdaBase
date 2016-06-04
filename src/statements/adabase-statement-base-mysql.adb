@@ -781,7 +781,10 @@ package body AdaBase.Statement.Base.MySQL is
                      end;
                   when ft_enumtype =>
                      dvariant := (datatype => ft_enumtype,
-                                  V18 => ARC.convert (CT.SUS (ST)));
+                                  v18 => ARC.convert (CT.SUS (ST)));
+                  when ft_geometry =>
+                     dvariant := (datatype => ft_geometry,
+                                  v22 => WKB.Translate_WKB (ARC.convert (ST)));
                   when ft_chain =>   null;
                   when ft_settype => null;
                   when ft_bits =>    null;
@@ -987,6 +990,11 @@ package body AdaBase.Statement.Base.MySQL is
                      dvariant := (datatype => ft_utf8,
                                   v21 => CT.SUS (bincopy (cv.buffer_binary,
                                     datalen, Stmt.con_max_blob)));
+                  when ft_geometry =>
+                     dvariant := (datatype => ft_geometry,
+                                  v22 => WKB.Translate_WKB (ARC.convert
+                                      (bincopy (cv.buffer_binary,
+                                       datalen, Stmt.con_max_blob))));
                   when ft_timestamp =>
                      declare
                         year  : Natural := Natural (cv.buffer_time.year);
@@ -1235,7 +1243,11 @@ package body AdaBase.Statement.Base.MySQL is
                                 Stmt.con_max_blob));
                   when ft_utf8 => param.a21.all :=
                        bincopy (cv.buffer_binary, datalen,
-                               Stmt.con_max_blob);
+                                Stmt.con_max_blob);
+                  when ft_geometry => param.a22.all :=
+                       WKB.Translate_WKB
+                         (ARC.convert (bincopy (cv.buffer_binary, datalen,
+                          Stmt.con_max_blob)));
                   when ft_timestamp =>
                      declare
                         year  : Natural := Natural (cv.buffer_time.year);
@@ -1499,6 +1511,8 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_enumtype  => dossier.a18.all := ARC.convert (ST);
                   when ft_textual   => dossier.a13.all := CT.SUS (ST);
                   when ft_utf8      => dossier.a21.all := ST;
+                  when ft_geometry  =>
+                     dossier.a22.all := WKB.Translate_WKB (ARC.convert (ST));
                   when ft_timestamp =>
                      begin
                         dossier.a16.all := ARC.convert (ST);
@@ -1767,6 +1781,7 @@ package body AdaBase.Statement.Base.MySQL is
       use type AR.Settype_Access;
       use type AR.Bits_Access;
       use type AR.S_UTF8_Access;
+      use type AR.Geometry_Access;
 
       procedure set_binary_buffer (Str : String)
       is
@@ -1811,6 +1826,7 @@ package body AdaBase.Statement.Base.MySQL is
          when ft_settype =>    struct.buffer_type := ABM.MYSQL_TYPE_STRING;
          when ft_bits =>       struct.buffer_type := ABM.MYSQL_TYPE_STRING;
          when ft_utf8 =>       struct.buffer_type := ABM.MYSQL_TYPE_STRING;
+         when ft_geometry =>   struct.buffer_type := ABM.MYSQL_TYPE_STRING;
       end case;
       if zone.null_data then
          canvas.is_null := 1;
@@ -1937,6 +1953,12 @@ package body AdaBase.Statement.Base.MySQL is
                set_binary_buffer (ARC.convert (zone.v21));
             else
                set_binary_buffer (zone.a21.all);
+            end if;
+         when ft_geometry =>
+            if zone.a22 = null then
+               set_binary_buffer (GEO.Well_Known_Text (zone.v22));
+            else
+               set_binary_buffer (GEO.Well_Known_Text (zone.a22.all));
             end if;
          when ft_timestamp =>
             struct.buffer := canvas.buffer_time'Address;

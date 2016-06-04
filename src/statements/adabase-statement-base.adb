@@ -243,7 +243,7 @@ package body AdaBase.Statement.Base is
 
 
    ------------------------------------------------------
-   --  21 bind functions (impossible to make generic)  --
+   --  23 bind functions (impossible to make generic)  --
    ------------------------------------------------------
    procedure bind (Stmt  : out Base_Statement;
                    index : Positive;
@@ -575,6 +575,22 @@ package body AdaBase.Statement.Base is
       end if;
    end bind;
 
+   procedure bind (Stmt  : out Base_Statement;
+                   index : Positive;
+                   vaxx  : AR.Geometry_Access)
+   is
+      use type AR.Geometry_Access;
+      absent : Boolean := (vaxx = null);
+   begin
+      check_bound_column_access (absent);
+      if Stmt.bind_proceed (index => index) then
+         Stmt.crate.Replace_Element
+           (index, (output_type => ft_geometry, a22 => vaxx,
+                    v22 => Spatial_Data.Blank_Geometry,
+                    bound => True, null_data => False));
+      end if;
+   end bind;
+
 
    ------------------------------------------------------------------
    --  bind via headings  (believe me, generics are not possible)  --
@@ -733,6 +749,13 @@ package body AdaBase.Statement.Base is
         Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
    end bind;
 
+   procedure bind (Stmt    : out Base_Statement;
+                   heading : String;
+                   vaxx    : AR.Geometry_Access) is
+   begin
+        Stmt.bind (vaxx => vaxx, index => Stmt.bind_index (heading));
+   end bind;
+
 
    --------------------
    --  assign_index  --
@@ -753,7 +776,7 @@ package body AdaBase.Statement.Base is
 
 
    ------------------------------------------------------------------
-   --  assign via moniker (Access, 22)                                        --
+   --  assign via moniker (Access, 23)                                        --
    ------------------------------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
@@ -910,9 +933,16 @@ package body AdaBase.Statement.Base is
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : AR.Geometry_Access) is
+   begin
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
 
    ------------------------------------------------------------------
-   --  assign via moniker (Value, 22)                                        --
+   --  assign via moniker (Value, 23)                                        --
    ------------------------------------------------------------------
    procedure assign (Stmt    : out Base_Statement;
                      moniker : String;
@@ -1068,9 +1098,16 @@ package body AdaBase.Statement.Base is
       Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
    end assign;
 
+   procedure assign (Stmt    : out Base_Statement;
+                     moniker : String;
+                     vaxx    : Spatial_Data.Geometry) is
+   begin
+      Stmt.assign (vaxx => vaxx, index => Stmt.assign_index (moniker));
+   end assign;
+
 
    ------------------------------------------------------
-   --  22 + 22 = 44 assign functions                   --
+   --  23 + 23 = 46 assign functions                   --
    ------------------------------------------------------
    procedure assign (Stmt  : out Base_Statement;
                      index : Positive;
@@ -1547,6 +1584,30 @@ package body AdaBase.Statement.Base is
                  v21 => CT.SUS (vaxx), bound => True, null_data => False));
    end assign;
 
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : AR.Geometry_Access)
+   is
+      use type AR.Geometry_Access;
+      absent : Boolean := (vaxx = null);
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_geometry, a22 => vaxx,
+                 v22 => Spatial_Data.Blank_Geometry,
+                 bound => True, null_data => absent));
+   end assign;
+
+   procedure assign (Stmt  : out Base_Statement;
+                     index : Positive;
+                     vaxx  : Spatial_Data.Geometry)
+   is
+   begin
+      Stmt.realmccoy.Replace_Element
+        (index, (output_type => ft_geometry, a22 => null,
+                 v22 => vaxx, bound => True, null_data => False));
+   end assign;
+
+
 
    ------------------
    --  iterate #1  --
@@ -1629,6 +1690,15 @@ package body AdaBase.Statement.Base is
          when ft_settype   => null;
          when ft_bits      => null;
          when ft_utf8      => hold := (ft_utf8, ST);
+         when ft_geometry  =>
+            --  There's currently no easy way to go from text to geometry
+            --  At best we can go from text => WKB => geometry right now
+            declare
+               binary : WKB.WKB_Chain := ARC.convert (value);
+               shapes : Spatial_Data.Geometry := WKB.Translate_WKB (binary);
+            begin
+               hold := (ft_geometry, shapes);
+            end;
       end case;
       case zone.output_type is
          when ft_nbyte0    => Stmt.assign (index, hold.v00);
@@ -1650,6 +1720,7 @@ package body AdaBase.Statement.Base is
          when ft_timestamp => Stmt.assign (index, hold.v16);
          when ft_enumtype  => Stmt.assign (index, hold.v18);
          when ft_utf8      => Stmt.assign (index, hold.v21);
+         when ft_geometry  => Stmt.assign (index, hold.v22);
          when ft_chain     =>
             declare
                my_chain : AR.Chain := ARC.convert (value);
@@ -1664,9 +1735,9 @@ package body AdaBase.Statement.Base is
             end;
          when ft_bits =>
             declare
-               set : AR.Bits := ARC.convert (value);
+               bitchain : AR.Bits := ARC.convert (value);
             begin
-               Stmt.assign (index, set);
+               Stmt.assign (index, bitchain);
             end;
       end case;
    end auto_assign;
@@ -1705,6 +1776,7 @@ package body AdaBase.Statement.Base is
          when ft_bits      => param.a20.all :=
                               ARC.convert ("", param.a20.all'Length);
          when ft_utf8      => param.a21.all := AR.PARAM_IS_TEXT_UTF8;
+         when ft_geometry  => param.a22.all := AR.PARAM_IS_GEOMETRY;
       end case;
    end set_as_null;
 

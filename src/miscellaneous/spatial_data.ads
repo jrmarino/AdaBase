@@ -65,6 +65,7 @@ package Spatial_Data is
    subtype Geometric_Line is Geometric_Point_set (1 .. 2);
 
    Origin_Point : constant Geometric_Point := (0.0, 0.0);
+   Blank_Geometry : constant Geometry;
 
    --------------------------------
    --  Initialization functions  --
@@ -210,6 +211,8 @@ private
                                    (others => heterogeneous_Dummy);
          end case;
       end record;
+
+   Blank_Geometry : constant Geometry := (unset, 1, 0);
 
    --  returns a trimmed floating point image
    function format_real (value : Geometric_Real) return String;

@@ -899,6 +899,7 @@ package body AdaBase.Statement.Base.SQLite is
       use type AR.Settype_Access;
       use type AR.Bits_Access;
       use type AR.S_UTF8_Access;
+      use type AR.Geometry_Access;
    begin
       if zone.null_data then
          if not conn.marker_is_null (Stmt.stmt_handle, marker) then
@@ -1077,6 +1078,17 @@ package body AdaBase.Statement.Base.SQLite is
                   okay := conn.marker_is_text (Stmt.stmt_handle, marker,
                                                zone.a21.all, BT);
                end if;
+            when ft_geometry =>
+               if zone.a22 = null then
+                  okay := conn.marker_is_text (Stmt.stmt_handle, marker,
+                                               GEO.Well_Known_Text (zone.v22),
+                                               BT);
+               else
+                  okay := conn.marker_is_text
+                    (Stmt.stmt_handle, marker,
+                     GEO.Well_Known_Text (zone.a22.all), BT);
+               end if;
+
          end case;
          if not okay then
             Stmt.log_problem (category   => statement_execution,

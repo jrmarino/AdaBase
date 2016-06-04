@@ -49,6 +49,7 @@ package body AdaBase.Results.Field is
             end;
          when ft_real9     |
               ft_real18    |
+              ft_geometry  |
               ft_timestamp |
               ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
@@ -91,6 +92,7 @@ package body AdaBase.Results.Field is
             end;
          when ft_real9     |
               ft_real18    |
+              ft_geometry  |
               ft_timestamp |
               ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
@@ -134,6 +136,7 @@ package body AdaBase.Results.Field is
             end;
          when ft_real9     |
               ft_real18    |
+              ft_geometry  |
               ft_timestamp |
               ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
@@ -177,6 +180,7 @@ package body AdaBase.Results.Field is
             end;
          when ft_real9     |
               ft_real18    |
+              ft_geometry  |
               ft_timestamp |
               ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
@@ -220,6 +224,7 @@ package body AdaBase.Results.Field is
             end;
          when ft_real9     |
               ft_real18    |
+              ft_geometry  |
               ft_timestamp |
               ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
@@ -263,6 +268,7 @@ package body AdaBase.Results.Field is
             end;
          when ft_real9     |
               ft_real18    |
+              ft_geometry  |
               ft_timestamp |
               ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
@@ -294,6 +300,7 @@ package body AdaBase.Results.Field is
          when ft_utf8      => return ARC.convert (field.native.v21);  --  [1]
          when ft_real9     |
               ft_real18    |
+              ft_geometry  |
               ft_timestamp |
               ft_chain     |
               ft_bits      |
@@ -327,6 +334,7 @@ package body AdaBase.Results.Field is
          when ft_utf8      => return ARC.convert (field.native.v21);  --  [1]
          when ft_real9     |
               ft_real18    |
+              ft_geometry  |
               ft_timestamp |
               ft_chain     |
               ft_bits      |
@@ -360,6 +368,7 @@ package body AdaBase.Results.Field is
          when ft_utf8      => return ARC.convert (field.native.v21);  --  [1]
          when ft_real9     |
               ft_real18    |
+              ft_geometry  |
               ft_timestamp |
               ft_chain     |
               ft_bits      |
@@ -393,6 +402,7 @@ package body AdaBase.Results.Field is
          when ft_utf8      => return ARC.convert (field.native.v21);  --  [1]
          when ft_real9     |
               ft_real18    |
+              ft_geometry  |
               ft_timestamp |
               ft_chain     |
               ft_bits      |
@@ -426,6 +436,7 @@ package body AdaBase.Results.Field is
          when ft_utf8      => return ARC.convert (field.native.v21);  --  [1]
          when ft_real9     |
               ft_real18    |
+              ft_geometry  |
               ft_timestamp |
               ft_chain     |
               ft_bits      |
@@ -462,6 +473,7 @@ package body AdaBase.Results.Field is
          when ft_timestamp |
               ft_chain     |
               ft_bits      |
+              ft_geometry  |
               ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
@@ -495,6 +507,7 @@ package body AdaBase.Results.Field is
          when ft_timestamp |
               ft_chain     |
               ft_bits      |
+              ft_geometry  |
               ft_enumtype  |
               ft_settype   => raise UNSUPPORTED_CONVERSION;
       end case;
@@ -530,6 +543,7 @@ package body AdaBase.Results.Field is
          when ft_settype   => return ARC.convert (field.native.v19);
          when ft_bits      => return ARC.convert (field.native.v20);
          when ft_utf8      => return ARC.cvu2str (CT.USS (field.native.v21));
+         when ft_geometry  => return SPAT.Well_Known_Text (field.native.v22);
       end case;
    end as_string;
 
@@ -563,6 +577,8 @@ package body AdaBase.Results.Field is
          when ft_settype   => return ARC.convert (field.native.v19);
          when ft_bits      => return ARC.convert (field.native.v20);
          when ft_utf8      => return ARC.cvu2str (CT.USS (field.native.v21));
+         when ft_geometry  =>
+            return ARC.convert (SPAT.Well_Known_Text (field.native.v22));
       end case;
    end as_wstring;
 
@@ -596,6 +612,8 @@ package body AdaBase.Results.Field is
          when ft_settype   => return ARC.convert (field.native.v19);
          when ft_bits      => return ARC.convert (field.native.v20);
          when ft_utf8      => return ARC.cvu2str (CT.USS (field.native.v21));
+         when ft_geometry  =>
+            return ARC.convert (SPAT.Well_Known_Text (field.native.v22));
       end case;
    end as_wwstring;
 
@@ -603,15 +621,29 @@ package body AdaBase.Results.Field is
    -----------------
    --  as_time  --
    -----------------
-   function as_time (field : Std_Field) return AC.Time
-   is
-      --  Looks like nothing can be converted to a time type so far
+   function as_time (field : Std_Field) return AC.Time is
    begin
       case field.native.datatype is
          when ft_timestamp => return field.native.v16;
+         when ft_textual   => return ARC.convert (field.native.v13);
+         when ft_widetext  => return ARC.convert (field.native.v14);
+         when ft_supertext => return ARC.convert (field.native.v15);
+         when ft_utf8      => return ARC.convert (field.native.v21);
          when others => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_time;
+
+
+   ------------------
+   --  as_geometry --
+   ------------------
+   function as_geometry (field : Std_Field) return SPAT.Geometry is
+   begin
+      case field.native.datatype is
+         when ft_geometry => return field.native.v22;
+         when others => raise UNSUPPORTED_CONVERSION;
+      end case;
+   end as_geometry;
 
 
    ----------------
@@ -645,6 +677,7 @@ package body AdaBase.Results.Field is
               ft_real9 |
               ft_real18 |
               ft_utf8 |
+              ft_geometry |
               ft_enumtype |
               ft_settype |
               ft_timestamp => raise UNSUPPORTED_CONVERSION;
@@ -722,6 +755,7 @@ package body AdaBase.Results.Field is
               ft_real9 |
               ft_real18 |
               ft_utf8 |
+              ft_geometry |
               ft_enumtype |
               ft_settype |
               ft_timestamp => raise UNSUPPORTED_CONVERSION;
@@ -756,6 +790,8 @@ package body AdaBase.Results.Field is
          when ft_enumtype  => return ARC.cv2utf8 (field.native.v18);
          when ft_settype   => return ARC.cv2utf8 (field.native.v19);
          when ft_utf8      => return Text_UTF8 (CT.USS (field.native.v21));
+         when ft_geometry  =>
+            return ARC.cv2utf8 (SPAT.Well_Known_Text (field.native.v22));
          when ft_chain     |
               ft_bits      => raise UNSUPPORTED_CONVERSION;
       end case;
@@ -861,6 +897,7 @@ package body AdaBase.Results.Field is
          when ft_settype  => result.set ((ft_settype, PARAM_IS_TEXTUAL), True);
          when ft_bits => result.set ((ft_bits, PARAM_IS_TEXTUAL), True);
          when ft_utf8 => result.set ((ft_utf8, PARAM_IS_TEXTUAL), True);
+         when ft_geometry => result.set ((ft_geometry, PARAM_IS_GEOMETRY), True);
       end case;
       return result;
    end spawn_null_field;
@@ -894,6 +931,7 @@ package body AdaBase.Results.Field is
          when ft_settype   => field.native := (ft_settype, data.v19);
          when ft_bits      => field.native := (ft_bits, data.v20);
          when ft_utf8      => field.native := (ft_utf8, data.v21);
+         when ft_geometry  => field.native := (ft_geometry, data.v22);
       end case;
       field.explicit_null := exnull;
    end set;
