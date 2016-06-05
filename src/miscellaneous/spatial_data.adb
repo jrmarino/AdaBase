@@ -1687,7 +1687,7 @@ package body Spatial_Data is
                first   : Boolean;
             begin
                if collection.units = 1 then
-                  product := CT.SUS ("POLYGON(");
+                  product := CT.SUS ("POLYGON");
                end if;
                for ls in 1 .. collection.units loop
                   first := (ls = 1);
@@ -1695,7 +1695,10 @@ package body Spatial_Data is
                     (product, format_polygon
                        (retrieve_full_polygon (collection, ls), first));
                end loop;
-               return CT.USS (product) & pclose;
+               if collection.units > 1 then
+                  CT.SU.Append (product, pclose);
+               end if;
+               return CT.USS (product);
             end;
          when heterogeneous =>
             declare

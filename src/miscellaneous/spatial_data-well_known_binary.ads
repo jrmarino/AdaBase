@@ -44,6 +44,19 @@ private
                                marker : in out Natural)
                                return Geometric_Line_String;
 
+   function handle_polyrings  (direction : WKB_Endianness;
+                               payload   : WKB_Chain;
+                               marker    : in out Natural)
+                               return Geometric_Polygon;
+
+   function handle_polygon (payload : WKB_Chain;
+                            marker : in out Natural)
+                            return Geometry;
+
+   procedure handle_additional_polygons (payload : WKB_Chain;
+                                        marker : in out Natural;
+                                        collection : in out Geometry);
+
    function round_to_16_digits (FP : Geometric_Real) return Geometric_Real;
 
 end Spatial_Data.Well_Known_Binary;

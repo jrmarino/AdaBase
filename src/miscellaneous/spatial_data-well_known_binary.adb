@@ -104,8 +104,27 @@ package body Spatial_Data.Well_Known_Binary is
                     (product, handle_linestring (binary, marker));
                end loop;
                return product;
-            when single_polygon => null;
-            when multi_polygon => null;
+            when single_polygon =>
+               entities := entity_count;
+               required := 9 + (entities * 64);  --  at least, can be more
+               if required > chainlen then
+                  goto crash;
+               end if;
+               marker := 1;
+               return handle_polygon (binary, marker);
+            when multi_polygon =>
+               entities := entity_count;
+               required := 9 + (entities * 73);  --  at least, can be more
+               if required > chainlen then
+                  goto crash;
+               end if;
+                --  Required to have at least one linestring
+               marker := 10;
+               product := handle_polygon (binary, marker);
+               for additional_Poly in 2 .. entities loop
+                  handle_additional_polygons (binary, marker, product);
+               end loop;
+               return product;
             when heterogeneous => null;
          end case;
       end;
@@ -160,6 +179,82 @@ package body Spatial_Data.Well_Known_Binary is
       end loop;
       return LS;
    end handle_linestring;
+
+
+   ------------------------
+   --  handle_polyrings  --
+   ------------------------
+   function handle_polyrings  (direction : WKB_Endianness;
+                               payload   : WKB_Chain;
+                               marker    : in out Natural)
+                               return Geometric_Polygon
+   is
+      num_points : Natural :=  Natural (decode_hex32 (direction,
+                                        payload (marker .. marker + 3)));
+      ring : Geometric_Polygon (1 .. num_points);
+   begin
+      marker := marker + 4;
+      for x in 1 .. num_points loop
+         ring (x) := handle_point
+           (direction, payload (marker .. marker + 15));
+         marker := marker + 16;
+      end loop;
+      return ring;
+   end handle_polyrings;
+
+
+   ----------------------
+   --  handle_polygon  --
+   ----------------------
+   function handle_polygon (payload : WKB_Chain;
+                            marker : in out Natural)
+                            return Geometry
+   is
+      poly_endian : WKB_Endianness := decode_endianness (payload (marker));
+      num_rings : Natural := Natural (decode_hex32 (poly_endian,
+                                      payload (marker + 5 .. marker + 8)));
+      --  There must be at least one ring (exterior)
+   begin
+      marker := marker + 9;
+      declare
+         poly : Geometry := initialize_as_polygon
+           (handle_polyrings (direction => poly_endian,
+                              payload   => payload,
+                              marker    => marker));
+      begin
+         for x in 2 .. num_rings loop
+            append_polygon_hole
+              (poly, handle_polyrings (direction => poly_endian,
+                                       payload   => payload,
+                                       marker    => marker));
+         end loop;
+         return poly;
+      end;
+   end handle_polygon;
+
+
+   ----------------------------------
+   --  handle_additional_polygons  --
+   ----------------------------------
+   procedure handle_additional_polygons (payload : WKB_Chain;
+                                        marker : in out Natural;
+                                        collection : in out Geometry)
+   is
+      poly_endian : WKB_Endianness := decode_endianness (payload (marker));
+      num_rings : Natural := Natural (decode_hex32 (poly_endian,
+                                      payload (marker + 5 .. marker + 8)));
+      --  There must be at least one ring (exterior)
+   begin
+      marker := marker + 9;
+      append_polygon (collection,
+                      handle_polyrings (direction => poly_endian,
+                                        payload   => payload,
+                                        marker    => marker));
+      append_polygon_hole
+        (collection, handle_polyrings (direction => poly_endian,
+                                       payload   => payload,
+                                       marker    => marker));
+   end handle_additional_polygons;
 
 
    -------------------------
