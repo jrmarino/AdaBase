@@ -75,6 +75,7 @@ package body Spatial_Data.Well_Known_Binary is
                if required > chainlen then
                   goto crash;
                end if;
+               --  required to have at least one point
                declare
                   pt_endian   : WKB_Endianness :=
                                 decode_endianness (binary (10));
@@ -89,22 +90,63 @@ package body Spatial_Data.Well_Known_Binary is
                      pt_endian  : WKB_Endianness :=
                                   decode_endianness (binary (marker));
                      next_point : Geometric_Point := handle_point
-                       (endianness, binary (marker + 5 .. marker + 20));
+                       (pt_endian, binary (marker + 5 .. marker + 20));
                   begin
                      append_point (product, next_point);
                      marker := marker + 21;
                   end;
                end loop;
                return product;
+            when multi_line_string =>
+               entities := entity_count;
+               required := 9 + (entities * 25);  --  at least, can be more
+               if required > chainlen then
+                  goto crash;
+               end if;
+               --  Required to have at least one linestring
+               declare
+                  ls_endian : WKB_Endianness :=
+                              decode_endianness (binary (10));
+                  num_points : Natural :=
+                    Natural (decode_hex32 (ls_endian, binary (15 .. 18)));
+                  LS : Geometric_Line_String (1 .. num_points);
+               begin
+                  marker := 19;
+                  for x in 1 .. num_points loop
+                     LS (x) := handle_point
+                               (ls_endian, binary (marker .. marker + 15));
+                     marker := marker + 16;
+                  end loop;
+                  product := initialize_as_line_string (LS);
+               end;
+               for additional_LS in 2 .. entities loop
+                  declare
+                     ls_endian : WKB_Endianness :=
+                                 decode_endianness (binary (marker));
+                     num_points : Natural :=
+                       Natural (decode_hex32 (ls_endian,
+                                binary (marker + 5 .. marker + 8)));
+                     LS : Geometric_Line_String (1 .. num_points);
+                  begin
+                     marker := marker + 9;
+                     for x in 1 .. num_points loop
+                        LS (x) := handle_point
+                                  (ls_endian, binary (marker .. marker + 15));
+                        marker := marker + 16;
+                     end loop;
+                     append_line_string (product, LS);
+                  end;
+               end loop;
+               return product;
             when single_polygon => null;
-            when multi_line_string => null;
             when multi_polygon => null;
             when heterogeneous => null;
          end case;
       end;
       <<crash>>
       raise WKB_INVALID
-        with "Chain is smaller than required" & required'Img & " links";
+        with "Chain is smaller than required" & required'Img & " links (" &
+        chainlen'Img  & ")";
    end Translate_WKB;
 
 
