@@ -356,6 +356,7 @@ package body Spatial_Data.Well_Known_Binary is
                       return Geometric_Real;
 
       our_chain : WKB_Double_Precision_Chain;
+      fracked   : Boolean := False;
       byte_mask : constant array (0 .. 7) of WKB_Byte := (2 ** 0, 2 ** 1,
                                                           2 ** 2, 2 ** 3,
                                                           2 ** 4, 2 ** 5,
@@ -374,6 +375,7 @@ package body Spatial_Data.Well_Known_Binary is
                       return Geometric_Real is
       begin
          if (our_chain (link) and byte_mask (bitpos)) > 0 then
+            fracked := True;
             return 2.0 ** exp;
          end if;
          return 0.0;
@@ -386,6 +388,7 @@ package body Spatial_Data.Well_Known_Binary is
       result    : Geometric_Real;
       factor    : Geometric_Real;
       marker    : Integer;
+      negative  : Boolean;
 
    begin
       case direction is
@@ -401,9 +404,10 @@ package body Spatial_Data.Well_Known_Binary is
             our_chain (8) := chain (1);
       end case;
       if (our_chain (1) and sign_mask) > 0 then
-         --  Negative sign
+         negative := True;
          factor := -1.0;
       else
+         negative := False;
          factor := 1.0;
       end if;
       exponent :=
@@ -432,6 +436,14 @@ package body Spatial_Data.Well_Known_Binary is
             marker := marker - 1;
          end loop;
       end loop;
+
+      if not fracked and then exponent = 0 then
+         if negative then
+            return -0.0;
+         else
+            return 0.0;
+         end if;
+      end if;
 
       case exponent is
          when 2047 =>
