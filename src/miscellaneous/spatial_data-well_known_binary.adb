@@ -57,17 +57,9 @@ package body Spatial_Data.Well_Known_Binary is
                if required > chainlen or else entities < 2 then
                   goto crash;
                end if;
-               declare
-                  LS : Geometric_Line_String (1 .. entities);
-               begin
-                  marker := 10;
-                  for x in 1 .. entities loop
-                     LS (x) := handle_point (endianness,
-                                             binary (marker .. marker + 15));
-                     marker := marker + 16;
-                  end loop;
-                  product := initialize_as_line_string (LS);
-               end;
+               marker := 1;
+               product := initialize_as_line_string
+                 (handle_linestring (binary, marker));
                return product;
             when multi_point =>
                entities := entity_count;
@@ -104,38 +96,12 @@ package body Spatial_Data.Well_Known_Binary is
                   goto crash;
                end if;
                --  Required to have at least one linestring
-               declare
-                  ls_endian : WKB_Endianness :=
-                              decode_endianness (binary (10));
-                  num_points : Natural :=
-                    Natural (decode_hex32 (ls_endian, binary (15 .. 18)));
-                  LS : Geometric_Line_String (1 .. num_points);
-               begin
-                  marker := 19;
-                  for x in 1 .. num_points loop
-                     LS (x) := handle_point
-                               (ls_endian, binary (marker .. marker + 15));
-                     marker := marker + 16;
-                  end loop;
-                  product := initialize_as_line_string (LS);
-               end;
+               marker := 10;
+               product := initialize_as_line_string
+                 (handle_linestring (binary, marker));
                for additional_LS in 2 .. entities loop
-                  declare
-                     ls_endian : WKB_Endianness :=
-                                 decode_endianness (binary (marker));
-                     num_points : Natural :=
-                       Natural (decode_hex32 (ls_endian,
-                                binary (marker + 5 .. marker + 8)));
-                     LS : Geometric_Line_String (1 .. num_points);
-                  begin
-                     marker := marker + 9;
-                     for x in 1 .. num_points loop
-                        LS (x) := handle_point
-                                  (ls_endian, binary (marker .. marker + 15));
-                        marker := marker + 16;
-                     end loop;
-                     append_line_string (product, LS);
-                  end;
+                  append_line_string
+                    (product, handle_linestring (binary, marker));
                end loop;
                return product;
             when single_polygon => null;
@@ -173,6 +139,27 @@ package body Spatial_Data.Well_Known_Binary is
       Y := convert_to_IEEE754 (direction, payload (9 .. 16));
       return (X, Y);
    end handle_point;
+
+
+   -------------------------
+   --  handle_linestring  --
+   -------------------------
+   function handle_linestring (payload : WKB_Chain; marker : in out Natural)
+                               return Geometric_Line_String
+   is
+      ls_endian : WKB_Endianness := decode_endianness (payload (marker));
+      num_points : Natural :=  Natural (decode_hex32 (ls_endian,
+                                        payload (marker + 5 .. marker + 8)));
+      LS : Geometric_Line_String (1 .. num_points);
+   begin
+      marker := marker + 9;
+      for x in 1 .. num_points loop
+         LS (x) := handle_point
+           (ls_endian, payload (marker .. marker + 15));
+         marker := marker + 16;
+      end loop;
+      return LS;
+   end handle_linestring;
 
 
    -------------------------

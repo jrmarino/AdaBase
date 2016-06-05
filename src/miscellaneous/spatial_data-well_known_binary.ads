@@ -40,6 +40,10 @@ private
                           payload   : WKB_Shape_Point_Chain)
                           return Geometric_Point;
 
+   function handle_linestring (payload : WKB_Chain;
+                               marker : in out Natural)
+                               return Geometric_Line_String;
+
    function round_to_16_digits (FP : Geometric_Real) return Geometric_Real;
 
 end Spatial_Data.Well_Known_Binary;
