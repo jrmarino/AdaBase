@@ -1289,7 +1289,7 @@ package body Spatial_Data is
       last3  : constant String := raw (raw'Last - 2 .. raw'Last);
       posend : constant Natural := raw'Last - 4;
       shift  : constant Integer := Integer'Value (last3);
-      canvas : String (1 .. 43) := (others => '0');
+      canvas : String (1 .. 26) := (others => '0');
       dot    : Natural;
 
       function trim_sides (S : String) return String
@@ -1320,6 +1320,8 @@ package body Spatial_Data is
       if shift = 0 then
          canvas (1 .. posend) := raw (1 .. posend);
          return trim_sides (canvas (1 .. posend));
+      elsif shift > 18 or else shift < -18 then
+         return trim_sides (raw);
       elsif shift > 0 then
          canvas (1 .. posend) := raw (1 .. posend);
          dot := CT.pinpoint (canvas, ".");
