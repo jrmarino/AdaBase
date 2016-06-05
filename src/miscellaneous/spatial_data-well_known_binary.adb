@@ -292,6 +292,7 @@ package body Spatial_Data.Well_Known_Binary is
       function frack (link : Positive; bitpos : Natural; exp : Integer)
                       return Geometric_Real;
 
+      our_chain : WKB_Double_Precision_Chain;
       byte_mask : constant array (0 .. 7) of WKB_Byte := (2 ** 0, 2 ** 1,
                                                           2 ** 2, 2 ** 3,
                                                           2 ** 4, 2 ** 5,
@@ -300,7 +301,7 @@ package body Spatial_Data.Well_Known_Binary is
       function slice (link : Positive; bitpos : Natural; exp : Natural)
                       return WKB_exponent is
       begin
-         if (chain (link) and byte_mask (bitpos)) > 0 then
+         if (our_chain (link) and byte_mask (bitpos)) > 0 then
             return 2 ** exp;
          end if;
          return 0;
@@ -309,14 +310,13 @@ package body Spatial_Data.Well_Known_Binary is
       function frack (link : Positive; bitpos : Natural; exp : Integer)
                       return Geometric_Real is
       begin
-         if (chain (link) and byte_mask (bitpos)) > 0 then
+         if (our_chain (link) and byte_mask (bitpos)) > 0 then
             return 2.0 ** exp;
          end if;
          return 0.0;
       end frack;
 
       sign_mask : constant WKB_Byte := byte_mask (7);
-      our_chain : WKB_Double_Precision_Chain;
       exponent  : WKB_exponent := 0;
       fraction  : Geometric_Real := 0.0;
       power_res : Geometric_Real;

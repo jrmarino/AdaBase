@@ -1321,7 +1321,7 @@ package body Spatial_Data is
          canvas (1 .. posend) := raw (1 .. posend);
          return trim_sides (canvas (1 .. posend));
       elsif shift > 18 or else shift < -18 then
-         return trim_sides (raw);
+         return CT.trim (raw);
       elsif shift > 0 then
          canvas (1 .. posend) := raw (1 .. posend);
          dot := CT.pinpoint (canvas, ".");
