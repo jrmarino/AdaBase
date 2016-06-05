@@ -32,10 +32,10 @@ private
                                return WKB_Identifier;
    function get_collection_type (identifier : WKB_Identifier)
                                  return Collection_Type;
-   function decode_number (direction : WKB_Endianness;
-                           value : WKB_Double_Precision_Chain)
-                           return WKB_IEEE754_Hex;
-   function convert_to_IEEE754 (hex : WKB_IEEE754_Hex) return Geometric_Real;
+--   function decode_number (direction : WKB_Endianness;
+--                           value : WKB_Double_Precision_Chain)
+--                           return WKB_IEEE754_Hex;
+--   function convert_to_IEEE754 (hex : WKB_IEEE754_Hex) return Geometric_Real;
    function convert_to_IEEE754 (direction : WKB_Endianness;
                                 chain     : WKB_Double_Precision_Chain)
                                 return Geometric_Real;

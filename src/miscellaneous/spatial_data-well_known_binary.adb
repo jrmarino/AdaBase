@@ -3,7 +3,6 @@
 
 package body Spatial_Data.Well_Known_Binary is
 
-
    -------------------
    --  produce_WKT  --
    -------------------
@@ -197,87 +196,87 @@ package body Spatial_Data.Well_Known_Binary is
    ---------------------
    --  decode_number  --
    ---------------------
-   function decode_number (direction : WKB_Endianness;
-                           value : WKB_Double_Precision_Chain)
-                           return WKB_IEEE754_Hex
-   is
-      result : WKB_IEEE754_Hex := 0;
-      mask : array (1 .. 8) of WKB_IEEE754_Hex :=
-        (2 **  0, 2 **  8, 2 ** 16, 2 ** 24,
-         2 ** 32, 2 ** 40, 2 ** 48, 2 ** 56);
-   begin
-      case direction is
-         when little_endian =>
-            result := (WKB_IEEE754_Hex (value (1)) * mask (1)) +
-                      (WKB_IEEE754_Hex (value (2)) * mask (2)) +
-                      (WKB_IEEE754_Hex (value (3)) * mask (3)) +
-                      (WKB_IEEE754_Hex (value (4)) * mask (4)) +
-                      (WKB_IEEE754_Hex (value (5)) * mask (5)) +
-                      (WKB_IEEE754_Hex (value (6)) * mask (6)) +
-                      (WKB_IEEE754_Hex (value (7)) * mask (7)) +
-                      (WKB_IEEE754_Hex (value (8)) * mask (8));
-         when big_endian =>
-            result := (WKB_IEEE754_Hex (value (8)) * mask (1)) +
-                      (WKB_IEEE754_Hex (value (7)) * mask (2)) +
-                      (WKB_IEEE754_Hex (value (6)) * mask (3)) +
-                      (WKB_IEEE754_Hex (value (5)) * mask (4)) +
-                      (WKB_IEEE754_Hex (value (4)) * mask (5)) +
-                      (WKB_IEEE754_Hex (value (3)) * mask (6)) +
-                      (WKB_IEEE754_Hex (value (2)) * mask (7)) +
-                      (WKB_IEEE754_Hex (value (1)) * mask (8));
-      end case;
-      return result;
-   end decode_number;
+--     function decode_number (direction : WKB_Endianness;
+--                             value : WKB_Double_Precision_Chain)
+--                             return WKB_IEEE754_Hex
+--     is
+--        result : WKB_IEEE754_Hex := 0;
+--        mask : array (1 .. 8) of WKB_IEEE754_Hex :=
+--          (2 **  0, 2 **  8, 2 ** 16, 2 ** 24,
+--           2 ** 32, 2 ** 40, 2 ** 48, 2 ** 56);
+--     begin
+--        case direction is
+--           when little_endian =>
+--              result := (WKB_IEEE754_Hex (value (1)) * mask (1)) +
+--                        (WKB_IEEE754_Hex (value (2)) * mask (2)) +
+--                        (WKB_IEEE754_Hex (value (3)) * mask (3)) +
+--                        (WKB_IEEE754_Hex (value (4)) * mask (4)) +
+--                        (WKB_IEEE754_Hex (value (5)) * mask (5)) +
+--                        (WKB_IEEE754_Hex (value (6)) * mask (6)) +
+--                        (WKB_IEEE754_Hex (value (7)) * mask (7)) +
+--                        (WKB_IEEE754_Hex (value (8)) * mask (8));
+--           when big_endian =>
+--              result := (WKB_IEEE754_Hex (value (8)) * mask (1)) +
+--                        (WKB_IEEE754_Hex (value (7)) * mask (2)) +
+--                        (WKB_IEEE754_Hex (value (6)) * mask (3)) +
+--                        (WKB_IEEE754_Hex (value (5)) * mask (4)) +
+--                        (WKB_IEEE754_Hex (value (4)) * mask (5)) +
+--                        (WKB_IEEE754_Hex (value (3)) * mask (6)) +
+--                        (WKB_IEEE754_Hex (value (2)) * mask (7)) +
+--                        (WKB_IEEE754_Hex (value (1)) * mask (8));
+--        end case;
+--        return result;
+--     end decode_number;
 
 
    --------------------------
    --  convert_to_IEEE754  --
    --------------------------
-   function convert_to_IEEE754 (hex : WKB_IEEE754_Hex) return Geometric_Real
-   is
-      sign_mask : WKB_IEEE754_Hex := 2 ** 63;
-      work_mask : WKB_IEEE754_Hex;
-      exponent  : WKB_exponent := 0;
-      fraction  : Geometric_Real := 0.0;
-      power_res : Geometric_Real;
-      result    : Geometric_Real;
-      factor    : Geometric_Real;
-      marker    : Integer := -1;
-   begin
-      if (hex and sign_mask) > 0 then
-         --  Negative sign
-         factor := -1.0;
-      else
-         factor := 1.0;
-      end if;
-      for x in 52 .. 62 loop
-         work_mask := 2 ** x;
-         if (hex and work_mask) > 0 then
-            exponent := exponent + (2 ** (x - 52));
-         end if;
-      end loop;
-      for x in reverse 0 .. 51 loop
-         work_mask := 2 ** x;
-         if (hex and work_mask) > 0 then
-            fraction := fraction + (2.0 ** marker);
-         end if;
-         marker := marker - 1;
-      end loop;
-      case exponent is
-         when 2047 =>
-            raise WKB_INVALID
-              with "Infinity/NAN";
-         when 0 =>
-            --  denormalized
-            power_res := 2.0 ** (-1022);
-            result := factor * fraction * power_res;
-         when 1 .. 2046 =>
-            --  normalized
-            power_res := 2.0 ** (Natural (exponent) - 1023);
-            result := factor * (1.0 + fraction) * power_res;
-      end case;
-      return result;
-   end convert_to_IEEE754;
+--     function convert_to_IEEE754 (hex : WKB_IEEE754_Hex) return Geometric_Real
+--     is
+--        sign_mask : WKB_IEEE754_Hex := 2 ** 63;
+--        work_mask : WKB_IEEE754_Hex;
+--        exponent  : WKB_exponent := 0;
+--        fraction  : Geometric_Real := 0.0;
+--        power_res : Geometric_Real;
+--        result    : Geometric_Real;
+--        factor    : Geometric_Real;
+--        marker    : Integer := -1;
+--     begin
+--        if (hex and sign_mask) > 0 then
+--           --  Negative sign
+--           factor := -1.0;
+--        else
+--           factor := 1.0;
+--        end if;
+--        for x in 52 .. 62 loop
+--           work_mask := 2 ** x;
+--           if (hex and work_mask) > 0 then
+--              exponent := exponent + (2 ** (x - 52));
+--           end if;
+--        end loop;
+--        for x in reverse 0 .. 51 loop
+--           work_mask := 2 ** x;
+--           if (hex and work_mask) > 0 then
+--              fraction := fraction + (2.0 ** marker);
+--           end if;
+--           marker := marker - 1;
+--        end loop;
+--        case exponent is
+--           when 2047 =>
+--              raise WKB_INVALID
+--                with "Infinity/NAN";
+--           when 0 =>
+--              --  denormalized
+--              power_res := 2.0 ** (-1022);
+--              result := factor * fraction * power_res;
+--           when 1 .. 2046 =>
+--              --  normalized
+--              power_res := 2.0 ** (Natural (exponent) - 1023);
+--              result := factor * (1.0 + fraction) * power_res;
+--        end case;
+--        return result;
+--     end convert_to_IEEE754;
 
 
    --------------------------
@@ -382,7 +381,29 @@ package body Spatial_Data.Well_Known_Binary is
             power_res := 2.0 ** (Natural (exponent) - 1023);
             result := factor * (1.0 + fraction) * power_res;
       end case;
-      return result;
+      declare
+         --  remove 2 significant digits after round (18 => 16)
+         resimage : String := Geometric_Real'Image (result);
+         dot : Natural := CT.pinpoint (resimage, ".");
+         exp : Natural := CT.pinpoint (resimage, "E");
+         dec : String := resimage (dot + 1 .. exp - 1);
+         halfpump : WKB_IEEE754_Hex := 50;
+         vessel   : WKB_IEEE754_Hex;
+      begin
+         if dec'Length /= 17 then
+            raise WKB_INVALID
+              with "float image length wrong:" & dec'Length'Img;
+         end if;
+         vessel := WKB_IEEE754_Hex'Value (dec) + halfpump;
+         declare
+            decimage : String := WKB_IEEE754_Hex'Image (vessel);
+         begin
+            return Geometric_Real'Value
+              (resimage (resimage'First .. dot) &
+                 decimage (decimage'First + 1 .. decimage'Last - 2) &
+                 resimage (exp .. resimage'Last));
+         end;
+      end;
    end convert_to_IEEE754;
 
 

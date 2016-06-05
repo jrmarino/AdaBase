@@ -1314,7 +1314,11 @@ package body Spatial_Data is
          if S (right) = '.' then
             right := right - 1;
          end if;
-         return S (left .. right);
+         if S (left .. left + 1) = "-." then
+            return "-0" & S (left + 1 .. right);
+         else
+            return S (left .. right);
+         end if;
       end trim_sides;
    begin
       if shift = 0 then
