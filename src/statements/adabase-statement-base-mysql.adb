@@ -770,7 +770,11 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_utf8 =>
                      dvariant := (datatype => ft_utf8, v21 => CT.SUS (ST));
                   when ft_geometry =>
-                     dvariant := (datatype => ft_geometry, v22 => CT.SUS (ST));
+                     --  MySQL internal geometry format is SRID + WKB
+                     --  Remove the first 4 bytes and save only the WKB
+                     dvariant :=
+                       (datatype => ft_geometry,
+                        v22 => CT.SUS (ST (ST'First + 3 .. ST'Last)));
                   when ft_timestamp =>
                      begin
                         dvariant := (datatype => ft_timestamp,
@@ -903,6 +907,7 @@ package body AdaBase.Statement.Base.MySQL is
          for F in 1 .. maxlen loop
             declare
                use type ABM.enum_field_types;
+               function binary_string return String;
                cv       : mysql_canvas renames Stmt.bind_canvas (F);
                colinfo  : column_info renames Stmt.column_info.Element (F);
                dvariant : ARF.Variant;
@@ -912,6 +917,13 @@ package body AdaBase.Statement.Base.MySQL is
                heading  : constant String := CT.USS (colinfo.field_name);
                isnull   : constant Boolean := (Natural (cv.is_null) = 1);
                mtype    : ABM.enum_field_types := colinfo.mysql_type;
+
+               function binary_string return String is
+               begin
+                  return bincopy (data       => cv.buffer_binary,
+                                  datalen    => datalen,
+                                  max_size   => Stmt.con_max_blob);
+               end binary_string;
             begin
                if isnull then
                   field := ARF.spawn_null_field (colinfo.field_type);
@@ -955,8 +967,7 @@ package body AdaBase.Statement.Base.MySQL is
                        mtype = ABM.MYSQL_TYPE_DECIMAL
                      then
                         dvariant := (datatype => ft_real9,
-                                     v11 => convert (bincopy (cv.buffer_binary,
-                                       datalen, Stmt.con_max_blob)));
+                                     v11 => convert (binary_string));
                      else
                         dvariant := (datatype => ft_real9,
                                      v11 => AR.Real9 (cv.buffer_float));
@@ -966,32 +977,33 @@ package body AdaBase.Statement.Base.MySQL is
                        mtype = ABM.MYSQL_TYPE_DECIMAL
                      then
                         dvariant := (datatype => ft_real18,
-                                     v12 => convert (bincopy (cv.buffer_binary,
-                                       datalen, Stmt.con_max_blob)));
+                                     v12 => convert (binary_string));
                      else
                         dvariant := (datatype => ft_real18,
                                      v12 => AR.Real18 (cv.buffer_double));
                      end if;
                   when ft_textual =>
                      dvariant := (datatype => ft_textual,
-                                  v13 => CT.SUS (bincopy (cv.buffer_binary,
-                                    datalen, Stmt.con_max_blob)));
+                                  v13 => CT.SUS (binary_string));
                   when ft_widetext =>
                      dvariant := (datatype => ft_widetext,
-                                  v14 => convert (bincopy (cv.buffer_binary,
-                                    datalen, Stmt.con_max_blob)));
+                                  v14 => convert (binary_string));
                   when ft_supertext =>
                      dvariant := (datatype => ft_supertext,
-                                  v15 => convert (bincopy (cv.buffer_binary,
-                                    datalen, Stmt.con_max_blob)));
+                                  v15 => convert (binary_string));
                   when ft_utf8 =>
                      dvariant := (datatype => ft_utf8,
-                                  v21 => CT.SUS (bincopy (cv.buffer_binary,
-                                    datalen, Stmt.con_max_blob)));
+                                  v21 => CT.SUS (binary_string));
                   when ft_geometry =>
-                     dvariant := (datatype => ft_geometry,
-                                  v22 => CT.SUS (bincopy (cv.buffer_binary,
-                                    datalen, Stmt.con_max_blob)));
+                     --  MySQL internal geometry format is SRID + WKB
+                     --  Remove the first 4 bytes and save only the WKB
+                     declare
+                        ST : String := binary_string;
+                        wkbstring  : String := ST (ST'First + 3 .. ST'Last);
+                     begin
+                        dvariant := (datatype => ft_geometry,
+                                     v22 => CT.SUS (wkbstring));
+                     end;
                   when ft_timestamp =>
                      declare
                         year  : Natural := Natural (cv.buffer_time.year);
@@ -1027,9 +1039,8 @@ package body AdaBase.Statement.Base.MySQL is
                           );
                      end;
                   when ft_enumtype =>
-                     dvariant := (datatype => ft_enumtype, v18 => ARC.convert
-                                  (CT.SUS (bincopy (cv.buffer_binary, datalen,
-                                     Stmt.con_max_blob))));
+                     dvariant := (datatype => ft_enumtype,
+                                  v18 => ARC.convert (binary_string));
                   when ft_settype => null;
                   when ft_chain   => null;
                   when ft_bits    => null;
@@ -1037,21 +1048,18 @@ package body AdaBase.Statement.Base.MySQL is
                   case colinfo.field_type is
                   when ft_chain =>
                      field := ARF.spawn_field
-                       (binob => bincopy (cv.buffer_binary, datalen,
-                        Stmt.con_max_blob));
+                       (binob =>  bincopy (cv.buffer_binary, datalen,
+                                           Stmt.con_max_blob));
                   when ft_bits =>
                      field := ARF.spawn_bits_field
                        (convert_to_bitstring
-                          (bincopy (cv.buffer_binary, datalen,
-                           Stmt.con_max_blob), datalen * 8));
+                          (binary_string, datalen * 8));
                   when ft_settype =>
                      field := ARF.spawn_field
-                       (enumset => bincopy (cv.buffer_binary, datalen,
-                        Stmt.con_max_blob));
+                       (enumset => binary_string);
                   when others =>
                      field := ARF.spawn_field
-                       (data => dvariant,
-                        null_data => isnull);
+                       (data => dvariant, null_data => isnull);
                   end case;
                end if;
 
@@ -1106,6 +1114,7 @@ package body AdaBase.Statement.Base.MySQL is
 
             declare
                use type ABM.enum_field_types;
+               function binary_string return String;
                cv      : mysql_canvas renames Stmt.bind_canvas (F);
                colinfo : column_info renames Stmt.column_info.Element (F);
                param   : bindrec renames Stmt.crate.Element (F);
@@ -1116,6 +1125,13 @@ package body AdaBase.Statement.Base.MySQL is
                errmsg  : constant String  := "native type : " &
                          field_types'Image (Tnative) & " binding type : " &
                          field_types'Image (Tout);
+
+               function binary_string return String is
+               begin
+                  return bincopy (data       => cv.buffer_binary,
+                                  datalen    => datalen,
+                                  max_size   => Stmt.con_max_blob);
+               end binary_string;
             begin
                --  Derivation of implementation taken from PostgreSQL
                --  Only guaranteed successful converstions allowed though
@@ -1215,8 +1231,7 @@ package body AdaBase.Statement.Base.MySQL is
                      if mtype = ABM.MYSQL_TYPE_NEWDECIMAL or else
                        mtype = ABM.MYSQL_TYPE_DECIMAL
                      then
-                        param.a11.all := convert (bincopy (cv.buffer_binary,
-                                              datalen, Stmt.con_max_blob));
+                        param.a11.all := convert (binary_string);
                      else
                         param.a11.all := AR.Real9 (cv.buffer_float);
                      end if;
@@ -1224,27 +1239,24 @@ package body AdaBase.Statement.Base.MySQL is
                      if mtype = ABM.MYSQL_TYPE_NEWDECIMAL or else
                        mtype = ABM.MYSQL_TYPE_DECIMAL
                      then
-                        param.a12.all := convert (bincopy (cv.buffer_binary,
-                                              datalen, Stmt.con_max_blob));
+                        param.a12.all := convert (binary_string);
                      else
                         param.a12.all := AR.Real18 (cv.buffer_double);
                      end if;
-                  when ft_textual => param.a13.all :=
-                       CT.SUS (bincopy (cv.buffer_binary, datalen,
-                               Stmt.con_max_blob));
-                  when ft_widetext => param.a14.all :=
-                       convert (bincopy (cv.buffer_binary, datalen,
-                                Stmt.con_max_blob));
+                  when ft_textual => param.a13.all := CT.SUS (binary_string);
+                  when ft_widetext => param.a14.all := convert (binary_string);
                   when ft_supertext => param.a15.all :=
-                       convert (bincopy (cv.buffer_binary, datalen,
-                                Stmt.con_max_blob));
-                  when ft_utf8 => param.a21.all :=
-                       bincopy (cv.buffer_binary, datalen,
-                                Stmt.con_max_blob);
-                  when ft_geometry => param.a22.all :=
-                       WKB.Translate_WKB
-                         (ARC.convert (bincopy (cv.buffer_binary, datalen,
-                          Stmt.con_max_blob)));
+                       convert (binary_string);
+                  when ft_utf8 => param.a21.all := binary_string;
+                  when ft_geometry =>
+                     --  MySQL internal geometry format is SRID + WKB
+                     --  Remove the first 4 bytes and translate WKB
+                     declare
+                        ST : String := binary_string;
+                        wkbstring  : String := ST (ST'First + 3 .. ST'Last);
+                     begin
+                        param.a22.all := WKB.Translate_WKB (wkbstring);
+                     end;
                   when ft_timestamp =>
                      declare
                         year  : Natural := Natural (cv.buffer_time.year);
@@ -1302,12 +1314,10 @@ package body AdaBase.Statement.Base.MySQL is
                      end;
                   when ft_enumtype =>
                      param.a18.all :=
-                       ARC.convert (CT.SUS (bincopy (cv.buffer_binary, datalen,
-                                Stmt.con_max_blob)));
+                       ARC.convert (CT.SUS (binary_string));
                   when ft_settype =>
                      declare
-                        setstr : constant String := bincopy
-                          (cv.buffer_binary, datalen, Stmt.con_max_blob);
+                        setstr : constant String := binary_string;
                         num_items : constant Natural := num_set_items (setstr);
                      begin
                         if param.a19.all'Length < num_items
@@ -1508,8 +1518,14 @@ package body AdaBase.Statement.Base.MySQL is
                   when ft_enumtype  => dossier.a18.all := ARC.convert (ST);
                   when ft_textual   => dossier.a13.all := CT.SUS (ST);
                   when ft_utf8      => dossier.a21.all := ST;
-                  when ft_geometry  => dossier.a22.all :=
-                                       WKB.Translate_WKB (ST);
+                  when ft_geometry =>
+                     --  MySQL internal geometry format is SRID + WKB
+                     --  Remove the first 4 bytes and translate WKB
+                     declare
+                        wkbstring  : String := ST (ST'First + 3 .. ST'Last);
+                     begin
+                        dossier.a22.all := WKB.Translate_WKB (wkbstring);
+                     end;
                   when ft_timestamp =>
                      begin
                         dossier.a16.all := ARC.convert (ST);
