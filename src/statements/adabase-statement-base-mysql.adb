@@ -774,7 +774,7 @@ package body AdaBase.Statement.Base.MySQL is
                      --  Remove the first 4 bytes and save only the WKB
                      dvariant :=
                        (datatype => ft_geometry,
-                        v22 => CT.SUS (ST (ST'First + 3 .. ST'Last)));
+                        v22 => CT.SUS (ST (ST'First + 4 .. ST'Last)));
                   when ft_timestamp =>
                      begin
                         dvariant := (datatype => ft_timestamp,
@@ -999,7 +999,7 @@ package body AdaBase.Statement.Base.MySQL is
                      --  Remove the first 4 bytes and save only the WKB
                      declare
                         ST : String := binary_string;
-                        wkbstring  : String := ST (ST'First + 3 .. ST'Last);
+                        wkbstring  : String := ST (ST'First + 4 .. ST'Last);
                      begin
                         dvariant := (datatype => ft_geometry,
                                      v22 => CT.SUS (wkbstring));
@@ -1253,7 +1253,7 @@ package body AdaBase.Statement.Base.MySQL is
                      --  Remove the first 4 bytes and translate WKB
                      declare
                         ST : String := binary_string;
-                        wkbstring  : String := ST (ST'First + 3 .. ST'Last);
+                        wkbstring  : String := ST (ST'First + 4 .. ST'Last);
                      begin
                         param.a22.all := WKB.Translate_WKB (wkbstring);
                      end;
@@ -1522,7 +1522,7 @@ package body AdaBase.Statement.Base.MySQL is
                      --  MySQL internal geometry format is SRID + WKB
                      --  Remove the first 4 bytes and translate WKB
                      declare
-                        wkbstring  : String := ST (ST'First + 3 .. ST'Last);
+                        wkbstring  : String := ST (ST'First + 4 .. ST'Last);
                      begin
                         dossier.a22.all := WKB.Translate_WKB (wkbstring);
                      end;
