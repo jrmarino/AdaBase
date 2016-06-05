@@ -417,30 +417,41 @@ package body Spatial_Data.Well_Known_Binary is
             power_res := 2.0 ** Integer (Natural (exponent) - 1023);
             result := factor * (1.0 + fraction) * power_res;
       end case;
-      declare
-         --  remove 2 significant digits after round (18 => 16)
-         resimage : String := Geometric_Real'Image (result);
-         dot : Natural := CT.pinpoint (resimage, ".");
-         exp : Natural := CT.pinpoint (resimage, "E");
-         dec : String := resimage (dot + 1 .. exp - 1);
-         halfpump : WKB_IEEE754_Hex := 50;
-         vessel   : WKB_IEEE754_Hex;
-      begin
-         if dec'Length /= 17 then
-            raise WKB_INVALID
-              with "float image length wrong:" & dec'Length'Img;
-         end if;
-         vessel := WKB_IEEE754_Hex'Value (dec) + halfpump;
-         declare
-            decimage : String := WKB_IEEE754_Hex'Image (vessel);
-         begin
-            return Geometric_Real'Value
-              (resimage (resimage'First .. dot) &
-                 decimage (decimage'First + 1 .. decimage'Last - 2) &
-                 resimage (exp .. resimage'Last));
-         end;
-      end;
+      return round_to_16_digits (result);
    end convert_to_IEEE754;
+
+
+   --------------------------
+   --  round_to_16_digits  --
+   --------------------------
+   function round_to_16_digits (FP : Geometric_Real) return Geometric_Real
+   is
+      type Int64 is range -2 ** 63 .. 2 ** 63 - 1;
+      --  Image always in form:
+      --  [sign/space][digit][dot][17 digits]E[sign][2..3 digits]
+      resimage : String := Geometric_Real'Image (FP);
+      dot : Natural := CT.pinpoint (resimage, ".");
+      exp : Natural := CT.pinpoint (resimage, "E");
+      dec : String := resimage (resimage'First .. dot - 1) &
+                      resimage (dot + 1 .. exp - 1);
+      nagative : constant Boolean := (resimage (resimage'First) = '-');
+      halfpump : constant Int64 := 50;
+      vessel   : Int64;
+   begin
+      if nagative then
+         vessel := Int64'Value (dec) - halfpump;
+      else
+         vessel := Int64'Value (dec) + halfpump;
+      end if;
+      declare
+         decimage : String := Int64'Image (vessel);
+      begin
+         return Geometric_Real'Value
+           (decimage (decimage'First .. decimage'First + 1) & '.' &
+              decimage (decimage'First + 2 .. decimage'Last - 2) &
+              resimage (exp .. resimage'Last));
+      end;
+   end round_to_16_digits;
 
 
    ---------------
