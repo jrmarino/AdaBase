@@ -1157,7 +1157,6 @@ package body AdaBase.Connection.Base.MySQL is
                      ABM.mysql_character_set_name (handle => conn.handle);
             setstr : String := ABM.ICS.Value (Item => set);
          begin
-            ABM.ICS.Free (set);
             return ACH.To_Upper (setstr);
          end;
       else
