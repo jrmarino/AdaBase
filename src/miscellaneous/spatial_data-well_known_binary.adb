@@ -20,20 +20,30 @@ package body Spatial_Data.Well_Known_Binary is
    function Translate_WKB (WKBinary : String) return Geometry
    is
       binary   : WKB_Chain := convert (WKBinary);
-      chainlen : WKB_Hex32 := WKB_Hex32 (binary'Length);
-      required : WKB_Hex32 := 21;
+      chainlen : Natural := binary'Length;
+      required : Natural := 21;
    begin
       if chainlen < 21 then
          goto crash;
       end if;
       declare
-         endianness : WKB_Endianness := decode_endianness (binary (1));
-         ID_chain   : WKB_Identifier_Chain := binary (2 .. 5);
-         Identity   : WKB_Identifier :=
+         function entity_count return Natural;
+         endianness : constant WKB_Endianness :=
+                      decode_endianness (binary (1));
+         ID_chain   : constant WKB_Identifier_Chain := binary (2 .. 5);
+         Identity   : constant WKB_Identifier :=
                       decode_identifier (direction => endianness,
                                          value     => ID_chain);
-         col_type   : Collection_Type := get_collection_type (Identity);
+         col_type   : constant Collection_Type :=
+                      get_collection_type (Identity);
          product    : Geometry;
+         marker     : Natural;
+         entities   : Natural;
+
+         function entity_count return Natural is
+         begin
+            return Natural (decode_hex32 (endianness, binary (6 .. 9)));
+         end entity_count;
       begin
          case col_type is
             when unset | single_circle | single_infinite_line =>
@@ -42,26 +52,51 @@ package body Spatial_Data.Well_Known_Binary is
                return initialize_as_point
                  (handle_point (endianness, binary (6 .. 21)));
             when single_line_string =>
+               entities := entity_count;
+               required := 9 + (entities * 16);
+               if required > chainlen or else entities < 2 then
+                  goto crash;
+               end if;
                declare
-                  num_points : WKB_Hex32 :=
-                    decode_hex32 (endianness, binary (6 .. 9));
-                  marker : Natural := 26;
+                  LS : Geometric_Line_String (1 .. entities);
                begin
-                  required := 9 + (num_points * 16);
-                  if required > chainlen then
-                     goto crash;
-                  end if;
-                  product := initialize_as_point
-                    (handle_point (endianness, binary (10 .. 25)));
-                  for x in 2 .. num_points loop
-                     append_point (product, (handle_point (endianness,
-                       binary (marker .. marker + 15))));
+                  marker := 10;
+                  for x in 1 .. entities loop
+                     LS (x) := handle_point (endianness,
+                                             binary (marker .. marker + 15));
                      marker := marker + 16;
                   end loop;
-                  return product;
+                  product := initialize_as_line_string (LS);
                end;
+               return product;
+            when multi_point =>
+               entities := entity_count;
+               required := 9 + (entities * 21);
+               if required > chainlen then
+                  goto crash;
+               end if;
+               declare
+                  pt_endian   : WKB_Endianness :=
+                                decode_endianness (binary (10));
+                  first_point : Geometric_Point :=
+                                handle_point (endianness, binary (15 .. 30));
+               begin
+                  product := initialize_as_point (first_point);
+               end;
+               marker := 31;
+               for x in 2 .. entities loop
+                  declare
+                     pt_endian  : WKB_Endianness :=
+                                  decode_endianness (binary (marker));
+                     next_point : Geometric_Point := handle_point
+                       (endianness, binary (marker + 5 .. marker + 20));
+                  begin
+                     append_point (product, next_point);
+                     marker := marker + 21;
+                  end;
+               end loop;
+               return product;
             when single_polygon => null;
-            when multi_point => null;
             when multi_line_string => null;
             when multi_polygon => null;
             when heterogeneous => null;
@@ -321,7 +356,7 @@ package body Spatial_Data.Well_Known_Binary is
       power_res : Geometric_Real;
       result    : Geometric_Real;
       factor    : Geometric_Real;
-      marker    : Integer := -5;
+      marker    : Integer;
 
    begin
       case direction is
@@ -361,6 +396,7 @@ package body Spatial_Data.Well_Known_Binary is
         frack (link => 2, bitpos => 1, exp => -3) +
         frack (link => 2, bitpos => 0, exp => -4);
 
+      marker := -5;
       for link in 3 .. 8 loop
          for bitpos in reverse 0 .. 7 loop
             fraction := fraction + frack (link, bitpos, marker);
@@ -378,7 +414,7 @@ package body Spatial_Data.Well_Known_Binary is
             result := factor * fraction * power_res;
          when 1 .. 2046 =>
             --  normalized
-            power_res := 2.0 ** (Natural (exponent) - 1023);
+            power_res := 2.0 ** Integer (Natural (exponent) - 1023);
             result := factor * (1.0 + fraction) * power_res;
       end case;
       declare
