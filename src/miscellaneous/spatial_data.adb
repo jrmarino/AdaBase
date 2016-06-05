@@ -1537,7 +1537,7 @@ package body Spatial_Data is
                                    first : Boolean := False;
                                    label : Boolean := False) return String;
 
-      sep    : constant String := ", ";
+      sep    : constant String := ",";
       popen  : constant String := "(";
       pclose : constant String := ")";
 
@@ -1547,7 +1547,7 @@ package body Spatial_Data is
       is
          ptx    : constant String := format_real (pt.X);
          pty    : constant String := format_real (pt.Y);
-         lead   : constant String := "POINT ";
+         lead   : constant String := "POINT";
          core   : constant String := ptx & " " & pty;
       begin
          if label then
@@ -1569,7 +1569,7 @@ package body Spatial_Data is
                                first : Boolean := False;
                                label : Boolean := False) return String
       is
-         lead   : constant String := "POLYGON ";
+         lead   : constant String := "POLYGON";
          work   : CT.Text;
          inner1 : Boolean;
          lastsc : Natural := 0;
@@ -1609,7 +1609,7 @@ package body Spatial_Data is
                                    first : Boolean := False;
                                    label : Boolean := False) return String
       is
-         lead   : constant String := "LINESTRING ";
+         lead   : constant String := "LINESTRING";
          work   : CT.Text := CT.blank;
          inner1 : Boolean;
       begin
@@ -1657,7 +1657,7 @@ package body Spatial_Data is
                                    True, True);
          when multi_point =>
             declare
-               product : CT.Text := CT.SUS ("MULTIPOINT (");
+               product : CT.Text := CT.SUS ("MULTIPOINT(");
                first   : Boolean;
             begin
                for x in collection.set_points'Range loop
@@ -1670,7 +1670,7 @@ package body Spatial_Data is
             end;
          when multi_line_string =>
             declare
-               product : CT.Text := CT.SUS ("MULTILINESTRING (");
+               product : CT.Text := CT.SUS ("MULTILINESTRING(");
                first   : Boolean;
             begin
                for ls in 1 .. collection.units loop
@@ -1683,11 +1683,11 @@ package body Spatial_Data is
             end;
          when multi_polygon =>
             declare
-               product : CT.Text := CT.SUS ("MULTIPOLYGON (");
+               product : CT.Text := CT.SUS ("MULTIPOLYGON(");
                first   : Boolean;
             begin
                if collection.units = 1 then
-                  product := CT.SUS ("POLYGON (");
+                  product := CT.SUS ("POLYGON(");
                end if;
                for ls in 1 .. collection.units loop
                   first := (ls = 1);
@@ -1699,7 +1699,7 @@ package body Spatial_Data is
             end;
          when heterogeneous =>
             declare
-               product : CT.Text := CT.SUS ("GEOMETRYCOLLECTION (");
+               product : CT.Text := CT.SUS ("GEOMETRYCOLLECTION(");
                first   : Boolean;
                flavor  : Geometric_Shape;
             begin
