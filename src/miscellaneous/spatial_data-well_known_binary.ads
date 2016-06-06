@@ -59,12 +59,11 @@ private
                             force_multi : Boolean)
                             return Geometry;
 
-   procedure handle_additional_polygons (payload : WKB_Chain;
-                                         marker : in out Natural;
-                                         collection : in out Geometry);
+   procedure augment_polygon (payload : WKB_Chain;
+                              marker : in out Natural;
+                              canvas : in out Geometry);
 
-   procedure handle_unit_collection (initial : Boolean;
-                                     payload : WKB_Chain;
+   procedure handle_unit_collection (payload : WKB_Chain;
                                      marker : in out Natural;
                                      collection : in out Geometry);
 

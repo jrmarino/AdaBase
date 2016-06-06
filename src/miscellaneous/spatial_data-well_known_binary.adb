@@ -38,7 +38,6 @@ package body Spatial_Data.Well_Known_Binary is
                                          value     => ID_chain);
          col_type   : constant Collection_Type :=
                       get_collection_type (Identity);
-         initial    : Boolean := True;
          product    : Geometry;
          entities   : Natural;
 
@@ -57,19 +56,16 @@ package body Spatial_Data.Well_Known_Binary is
                  multi_point |
                  multi_line_string |
                  multi_polygon =>
-               handle_unit_collection (initial    => initial,
-                                       payload    => binary,
+               handle_unit_collection (payload    => binary,
                                        marker     => marker,
                                        collection => product);
             when heterogeneous =>
                entities := entity_count;
                marker := marker + 9;
                for entity in 1 .. entities loop
-                  handle_unit_collection (initial    => initial,
-                                          payload    => binary,
+                  handle_unit_collection (payload    => binary,
                                           marker     => marker,
                                           collection => product);
-                  initial := False;
                end loop;
          end case;
          return product;
@@ -89,8 +85,7 @@ package body Spatial_Data.Well_Known_Binary is
    ------------------------------
    --  handle_unit_collection  --
    ------------------------------
-   procedure handle_unit_collection (initial : Boolean;
-                                     payload : WKB_Chain;
+   procedure handle_unit_collection (payload : WKB_Chain;
                                      marker : in out Natural;
                                      collection : in out Geometry)
    is
@@ -120,11 +115,7 @@ package body Spatial_Data.Well_Known_Binary is
             declare
                pt : Geometric_Point := handle_new_point (payload, marker);
             begin
-               if initial then
-                  collection := initialize_as_point (pt);
-               else
-                  append_point (collection, pt);
-               end if;
+               append_point (collection, pt);
             end;
          when multi_point =>
             entities := entity_count;
@@ -137,22 +128,14 @@ package body Spatial_Data.Well_Known_Binary is
                for x in 2 .. entities loop
                   append_point (element, handle_new_point (payload, marker));
                end loop;
-               if initial then
-                  collection := element;
-               else
-                  append_complex_geometry (collection, element);
-               end if;
+               append_complex_geometry (collection, element);
             end;
          when single_line_string =>
             declare
                LS : Geometric_Line_String :=
                     handle_linestring (payload, marker);
             begin
-               if initial then
-                  collection := initialize_as_line_string (LS);
-               else
-                  append_line_string (collection, LS);
-               end if;
+               append_line_string (collection, LS);
             end;
          when multi_line_string =>
             entities := entity_count;
@@ -167,18 +150,19 @@ package body Spatial_Data.Well_Known_Binary is
                   append_line_string (collection,
                                       handle_linestring (payload, marker));
                end loop;
-               if initial then
-                  collection := element;
-               else
-                  append_complex_geometry (collection, element);
-               end if;
+               append_complex_geometry (collection, element);
             end;
          when single_polygon =>
-            if initial then
-               collection := handle_polygon (payload, marker, False);
-            else
-               handle_additional_polygons (payload, marker, collection);
-            end if;
+            declare
+               element : Geometry := handle_polygon (payload, marker, False);
+               NH : Natural := number_of_polygon_holes (element, 1);
+            begin
+               append_polygon (collection, retrieve_polygon (element, 1));
+               for hole_index in 1 .. NH loop
+                  append_polygon_hole (collection,
+                                       retrieve_hole (element, 1, hole_index));
+               end loop;
+            end;
          when multi_polygon =>
             entities := entity_count;
             marker := marker + 9;
@@ -187,14 +171,10 @@ package body Spatial_Data.Well_Known_Binary is
                element : Geometry := handle_polygon (payload, marker, True);
             begin
                for additional_Poly in 2 .. entities loop
-                  handle_additional_polygons (payload, marker, element);
+                  augment_polygon (payload, marker, element);
                end loop;
 
-               if initial then
-                  collection := element;
-               else
-                  append_complex_geometry (collection, element);
-               end if;
+               append_complex_geometry (collection, element);
             end;
          when heterogeneous =>
             raise WKB_INVALID
@@ -319,30 +299,25 @@ package body Spatial_Data.Well_Known_Binary is
    end handle_polygon;
 
 
-   ----------------------------------
-   --  handle_additional_polygons  --
-   ----------------------------------
-   procedure handle_additional_polygons (payload : WKB_Chain;
-                                        marker : in out Natural;
-                                        collection : in out Geometry)
+   ------------------------
+   --  augment_polygon   --
+   ------------------------
+   procedure augment_polygon (payload : WKB_Chain;
+                              marker : in out Natural;
+                              canvas : in out Geometry)
    is
       poly_endian : WKB_Endianness := decode_endianness (payload (marker));
       num_rings : Natural := Natural (decode_hex32 (poly_endian,
                                       payload (marker + 5 .. marker + 8)));
-      --  There must be at least one ring (exterior)
    begin
       marker := marker + 9;
-      append_polygon (collection,
-                      handle_polyrings (direction => poly_endian,
-                                        payload   => payload,
-                                        marker    => marker));
-      for x in 2 .. num_rings loop
+      for x in 1 .. num_rings loop
          append_polygon_hole
-           (collection, handle_polyrings (direction => poly_endian,
-                                          payload   => payload,
-                                          marker    => marker));
+           (canvas, handle_polyrings (direction => poly_endian,
+                                      payload   => payload,
+                                      marker    => marker));
       end loop;
-   end handle_additional_polygons;
+   end augment_polygon;
 
 
    -------------------------

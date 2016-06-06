@@ -104,7 +104,7 @@ package body Spatial_Data is
       end if;
       for pt in polygon'Range loop
          HC (pt).group_id   := 1;
-         HC (pt).group_type := single_polygon;
+         HC (pt).group_type := multi_polygon;
          HC (pt).shape_id   := 1;
          HC (pt).shape      := polygon_shape;
          HC (pt).component  := 1;
@@ -722,9 +722,10 @@ package body Spatial_Data is
             fresh_cnt := subcollection.set_heterogeneous'Length;
       end case;
       case collection.contents is
-         when unset | single_circle | single_infinite_line =>
+         when single_circle | single_infinite_line =>
             raise ILLEGAL_SHAPE
               with "collection does not contain standard shapes";
+         when unset => exist_cnt := 0;
          when single_point => exist_cnt := 1;
          when single_line_string =>
             exist_cnt := collection.line_string'Length;
@@ -896,15 +897,13 @@ package body Spatial_Data is
             end;
          when multi_polygon =>
             declare
-               PG : Geometric_Polygon := retrieve_polygon (collection, index);
-               NH : Natural := number_of_polygon_holes (collection, index);
-               GM : Geometry := initialize_as_polygon (PG);
+               HC : Heterogeneous_Collection :=
+                    retrieve_full_polygon (collection, index);
             begin
-               for hole in 1 .. NH loop
-                  append_polygon_hole
-                    (GM, retrieve_hole (collection, index, hole));
-               end loop;
-               return GM;
+               return (contents => multi_polygon,
+                       points   => HC'Length,
+                       units    => 1,
+                       set_polygons => HC);
             end;
          when heterogeneous =>
             --  Index refers to group ID, return everything with this ID
@@ -1383,8 +1382,7 @@ package body Spatial_Data is
          when multi_polygon  =>
             position := outer_polygon_position (collection, index);
             shape_id := collection.set_polygons (position).shape_id;
-            for x in Positive range position .. collection.set_polygons'Last
-            loop
+            for x in position .. collection.set_polygons'Last loop
                exit when collection.set_polygons (x).shape_id /= shape_id;
                endpoint := x;
             end loop;
@@ -1804,6 +1802,7 @@ package body Spatial_Data is
    function Well_Known_Text (collection : Geometry;
                              top_first  : Boolean := True) return String
    is
+      function initialize_title (title : String) return CT.Text;
       function format_point (pt    : Geometric_Point;
                              first : Boolean := False;
                              label : Boolean := False) return String;
@@ -1817,6 +1816,15 @@ package body Spatial_Data is
       sep    : constant String := ",";
       popen  : constant String := "(";
       pclose : constant String := ")";
+
+      function initialize_title (title : String) return CT.Text is
+      begin
+         if top_first then
+            return CT.SUS (title);
+         else
+            return CT.SUS (sep & title);
+         end if;
+      end initialize_title;
 
       function format_point (pt    : Geometric_Point;
                              first : Boolean := False;
@@ -1934,52 +1942,47 @@ package body Spatial_Data is
                                    top_first, True);
          when multi_point =>
             declare
-               product : CT.Text := CT.SUS ("MULTIPOINT(");
-               first   : Boolean;
+               product : CT.Text := initialize_title ("MULTIPOINT(");
+               first   : Boolean := True;
             begin
                for x in collection.set_points'Range loop
-                  first := (x = collection.set_points'First);
                   CT.SU.Append
                     (product, format_point
                        (collection.set_points (x), first));
+                  first := False;
                end loop;
                return CT.USS (product) & pclose;
             end;
          when multi_line_string =>
             declare
-               product : CT.Text := CT.SUS ("MULTILINESTRING(");
-               first   : Boolean;
+               product : CT.Text := initialize_title ("MULTILINESTRING(");
+               first   : Boolean := True;
             begin
                for ls in 1 .. collection.units loop
-                  first := (ls = 1);
                   CT.SU.Append
                     (product, format_line_string
                        (retrieve_line_string (collection, ls), first));
+                  first := False;
                end loop;
                return CT.USS (product) & pclose;
             end;
          when multi_polygon =>
             declare
-               product : CT.Text := CT.SUS ("MULTIPOLYGON(");
-               first   : Boolean;
+               product : CT.Text := initialize_title ("MULTIPOLYGON(");
+               first   : Boolean := True;
             begin
-               if collection.units = 1 then
-                  product := CT.SUS ("POLYGON");
-               end if;
                for ls in 1 .. collection.units loop
-                  first := (ls = 1);
                   CT.SU.Append
                     (product, format_polygon
                        (retrieve_full_polygon (collection, ls), first));
+                  first := False;
                end loop;
-               if collection.units > 1 then
-                  CT.SU.Append (product, pclose);
-               end if;
+               CT.SU.Append (product, pclose);
                return CT.USS (product);
             end;
          when heterogeneous =>
             declare
-               product : CT.Text := CT.SUS ("GEOMETRYCOLLECTION(");
+               product : CT.Text := initialize_title ("GEOMETRYCOLLECTION(");
                first   : Boolean := True;
                GM      : Geometry;
             begin
