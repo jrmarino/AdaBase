@@ -642,6 +642,8 @@ package body AdaBase.Results.Field is
       case field.native.datatype is
          when ft_geometry =>
             return WKB.Translate_WKB (CT.USS (field.native.v22));
+         when ft_chain =>
+            return WKB.Translate_WKB (ARC.convert (field.native.v22));
          when others => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_geometry;
@@ -664,6 +666,7 @@ package body AdaBase.Results.Field is
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_chain     => return ARC.convert (field.native.v17);
+         when ft_geometry  => return ARC.convert (field.native.v22);
          when ft_bits      =>
             declare
                target_bits : Bits := ARC.convert (field.native.v20);
@@ -678,7 +681,6 @@ package body AdaBase.Results.Field is
               ft_real9 |
               ft_real18 |
               ft_utf8 |
-              ft_geometry |
               ft_enumtype |
               ft_settype |
               ft_timestamp => raise UNSUPPORTED_CONVERSION;
