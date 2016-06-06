@@ -647,8 +647,8 @@ package body Spatial_Data is
    procedure append_complex_geometry (collection : out Geometry;
                                       subcollection : Geometry)
    is
-      classification : Collection_Type := collection.contents;
-      product     : Geometry := initialize_as_point ((0.0, 0.0));
+      classification : Collection_Type := subcollection.contents;
+      exist_cnt : Natural;
    begin
       case classification is
          when unset |
@@ -664,6 +664,125 @@ package body Spatial_Data is
          when multi_polygon => null;
          when heterogeneous => null;
       end case;
+      case collection.contents is
+         when unset | single_circle | single_infinite_line =>
+            raise ILLEGAL_SHAPE
+              with "collection does not contain standard shapes";
+         when single_point => exist_cnt := 1;
+         when single_line_string =>
+            exist_cnt := collection.line_string'Length;
+         when single_polygon =>
+            exist_cnt := collection.polygon'Length;
+         when multi_point =>
+            exist_cnt := collection.set_points'Length;
+         when multi_polygon =>
+            exist_cnt := collection.set_polygons'Length;
+         when multi_line_string =>
+            exist_cnt := collection.set_line_strings'Length;
+         when heterogeneous =>
+            exist_cnt := collection.set_heterogeneous'Length;
+      end case;
+      declare
+         LL : Natural := exist_cnt;
+         point_count : Natural := exist_cnt + LL;
+         HC : Heterogeneous_Collection (1 .. point_count);
+         next_gr : Positive;
+      begin
+         next_gr := collection.units + 1;
+         case collection.contents is
+            when unset | single_circle | single_infinite_line => null;
+            when single_point =>
+               HC (1).group_id   := 1;
+               HC (1).group_type := single_point;
+               HC (1).shape_id   := 1;
+               HC (1).shape      := point_shape;
+               HC (1).component  := 1;
+               HC (1).point      := collection.point;
+            when single_line_string =>
+               for pt in 1 .. exist_cnt loop
+                  HC (pt).group_id   := 1;
+                  HC (pt).group_type := single_line_string;
+                  HC (pt).shape_id   := 1;
+                  HC (pt).shape      := line_string_shape;
+                  HC (pt).component  := 1;
+                  HC (pt).point      := collection.line_string (pt);
+               end loop;
+            when single_polygon =>
+               for pt in 1 .. exist_cnt loop
+                  HC (pt).group_id   := 1;
+                  HC (pt).group_type := single_polygon;
+                  HC (pt).shape_id   := 1;
+                  HC (pt).shape      := polygon_shape;
+                  HC (pt).component  := 1;
+                  HC (pt).point      := collection.polygon (pt);
+               end loop;
+            when multi_point =>
+               for pt in 1 .. exist_cnt loop
+                  HC (pt).group_id   := 1;
+                  HC (pt).group_type := multi_point;
+                  HC (pt).shape_id   := pt;
+                  HC (pt).shape      := point_shape;
+                  HC (pt).component  := 1;
+                  HC (pt).point      := collection.set_points (pt);
+               end loop;
+            when multi_line_string =>
+               for pt in 1 .. exist_cnt loop
+                  HC (pt).group_id   := 1;
+                  HC (pt).group_type := multi_line_string;
+                  HC (pt).shape_id   := collection.set_line_strings (pt).shape_id;
+                  HC (pt).shape      := line_string_shape;
+                  HC (pt).component  := 1;
+                  HC (pt).point      := collection.set_line_strings (pt).point;
+               end loop;
+            when multi_polygon =>
+               HC (1 .. exist_cnt) := collection.set_polygons;
+            when heterogeneous =>
+               HC (1 .. exist_cnt) := collection.set_heterogeneous;
+         end case;
+         case classification is
+            when multi_point =>
+               for x in subcollection.set_points'Range loop
+                  HC (x + LL).group_id   := next_gr;
+                  HC (x + LL).group_type := multi_point;
+                  HC (x + LL).shape_id   := x;
+                  HC (x + LL).shape      := point_shape;
+                  HC (x + LL).component  := 1;
+                  HC (x + LL).point      := subcollection.set_points (x);
+               end loop;
+            when multi_line_string =>
+               for x in subcollection.set_line_strings'Range loop
+                  HC (x + LL).group_id   := next_gr;
+                  HC (x + LL).group_type := multi_line_string;
+                  HC (x + LL).shape_id   := subcollection.set_line_strings (x).shape_id;
+                  HC (x + LL).shape      := line_string_shape;
+                  HC (x + LL).component  := 1;
+                  HC (x + LL).point      := subcollection.set_line_strings (x).point;
+               end loop;
+            when multi_polygon =>
+               for x in subcollection.set_polygons'Range loop
+                  HC (x + LL).group_id   := next_gr;
+                  HC (x + LL).group_type := subcollection.set_polygons (x).group_type;
+                  HC (x + LL).shape_id   := subcollection.set_polygons (x).shape_id;
+                  HC (x + LL).shape      := subcollection.set_polygons (x).shape;
+                  HC (x + LL).component  := subcollection.set_polygons (x).component;
+                  HC (x + LL).point      := subcollection.set_polygons (x).point;
+               end loop;
+            when heterogeneous => null;
+               for x in subcollection.set_heterogeneous'Range loop
+                  HC (x + LL).group_id   := next_gr;
+                  HC (x + LL).group_type := subcollection.set_heterogeneous (x).group_type;
+                  HC (x + LL).shape_id   := subcollection.set_heterogeneous (x).shape_id;
+                  HC (x + LL).shape      := subcollection.set_heterogeneous (x).shape;
+                  HC (x + LL).component  := subcollection.set_heterogeneous (x).component;
+                  HC (x + LL).point      := subcollection.set_heterogeneous (x).point;
+               end loop;
+            when others => null;
+         end case;
+         collection := (contents => heterogeneous,
+                        points   => point_count,
+                        units    => next_gr,
+                        set_heterogeneous => HC);
+      end;
    end append_complex_geometry;
 
 
