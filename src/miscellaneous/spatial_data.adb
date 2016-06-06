@@ -152,8 +152,12 @@ package body Spatial_Data is
                   HC (x).component  := 1;
                   HC (x).point      := collection.line_string (x);
                end loop;
-               HC (HC'Last) := (num_units, single_point,
-                                1, point_shape, 1, point);
+               HC (HC'Last).group_id   := 2;
+               HC (HC'Last).group_type := single_point;
+               HC (HC'Last).shape_id   := num_units;
+               HC (HC'Last).shape      := point_shape;
+               HC (HC'Last).component  := 1;
+               HC (HC'Last).point      := point;
                collection := (heterogeneous, point_count, num_units, HC);
             end;
          when single_polygon =>
@@ -169,8 +173,12 @@ package body Spatial_Data is
                   HC (x).component  := 1;
                   HC (x).point      := collection.polygon (x);
                end loop;
-               HC (HC'Last) := (num_units, single_point,
-                                1, point_shape, 1, point);
+               HC (HC'Last).group_id   := 2;
+               HC (HC'Last).group_type := single_point;
+               HC (HC'Last).shape_id   := num_units;
+               HC (HC'Last).shape      := point_shape;
+               HC (HC'Last).component  := 1;
+               HC (HC'Last).point      := point;
                collection := (heterogeneous, point_count, num_units, HC);
             end;
          when multi_point =>
@@ -194,8 +202,12 @@ package body Spatial_Data is
                   HC (x).component := 1;
                   HC (x).point     := collection.set_line_strings (x).point;
                end loop;
-               HC (HC'Last) := (num_units, single_point,
-                                1, point_shape, 1, point);
+               HC (HC'Last).group_id   := 2;
+               HC (HC'Last).group_type := single_point;
+               HC (HC'Last).shape_id   := num_units;
+               HC (HC'Last).shape      := point_shape;
+               HC (HC'Last).component  := 1;
+               HC (HC'Last).point      := point;
                collection := (heterogeneous, point_count, num_units, HC);
             end;
          when multi_polygon =>
@@ -204,21 +216,28 @@ package body Spatial_Data is
                HC : Heterogeneous_Collection (1 .. point_count);
             begin
                HC (collection.set_polygons'Range) := collection.set_polygons;
-               HC (HC'Last) := (num_units, single_point,
-                                1, point_shape, 1, point);
+               HC (HC'Last).group_id   := 2;
+               HC (HC'Last).group_type := single_point;
+               HC (HC'Last).shape_id   := num_units;
+               HC (HC'Last).shape      := point_shape;
+               HC (HC'Last).component  := 1;
+               HC (HC'Last).point      := point;
                collection := (heterogeneous, point_count, num_units, HC);
             end;
          when heterogeneous =>
             declare
-               point_count : Natural :=
-                 collection.set_heterogeneous'Length + 1;
+               LL : Natural := collection.set_heterogeneous'Length;
+               point_count : Natural := LL + 1;
                HC : Heterogeneous_Collection (1 .. point_count);
             begin
                HC (1 .. collection.set_heterogeneous'Last) :=
                  collection.set_heterogeneous;
-               HC (HC'Last) := (num_units, single_point,
-                                1, point_shape, 1, point);
-               collection := (heterogeneous, point_count, num_units, HC);
+               HC (HC'Last).group_id   := HC (LL).group_id + 1;
+               HC (HC'Last).group_type := single_point;
+               HC (HC'Last).shape_id   := num_units;
+               HC (HC'Last).shape      := point_shape;
+               HC (HC'Last).component  := 1;
+               HC (HC'Last).point      := point;
             end;
       end case;
    end append_point;
@@ -269,9 +288,9 @@ package body Spatial_Data is
                HC (1).component  := 1;
                HC (1).point      := collection.point;
                for x in line_string'Range loop
-                  HC (x + 1).group_id   := num_units;
+                  HC (x + 1).group_id   := 2;
                   HC (x + 1).group_type := single_line_string;
-                  HC (x + 1).shape_id   := x;
+                  HC (x + 1).shape_id   := num_units;
                   HC (x + 1).shape      := line_string_shape;
                   HC (x + 1).component  := 1;
                   HC (x + 1).point      := line_string (x);
@@ -311,9 +330,9 @@ package body Spatial_Data is
                   HC (x).point      := collection.polygon (x);
                end loop;
                for x in line_string'Range loop
-                  HC (x + LL).group_id   := num_units;
+                  HC (x + LL).group_id   := 2;
                   HC (x + LL).group_type := single_line_string;
-                  HC (x + LL).shape_id   := x;
+                  HC (x + LL).shape_id   := num_units;
                   HC (x + LL).shape      := line_string_shape;
                   HC (x + LL).component  := 1;
                   HC (x + LL).point      := line_string (x);
@@ -336,9 +355,9 @@ package body Spatial_Data is
                   HC (x).point      := collection.set_points (x);
                end loop;
                for x in line_string'Range loop
-                  HC (x + LL).group_id   := num_units;
+                  HC (x + LL).group_id   := 2;
                   HC (x + LL).group_type := single_line_string;
-                  HC (x + LL).shape_id   := x;
+                  HC (x + LL).shape_id   := num_units;
                   HC (x + LL).shape      := line_string_shape;
                   HC (x + LL).component  := 1;
                   HC (x + LL).point      := line_string (x);
@@ -375,9 +394,9 @@ package body Spatial_Data is
                   HC (x).point      := collection.set_polygons (x).point;
                end loop;
                for x in line_string'Range loop
-                  HC (x + LL).group_id   := num_units;
+                  HC (x + LL).group_id   := HC (LL).group_id + 1;
                   HC (x + LL).group_type := single_line_string;
-                  HC (x + LL).shape_id   := x;
+                  HC (x + LL).shape_id   := num_units;
                   HC (x + LL).shape      := line_string_shape;
                   HC (x + LL).component  := 1;
                   HC (x + LL).point      := line_string (x);
@@ -394,9 +413,9 @@ package body Spatial_Data is
                HC (collection.set_heterogeneous'Range) :=
                  collection.set_heterogeneous;
                for x in line_string'Range loop
-                  HC (x + LL).group_id   := num_units;
+                  HC (x + LL).group_id   := HC (LL).group_id + 1;
                   HC (x + LL).group_type := single_line_string;
-                  HC (x + LL).shape_id   := x;
+                  HC (x + LL).shape_id   := num_units;
                   HC (x + LL).shape      := line_string_shape;
                   HC (x + LL).component  := 1;
                   HC (x + LL).point      := line_string (x);
@@ -444,9 +463,9 @@ package body Spatial_Data is
                HC (1).component  := 1;
                HC (1).point      := collection.point;
                for x in polygon'Range loop
-                  HC (x + 1).group_id   := num_units;
+                  HC (x + 1).group_id   := 2;
                   HC (x + 1).group_type := single_polygon;
-                  HC (x + 1).shape_id   := 1;
+                  HC (x + 1).shape_id   := num_units;
                   HC (x + 1).shape      := polygon_shape;
                   HC (x + 1).component  := 1;
                   HC (x + 1).point      := polygon (x);
@@ -469,9 +488,9 @@ package body Spatial_Data is
                   HC (x).point      := collection.line_string (x);
                end loop;
                for x in polygon'Range loop
-                  HC (x + LL).group_id   := num_units;
+                  HC (x + LL).group_id   := 2;
                   HC (x + LL).group_type := single_polygon;
-                  HC (x + LL).shape_id   := 1;
+                  HC (x + LL).shape_id   := num_units;
                   HC (x + LL).shape      := polygon_shape;
                   HC (x + LL).component  := 1;
                   HC (x + LL).point      := polygon (x);
@@ -494,9 +513,9 @@ package body Spatial_Data is
                   HC (x).point      := collection.polygon (x);
                end loop;
                for x in polygon'Range loop
-                  HC (x + LL).group_id   := num_units;
+                  HC (x + LL).group_id   := 1;
                   HC (x + LL).group_type := single_polygon;
-                  HC (x + LL).shape_id   := 1;
+                  HC (x + LL).shape_id   := num_units;
                   HC (x + LL).shape      := polygon_shape;
                   HC (x + LL).component  := 1;
                   HC (x + LL).point      := polygon (x);
@@ -519,9 +538,9 @@ package body Spatial_Data is
                   HC (x).point      := collection.set_points (x);
                end loop;
                for x in polygon'Range loop
-                  HC (x + LL).group_id   := num_units;
+                  HC (x + LL).group_id   := 2;
                   HC (x + LL).group_type := single_polygon;
-                  HC (x + LL).shape_id   := 1;
+                  HC (x + LL).shape_id   := num_units;
                   HC (x + LL).shape      := polygon_shape;
                   HC (x + LL).component  := 1;
                   HC (x + LL).point      := polygon (x);
@@ -544,9 +563,9 @@ package body Spatial_Data is
                   HC (x).point     := collection.set_line_strings (x).point;
                end loop;
                for x in polygon'Range loop
-                  HC (x + LL).group_id   := num_units;
+                  HC (x + LL).group_id   := 2;
                   HC (x + LL).group_type := single_polygon;
-                  HC (x + LL).shape_id   := 1;
+                  HC (x + LL).shape_id   := num_units;
                   HC (x + LL).shape      := polygon_shape;
                   HC (x + LL).component  := 1;
                   HC (x + LL).point      := polygon (x);
@@ -562,9 +581,9 @@ package body Spatial_Data is
             begin
                HC (collection.set_polygons'Range) := collection.set_polygons;
                for x in polygon'Range loop
-                  HC (x + LL).group_id   := num_units;
+                  HC (x + LL).group_id   := 1;
                   HC (x + LL).group_type := single_polygon;
-                  HC (x + LL).shape_id   := 1;
+                  HC (x + LL).shape_id   := num_units;
                   HC (x + LL).shape      := polygon_shape;
                   HC (x + LL).component  := 1;
                   HC (x + LL).point      := polygon (x);
@@ -581,9 +600,9 @@ package body Spatial_Data is
                HC (collection.set_heterogeneous'Range) :=
                  collection.set_heterogeneous;
                for x in polygon'Range loop
-                  HC (x + LL).group_id   := num_units;
+                  HC (x + LL).group_id   := HC (LL).group_id + 1;
                   HC (x + LL).group_type := single_polygon;
-                  HC (x + LL).shape_id   := 1;
+                  HC (x + LL).shape_id   := num_units;
                   HC (x + LL).shape      := polygon_shape;
                   HC (x + LL).component  := 1;
                   HC (x + LL).point      := polygon (x);
@@ -746,7 +765,6 @@ package body Spatial_Data is
          HC : Heterogeneous_Collection (1 .. point_count);
          next_gr : Positive;
       begin
-         next_gr := collection.units + 1;
          case collection.contents is
             when unset | single_circle | single_infinite_line => null;
             when single_point =>
@@ -800,6 +818,7 @@ package body Spatial_Data is
          case classification is
             when multi_point =>
                for x in subcollection.set_points'Range loop
+                  next_gr := collection.units + x;
                   HC (x + LL).group_id   := next_gr;
                   HC (x + LL).group_type := multi_point;
                   HC (x + LL).shape_id   := x;
@@ -809,6 +828,7 @@ package body Spatial_Data is
                end loop;
             when multi_line_string =>
                for x in subcollection.set_line_strings'Range loop
+                  next_gr := collection.units + subcollection.set_line_strings (x).shape_id;
                   HC (x + LL).group_id   := next_gr;
                   HC (x + LL).group_type := multi_line_string;
                   HC (x + LL).shape_id   := subcollection.set_line_strings (x).shape_id;
@@ -818,6 +838,7 @@ package body Spatial_Data is
                end loop;
             when multi_polygon =>
                for x in subcollection.set_polygons'Range loop
+                  next_gr := collection.units + subcollection.set_polygons (x).group_id;
                   HC (x + LL).group_id   := next_gr;
                   HC (x + LL).group_type := subcollection.set_polygons (x).group_type;
                   HC (x + LL).shape_id   := subcollection.set_polygons (x).shape_id;
@@ -827,6 +848,7 @@ package body Spatial_Data is
                end loop;
             when heterogeneous => null;
                for x in subcollection.set_heterogeneous'Range loop
+                  next_gr := collection.units + subcollection.set_heterogeneous (x).group_id;
                   HC (x + LL).group_id   := next_gr;
                   HC (x + LL).group_type := subcollection.set_heterogeneous (x).group_type;
                   HC (x + LL).shape_id   := subcollection.set_heterogeneous (x).shape_id;

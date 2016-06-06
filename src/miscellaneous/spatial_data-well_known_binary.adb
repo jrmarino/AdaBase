@@ -171,7 +171,7 @@ package body Spatial_Data.Well_Known_Binary is
                element : Geometry := handle_polygon (payload, marker, True);
             begin
                for additional_Poly in 2 .. entities loop
-                  augment_polygon (payload, marker, element);
+                  handle_extra_multipolygon (payload, marker, element);
                end loop;
 
                append_complex_geometry (collection, element);
@@ -289,6 +289,8 @@ package body Spatial_Data.Well_Known_Binary is
                               payload   => payload,
                               marker    => marker));
       end if;
+      --  The second and subsequent rings are inside (holes)
+      --  These are optional
       for x in 2 .. num_rings loop
          append_polygon_hole
            (poly, handle_polyrings (direction => poly_endian,
@@ -299,25 +301,28 @@ package body Spatial_Data.Well_Known_Binary is
    end handle_polygon;
 
 
-   ------------------------
-   --  augment_polygon   --
-   ------------------------
-   procedure augment_polygon (payload : WKB_Chain;
-                              marker : in out Natural;
-                              canvas : in out Geometry)
+   ----------------------------------
+   --  handle_extra_multipolygon   --
+   ----------------------------------
+   procedure handle_extra_multipolygon (payload : WKB_Chain;
+                                        marker : in out Natural;
+                                        canvas : in out Geometry)
    is
       poly_endian : WKB_Endianness := decode_endianness (payload (marker));
       num_rings : Natural := Natural (decode_hex32 (poly_endian,
                                       payload (marker + 5 .. marker + 8)));
    begin
       marker := marker + 9;
-      for x in 1 .. num_rings loop
-         append_polygon_hole
-           (canvas, handle_polyrings (direction => poly_endian,
-                                      payload   => payload,
-                                      marker    => marker));
+      append_polygon (canvas, handle_polyrings (direction => poly_endian,
+                                                payload   => payload,
+                                                marker    => marker));
+      for x in 2 .. num_rings loop
+         append_polygon_hole (canvas,
+                              handle_polyrings (direction => poly_endian,
+                                                payload   => payload,
+                                                marker    => marker));
       end loop;
-   end augment_polygon;
+   end handle_extra_multipolygon;
 
 
    -------------------------
