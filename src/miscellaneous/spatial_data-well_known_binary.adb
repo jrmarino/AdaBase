@@ -113,7 +113,7 @@ package body Spatial_Data.Well_Known_Binary is
       end entity_count;
    begin
       case col_type is
-         when unset | single_circle | single_infinite_line | heterogeneous =>
+         when unset | single_circle | single_infinite_line =>
             raise WKB_INVALID
               with "Handle_Unit_collection: Should never happen";
          when single_point =>
@@ -132,16 +132,17 @@ package body Spatial_Data.Well_Known_Binary is
             declare
                --  required to have at least one point
                pt1 : Geometric_Point := handle_new_point (payload, marker);
+               element : Geometry := initialize_as_point (pt1);
             begin
+               for x in 2 .. entities loop
+                  append_point (element, handle_new_point (payload, marker));
+               end loop;
                if initial then
-                  collection := initialize_as_point (pt1);
+                  collection := element;
                else
-                  append_point (collection, pt1);
+                  append_complex_geometry (collection, element);
                end if;
             end;
-            for x in 2 .. entities loop
-               append_point (collection, handle_new_point (payload, marker));
-            end loop;
          when single_line_string =>
             declare
                LS : Geometric_Line_String :=
@@ -160,11 +161,12 @@ package body Spatial_Data.Well_Known_Binary is
             declare
                LS : Geometric_Line_String :=
                     handle_linestring (payload, marker);
+               element : Geometry := initialize_as_line_string (LS);
             begin
                if initial then
-                  collection := initialize_as_line_string (LS);
+                  collection := element;
                else
-                  append_line_string (collection, LS);
+                  append_complex_geometry (collection, element);
                end if;
             end;
             for additional_LS in 2 .. entities loop
@@ -180,15 +182,23 @@ package body Spatial_Data.Well_Known_Binary is
          when multi_polygon =>
             entities := entity_count;
             marker := marker + 9;
-            --  Required to have at least one linestring
-            if initial then
-               collection := handle_polygon (payload, marker);
-            else
-                handle_additional_polygons (payload, marker, collection);
-            end if;
-            for additional_Poly in 2 .. entities loop
-               handle_additional_polygons (payload, marker, collection);
-            end loop;
+            --  Required to have at least one polygon
+            declare
+               element : Geometry := handle_polygon (payload, marker);
+            begin
+               for additional_Poly in 2 .. entities loop
+                  handle_additional_polygons (payload, marker, element);
+               end loop;
+
+               if initial then
+                  collection := element;
+               else
+                  append_complex_geometry (collection, element);
+               end if;
+            end;
+         when heterogeneous =>
+            raise WKB_INVALID
+              with "collection inside collection not yet implemented";
       end case;
    end handle_unit_collection;
 
