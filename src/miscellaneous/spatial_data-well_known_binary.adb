@@ -320,10 +320,12 @@ package body Spatial_Data.Well_Known_Binary is
                       handle_polyrings (direction => poly_endian,
                                         payload   => payload,
                                         marker    => marker));
-      append_polygon_hole
-        (collection, handle_polyrings (direction => poly_endian,
-                                       payload   => payload,
-                                       marker    => marker));
+      for x in 2 .. num_rings loop
+         append_polygon_hole
+           (collection, handle_polyrings (direction => poly_endian,
+                                          payload   => payload,
+                                          marker    => marker));
+      end loop;
    end handle_additional_polygons;
 
 
