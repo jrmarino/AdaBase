@@ -676,6 +676,16 @@ package body Spatial_Data is
    end size_of_collection;
 
 
+   --------------------------
+   --  type_of_collection  --
+   --------------------------
+   function type_of_collection (collection : Geometry) return Collection_Type
+   is
+   begin
+      return collection.contents;
+   end type_of_collection;
+
+
    ------------------------------
    --  retrieve_subcollection  --
    ------------------------------
@@ -974,20 +984,47 @@ package body Spatial_Data is
          when multi_point          => return point_shape;
          when multi_line_string    => return line_string_shape;
          when multi_polygon        => return polygon_shape;
-         when heterogeneous        =>
-            for x in collection.set_heterogeneous'Range loop
-               if collection.set_heterogeneous (x).shape_id = index then
-                  return collection.set_heterogeneous (x).shape;
-               end if;
-            end loop;
-            raise CONVERSION_FAILED
-              with "Impossible! Collection size=" & collection.units'Img &
-              " index=" & index'Img & " but heterogeneous shape not found";
+         when heterogeneous        => return mixture;
          when unset =>
             raise CONVERSION_FAILED
               with "Geometry is unset - it contains zero shapes";
       end case;
    end collection_item_shape;
+
+
+   ----------------------------
+   --  collection_item_type  --
+   ----------------------------
+   function collection_item_type (collection : Geometry;
+                                  index      : Positive := 1)
+                                  return Collection_Type is
+   begin
+      check_collection_index (collection, index);
+      case collection.contents is
+         when unset => raise CONVERSION_FAILED
+              with "geometry is unset (typeless)";
+         when single_point |
+              single_circle |
+              single_polygon |
+              single_infinite_line |
+              single_line_string =>
+            return collection.contents;
+         when multi_point => return single_point;
+         when multi_line_string => return single_line_string;
+         when multi_polygon => return single_polygon;
+         when heterogeneous =>
+            declare
+               sub_index : Positive;
+               data_size : Positive;
+            begin
+               locate_heterogenous_item (collection => collection,
+                                         index      => index,
+                                         set_index  => sub_index,
+                                         num_points => data_size);
+               return collection.set_heterogeneous (sub_index).group_type;
+            end;
+      end case;
+   end collection_item_type;
 
 
    ----------------------
@@ -1001,24 +1038,9 @@ package body Spatial_Data is
          when single_point  => return collection.point;
          when multi_point   => return collection.set_points (index);
          when heterogeneous =>
-            declare
-               sub_index : Positive;
-               data_size : Positive;
-            begin
-               locate_heterogenous_item (collection => collection,
-                                         index      => index,
-                                         set_index  => sub_index,
-                                         num_points => data_size);
-               if collection.set_heterogeneous (sub_index).shape =
-                 point_shape and then data_size = 1
-               then
-                  return collection.set_heterogeneous (sub_index).point;
-               else
-                  raise CONVERSION_FAILED
-                    with "Data type at heterogenous index" & index'Img &
-                    " is not a point or is not 1-component group";
-               end if;
-            end;
+            raise CONVERSION_FAILED
+              with "Requested polygon from mixed collection. " &
+              "(Extract using retrieve_subcollection instead)";
          when others =>
             raise CONVERSION_FAILED
               with "Requested point, but shape is " &
@@ -1056,7 +1078,6 @@ package body Spatial_Data is
       check_collection_index (collection, index);
       case collection.contents is
          when single_line_string => return collection.line_string;
-
          when multi_line_string  =>
             declare
                sub_index : Positive;
@@ -1591,6 +1612,8 @@ package body Spatial_Data is
                              (retrieve_full_polygon (collection, ls), first));
                      when circle_shape        => null;
                      when infinite_line_shape => null;
+                     when mixture =>
+                        raise CONVERSION_FAILED with "TO BE IMPLEMENTED";
                   end case;
                end loop;
                return CT.USS (product) & pclose;
@@ -1802,6 +1825,8 @@ package body Spatial_Data is
                            format_polygon
                              (retrieve_full_polygon (collection, ls),
                               first, True));
+                     when mixture =>
+                        raise CONVERSION_FAILED with "TO BE IMPLEMENTED";
                      when circle_shape        => null;
                      when infinite_line_shape => null;
                   end case;

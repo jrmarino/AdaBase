@@ -22,7 +22,8 @@ package Spatial_Data is
                             line_string_shape,
                             infinite_line_shape,
                             circle_shape,
-                            polygon_shape);
+                            polygon_shape,
+                            mixture);
 
    --  The range limits are necessary to avoid storage error warnings
    subtype Geo_Points is Positive range 1 .. 2 ** 20;
@@ -101,10 +102,16 @@ package Spatial_Data is
    ---------------------------
    --  Retrieval functions  --
    ---------------------------
-   function size_of_collection    (collection : Geometry) return Positive;
+   function type_of_collection    (collection : Geometry)
+                                   return Collection_Type;
+   function size_of_collection    (collection : Geometry)
+                                   return Positive;
    function collection_item_shape (collection : Geometry;
                                    index      : Positive := 1)
                                    return Geometric_Shape;
+   function collection_item_type  (collection : Geometry;
+                                   index      : Positive := 1)
+                                   return Collection_Type;
    function retrieve_polygon     (collection : Geometry; index : Positive := 1)
                                   return Geometric_Polygon;
    function retrieve_hole        (collection : Geometry; index : Positive := 1;
@@ -120,11 +127,6 @@ package Spatial_Data is
                                   return Geometric_Circle;
    function retrieve_subcollection (collection : Geometry; index : Positive := 1)
                                     return Geometry;
-
-   --  retrieve multipoint
-   --  retieve multiline
-   --  retrieve multipoly
-   --  rereive subcolllection
 
    function retrieve_two_points_of_infinite_line (collection : Geometry)
                                                   return Geometric_Line;
