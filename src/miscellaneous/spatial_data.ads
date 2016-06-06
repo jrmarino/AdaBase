@@ -84,6 +84,10 @@ package Spatial_Data is
                                        return Geometry;
    function initialize_as_infinite_line (two_points_on_line : Geometric_Line)
                                          return Geometry;
+   function initialize_as_multi_line (line_string : Geometric_Line_String)
+                                      return Geometry;
+   function initialize_as_multi_polygon (polygon : Geometric_Polygon)
+                                         return Geometry;
 
    -----------------------------------
    --  Build collections functions  --

@@ -55,7 +55,8 @@ private
                                return Geometric_Polygon;
 
    function handle_polygon (payload : WKB_Chain;
-                            marker : in out Natural)
+                            marker : in out Natural;
+                            force_multi : Boolean)
                             return Geometry;
 
    procedure handle_additional_polygons (payload : WKB_Chain;

@@ -53,6 +53,26 @@ package body Spatial_Data is
    end initialize_as_infinite_line;
 
 
+   --------------------------------
+   --  initialize_as_multi_line  --
+   --------------------------------
+   function initialize_as_multi_line (line_string : Geometric_Line_String)
+                                      return Geometry
+   is
+      LL : constant Natural := line_string'Length;
+      HC : Homogeneous_Collection (1 .. LL);
+   begin
+      for pt in line_string'Range loop
+         HC (pt).point    := line_string (pt);
+         HC (pt).shape_id := 1;
+      end loop;
+      return (contents => multi_line_string,
+              points   => LL,
+              units    => 1,
+              set_line_strings => HC);
+   end initialize_as_multi_line;
+
+
    -----------------------------
    --  initialize_as_polygon  --
    -----------------------------
@@ -66,6 +86,35 @@ package body Spatial_Data is
       end if;
       return (single_polygon, polygon'Length, 1, polygon);
    end initialize_as_polygon;
+
+
+   -----------------------------------
+   --  initialize_as_multi_polygon  --
+   -----------------------------------
+   function initialize_as_multi_polygon (polygon : Geometric_Polygon)
+                                         return Geometry
+   is
+      LL : constant Natural := polygon'Length;
+      HC : Heterogeneous_Collection (1 .. LL);
+   begin
+      if polygon'Length < 4 then
+         raise LACKING_POINTS
+           with "polygons must have at least 4 points (found only" &
+           polygon'Length'Img & ")";
+      end if;
+      for pt in polygon'Range loop
+         HC (pt).group_id   := 1;
+         HC (pt).group_type := single_polygon;
+         HC (pt).shape_id   := 1;
+         HC (pt).shape      := polygon_shape;
+         HC (pt).component  := 1;
+         HC (pt).point      := polygon (pt);
+      end loop;
+      return (contents => multi_polygon,
+              points   => LL,
+              units    => 1,
+              set_polygons => HC);
+   end initialize_as_multi_polygon;
 
 
    --------------------
@@ -204,7 +253,10 @@ package body Spatial_Data is
             raise CONVERSION_FAILED
               with "Infinite lines cannot be part of a geometric collection";
          when unset =>
-            product := (single_line_string, 1, 1, line_string);
+            product := (contents    => single_line_string,
+                        points      => line_string'Length,
+                        units       => 1,
+                        line_string => line_string);
          when single_point =>
             declare
                point_count : Natural := 1 + line_string'Length;
@@ -649,6 +701,7 @@ package body Spatial_Data is
    is
       classification : Collection_Type := subcollection.contents;
       exist_cnt : Natural;
+      fresh_cnt : Natural;
    begin
       case classification is
          when unset |
@@ -659,10 +712,14 @@ package body Spatial_Data is
               single_polygon =>
             raise ILLEGAL_SHAPE
               with "Shape is not complex: " & classification'Img;
-         when multi_point => null;
-         when multi_line_string => null;
-         when multi_polygon => null;
-         when heterogeneous => null;
+         when multi_point =>
+            fresh_cnt := subcollection.set_points'Length;
+         when multi_line_string =>
+            fresh_cnt := subcollection.set_line_strings'Length;
+         when multi_polygon =>
+            fresh_cnt := subcollection.set_polygons'Length;
+         when heterogeneous =>
+            fresh_cnt := subcollection.set_heterogeneous'Length;
       end case;
       case collection.contents is
          when unset | single_circle | single_infinite_line =>
@@ -684,7 +741,7 @@ package body Spatial_Data is
       end case;
       declare
          LL : Natural := exist_cnt;
-         point_count : Natural := exist_cnt + LL;
+         point_count : Natural := exist_cnt + fresh_cnt;
          HC : Heterogeneous_Collection (1 .. point_count);
          next_gr : Positive;
       begin

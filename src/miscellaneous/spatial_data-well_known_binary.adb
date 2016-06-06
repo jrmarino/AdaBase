@@ -161,21 +161,21 @@ package body Spatial_Data.Well_Known_Binary is
             declare
                LS : Geometric_Line_String :=
                     handle_linestring (payload, marker);
-               element : Geometry := initialize_as_line_string (LS);
+               element : Geometry := initialize_as_multi_line (LS);
             begin
+               for additional_LS in 2 .. entities loop
+                  append_line_string (collection,
+                                      handle_linestring (payload, marker));
+               end loop;
                if initial then
                   collection := element;
                else
                   append_complex_geometry (collection, element);
                end if;
             end;
-            for additional_LS in 2 .. entities loop
-               append_line_string (collection,
-                                   handle_linestring (payload, marker));
-            end loop;
          when single_polygon =>
             if initial then
-               collection := handle_polygon (payload, marker);
+               collection := handle_polygon (payload, marker, False);
             else
                handle_additional_polygons (payload, marker, collection);
             end if;
@@ -184,7 +184,7 @@ package body Spatial_Data.Well_Known_Binary is
             marker := marker + 9;
             --  Required to have at least one polygon
             declare
-               element : Geometry := handle_polygon (payload, marker);
+               element : Geometry := handle_polygon (payload, marker, True);
             begin
                for additional_Poly in 2 .. entities loop
                   handle_additional_polygons (payload, marker, element);
@@ -287,29 +287,35 @@ package body Spatial_Data.Well_Known_Binary is
    --  handle_polygon  --
    ----------------------
    function handle_polygon (payload : WKB_Chain;
-                            marker : in out Natural)
+                            marker : in out Natural;
+                            force_multi : Boolean)
                             return Geometry
    is
+      poly : Geometry;
       poly_endian : WKB_Endianness := decode_endianness (payload (marker));
       num_rings : Natural := Natural (decode_hex32 (poly_endian,
                                       payload (marker + 5 .. marker + 8)));
       --  There must be at least one ring (exterior)
    begin
       marker := marker + 9;
-      declare
-         poly : Geometry := initialize_as_polygon
+      if force_multi then
+         poly := initialize_as_multi_polygon
            (handle_polyrings (direction => poly_endian,
                               payload   => payload,
                               marker    => marker));
-      begin
-         for x in 2 .. num_rings loop
-            append_polygon_hole
-              (poly, handle_polyrings (direction => poly_endian,
-                                       payload   => payload,
-                                       marker    => marker));
-         end loop;
-         return poly;
-      end;
+      else
+         poly := initialize_as_polygon
+           (handle_polyrings (direction => poly_endian,
+                              payload   => payload,
+                              marker    => marker));
+      end if;
+      for x in 2 .. num_rings loop
+         append_polygon_hole
+           (poly, handle_polyrings (direction => poly_endian,
+                                    payload   => payload,
+                                    marker    => marker));
+      end loop;
+      return poly;
    end handle_polygon;
 
 
