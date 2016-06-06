@@ -1625,7 +1625,8 @@ package body Spatial_Data is
    -----------------------
    --  Well_Known_Text  --
    -----------------------
-   function Well_Known_Text (collection : Geometry) return String
+   function Well_Known_Text (collection : Geometry;
+                             top_first  : Boolean := True) return String
    is
       function format_point (pt    : Geometric_Point;
                              first : Boolean := False;
@@ -1741,20 +1742,20 @@ package body Spatial_Data is
          when unset =>
             return "";
          when single_point =>
-            return format_point (collection.point, True, True);
+            return format_point (collection.point, top_first, True);
          when single_line_string =>
-            return format_line_string (collection.line_string, True, True);
+            return format_line_string (collection.line_string, top_first, True);
          when single_infinite_line =>
             --  Infinite lines are not supported by WKT so this is wrong
-            return format_line_string (collection.infinite_line, True, True);
+            return format_line_string (collection.infinite_line, top_first, True);
          when single_circle =>
             --  No circles in WKT, so using this output will result in error
             return "CIRCLE (" &
-              format_point (collection.circle.center_point, True) & sep &
+              format_point (collection.circle.center_point, top_first) & sep &
               format_real (collection.circle.radius) & pclose;
          when single_polygon =>
             return format_polygon (retrieve_full_polygon (collection, 1),
-                                   True, True);
+                                   top_first, True);
          when multi_point =>
             declare
                product : CT.Text := CT.SUS ("MULTIPOINT(");
@@ -1803,33 +1804,13 @@ package body Spatial_Data is
          when heterogeneous =>
             declare
                product : CT.Text := CT.SUS ("GEOMETRYCOLLECTION(");
-               first   : Boolean;
-               flavor  : Geometric_Shape;
+               first   : Boolean := True;
+               GM      : Geometry;
             begin
                for ls in 1 .. collection.units loop
-                  first := (ls = 1);
-                  flavor := collection_item_shape (collection, ls);
-                  case flavor is
-                     when point_shape =>
-                        CT.SU.Append
-                          (product, format_point
-                             (retrieve_point (collection, ls), first, True));
-                     when line_string_shape =>
-                        CT.SU.Append
-                          (product, format_line_string
-                             (retrieve_line_string (collection, ls), first,
-                              True));
-                     when polygon_shape =>
-                        CT.SU.Append
-                          (product,
-                           format_polygon
-                             (retrieve_full_polygon (collection, ls),
-                              first, True));
-                     when mixture =>
-                        raise CONVERSION_FAILED with "TO BE IMPLEMENTED";
-                     when circle_shape        => null;
-                     when infinite_line_shape => null;
-                  end case;
+                  GM := retrieve_subcollection (collection, ls);
+                  CT.SU.Append (product, Well_Known_Text (GM, first));
+                  first := False;
                end loop;
                return CT.USS (product) & pclose;
             end;
