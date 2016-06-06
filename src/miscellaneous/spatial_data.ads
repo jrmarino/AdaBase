@@ -95,6 +95,8 @@ package Spatial_Data is
                                   polygon    : Geometric_Polygon);
    procedure append_polygon      (collection : out Geometry;
                                   polygon    : Geometric_Polygon);
+   procedure append_complex_geometry (collection : out Geometry;
+                                      subcollection : Geometry);
 
    ---------------------------
    --  Retrieval functions  --
@@ -116,6 +118,13 @@ package Spatial_Data is
                                   return Geometric_Line_String;
    function retrieve_circle      (collection : Geometry)
                                   return Geometric_Circle;
+   function retrieve_subcollection (collection : Geometry; index : Positive := 1)
+                                    return Geometry;
+
+   --  retrieve multipoint
+   --  retieve multiline
+   --  retrieve multipoly
+   --  rereive subcolllection
 
    function retrieve_two_points_of_infinite_line (collection : Geometry)
                                                   return Geometric_Line;
@@ -149,6 +158,7 @@ package Spatial_Data is
    OUT_OF_COLLECTION_RANGE : exception;
    LACKING_POINTS          : exception;
    ILLEGAL_POLY_HOLE       : exception;
+   ILLEGAL_SHAPE           : exception;
 
 private
 
@@ -162,17 +172,20 @@ private
 
    type Heterogeneous_Collection_Unit is
       record
-         point     : Geometric_Point;
-         shape     : Geometric_Shape;
-         shape_id  : Positive;
-         component : Positive := 1;
+         --  for primate shapes, group_id = shape_id and component = 1
+         group_id   : Positive;
+         group_type : Collection_Type;
+         shape_id   : Positive;
+         shape      : Geometric_Shape;
+         component  : Positive;
+         point      : Geometric_Point;
       end record;
 
    Homogeneous_Dummy : constant Homogeneous_Collection_Unit :=
                        (Origin_Point, 1);
 
    heterogeneous_Dummy : constant Heterogeneous_Collection_Unit :=
-                         (Origin_Point, point_shape, 1, 1);
+                         (1, single_point, 1, point_shape, 1, Origin_Point);
 
    type Homogeneous_Collection is
        array (Positive range <>) of Homogeneous_Collection_Unit;
@@ -225,24 +238,30 @@ private
    --  For 2-ring polygons, this is same as outer ring
    function outer_polygon_position (collection : Geometry; item : Positive)
                                     return Positive;
-   function outer_polygon_hetero_position (collection : Geometry;
-                                           item : Positive)
-                                           return Positive;
+--     function outer_polygon_hetero_position (collection : Geometry;
+--                                             group_id   : Positive;
+--                                             item_id    : Positive)
+--                                             return Positive;
 
    --  Returns starting position of inner ring of 2-ring polygons
    function inner_polygon_position (collection : Geometry; item : Positive;
-                                   hole_item : Positive) return Positive;
-   function inner_polygon_hetero_position (collection : Geometry;
-                                           item : Positive;
-                                           hole_item : Positive)
-                                           return Positive;
+                                    hole_item : Positive) return Positive;
+--     function inner_polygon_hetero_position (collection : Geometry;
+--                                             group_id   : Positive;
+--                                             item_id    : Positive;
+--                                             hole_item  : Positive)
+--                                             return Positive;
 
    --  Given a starting position, returns the number of points in the polygon
    function polygon_ring_size (collection : Geometry; position : Positive)
                                return Positive;
-   function polygon_hetero_ring_size (collection : Geometry;
-                                      position : Positive)
-                                      return Positive;
+--     function polygon_hetero_ring_size (collection : Geometry;
+--                                        position : Positive)
+--                                        return Positive;
+--     function polygon_hetero_hole_count (collection : Geometry;
+--                                         position   : Positive) return Natural;
+   function group_size (collection : Geometry;
+                        position   : Positive) return Natural;
 
    --  raises exception if index is out of range
    procedure check_collection_index (collection : Geometry; index : Positive);
