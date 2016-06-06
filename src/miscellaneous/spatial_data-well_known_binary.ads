@@ -36,9 +36,14 @@ private
                                 chain     : WKB_Double_Precision_Chain)
                                 return Geometric_Real;
 
-   function handle_point (direction : WKB_Endianness;
-                          payload   : WKB_Shape_Point_Chain)
-                          return Geometric_Point;
+   function handle_coordinate (direction : WKB_Endianness;
+                               payload : WKB_Chain;
+                               marker : in out Natural)
+                               return Geometric_Real;
+
+   function handle_new_point (payload : WKB_Chain;
+                              marker : in out Natural)
+                              return Geometric_Point;
 
    function handle_linestring (payload : WKB_Chain;
                                marker : in out Natural)
@@ -54,8 +59,13 @@ private
                             return Geometry;
 
    procedure handle_additional_polygons (payload : WKB_Chain;
-                                        marker : in out Natural;
-                                        collection : in out Geometry);
+                                         marker : in out Natural;
+                                         collection : in out Geometry);
+
+   procedure handle_unit_collection (initial : Boolean;
+                                     payload : WKB_Chain;
+                                     marker : in out Natural;
+                                     collection : in out Geometry);
 
    function round_to_16_digits (FP : Geometric_Real) return Geometric_Real;
 

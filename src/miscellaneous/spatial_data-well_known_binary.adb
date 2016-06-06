@@ -21,117 +21,59 @@ package body Spatial_Data.Well_Known_Binary is
    is
       binary   : WKB_Chain := convert (WKBinary);
       chainlen : Natural := binary'Length;
-      required : Natural := 21;
    begin
       if chainlen < 21 then
-         goto crash;
+         raise WKB_INVALID
+           with "Chain is smaller than required to accommodate a point)";
       end if;
       declare
          function entity_count return Natural;
+         marker     : Natural := binary'First;
          endianness : constant WKB_Endianness :=
-                      decode_endianness (binary (1));
-         ID_chain   : constant WKB_Identifier_Chain := binary (2 .. 5);
+                      decode_endianness (binary (marker));
+         ID_chain   : constant WKB_Identifier_Chain :=
+                      binary (marker + 1 .. marker + 4);
          Identity   : constant WKB_Identifier :=
                       decode_identifier (direction => endianness,
                                          value     => ID_chain);
          col_type   : constant Collection_Type :=
                       get_collection_type (Identity);
+         initial    : Boolean := True;
          product    : Geometry;
-         marker     : Natural;
          entities   : Natural;
 
          function entity_count return Natural is
          begin
-            return Natural (decode_hex32 (endianness, binary (6 .. 9)));
+            return Natural (decode_hex32
+                            (endianness, binary (marker + 5 .. marker + 8)));
          end entity_count;
       begin
          case col_type is
             when unset | single_circle | single_infinite_line =>
                return product; -- unset
-            when single_point =>
-               return initialize_as_point
-                 (handle_point (endianness, binary (6 .. 21)));
-            when single_line_string =>
+            when single_point |
+                 single_line_string |
+                 single_polygon |
+                 multi_point |
+                 multi_line_string |
+                 multi_polygon =>
+               handle_unit_collection (initial    => initial,
+                                       payload    => binary,
+                                       marker     => marker,
+                                       collection => product);
+            when heterogeneous =>
                entities := entity_count;
-               required := 9 + (entities * 16);
-               if required > chainlen or else entities < 2 then
-                  goto crash;
-               end if;
-               marker := 1;
-               product := initialize_as_line_string
-                 (handle_linestring (binary, marker));
-               return product;
-            when multi_point =>
-               entities := entity_count;
-               required := 9 + (entities * 21);
-               if required > chainlen then
-                  goto crash;
-               end if;
-               --  required to have at least one point
-               declare
-                  pt_endian   : WKB_Endianness :=
-                                decode_endianness (binary (10));
-                  first_point : Geometric_Point :=
-                                handle_point (endianness, binary (15 .. 30));
-               begin
-                  product := initialize_as_point (first_point);
-               end;
-               marker := 31;
-               for x in 2 .. entities loop
-                  declare
-                     pt_endian  : WKB_Endianness :=
-                                  decode_endianness (binary (marker));
-                     next_point : Geometric_Point := handle_point
-                       (pt_endian, binary (marker + 5 .. marker + 20));
-                  begin
-                     append_point (product, next_point);
-                     marker := marker + 21;
-                  end;
+               marker := marker + 9;
+               for entity in 1 .. entities loop
+                  handle_unit_collection (initial    => initial,
+                                          payload    => binary,
+                                          marker     => marker,
+                                          collection => product);
+                  initial := False;
                end loop;
-               return product;
-            when multi_line_string =>
-               entities := entity_count;
-               required := 9 + (entities * 25);  --  at least, can be more
-               if required > chainlen then
-                  goto crash;
-               end if;
-               --  Required to have at least one linestring
-               marker := 10;
-               product := initialize_as_line_string
-                 (handle_linestring (binary, marker));
-               for additional_LS in 2 .. entities loop
-                  append_line_string
-                    (product, handle_linestring (binary, marker));
-               end loop;
-               return product;
-            when single_polygon =>
-               entities := entity_count;
-               required := 9 + (entities * 64);  --  at least, can be more
-               if required > chainlen then
-                  goto crash;
-               end if;
-               marker := 1;
-               return handle_polygon (binary, marker);
-            when multi_polygon =>
-               entities := entity_count;
-               required := 9 + (entities * 73);  --  at least, can be more
-               if required > chainlen then
-                  goto crash;
-               end if;
-                --  Required to have at least one linestring
-               marker := 10;
-               product := handle_polygon (binary, marker);
-               for additional_Poly in 2 .. entities loop
-                  handle_additional_polygons (binary, marker, product);
-               end loop;
-               return product;
-            when heterogeneous => null;
          end case;
+         return product;
       end;
-      <<crash>>
-      raise WKB_INVALID
-        with "Chain is smaller than required" & required'Img & " links (" &
-        chainlen'Img  & ")";
    end Translate_WKB;
 
 
@@ -144,20 +86,144 @@ package body Spatial_Data.Well_Known_Binary is
    end Construct_WKB;
 
 
-   --------------------
-   --  handle_point  --
-   --------------------
-   function handle_point (direction : WKB_Endianness;
-                          payload   : WKB_Shape_Point_Chain)
-                          return Geometric_Point
+   ------------------------------
+   --  handle_unit_collection  --
+   ------------------------------
+   procedure handle_unit_collection (initial : Boolean;
+                                     payload : WKB_Chain;
+                                     marker : in out Natural;
+                                     collection : in out Geometry)
    is
+      function entity_count return Natural;
+      endianness : constant WKB_Endianness :=
+                   decode_endianness (payload (marker));
+      ID_chain   : constant WKB_Identifier_Chain :=
+                   payload (marker + 1 .. marker + 4);
+      Identity   : constant WKB_Identifier :=
+                   decode_identifier (direction => endianness,
+                           value     => ID_chain);
+      col_type   : constant Collection_Type :=
+                   get_collection_type (Identity);
+      entities   : Natural;
+
+      function entity_count return Natural is
+      begin
+         return Natural (decode_hex32 (endianness,
+                         payload (marker + 5 .. marker + 8)));
+      end entity_count;
+   begin
+      case col_type is
+         when unset | single_circle | single_infinite_line | heterogeneous =>
+            raise WKB_INVALID
+              with "Handle_Unit_collection: Should never happen";
+         when single_point =>
+            declare
+               pt : Geometric_Point := handle_new_point (payload, marker);
+            begin
+               if initial then
+                  collection := initialize_as_point (pt);
+               else
+                  append_point (collection, pt);
+               end if;
+            end;
+         when multi_point =>
+            entities := entity_count;
+            marker := marker + 9;
+            declare
+               --  required to have at least one point
+               pt1 : Geometric_Point := handle_new_point (payload, marker);
+            begin
+               if initial then
+                  collection := initialize_as_point (pt1);
+               else
+                  append_point (collection, pt1);
+               end if;
+            end;
+            for x in 2 .. entities loop
+               append_point (collection, handle_new_point (payload, marker));
+            end loop;
+         when single_line_string =>
+            declare
+               LS : Geometric_Line_String :=
+                    handle_linestring (payload, marker);
+            begin
+               if initial then
+                  collection := initialize_as_line_string (LS);
+               else
+                  append_line_string (collection, LS);
+               end if;
+            end;
+         when multi_line_string =>
+            entities := entity_count;
+            marker := marker + 9;
+            --  Required to have at least one linestring
+            declare
+               LS : Geometric_Line_String :=
+                    handle_linestring (payload, marker);
+            begin
+               if initial then
+                  collection := initialize_as_line_string (LS);
+               else
+                  append_line_string (collection, LS);
+               end if;
+            end;
+            for additional_LS in 2 .. entities loop
+               append_line_string (collection,
+                                   handle_linestring (payload, marker));
+            end loop;
+         when single_polygon =>
+            if initial then
+               collection := handle_polygon (payload, marker);
+            else
+               handle_additional_polygons (payload, marker, collection);
+            end if;
+         when multi_polygon =>
+            entities := entity_count;
+            marker := marker + 9;
+            --  Required to have at least one linestring
+            if initial then
+               collection := handle_polygon (payload, marker);
+            else
+                handle_additional_polygons (payload, marker, collection);
+            end if;
+            for additional_Poly in 2 .. entities loop
+               handle_additional_polygons (payload, marker, collection);
+            end loop;
+      end case;
+   end handle_unit_collection;
+
+
+   -------------------------
+   --  handle_coordinate  --
+   -------------------------
+   function handle_coordinate (direction : WKB_Endianness;
+                               payload : WKB_Chain;
+                               marker : in out Natural)
+                               return Geometric_Real
+   is
+      Z : Geometric_Real;
+   begin
+      Z := convert_to_IEEE754 (direction, payload (marker .. marker + 7));
+      marker := marker + 8;
+      return Z;
+   end handle_coordinate;
+
+
+   ------------------------
+   --  handle_new_point  --
+   ------------------------
+   function handle_new_point (payload : WKB_Chain;
+                              marker : in out Natural) return Geometric_Point
+   is
+      pt_endian : WKB_Endianness := decode_endianness (payload (marker));
       X : Geometric_Real;
       Y : Geometric_Real;
    begin
-      X := convert_to_IEEE754 (direction, payload (1 .. 8));
-      Y := convert_to_IEEE754 (direction, payload (9 .. 16));
+      marker := marker + 5;
+      X := handle_coordinate (pt_endian, payload, marker);
+      Y := handle_coordinate (pt_endian, payload, marker);
       return (X, Y);
-   end handle_point;
+   end handle_new_point;
 
 
    -------------------------
@@ -170,12 +236,14 @@ package body Spatial_Data.Well_Known_Binary is
       num_points : Natural :=  Natural (decode_hex32 (ls_endian,
                                         payload (marker + 5 .. marker + 8)));
       LS : Geometric_Line_String (1 .. num_points);
+      X : Geometric_Real;
+      Y : Geometric_Real;
    begin
       marker := marker + 9;
-      for x in 1 .. num_points loop
-         LS (x) := handle_point
-           (ls_endian, payload (marker .. marker + 15));
-         marker := marker + 16;
+      for pt in 1 .. num_points loop
+         X := handle_coordinate (ls_endian, payload, marker);
+         Y := handle_coordinate (ls_endian, payload, marker);
+         LS (pt) := (X, Y);
       end loop;
       return LS;
    end handle_linestring;
@@ -192,12 +260,14 @@ package body Spatial_Data.Well_Known_Binary is
       num_points : Natural :=  Natural (decode_hex32 (direction,
                                         payload (marker .. marker + 3)));
       ring : Geometric_Polygon (1 .. num_points);
+      X : Geometric_Real;
+      Y : Geometric_Real;
    begin
       marker := marker + 4;
-      for x in 1 .. num_points loop
-         ring (x) := handle_point
-           (direction, payload (marker .. marker + 15));
-         marker := marker + 16;
+      for pt in 1 .. num_points loop
+         X := handle_coordinate (direction, payload, marker);
+         Y := handle_coordinate (direction, payload, marker);
+         ring (pt) := (X, Y);
       end loop;
       return ring;
    end handle_polyrings;
