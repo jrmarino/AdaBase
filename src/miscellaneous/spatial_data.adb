@@ -852,27 +852,6 @@ package body Spatial_Data is
    end group_size;
 
 
-   ---------------------------------
-   --  polygon_hetero_hole_count  --
-   ---------------------------------
---     function polygon_hetero_hole_count (collection : Geometry;
---                                         position   : Positive) return Natural
---     is
---        shape_id : Positive;
---        group_id : Positive;
---        result   : Natural := 0;
---     begin
---        shape_id := collection.set_heterogeneous (position).shape_id;
---        group_id := collection.set_heterogeneous (position).group_id;
---        for x in position + 1 .. collection.set_heterogeneous'Last loop
---           exit when collection.set_heterogeneous (x).group_id /= group_id;
---           exit when collection.set_heterogeneous (x).shape_id /= shape_id;
---           result := collection.set_heterogeneous (x).component - 1;
---        end loop;
---        return result;
---     end polygon_hetero_hole_count;
-
-
    ------------------------------
    --  check_collection_index  --
    ------------------------------
@@ -942,32 +921,6 @@ package body Spatial_Data is
    end polygon_ring_size;
 
 
-   --------------------------------
-   --  polygon_hetero_ring_size  --
-   --------------------------------
---     function polygon_hetero_ring_size (collection : Geometry;
---                                        position   : Positive)
---                                        return Positive
---     is
---        zone : Heterogeneous_Collection renames collection.set_heterogeneous;
---        curr_gp : Positive := zone (position).group_id;
---        curr_id : Positive := zone (position).shape_id;
---        curr_sc : Positive := zone (position).component;
---        arrow   : Positive := position;
---        size    : Positive := 1;
---     begin
---        loop
---           arrow := arrow + 1;
---           exit when arrow > zone'Length;
---           exit when zone (arrow).group_id /= curr_gp;
---           exit when zone (arrow).shape_id /= curr_id;
---           exit when zone (arrow).component /= curr_sc;
---           size := size + 1;
---        end loop;
---        return size;
---     end polygon_hetero_ring_size;
-
-
    ------------------------------
    --  outer_polygon_position  --
    ------------------------------
@@ -986,28 +939,6 @@ package body Spatial_Data is
    end outer_polygon_position;
 
 
-   -------------------------------------
-   --  outer_polygon_hetero_position  --
-   -------------------------------------
---     function outer_polygon_hetero_position (collection : Geometry;
---                                             group_id   : Positive;
---                                             item_id    : Positive)
---                                             return Positive is
---     begin
---        for x in collection.set_heterogeneous'Range loop
---           if collection.set_heterogeneous (x).group_id = group_id and then
---             collection.set_heterogeneous (x).shape_id = item_id
---           then
---              if collection.set_heterogeneous (x).component = 1 then
---                 return x;
---              end if;
---           end if;
---        end loop;
---        raise CONVERSION_FAILED
---          with "Group" & group_id'Img & ", Item" & item_id'Img & " not found";
---     end outer_polygon_hetero_position;
-
-
    ------------------------------
    --  inner_polygon_position  --
    ------------------------------
@@ -1024,28 +955,6 @@ package body Spatial_Data is
       raise CONVERSION_FAILED
         with "Item" & item'Img & "/" & hole_item'Img & " was not found";
    end inner_polygon_position;
-
-
-   -------------------------------------
-   --  inner_polygon_hetero_position  --
-   -------------------------------------
---     function inner_polygon_hetero_position (collection : Geometry;
---                                             group_id   : Positive;
---                                             item_id    : Positive;
---                                             hole_item  : Positive)
---                                             return Positive is
---     begin
---        for x in collection.set_heterogeneous'Range loop
---           if collection.set_heterogeneous (x).group_id = group_id and then
---             collection.set_heterogeneous (x).shape_id = item_id and then
---             collection.set_heterogeneous (x).component = hole_item
---           then
---              return x;
---           end if;
---        end loop;
---        raise CONVERSION_FAILED
---          with "Group" & group_id'Img & ", Item" & item_id'Img & " not found";
---     end inner_polygon_hetero_position;
 
 
    -----------------------------

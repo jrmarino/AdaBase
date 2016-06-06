@@ -238,28 +238,15 @@ private
    --  For 2-ring polygons, this is same as outer ring
    function outer_polygon_position (collection : Geometry; item : Positive)
                                     return Positive;
---     function outer_polygon_hetero_position (collection : Geometry;
---                                             group_id   : Positive;
---                                             item_id    : Positive)
---                                             return Positive;
 
    --  Returns starting position of inner ring of 2-ring polygons
    function inner_polygon_position (collection : Geometry; item : Positive;
                                     hole_item : Positive) return Positive;
---     function inner_polygon_hetero_position (collection : Geometry;
---                                             group_id   : Positive;
---                                             item_id    : Positive;
---                                             hole_item  : Positive)
---                                             return Positive;
 
    --  Given a starting position, returns the number of points in the polygon
    function polygon_ring_size (collection : Geometry; position : Positive)
                                return Positive;
---     function polygon_hetero_ring_size (collection : Geometry;
---                                        position : Positive)
---                                        return Positive;
---     function polygon_hetero_hole_count (collection : Geometry;
---                                         position   : Positive) return Natural;
+
    function group_size (collection : Geometry;
                         position   : Positive) return Natural;
 
