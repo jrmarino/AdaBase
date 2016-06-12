@@ -69,7 +69,6 @@ package Spatial_Data is
                            points : Geo_Points := Geo_Points'First) is private;
 
    Origin_Point   : constant Geometric_Point := (0.0, 0.0);
-   Blank_Geometry : constant Geometry;
 
 
    --------------------------------
@@ -104,11 +103,11 @@ package Spatial_Data is
    procedure augment_multi_point   (collection : in out Geometry;
                                     point      : Geometric_Point);
 
-   procedure augment_multi_polygon (collection : in out Geometry;
-                                    polygon    : Geometric_Polygon);
-
    procedure augment_multi_line    (collection : in out Geometry;
                                     line       : Geometric_Line_String);
+
+   procedure augment_multi_polygon (collection : in out Geometry;
+                                    polygon    : Geometric_Polygon);
 
    procedure augment_collection    (collection : in out Geometry;
                                     anything   : Geometry);
@@ -183,10 +182,12 @@ private
 
    type Ring_Structure is
       record
+         Item_Type   : Collection_Type;
          Item_ID     : Positive;
          Ring_ID     : Positive;
          Ring_Size   : Positive;
          Point_Index : Positive;
+         mix_level   : Natural;
       end record;
 
    type Ring_Structures is array (Positive range <>) of Ring_Structure;
@@ -208,45 +209,20 @@ private
             when unset => null;
             when others =>
                structures : Ring_Structures (1 .. subunits);
-               points_set : Geometric_Point_Collection (1 .. points) :=
-                            (others => Origin_Point);
+               points_set : Geometric_Point_Collection (1 .. points);
          end case;
       end record;
 
-   Blank_Geometry : constant Geometry := (unset, 0, 0, 1);
+   blank_structure : constant Ring_Structure := (single_point, 1, 1, 1, 1, 0);
 
    --  returns a trimmed floating point image
    function format_real (value : Geometric_Real) return String;
 
---     --  Returns starting position in polygon_set for given index
---     --  For 2-ring polygons, this is same as outer ring
---     function outer_polygon_position (collection : Geometry; item : Positive)
---                                      return Positive;
---
---     --  Returns starting position of inner ring of 2-ring polygons
---     function inner_polygon_position (collection : Geometry; item : Positive;
---                                      hole_item : Positive) return Positive;
---
---     --  Given a starting position, returns the number of points in the polygon
---     function polygon_ring_size (collection : Geometry; position : Positive)
---                                 return Positive;
---
---     function group_size (collection : Geometry;
---                          position   : Positive) return Natural;
---
---     --  raises exception if index is out of range
---     procedure check_collection_index (collection : Geometry; index : Positive);
+   --  raises exception if index is out of range
+   procedure check_collection_index (collection : Geometry; index : Positive);
 
---     --  Raises exception if index is not found, otherwise locates exactly
---     --  where shapes starts in the array and how many points it contains
---     procedure locate_heterogenous_item (collection : Geometry;
---                                         index      : Positive;
---                                         set_index  : out Positive;
---                                         num_points : out Positive);
---
---     --  Returns heterogenous section of a polygon including its holes
---     function retrieve_full_polygon (collection : Geometry;
---                                     index : Positive := 1)
---                                     return Heterogeneous_Collection;
+   function single_canvas (gm_type  : Collection_Type;
+                           subunits : Geo_Units;
+                           points   : Geo_Points) return Geometry;
 
 end Spatial_Data;

@@ -8,10 +8,12 @@ package body Spatial_Data is
    ---------------------------
    function initialize_as_point (point : Geometric_Point) return Geometry
    is
-      metadata : Ring_Structure := (Item_ID     => 1,
+      metadata : Ring_Structure := (Item_Type   => single_point,
+                                    Item_ID     => 1,
                                     Ring_ID     => 1,
                                     Ring_Size   => 1,
-                                    Point_Index => 1);
+                                    Point_Index => 1,
+                                    mix_level   => 0);
    begin
       return (contents => single_point,
               units      => 1,
@@ -27,10 +29,12 @@ package body Spatial_Data is
    ---------------------------------
    function initialize_as_multi_point (point : Geometric_Point) return Geometry
    is
-      metadata : Ring_Structure := (Item_ID     => 1,
+      metadata : Ring_Structure := (Item_Type   => single_point,
+                                    Item_ID     => 1,
                                     Ring_ID     => 1,
                                     Ring_Size   => 1,
-                                    Point_Index => 1);
+                                    Point_Index => 1,
+                                    mix_level   => 0);
    begin
       return (contents => multi_point,
               units      => 1,
@@ -47,12 +51,14 @@ package body Spatial_Data is
    function initialize_as_line (line_string : Geometric_Line_String)
                                 return Geometry
    is
-      metadata : Ring_Structure := (Item_ID     => 1,
+      metadata : Ring_Structure := (Item_Type   => single_line_string,
+                                    Item_ID     => 1,
                                     Ring_ID     => 1,
                                     Ring_Size   => line_string'Length,
-                                    Point_Index => 1);
+                                    Point_Index => 1,
+                                    mix_level   => 0);
    begin
-      return (contents => single_line_string,
+      return (contents   => single_line_string,
               units      => 1,
               subunits   => 1,
               points     => line_string'Length,
@@ -67,10 +73,12 @@ package body Spatial_Data is
    function initialize_as_multi_line (line_string : Geometric_Line_String)
                                       return Geometry
    is
-      metadata : Ring_Structure := (Item_ID     => 1,
+      metadata : Ring_Structure := (Item_Type   => single_line_string,
+                                    Item_ID     => 1,
                                     Ring_ID     => 1,
                                     Ring_Size   => line_string'Length,
-                                    Point_Index => 1);
+                                    Point_Index => 1,
+                                    mix_level   => 0);
    begin
       return (contents => multi_line_string,
               units      => 1,
@@ -89,10 +97,12 @@ package body Spatial_Data is
    is
       num_points : constant Natural := outer_ring'Length;
       PG : Geometric_Polygon (rings  => 1, points => num_points);
-      metadata : Ring_Structure := (Item_ID     => 1,
+      metadata : Ring_Structure := (Item_Type   => single_polygon,
+                                    Item_ID     => 1,
                                     Ring_ID     => 1,
                                     Ring_Size   => num_points,
-                                    Point_Index => 1);
+                                    Point_Index => 1,
+                                    mix_level   => 0);
    begin
       if num_points < 4 then
          raise LACKING_POINTS
@@ -115,10 +125,12 @@ package body Spatial_Data is
       last_ring    : constant Natural := polygon.rings + 1;
       total_points : constant Natural := polygon.points + num_points;
       PG : Geometric_Polygon (rings  => last_ring, points => total_points);
-      metadata : Ring_Structure := (Item_ID     => 1,
+      metadata : Ring_Structure := (Item_Type   => single_polygon,
+                                    Item_ID     => 1,
                                     Ring_ID     => last_ring,
                                     Ring_Size   => num_points,
-                                    Point_Index => polygon.points + 1);
+                                    Point_Index => polygon.points + 1,
+                                    mix_level   => 0);
    begin
       if num_points < 4 then
          raise LACKING_POINTS
@@ -139,18 +151,58 @@ package body Spatial_Data is
    end append_inner_ring;
 
 
+   -----------------------
+   --  number_of_rings  --
+   -----------------------
+   function number_of_rings (polygon : Geometric_Polygon) return Natural is
+   begin
+      return Natural (polygon.rings);
+   end number_of_rings;
+
+
+   ---------------------
+   --  retrieve_ring  --
+   ---------------------
+   function retrieve_ring (polygon : Geometric_Polygon; ring_index : Positive)
+                           return Geometric_Ring is
+   begin
+      if ring_index > polygon.rings then
+         raise OUT_OF_COLLECTION_RANGE
+           with "Requested ring" & ring_index'Img &
+           ", but there are only" & polygon.rings'Img & " available";
+      end if;
+      declare
+         num_points : Positive := polygon.structures (ring_index).Ring_Size;
+         start_here : Positive := polygon.structures (ring_index).Point_Index;
+         finish     : Positive := start_here + num_points - 1;
+         GR : Geometric_Ring (1 .. num_points);
+      begin
+         GR := polygon.points_set (start_here .. finish);
+         return GR;
+      end;
+   end retrieve_ring;
+
+
    -----------------------------
    --  initialize_as_polygon  --
    -----------------------------
    function initialize_as_polygon (polygon : Geometric_Polygon)
-                                   return Geometry is
+                                   return Geometry
+   is
+      GM : Geometry (contents   => single_polygon,
+                     units      => 1,
+                     subunits   => polygon.rings,
+                     points     => polygon.points);
    begin
-      if polygon'Length < 4 then
-         raise LACKING_POINTS
-           with "polygons must have at least 4 points (found only" &
-           polygon'Length'Img & ")";
-      end if;
-      return (single_polygon, polygon'Length, 1, polygon);
+      for ring in 1 .. polygon.rings loop
+         GM.structures (ring) := polygon.structures (ring);
+      end loop;
+
+      for pt in 1 .. polygon.points loop
+         GM.points_set (pt) := polygon.points_set (pt);
+      end loop;
+
+      return GM;
    end initialize_as_polygon;
 
 
@@ -160,783 +212,41 @@ package body Spatial_Data is
    function initialize_as_multi_polygon (polygon : Geometric_Polygon)
                                          return Geometry
    is
-      LL : constant Natural := polygon'Length;
-      HC : Heterogeneous_Collection (1 .. LL);
+      GM : Geometry (contents   => multi_polygon,
+                     units      => 1,
+                     subunits   => polygon.rings,
+                     points     => polygon.points);
    begin
-      if polygon'Length < 4 then
-         raise LACKING_POINTS
-           with "polygons must have at least 4 points (found only" &
-           polygon'Length'Img & ")";
-      end if;
-      for pt in polygon'Range loop
-         HC (pt).group_id   := 1;
-         HC (pt).group_type := multi_polygon;
-         HC (pt).shape_id   := 1;
-         HC (pt).shape      := polygon_shape;
-         HC (pt).component  := 1;
-         HC (pt).point      := polygon (pt);
+      for ring in 1 .. polygon.rings loop
+         GM.structures (ring) := polygon.structures (ring);
       end loop;
-      return (contents => multi_polygon,
-              points   => LL,
-              units    => 1,
-              set_polygons => HC);
+
+      for pt in 1 .. polygon.points loop
+         GM.points_set (pt) := polygon.points_set (pt);
+      end loop;
+
+      return GM;
    end initialize_as_multi_polygon;
 
 
-   --------------------
-   --  append_point  --
-   --------------------
-   procedure append_point (collection : out Geometry; point : Geometric_Point)
+   --------------------------------
+   --  initialize_as_collection  --
+   --------------------------------
+   function initialize_as_collection (anything : Geometry) return Geometry
    is
-      classification : Collection_Type := collection.contents;
-      num_units   : Natural := collection.units + 1;
+      classification : Collection_Type := anything.contents;
+      GM : Geometry (contents   => heterogeneous,
+                     units      => anything.units,
+                     subunits   => anything.subunits,
+                     points     => anything.points);
    begin
-      case classification is
-         when single_circle =>
-            raise CONVERSION_FAILED
-              with "circles cannot be part of a geometric collection";
-         when single_infinite_line =>
-            raise CONVERSION_FAILED
-              with "Infinite lines cannot be part of a geometric collection";
-         when unset =>
-            collection := (single_point, 1, 1, point);
-         when single_point =>
-            collection := (multi_point,
-                           num_units,
-                           num_units,
-                           (collection.point, point));
-         when single_line_string =>
-            declare
-               point_count : Natural := collection.line_string'Length + 1;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               for x in collection.line_string'Range loop
-                  HC (x).group_id   := 1;
-                  HC (x).group_type := single_line_string;
-                  HC (x).shape_id   := 1;
-                  HC (x).shape      := line_string_shape;
-                  HC (x).component  := 1;
-                  HC (x).point      := collection.line_string (x);
-               end loop;
-               HC (HC'Last).group_id   := 2;
-               HC (HC'Last).group_type := single_point;
-               HC (HC'Last).shape_id   := num_units;
-               HC (HC'Last).shape      := point_shape;
-               HC (HC'Last).component  := 1;
-               HC (HC'Last).point      := point;
-               collection := (heterogeneous, point_count, num_units, HC);
-            end;
-         when single_polygon =>
-            declare
-               point_count : Natural := collection.polygon'Length + 1;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               for x in collection.polygon'Range loop
-                  HC (x).group_id   := 1;
-                  HC (x).group_type := single_polygon;
-                  HC (x).shape_id   := 1;
-                  HC (x).shape      := polygon_shape;
-                  HC (x).component  := 1;
-                  HC (x).point      := collection.polygon (x);
-               end loop;
-               HC (HC'Last).group_id   := 2;
-               HC (HC'Last).group_type := single_point;
-               HC (HC'Last).shape_id   := num_units;
-               HC (HC'Last).shape      := point_shape;
-               HC (HC'Last).component  := 1;
-               HC (HC'Last).point      := point;
-               collection := (heterogeneous, point_count, num_units, HC);
-            end;
-         when multi_point =>
-            declare
-               HC : Geometric_Point_Collection (1 .. num_units);
-            begin
-               HC (1 .. collection.set_points'Last) := collection.set_points;
-               HC (HC'Last) := (point);
-               collection := (multi_point, num_units, num_units, HC);
-            end;
-         when multi_line_string =>
-            declare
-               point_count : Natural := collection.set_line_strings'Length + 1;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               for x in collection.set_line_strings'Range loop
-                  HC (x).group_id   := 1;
-                  HC (x).group_type := multi_line_string;
-                  HC (x).shape_id  := collection.set_line_strings (x).shape_id;
-                  HC (x).shape     := line_string_shape;
-                  HC (x).component := 1;
-                  HC (x).point     := collection.set_line_strings (x).point;
-               end loop;
-               HC (HC'Last).group_id   := 2;
-               HC (HC'Last).group_type := single_point;
-               HC (HC'Last).shape_id   := num_units;
-               HC (HC'Last).shape      := point_shape;
-               HC (HC'Last).component  := 1;
-               HC (HC'Last).point      := point;
-               collection := (heterogeneous, point_count, num_units, HC);
-            end;
-         when multi_polygon =>
-            declare
-               point_count : Natural := collection.set_polygons'Length + 1;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               HC (collection.set_polygons'Range) := collection.set_polygons;
-               HC (HC'Last).group_id   := 2;
-               HC (HC'Last).group_type := single_point;
-               HC (HC'Last).shape_id   := num_units;
-               HC (HC'Last).shape      := point_shape;
-               HC (HC'Last).component  := 1;
-               HC (HC'Last).point      := point;
-               collection := (heterogeneous, point_count, num_units, HC);
-            end;
-         when heterogeneous =>
-            declare
-               LL : Natural := collection.set_heterogeneous'Length;
-               point_count : Natural := LL + 1;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               HC (1 .. collection.set_heterogeneous'Last) :=
-                 collection.set_heterogeneous;
-               HC (HC'Last).group_id   := HC (LL).group_id + 1;
-               HC (HC'Last).group_type := single_point;
-               HC (HC'Last).shape_id   := num_units;
-               HC (HC'Last).shape      := point_shape;
-               HC (HC'Last).component  := 1;
-               HC (HC'Last).point      := point;
-            end;
-      end case;
-   end append_point;
-
-
-   -------------------
-   --  append_line  --
-   -------------------
-   procedure append_line (collection : out Geometry; line : Geometric_Line)
-   is
-      LS : Geometric_Line_String (1 .. 2) := (line (1), line (2));
-   begin
-      append_line_string (collection, LS);
-   end append_line;
-
-
-   --------------------------
-   --  append_line_string  --
-   --------------------------
-   procedure append_line_string (collection : out Geometry;
-                                 line_string : Geometric_Line_String)
-   is
-      classification : Collection_Type := collection.contents;
-      product     : Geometry := initialize_as_point ((0.0, 0.0));
-      num_units   : Natural := collection.units + 1;
-   begin
-      case classification is
-         when single_circle =>
-            raise CONVERSION_FAILED
-              with "circles cannot be part of a geometric collection";
-         when single_infinite_line =>
-            raise CONVERSION_FAILED
-              with "Infinite lines cannot be part of a geometric collection";
-         when unset =>
-            product := (contents    => single_line_string,
-                        points      => line_string'Length,
-                        units       => 1,
-                        line_string => line_string);
-         when single_point =>
-            declare
-               point_count : Natural := 1 + line_string'Length;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               HC (1).group_id   := 1;
-               HC (1).group_type := single_point;
-               HC (1).shape_id   := 1;
-               HC (1).shape      := point_shape;
-               HC (1).component  := 1;
-               HC (1).point      := collection.point;
-               for x in line_string'Range loop
-                  HC (x + 1).group_id   := 2;
-                  HC (x + 1).group_type := single_line_string;
-                  HC (x + 1).shape_id   := num_units;
-                  HC (x + 1).shape      := line_string_shape;
-                  HC (x + 1).component  := 1;
-                  HC (x + 1).point      := line_string (x);
-               end loop;
-               product := (heterogeneous, point_count, num_units, HC);
-            end;
-         when single_line_string =>
-            declare
-               point_count : Natural := collection.line_string'Length +
-                                        line_string'Length;
-               LL : Natural := collection.line_string'Length;
-               HC : Homogeneous_Collection (1 .. point_count);
-            begin
-               for x in collection.line_string'Range loop
-                  HC (x).shape_id := 1;
-                  HC (x).point    := collection.line_string (x);
-               end loop;
-               for x in line_string'Range loop
-                  HC (x + LL).shape_id := num_units;
-                  HC (x + LL).point    := line_string (x);
-               end loop;
-               product := (multi_line_string, point_count, num_units, HC);
-            end;
-         when single_polygon =>
-            declare
-               point_count : Natural := collection.polygon'Length +
-                                        line_string'Length;
-               LL : Natural := collection.polygon'Length;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               for x in collection.polygon'Range loop
-                  HC (x).group_id   := 1;
-                  HC (x).group_type := single_polygon;
-                  HC (x).shape_id   := 1;
-                  HC (x).shape      := polygon_shape;
-                  HC (x).component  := 1;
-                  HC (x).point      := collection.polygon (x);
-               end loop;
-               for x in line_string'Range loop
-                  HC (x + LL).group_id   := 2;
-                  HC (x + LL).group_type := single_line_string;
-                  HC (x + LL).shape_id   := num_units;
-                  HC (x + LL).shape      := line_string_shape;
-                  HC (x + LL).component  := 1;
-                  HC (x + LL).point      := line_string (x);
-               end loop;
-               product := (heterogeneous, point_count, num_units, HC);
-            end;
-         when multi_point =>
-            declare
-               point_count : Natural := collection.set_points'Length +
-                                        line_string'Length;
-               LL : Natural := collection.set_points'Length;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               for x in collection.set_points'Range loop
-                  HC (x).group_id   := 1;
-                  HC (x).group_type := multi_point;
-                  HC (x).shape_id   := x;
-                  HC (x).shape      := point_shape;
-                  HC (x).component  := 1;
-                  HC (x).point      := collection.set_points (x);
-               end loop;
-               for x in line_string'Range loop
-                  HC (x + LL).group_id   := 2;
-                  HC (x + LL).group_type := single_line_string;
-                  HC (x + LL).shape_id   := num_units;
-                  HC (x + LL).shape      := line_string_shape;
-                  HC (x + LL).component  := 1;
-                  HC (x + LL).point      := line_string (x);
-               end loop;
-               product := (heterogeneous, point_count, num_units, HC);
-            end;
-         when multi_line_string =>
-            declare
-               point_count : Natural := collection.set_line_strings'Length +
-                                        line_string'Length;
-               LL : Natural := collection.set_line_strings'Length;
-               HC : Homogeneous_Collection (1 .. point_count);
-            begin
-               HC (collection.set_points'Range) := collection.set_line_strings;
-               num_units := collection.units;
-               for x in line_string'Range loop
-                  HC (x + LL).shape_id := num_units;
-                  HC (x + LL).point    := line_string (x);
-               end loop;
-               product := (multi_line_string, point_count, num_units, HC);
-            end;
-         when multi_polygon =>
-            declare
-               point_count : Natural := collection.set_polygons'Length +
-                                        line_string'Length;
-               LL : Natural := collection.set_polygons'Length;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               for x in collection.set_polygons'Range loop
-                  HC (x).group_id   := 1;
-                  HC (x).group_type := multi_polygon;
-                  HC (x).shape_id   := collection.set_polygons (x).shape_id;
-                  HC (x).shape      := polygon_shape;
-                  HC (x).component  := collection.set_polygons (x).component;
-                  HC (x).point      := collection.set_polygons (x).point;
-               end loop;
-               for x in line_string'Range loop
-                  HC (x + LL).group_id   := HC (LL).group_id + 1;
-                  HC (x + LL).group_type := single_line_string;
-                  HC (x + LL).shape_id   := num_units;
-                  HC (x + LL).shape      := line_string_shape;
-                  HC (x + LL).component  := 1;
-                  HC (x + LL).point      := line_string (x);
-               end loop;
-               product := (heterogeneous, point_count, num_units, HC);
-            end;
-         when heterogeneous =>
-            declare
-               point_count : Natural := collection.set_heterogeneous'Length +
-                                        line_string'Length;
-               LL : Natural := collection.set_heterogeneous'Length;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               HC (collection.set_heterogeneous'Range) :=
-                 collection.set_heterogeneous;
-               for x in line_string'Range loop
-                  HC (x + LL).group_id   := HC (LL).group_id + 1;
-                  HC (x + LL).group_type := single_line_string;
-                  HC (x + LL).shape_id   := num_units;
-                  HC (x + LL).shape      := line_string_shape;
-                  HC (x + LL).component  := 1;
-                  HC (x + LL).point      := line_string (x);
-               end loop;
-               product := (heterogeneous, point_count, num_units, HC);
-            end;
-      end case;
-      collection := product;
-   end append_line_string;
-
-
-   ----------------------
-   --  append_polygon  --
-   ----------------------
-   procedure append_polygon (collection : out Geometry;
-                             polygon : Geometric_Polygon)
-   is
-      classification : Collection_Type := collection.contents;
-      product     : Geometry := initialize_as_point ((0.0, 0.0));
-      num_units   : Natural := collection.units + 1;
-   begin
-      if polygon'Length < 4 then
-         raise LACKING_POINTS
-           with "polygons must have at least 4 points (found only" &
-           polygon'Length'Img & ")";
-      end if;
-      case classification is
-         when single_circle =>
-            raise CONVERSION_FAILED
-              with "circles cannot be part of a geometric collection";
-         when single_infinite_line =>
-            raise CONVERSION_FAILED
-              with "Infinite lines cannot be part of a geometric collection";
-         when unset =>
-            product := (single_polygon, polygon'Length, 1, polygon);
-         when single_point =>
-            declare
-               point_count : Natural := 1 + polygon'Length;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               HC (1).group_id   := 1;
-               HC (1).group_type := single_point;
-               HC (1).shape_id   := 1;
-               HC (1).shape      := point_shape;
-               HC (1).component  := 1;
-               HC (1).point      := collection.point;
-               for x in polygon'Range loop
-                  HC (x + 1).group_id   := 2;
-                  HC (x + 1).group_type := single_polygon;
-                  HC (x + 1).shape_id   := num_units;
-                  HC (x + 1).shape      := polygon_shape;
-                  HC (x + 1).component  := 1;
-                  HC (x + 1).point      := polygon (x);
-               end loop;
-               product := (heterogeneous, point_count, num_units, HC);
-            end;
-         when single_line_string =>
-            declare
-               point_count : Natural := collection.line_string'Length +
-                                        polygon'Length;
-               LL : Natural := collection.line_string'Length;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               for x in collection.line_string'Range loop
-                  HC (x).group_id   := 1;
-                  HC (x).group_type := single_line_string;
-                  HC (x).shape_id   := 1;
-                  HC (x).shape      := line_string_shape;
-                  HC (x).component  := 1;
-                  HC (x).point      := collection.line_string (x);
-               end loop;
-               for x in polygon'Range loop
-                  HC (x + LL).group_id   := 2;
-                  HC (x + LL).group_type := single_polygon;
-                  HC (x + LL).shape_id   := num_units;
-                  HC (x + LL).shape      := polygon_shape;
-                  HC (x + LL).component  := 1;
-                  HC (x + LL).point      := polygon (x);
-               end loop;
-               product := (heterogeneous, point_count, num_units, HC);
-            end;
-         when single_polygon =>
-            declare
-               point_count : Natural := collection.polygon'Length +
-                                        polygon'Length;
-               LL : Natural := collection.polygon'Length;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               for x in collection.polygon'Range loop
-                  HC (x).group_id   := 1;
-                  HC (x).group_type := single_polygon;
-                  HC (x).shape_id   := 1;
-                  HC (x).shape      := polygon_shape;
-                  HC (x).component  := 1;
-                  HC (x).point      := collection.polygon (x);
-               end loop;
-               for x in polygon'Range loop
-                  HC (x + LL).group_id   := 1;
-                  HC (x + LL).group_type := single_polygon;
-                  HC (x + LL).shape_id   := num_units;
-                  HC (x + LL).shape      := polygon_shape;
-                  HC (x + LL).component  := 1;
-                  HC (x + LL).point      := polygon (x);
-               end loop;
-               product := (multi_polygon, point_count, num_units, HC);
-            end;
-         when multi_point =>
-            declare
-               point_count : Natural := collection.set_points'Length +
-                                        polygon'Length;
-               LL : Natural := collection.set_points'Length;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               for x in collection.set_points'Range loop
-                  HC (x).group_id   := 1;
-                  HC (x).group_type := multi_point;
-                  HC (x).shape_id   := x;
-                  HC (x).shape      := point_shape;
-                  HC (x).component := 1;
-                  HC (x).point      := collection.set_points (x);
-               end loop;
-               for x in polygon'Range loop
-                  HC (x + LL).group_id   := 2;
-                  HC (x + LL).group_type := single_polygon;
-                  HC (x + LL).shape_id   := num_units;
-                  HC (x + LL).shape      := polygon_shape;
-                  HC (x + LL).component  := 1;
-                  HC (x + LL).point      := polygon (x);
-               end loop;
-               product := (heterogeneous, point_count, num_units, HC);
-            end;
-         when multi_line_string =>
-            declare
-               point_count : Natural := collection.set_line_strings'Length +
-                                        polygon'Length;
-               LL : Natural := collection.set_line_strings'Length;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               for x in collection.set_line_strings'Range loop
-                  HC (x).group_id   := 1;
-                  HC (x).group_type := multi_line_string;
-                  HC (x).shape_id  := collection.set_line_strings (x).shape_id;
-                  HC (x).shape     := line_string_shape;
-                  HC (x).component := 1;
-                  HC (x).point     := collection.set_line_strings (x).point;
-               end loop;
-               for x in polygon'Range loop
-                  HC (x + LL).group_id   := 2;
-                  HC (x + LL).group_type := single_polygon;
-                  HC (x + LL).shape_id   := num_units;
-                  HC (x + LL).shape      := polygon_shape;
-                  HC (x + LL).component  := 1;
-                  HC (x + LL).point      := polygon (x);
-               end loop;
-               product := (heterogeneous, point_count, num_units, HC);
-            end;
-         when multi_polygon =>
-            declare
-               point_count : Natural := collection.set_polygons'Length +
-                                        polygon'Length;
-               LL : Natural := collection.set_polygons'Length;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               HC (collection.set_polygons'Range) := collection.set_polygons;
-               for x in polygon'Range loop
-                  HC (x + LL).group_id   := 1;
-                  HC (x + LL).group_type := single_polygon;
-                  HC (x + LL).shape_id   := num_units;
-                  HC (x + LL).shape      := polygon_shape;
-                  HC (x + LL).component  := 1;
-                  HC (x + LL).point      := polygon (x);
-               end loop;
-               product := (multi_polygon, point_count, num_units, HC);
-            end;
-         when heterogeneous =>
-            declare
-               point_count : Natural := collection.set_heterogeneous'Length +
-                                        polygon'Length;
-               LL : Natural := collection.set_heterogeneous'Length;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               HC (collection.set_heterogeneous'Range) :=
-                 collection.set_heterogeneous;
-               for x in polygon'Range loop
-                  HC (x + LL).group_id   := HC (LL).group_id + 1;
-                  HC (x + LL).group_type := single_polygon;
-                  HC (x + LL).shape_id   := num_units;
-                  HC (x + LL).shape      := polygon_shape;
-                  HC (x + LL).component  := 1;
-                  HC (x + LL).point      := polygon (x);
-               end loop;
-               product := (heterogeneous, point_count, num_units, HC);
-            end;
-      end case;
-      collection := product;
-   end append_polygon;
-
-
-   ---------------------------
-   --  append_polygon_hole  --
-   ---------------------------
-   procedure append_polygon_hole (collection : out Geometry;
-                                  polygon : Geometric_Polygon)
-   is
-      classification : Collection_Type := collection.contents;
-      product     : Geometry := initialize_as_point ((0.0, 0.0));
-   begin
-      if polygon'Length < 4 then
-         raise LACKING_POINTS
-           with "polygons must have at least 4 points (found only" &
-           polygon'Length'Img & ")";
-      end if;
-      case classification is
-         when single_polygon =>
-            declare
-               point_count : Natural := collection.polygon'Length +
-                                        polygon'Length;
-               LL : Natural := collection.polygon'Length;
-               HC : Heterogeneous_Collection (1 .. point_count);
-            begin
-               for x in collection.polygon'Range loop
-                  HC (x).group_id   := 1;
-                  HC (x).group_type := single_polygon;
-                  HC (x).shape_id   := 1;
-                  HC (x).shape      := polygon_shape;
-                  HC (x).component  := 1;
-                  HC (x).point      := collection.polygon (x);
-               end loop;
-               for x in polygon'Range loop
-                  HC (x + LL).group_id   := 1;
-                  HC (x + LL).group_type := single_polygon;
-                  HC (x + LL).shape_id   := 1;
-                  HC (x + LL).shape      := polygon_shape;
-                  HC (x + LL).component  := 2;
-                  HC (x + LL).point      := polygon (x);
-               end loop;
-               product := (multi_polygon, point_count, 1, HC);
-            end;
-         when multi_polygon =>
-            declare
-               point_count : Natural := collection.set_polygons'Length +
-                                        polygon'Length;
-               LL : Natural := collection.set_polygons'Length;
-               HC : Heterogeneous_Collection (1 .. point_count);
-               last_id : Positive := collection.set_polygons (LL).shape_id;
-               last_sc : Positive := collection.set_polygons (LL).component;
-               last_gr : Positive := collection.set_polygons (LL).group_id;
-            begin
-               HC (collection.set_polygons'Range) := collection.set_polygons;
-               for x in polygon'Range loop
-                  HC (x + LL).group_id   := last_gr;
-                  HC (x + LL).group_type := multi_polygon;
-                  HC (x + LL).shape_id   := last_id;
-                  HC (x + LL).shape      := polygon_shape;
-                  HC (x + LL).component  := last_sc + 1;
-                  HC (x + LL).point      := polygon (x);
-               end loop;
-               product := (multi_polygon, point_count, last_id, HC);
-            end;
-         when heterogeneous =>
-            declare
-               point_count : Natural := collection.set_heterogeneous'Length +
-                                        polygon'Length;
-               LL : Natural := collection.set_heterogeneous'Length;
-               HC : Heterogeneous_Collection (1 .. point_count);
-               last_id : Positive;
-               last_sc : Positive;
-               last_gr : Positive;
-            begin
-               if collection.set_heterogeneous (LL).shape /= polygon_shape then
-                  raise ILLEGAL_POLY_HOLE
-                    with "The last inserted shape was not a polygon";
-               end if;
-               last_id := collection.set_heterogeneous (LL).shape_id;
-               last_sc := collection.set_heterogeneous (LL).component;
-               last_gr := collection.set_heterogeneous (LL).group_id;
-               HC (collection.set_heterogeneous'Range) :=
-                 collection.set_heterogeneous;
-               for x in polygon'Range loop
-                  HC (x + LL).group_id   := last_gr;
-                  HC (x + LL).group_type := heterogeneous;
-                  HC (x + LL).shape_id   := last_id;
-                  HC (x + LL).shape      := polygon_shape;
-                  HC (x + LL).component  := last_sc + 1;
-                  HC (x + LL).point      := polygon (x);
-               end loop;
-               product := (heterogeneous, point_count, last_id, HC);
-            end;
-         when others =>
-            raise ILLEGAL_POLY_HOLE
-              with "Cannot add polygon hole to " & classification'Img;
-      end case;
-      collection := product;
-   end append_polygon_hole;
-
-
-   -------------------------------
-   --  append_complex_geometry  --
-   -------------------------------
-   procedure append_complex_geometry (collection : out Geometry;
-                                      subcollection : Geometry)
-   is
-      classification : Collection_Type := subcollection.contents;
-      exist_cnt : Natural;
-      fresh_cnt : Natural;
-   begin
-      case classification is
-         when unset |
-              single_point |
-              single_line_string |
-              single_infinite_line |
-              single_circle |
-              single_polygon =>
-            raise ILLEGAL_SHAPE
-              with "Shape is not complex: " & classification'Img;
-         when multi_point =>
-            fresh_cnt := subcollection.set_points'Length;
-         when multi_line_string =>
-            fresh_cnt := subcollection.set_line_strings'Length;
-         when multi_polygon =>
-            fresh_cnt := subcollection.set_polygons'Length;
-         when heterogeneous =>
-            fresh_cnt := subcollection.set_heterogeneous'Length;
-      end case;
-      case collection.contents is
-         when single_circle | single_infinite_line =>
-            raise ILLEGAL_SHAPE
-              with "collection does not contain standard shapes";
-         when unset => exist_cnt := 0;
-         when single_point => exist_cnt := 1;
-         when single_line_string =>
-            exist_cnt := collection.line_string'Length;
-         when single_polygon =>
-            exist_cnt := collection.polygon'Length;
-         when multi_point =>
-            exist_cnt := collection.set_points'Length;
-         when multi_polygon =>
-            exist_cnt := collection.set_polygons'Length;
-         when multi_line_string =>
-            exist_cnt := collection.set_line_strings'Length;
-         when heterogeneous =>
-            exist_cnt := collection.set_heterogeneous'Length;
-      end case;
-      declare
-         LL : Natural := exist_cnt;
-         point_count : Natural := exist_cnt + fresh_cnt;
-         HC : Heterogeneous_Collection (1 .. point_count);
-         next_gr : Positive;
-         last_shape_id : Natural;
-      begin
-         case collection.contents is
-            when unset | single_circle | single_infinite_line => null;
-            when single_point =>
-               HC (1).group_id   := 1;
-               HC (1).group_type := single_point;
-               HC (1).shape_id   := 1;
-               HC (1).shape      := point_shape;
-               HC (1).component  := 1;
-               HC (1).point      := collection.point;
-            when single_line_string =>
-               for pt in 1 .. exist_cnt loop
-                  HC (pt).group_id   := 1;
-                  HC (pt).group_type := single_line_string;
-                  HC (pt).shape_id   := 1;
-                  HC (pt).shape      := line_string_shape;
-                  HC (pt).component  := 1;
-                  HC (pt).point      := collection.line_string (pt);
-               end loop;
-            when single_polygon =>
-               for pt in 1 .. exist_cnt loop
-                  HC (pt).group_id   := 1;
-                  HC (pt).group_type := single_polygon;
-                  HC (pt).shape_id   := 1;
-                  HC (pt).shape      := polygon_shape;
-                  HC (pt).component  := 1;
-                  HC (pt).point      := collection.polygon (pt);
-               end loop;
-            when multi_point =>
-               for pt in 1 .. exist_cnt loop
-                  HC (pt).group_id   := 1;
-                  HC (pt).group_type := multi_point;
-                  HC (pt).shape_id   := pt;
-                  HC (pt).shape      := point_shape;
-                  HC (pt).component  := 1;
-                  HC (pt).point      := collection.set_points (pt);
-               end loop;
-            when multi_line_string =>
-               for pt in 1 .. exist_cnt loop
-                  HC (pt).group_id   := 1;
-                  HC (pt).group_type := multi_line_string;
-                  HC (pt).shape_id   := collection.set_line_strings (pt).shape_id;
-                  HC (pt).shape      := line_string_shape;
-                  HC (pt).component  := 1;
-                  HC (pt).point      := collection.set_line_strings (pt).point;
-               end loop;
-            when multi_polygon =>
-               HC (1 .. exist_cnt) := collection.set_polygons;
-            when heterogeneous =>
-               HC (1 .. exist_cnt) := collection.set_heterogeneous;
-         end case;
-         if LL = 0 then
-            last_shape_id := 0;
-         else
-            last_shape_id := HC (LL).shape_id;
-         end if;
-         case classification is
-            when multi_point =>
-               for x in subcollection.set_points'Range loop
-                  next_gr := collection.units + 1;
-                  HC (x + LL).group_id   := next_gr;
-                  HC (x + LL).group_type := multi_point;
-                  HC (x + LL).shape_id   := last_shape_id + x;
-                  HC (x + LL).shape      := point_shape;
-                  HC (x + LL).component  := 1;
-                  HC (x + LL).point      := subcollection.set_points (x);
-               end loop;
-            when multi_line_string =>
-               for x in subcollection.set_line_strings'Range loop
-                  next_gr := collection.units + 1;
-                  HC (x + LL).group_id   := next_gr;
-                  HC (x + LL).group_type := multi_line_string;
-                  HC (x + LL).shape_id   := last_shape_id + subcollection.set_line_strings (x).shape_id;
-                  HC (x + LL).shape      := line_string_shape;
-                  HC (x + LL).component  := 1;
-                  HC (x + LL).point      := subcollection.set_line_strings (x).point;
-               end loop;
-            when multi_polygon =>
-               for x in subcollection.set_polygons'Range loop
-                  next_gr := collection.units + subcollection.set_polygons (x).group_id;
-                  HC (x + LL).group_id   := next_gr;
-                  HC (x + LL).group_type := subcollection.set_polygons (x).group_type;
-                  HC (x + LL).shape_id   := subcollection.set_polygons (x).shape_id;
-                  HC (x + LL).shape      := subcollection.set_polygons (x).shape;
-                  HC (x + LL).component  := subcollection.set_polygons (x).component;
-                  HC (x + LL).point      := subcollection.set_polygons (x).point;
-               end loop;
-            when heterogeneous => null;
-               for x in subcollection.set_heterogeneous'Range loop
-                  next_gr := collection.units + subcollection.set_heterogeneous (x).group_id;
-                  HC (x + LL).group_id   := next_gr;
-                  HC (x + LL).group_type := subcollection.set_heterogeneous (x).group_type;
-                  HC (x + LL).shape_id   := subcollection.set_heterogeneous (x).shape_id;
-                  HC (x + LL).shape      := subcollection.set_heterogeneous (x).shape;
-                  HC (x + LL).component  := subcollection.set_heterogeneous (x).component;
-                  HC (x + LL).point      := subcollection.set_heterogeneous (x).point;
-               end loop;
-            when others => null;
-         end case;
-         collection := (contents => heterogeneous,
-                        points   => point_count,
-                        units    => next_gr,
-                        set_heterogeneous => HC);
-      end;
-   end append_complex_geometry;
+      GM.structures := anything.structures;
+      GM.points_set := anything.points_set;
+      for ring in 1 .. anything.subunits loop
+         GM.structures (ring).mix_level := GM.structures (ring).mix_level + 1;
+      end loop;
+      return GM;
+   end initialize_as_collection;
 
 
    --------------------------
@@ -958,178 +268,189 @@ package body Spatial_Data is
    end type_of_collection;
 
 
-   ------------------------------
-   --  retrieve_subcollection  --
-   ------------------------------
-   function retrieve_subcollection (collection : Geometry;
-                                    index : Positive := 1) return Geometry
+   ---------------------------
+   --  augment_multi_point  --
+   ---------------------------
+   procedure augment_multi_point (collection : in out Geometry;
+                                  point      : Geometric_Point)
    is
-      cset : Heterogeneous_Collection renames collection.set_heterogeneous;
-      sub_index  : Positive;
-      data_size  : Positive;
    begin
       case collection.contents is
-         when unset |
-              single_point |
-              single_polygon |
-              single_line_string |
-              single_infinite_line |
-              single_circle =>
-            raise OUT_OF_COLLECTION_RANGE
-              with "Applies only to multi- and mixed geometric collections";
          when multi_point =>
             declare
-               pt : Geometric_Point := retrieve_point (collection, index);
+               last_point : Geo_Points := collection.points + 1;
+               last_unit  : Geo_Units  := collection.units + 1;
+               GM : Geometry (contents   => multi_point,
+                              units      => last_unit,
+                              subunits   => last_unit,
+                              points     => last_point);
             begin
-               return initialize_as_point (pt);
+               GM.structures (1 .. collection.subunits) :=
+                 collection.structures;
+               GM.points_set (1 .. collection.points) := collection.points_set;
+               GM.structures (last_unit) := (Item_Type   => single_point,
+                                             Item_ID     => last_unit,
+                                             Ring_ID     => 1,
+                                             Ring_Size   => 1,
+                                             Point_Index => last_point,
+                                             mix_level   => 0);
+               GM.points_set (last_point) := point;
+               collection := GM;
             end;
+         when others =>
+            raise ILLEGAL_SHAPE
+              with "The collection must already be a multi_point type";
+      end case;
+   end augment_multi_point;
+
+
+   --------------------------
+   --  augment_multi_line  --
+   --------------------------
+   procedure augment_multi_line (collection : in out Geometry;
+                                 line       : Geometric_Line_String)
+   is
+   begin
+      case collection.contents is
          when multi_line_string =>
             declare
-               LS : Geometric_Line_String :=
-                    retrieve_line_string (collection, index);
+               LL          : Natural    := line'Length;
+               first_point : Geo_Points := collection.points + 1;
+               last_point  : Geo_Points := collection.points + LL;
+               last_unit   : Geo_Units  := collection.units + 1;
+               marker      : Positive   := line'First;
+               GM : Geometry (contents   => multi_line_string,
+                              units      => last_unit,
+                              subunits   => last_unit,
+                              points     => last_point);
             begin
-               return initialize_as_line_string (LS);
+               GM.structures (1 .. collection.subunits) :=
+                 collection.structures;
+               GM.points_set (1 .. collection.points) := collection.points_set;
+               GM.structures (last_unit) := (Item_Type   => single_line_string,
+                                             Item_ID     => last_unit,
+                                             Ring_ID     => 1,
+                                             Ring_Size   => LL,
+                                             Point_Index => first_point,
+                                             mix_level   => 0);
+               for pt in first_point .. last_point loop
+                  GM.points_set (pt) := line (marker);
+                  marker := marker + 1;
+               end loop;
+               collection := GM;
             end;
+         when others =>
+            raise ILLEGAL_SHAPE
+              with "The collection must already be a multi_line_string type";
+      end case;
+   end augment_multi_line;
+
+
+   -----------------------------
+   --  augment_multi_polygon  --
+   -----------------------------
+   procedure augment_multi_polygon (collection : in out Geometry;
+                                    polygon    : Geometric_Polygon)
+   is
+   begin
+      case collection.contents is
          when multi_polygon =>
             declare
-               HC : Heterogeneous_Collection :=
-                    retrieve_full_polygon (collection, index);
+               num_points    : Geo_Points := polygon.points;
+               first_point   : Geo_Points := collection.points + 1;
+               last_point    : Geo_Points := collection.points + num_points;
+               last_unit     : Geo_Units  := collection.units + 1;
+               first_subunit : Geo_Units  := collection.subunits + 1;
+               last_subunit  : Geo_Units  := collection.subunits +
+                                            polygon.rings;
+               marker        : Positive   := polygon.structures'First;
+               ptmr          : Geo_Points := first_point;
+               ppsm          : Geo_Points := polygon.points_set'First;
+               GM : Geometry (contents   => multi_polygon,
+                              units      => last_unit,
+                              subunits   => last_subunit,
+                              points     => last_point);
             begin
-               return (contents => multi_polygon,
-                       points   => HC'Length,
-                       units    => 1,
-                       set_polygons => HC);
+               GM.structures (1 .. collection.subunits) :=
+                 collection.structures;
+               GM.points_set (1 .. collection.points) := collection.points_set;
+
+               for ring in first_subunit .. last_subunit loop
+                  GM.structures (ring) :=
+                    (Item_Type   => single_polygon,
+                     Item_ID     => ring,
+                     Ring_ID     => polygon.structures (marker).Ring_ID,
+                     Ring_Size   => polygon.structures (marker).Ring_Size,
+                     Point_Index => ptmr,
+                     mix_level   => 0);
+                  ptmr := ptmr + polygon.structures (marker).Ring_Size;
+                  marker := marker + 1;
+               end loop;
+
+               for pt in first_point .. last_point loop
+                  GM.points_set (pt) := polygon.points_set (ppsm);
+                  ppsm := ppsm + 1;
+               end loop;
+               collection := GM;
             end;
-         when heterogeneous =>
-            --  Index refers to group ID, return everything with this ID
-            locate_heterogenous_item (collection => collection,
-                                      index      => index,
-                                      set_index  => sub_index,
-                                      num_points => data_size);
-            case cset (sub_index).group_type is
-               when unset | single_circle | single_infinite_line =>
-                  raise CONVERSION_FAILED
-                       with "Illegal heterogenous type";
-               when single_point =>
-                  return initialize_as_point (cset (sub_index).point);
-               when single_line_string =>
-                  declare
-                     LS : Geometric_Line_String (1 .. data_size);
-                  begin
-                     for pt in 1 .. data_size loop
-                        LS (pt) := cset (sub_index + pt - 1).point;
-                     end loop;
-                     return initialize_as_line_string (LS);
-                  end;
-               when heterogeneous =>
-                  declare
-                     HC : Heterogeneous_Collection (1 .. data_size);
-                     item_cnt : Natural;
-                  begin
-                     item_cnt := group_size (collection, sub_index);
-                     HC (HC'Range) := collection.set_heterogeneous
-                       (sub_index .. sub_index + data_size - 1);
-                     return (contents => heterogeneous,
-                             points   => data_size,
-                             units    => item_cnt,
-                             set_heterogeneous => HC);
-                  end;
-               when multi_polygon =>
-                  declare
-                     HC : Heterogeneous_Collection (1 .. data_size);
-                     poly_cnt : Natural;
-                  begin
-                     poly_cnt := group_size (collection, sub_index);
-                     HC (HC'Range) := collection.set_heterogeneous
-                       (sub_index .. sub_index + data_size - 1);
-                     return (contents => multi_polygon,
-                             points   => data_size,
-                             units    => poly_cnt,
-                             set_polygons => HC);
-                  end;
-               when single_polygon =>
-                  declare
-                     PG : Geometric_Polygon (1 .. data_size);
-                  begin
-                     for pt in 1 .. data_size loop
-                        PG (pt) := cset (sub_index + pt - 1).point;
-                     end loop;
-                     return initialize_as_polygon (PG);
-                  end;
-               when multi_point =>
-                  declare
-                     PC : Geometric_Point_Collection (1 .. data_size);
-                  begin
-                     for pt in 1 .. data_size loop
-                        PC (pt) := cset (sub_index + pt - 1).point;
-                     end loop;
-                     return (contents   => multi_point,
-                             points     => data_size,
-                             units      => data_size,
-                             set_points => PC);
-                  end;
-               when multi_line_string =>
-                  declare
-                     HC : Homogeneous_Collection (1 .. data_size);
-                     line_cnt : Natural;
-                  begin
-                     line_cnt := group_size (collection, sub_index);
-                     for pt in 1 .. data_size loop
-                        HC (pt).point :=  cset (sub_index + pt - 1).point;
-                        HC (pt).shape_id := cset (sub_index + pt - 1).shape_id;
-                     end loop;
-                     return (contents => multi_line_string,
-                             points   => data_size,
-                             units    => line_cnt,
-                             set_line_strings => HC);
-                  end;
-            end case;
+         when others =>
+            raise ILLEGAL_SHAPE
+              with "The collection must already be a multi_polygon type";
       end case;
-   end retrieve_subcollection;
+   end augment_multi_polygon;
 
 
-   -------------------------------
-   --  number_of_polygon_holes  --
-   -------------------------------
-   function number_of_polygon_holes (collection : Geometry; index : Positive)
-                                     return Natural
-   is
-      position : Positive;
-      shape_id : Positive;
-      result   : Natural := 0;
+   --------------------------
+   --  augment_collection  --
+   --------------------------
+   procedure augment_collection (collection : in out Geometry;
+                                 anything   : Geometry) is
    begin
-      if collection.contents /= multi_polygon then
-         return 0;
-      end if;
+      case collection.contents is
+         when heterogeneous =>
+            declare
+               num_points    : Geo_Points := anything.points;
+               first_point   : Geo_Points := collection.points + 1;
+               last_point    : Geo_Points := collection.points + num_points;
+               last_unit     : Geo_Units  := collection.units + 1;
+               first_subunit : Geo_Units  := collection.subunits + 1;
+               last_subunit  : Geo_Units  := collection.subunits +
+                                             anything.units;
+               marker        : Positive   := anything.structures'First;
+               ptmr          : Geo_Points := first_point;
+               ppsm          : Geo_Points := anything.points_set'First;
+               GM : Geometry (contents   => heterogeneous,
+                              units      => last_unit,
+                              subunits   => last_subunit,
+                              points     => last_point);
+            begin
+               GM.structures (1 .. collection.subunits) :=
+                 collection.structures;
+               GM.points_set (1 .. collection.points) := collection.points_set;
 
-      position := outer_polygon_position (collection, index);
-      shape_id := collection.set_polygons (position).shape_id;
-      for x in Positive range
-        position + 1 .. collection.set_polygons'Last
-      loop
-         exit when collection.set_polygons (x).shape_id /= shape_id;
-         result := collection.set_polygons (x).component - 1;
-      end loop;
-      return result;
-   end number_of_polygon_holes;
+               for ring in first_subunit .. last_subunit loop
+                  GM.structures (ring) :=
+                    (Item_Type   => anything.contents,
+                     Item_ID     => ring,
+                     Ring_ID     => anything.structures (marker).Ring_ID,
+                     Ring_Size   => anything.structures (marker).Ring_Size,
+                     Point_Index => ptmr,
+                     mix_level   => anything.structures (marker).mix_level + 1);
+                  ptmr := ptmr + anything.structures (marker).Ring_Size;
+                  marker := marker + 1;
+               end loop;
 
-
-   ------------------
-   --  group_size  --
-   ------------------
-   function group_size (collection : Geometry;
-                        position   : Positive) return Natural
-   is
-      group_id : Positive;
-      result   : Natural;
-   begin
-      group_id := collection.set_heterogeneous (position).group_id;
-      for x in position + 1 .. collection.set_heterogeneous'Last loop
-         exit when collection.set_heterogeneous (x).group_id /= group_id;
-         result := collection.set_heterogeneous (x).shape_id;
-      end loop;
-      return result;
-   end group_size;
+               for pt in first_point .. last_point loop
+                  GM.points_set (pt) := anything.points_set (ppsm);
+                  ppsm := ppsm + 1;
+               end loop;
+               collection := GM;
+            end;
+      when others =>
+            raise ILLEGAL_SHAPE
+              with "The collection must already be a hetegeneous type";
+      end case;
+   end augment_collection;
 
 
    ------------------------------
@@ -1146,95 +467,281 @@ package body Spatial_Data is
    end check_collection_index;
 
 
-   ------------------------------
-   --  locate_homogenous_item  --
-   ------------------------------
-   procedure locate_heterogenous_item (collection : Geometry;
-                                       index      : Positive;
-                                       set_index  : out Positive;
-                                       num_points : out Positive)
+   ----------------------
+   --  retrieve_point  --
+   ----------------------
+   function retrieve_point (collection : Geometry; index : Positive := 1)
+                             return Geometric_Point is
+   begin
+      check_collection_index (collection, index);
+      case collection.contents is
+         when single_point | multi_point =>
+            return collection.points_set (index);
+         when heterogeneous =>
+            raise CONVERSION_FAILED
+              with "Requested polygon from mixed collection. " &
+              "(Extract using retrieve_subcollection instead)";
+         when others =>
+            raise CONVERSION_FAILED
+              with "Requested point, but shape is " &
+              collection_item_shape (collection, index)'Img;
+      end case;
+   end retrieve_point;
+
+
+   ---------------------
+   --  retrieve_line  --
+   ---------------------
+   function retrieve_line (collection : Geometry; index : Positive := 1)
+                                  return Geometric_Line_String is
+   begin
+      check_collection_index (collection, index);
+      case collection.contents is
+         when single_line_string | multi_line_string  =>
+            declare
+               CS : Ring_Structure renames collection.structures (index);
+               data_size   : Positive   := CS.Ring_Size;
+               first_point : Geo_Points := CS.Point_Index;
+               last_point  : Geo_Points := first_point + data_size - 1;
+               LNS         : Geometric_Line_String (1 .. data_size);
+            begin
+               LNS := collection.points_set (first_point .. last_point);
+               return LNS;
+            end;
+         when heterogeneous =>
+            raise CONVERSION_FAILED
+              with "Requested line_string from mixed collection. " &
+              "(Extract using retrieve_subcollection instead)";
+         when others =>
+            raise CONVERSION_FAILED
+              with "Requested line_string, but shape is " &
+              collection_item_shape (collection, index)'Img;
+      end case;
+   end retrieve_line;
+
+
+   ------------------------
+   --  retrieve_polygon  --
+   ------------------------
+   function retrieve_polygon (collection : Geometry; index : Positive := 1)
+                              return Geometric_Polygon
    is
-      set_index_set : Boolean := False;
+      found     : Boolean := False;
+      F_subunit : Geo_Units;
+      L_subunit : Geo_Units;
+      product   : Geometric_Polygon;
    begin
-      if collection.contents /= heterogeneous then
-         raise OUT_OF_COLLECTION_RANGE with collection.contents'Img &
-           ": Only works with heterogeneous collections";
-      end if;
-      for x in collection.set_heterogeneous'Range loop
-         if collection.set_heterogeneous (x).group_id = index then
-            if not set_index_set then
-               set_index := x;
-               set_index_set := True;
-               num_points := 1;
-            else
-               num_points := num_points + 1;
+      check_collection_index (collection, index);
+      case collection.contents is
+         when single_polygon | multi_polygon  =>
+            for subunit in 1 .. collection.subunits loop
+               if collection.structures (subunit).Item_ID = index then
+                  if not found then
+                     F_subunit := subunit;
+                  end if;
+                  L_subunit := subunit;
+                  found := True;
+               end if;
+            end loop;
+            if not found then
+               raise OUT_OF_COLLECTION_RANGE
+                 with "Failed to locate polygon" & index'Img;
             end if;
-         end if;
-      end loop;
-      if not set_index_set then
-         raise CONVERSION_FAILED
-           with "data corrupt: expected index" & index'Img &
-           " not found, but" & collection.units'Img & " items are present";
-      end if;
-   end locate_heterogenous_item;
+            declare
+               CS : Ring_Structure renames collection.structures (F_subunit);
+               data_size   : Positive   := CS.Ring_Size;
+               first_point : Geo_Points := CS.Point_Index;
+               last_point  : Geo_Points := first_point + data_size - 1;
+               outer_ring  : Geometric_Ring (1 .. data_size);
+            begin
+               outer_ring := collection.points_set (first_point .. last_point);
+               product := start_polygon (outer_ring);
+            end;
+            for subunit in F_subunit + 1 .. L_subunit loop
+               declare
+                  CS : Ring_Structure renames collection.structures (subunit);
+                  data_size   : Positive   := CS.Ring_Size;
+                  first_point : Geo_Points := CS.Point_Index;
+                  last_point  : Geo_Points := first_point + data_size - 1;
+                  hole        : Geometric_Ring (1 .. data_size);
+               begin
+                  hole := collection.points_set (first_point .. last_point);
+                  append_inner_ring (product, hole);
+               end;
+            end loop;
+            return product;
+         when heterogeneous =>
+            raise CONVERSION_FAILED
+              with "Requested polygon from mixed collection. " &
+              "(Extract using retrieve_subcollection instead)";
+         when others =>
+            raise CONVERSION_FAILED
+              with "Requested polygon, but shape is " &
+              collection_item_shape (collection, index)'Img;
+      end case;
+   end retrieve_polygon;
 
 
-   -------------------------
-   --  polygon_ring_size  --
-   -------------------------
-   function polygon_ring_size (collection : Geometry; position : Positive)
-                               return Positive
+   ---------------------
+   --  single_canvas  --
+   ---------------------
+   function single_canvas (gm_type  : Collection_Type;
+                           subunits : Geo_Units;
+                           points   : Geo_Points) return Geometry
    is
-      current_id : Positive := collection.set_polygons (position).shape_id;
-      current_sc : Positive := collection.set_polygons (position).component;
-      arrow      : Positive := position;
-      size       : Positive := 1;
+      p_set : Geometric_Point_Collection (1 .. points) :=
+                    (others => Origin_Point);
+      s_set : Ring_Structures (1 .. subunits) := (others => blank_structure);
    begin
-      loop
-         arrow := arrow + 1;
-         exit when arrow > collection.set_polygons'Length;
-         exit when collection.set_polygons (arrow).shape_id /= current_id;
-         exit when collection.set_polygons (arrow).component /= current_sc;
-         size := size + 1;
-      end loop;
-      return size;
-   end polygon_ring_size;
+      case gm_type is
+         when unset =>
+            return (unset, 1, 1, 1);
+         when single_point =>
+            return (single_point, 1, 1, 1, s_set, p_set);
+         when single_line_string =>
+            return (single_line_string, 1, 1, points, s_set, p_set);
+         when single_polygon =>
+            return (single_polygon, 1, subunits, points, s_set, p_set);
+         when multi_point =>
+            return (multi_point, 1, subunits, points, s_set, p_set);
+         when multi_line_string =>
+            return (multi_line_string, 1, subunits, points, s_set, p_set);
+         when multi_polygon =>
+            return (multi_polygon, 1, subunits, points, s_set, p_set);
+         when heterogeneous =>
+            return (contents => heterogeneous,
+                    units    => 1,
+                    subunits => subunits,
+                    points   => points,
+                    structures => s_set,
+                    points_set => p_set);
+      end case;
+   end single_canvas;
 
 
    ------------------------------
-   --  outer_polygon_position  --
+   --  retrieve_subcollection  --
    ------------------------------
-   function outer_polygon_position (collection : Geometry; item : Positive)
-                                    return Positive is
+   function retrieve_subcollection (collection : Geometry;
+                                    index : Positive := 1) return Geometry
+   is
+      found      : Boolean := False;
+      num_points : Natural := 0;
+      num_sunits : Geo_Units := 0;
+      F_subunit  : Geo_Units;
+      L_subunit  : Geo_Units;
+      MFactor    : Natural;
+      coltype    : Collection_Type;
    begin
-      for x in collection.set_polygons'Range loop
-         if collection.set_polygons (x).shape_id = item then
-            if collection.set_polygons (x).component = 1 then
-               return x;
+      case collection.contents is
+         when unset |
+              single_point |
+              single_polygon |
+              single_line_string =>
+            raise OUT_OF_COLLECTION_RANGE
+              with "Applies only to multi- and mixed geometric collections";
+         when multi_point =>
+            declare
+               pt : Geometric_Point := retrieve_point (collection, index);
+            begin
+               return initialize_as_point (pt);
+            end;
+         when multi_line_string =>
+            declare
+               LS : Geometric_Line_String := retrieve_line (collection, index);
+            begin
+               return initialize_as_line (LS);
+            end;
+         when multi_polygon =>
+            declare
+               PG : Geometric_Polygon := retrieve_polygon (collection, index);
+            begin
+               return initialize_as_polygon (PG);
+            end;
+         when heterogeneous =>
+            for subunit in 1 .. collection.subunits loop
+               if collection.structures (subunit).Item_ID = index then
+                  if not found then
+                     F_subunit := subunit;
+                     MFactor := collection.structures (subunit).mix_level;
+                     coltype := collection.structures (subunit).Item_Type;
+                  end if;
+                  L_subunit := subunit;
+                  found := True;
+                  num_sunits := num_sunits + 1;
+                  num_points := num_points +
+                                collection.structures (subunit).Ring_Size;
+               end if;
+            end loop;
+            if not found then
+               raise OUT_OF_COLLECTION_RANGE
+                 with "Failed to locate subcollection" & index'Img;
             end if;
-         end if;
-      end loop;
-      raise CONVERSION_FAILED
-        with "Item" & item'Img & " was not found";
-   end outer_polygon_position;
-
-
-   ------------------------------
-   --  inner_polygon_position  --
-   ------------------------------
-   function inner_polygon_position (collection : Geometry; item : Positive;
-                                    hole_item : Positive) return Positive is
-   begin
-      for x in collection.set_polygons'Range loop
-         if collection.set_polygons (x).shape_id = item and then
-           collection.set_polygons (x).component = hole_item
-         then
-            return x;
-         end if;
-      end loop;
-      raise CONVERSION_FAILED
-        with "Item" & item'Img & "/" & hole_item'Img & " was not found";
-   end inner_polygon_position;
+            if MFactor > 1 then
+               --  The element is also heterogenous
+               coltype := heterogeneous;
+            end if;
+            case collection.structures (F_subunit).Item_Type is
+               when unset =>
+                  raise CONVERSION_FAILED
+                    with "Illegal heterogenous type (unset)";
+               when single_point =>
+                  declare
+                     CS : Ring_Structure renames
+                       collection.structures (F_subunit);
+                     sndx : Positive := CS.Point_Index;
+                  begin
+                     return initialize_as_point (collection.points_set (sndx));
+                  end;
+               when single_line_string =>
+                  declare
+                     CS : Ring_Structure renames
+                       collection.structures (F_subunit);
+                     sndx      : Positive := CS.Point_Index;
+                     data_size : Positive := CS.Ring_Size;
+                     LNS : Geometric_Line_String (1 .. data_size);
+                     marker : Positive := 1;
+                  begin
+                     for pt in sndx .. sndx + data_size - 1 loop
+                        LNS (marker) := collection.points_set (pt);
+                        marker := marker + 1;
+                     end loop;
+                     return initialize_as_line (LNS);
+                  end;
+               when heterogeneous     |
+                    single_polygon    |
+                    multi_point       |
+                    multi_polygon     |
+                    multi_line_string =>
+                  declare
+                     CS : Ring_Structure renames
+                       collection.structures (F_subunit);
+                     FP : Geo_Points := CS.Point_Index;
+                     LP : Geo_Points := FP + num_points - 1;
+                     GM : Geometry := single_canvas (coltype,
+                                                     num_sunits,
+                                                     num_points);
+                     marker : Geo_Units := 1;
+                     diff   : Natural := CS.Item_ID - 1;
+                     ptdiff : Natural := CS.Point_Index - 1;
+                  begin
+                     GM.points_set (1 .. num_points) :=
+                       collection.points_set (FP .. LP);
+                     for S in F_subunit .. L_subunit loop
+                        GM.structures (marker) :=
+                          (Item_Type   => GM.structures (S).Item_Type,
+                           Item_ID     => GM.structures (S).Item_ID - diff,
+                           Ring_ID     => GM.structures (S).Ring_ID,
+                           Ring_Size   => GM.structures (S).Ring_Size,
+                           Point_Index => GM.structures (S).Point_Index - ptdiff,
+                           mix_level   => GM.structures (S).mix_level - 1);
+                        marker := marker + 1;
+                     end loop;
+                     return GM;
+                  end;
+            end case;
+      end case;
+   end retrieve_subcollection;
 
 
    -----------------------------
@@ -1248,8 +755,6 @@ package body Spatial_Data is
       case collection.contents is
          when single_point         => return point_shape;
          when single_line_string   => return line_string_shape;
-         when single_infinite_line => return infinite_line_shape;
-         when single_circle        => return circle_shape;
          when single_polygon       => return polygon_shape;
          when multi_point          => return point_shape;
          when multi_line_string    => return line_string_shape;
@@ -1274,275 +779,22 @@ package body Spatial_Data is
          when unset => raise CONVERSION_FAILED
               with "geometry is unset (typeless)";
          when single_point |
-              single_circle |
               single_polygon |
-              single_infinite_line |
               single_line_string =>
             return collection.contents;
          when multi_point => return single_point;
          when multi_line_string => return single_line_string;
          when multi_polygon => return single_polygon;
          when heterogeneous =>
-            declare
-               sub_index : Positive;
-               data_size : Positive;
-            begin
-               locate_heterogenous_item (collection => collection,
-                                         index      => index,
-                                         set_index  => sub_index,
-                                         num_points => data_size);
-               return collection.set_heterogeneous (sub_index).group_type;
-            end;
+            for subunit in 1 .. collection.subunits loop
+               if collection.structures (subunit).Item_ID = index then
+                  return collection.structures (subunit).Item_Type;
+               end if;
+            end loop;
+            raise OUT_OF_COLLECTION_RANGE
+              with "collection_item_type out of range: " & index'Img;
       end case;
    end collection_item_type;
-
-
-   ----------------------
-   --  retrieve_point  --
-   ----------------------
-   function retrieve_point (collection : Geometry; index : Positive := 1)
-                             return Geometric_Point is
-   begin
-      check_collection_index (collection, index);
-      case collection.contents is
-         when single_point  => return collection.point;
-         when multi_point   => return collection.set_points (index);
-         when heterogeneous =>
-            raise CONVERSION_FAILED
-              with "Requested polygon from mixed collection. " &
-              "(Extract using retrieve_subcollection instead)";
-         when others =>
-            raise CONVERSION_FAILED
-              with "Requested point, but shape is " &
-              collection_item_shape (collection, index)'Img;
-      end case;
-   end retrieve_point;
-
-
-   ---------------------
-   --  retrieve_line  --
-   ---------------------
-   function retrieve_line (collection : Geometry; index : Positive := 1)
-                           return Geometric_Line is
-   begin
-      check_collection_index (collection, index);
-      declare
-         product : Geometric_Line_String :=
-                   retrieve_line_string (collection, index);
-      begin
-         if product'Length > 2 then
-            raise CONVERSION_FAILED
-              with "Object consists of more than 1 line (it's a line string)";
-         end if;
-         return product;
-      end;
-   end retrieve_line;
-
-
-   ----------------------------
-   --  retrieve_line_string  --
-   ----------------------------
-   function retrieve_line_string (collection : Geometry; index : Positive := 1)
-                                  return Geometric_Line_String is
-   begin
-      check_collection_index (collection, index);
-      case collection.contents is
-         when single_line_string => return collection.line_string;
-         when multi_line_string  =>
-            declare
-               sub_index : Positive;
-               data_size : Positive;
-               set_index_set : Boolean := False;
-            begin
-               for x in collection.set_line_strings'Range loop
-                  if collection.set_line_strings (x).shape_id = index then
-                     if not set_index_set then
-                        sub_index := x;
-                        set_index_set := True;
-                        data_size := 1;
-                     else
-                        data_size := data_size + 1;
-                     end if;
-                  end if;
-               end loop;
-               if not set_index_set then
-                  raise CONVERSION_FAILED
-                    with "data corrupt: expected index" & index'Img &
-                    " not found, but" & collection.units'Img;
-               end if;
-               if data_size >= 2 then
-                  declare
-                     LNS : Geometric_Line_String (1 .. data_size);
-                  begin
-                     for x in Positive range 1 .. data_size loop
-                        LNS (x) := collection.set_line_strings
-                          (sub_index + x - 1).point;
-                     end loop;
-                     return LNS;
-                  end;
-               else
-                  raise CONVERSION_FAILED
-                    with "Data type at set_line_strings index" & index'Img &
-                    "is not at least 2 points long";
-               end if;
-            end;
-         when heterogeneous =>
-            raise CONVERSION_FAILED
-              with "Requested line_string from mixed collection. " &
-              "(Extract using retrieve_subcollection instead)";
-         when others =>
-            raise CONVERSION_FAILED
-              with "Requested line_string, but shape is " &
-              collection_item_shape (collection, index)'Img;
-      end case;
-   end retrieve_line_string;
-
-
-   ----------------------
-   --  retrieve_circle  --
-   ----------------------
-   function retrieve_circle (collection : Geometry) return Geometric_Circle is
-   begin
-      case collection.contents is
-         when single_circle  => return collection.circle;
-         when others =>
-            raise CONVERSION_FAILED
-              with "Requested circle, but shape is " &
-              collection_item_shape (collection, 1)'Img;
-      end case;
-   end retrieve_circle;
-
-
-   ------------------------
-   --  retrieve_polygon  --
-   ------------------------
-   function retrieve_polygon (collection : Geometry; index : Positive := 1)
-                              return Geometric_Polygon
-   is
-      position  : Positive;
-      data_size : Positive;
-   begin
-      check_collection_index (collection, index);
-      case collection.contents is
-         when single_polygon => return collection.polygon;
-         when multi_polygon  =>
-            position  := outer_polygon_position (collection, index);
-            data_size := polygon_ring_size (collection, position);
-            declare
-               LNS : Geometric_Polygon (1 .. data_size);
-            begin
-               for x in Positive range 1 .. data_size loop
-                  LNS (x) := collection.set_polygons (position + x - 1).point;
-               end loop;
-               return LNS;
-            end;
-         when heterogeneous =>
-            raise CONVERSION_FAILED
-              with "Requested polygon from mixed collection. " &
-              "(Extract using retrieve_subcollection instead)";
-         when others =>
-            raise CONVERSION_FAILED
-              with "Requested polygon, but shape is " &
-              collection_item_shape (collection, index)'Img;
-      end case;
-   end retrieve_polygon;
-
-
-   -----------------------------
-   --  retrieve_full_polygon  --
-   -----------------------------
-   function retrieve_full_polygon (collection : Geometry;
-                                   index : Positive := 1)
-                                   return Heterogeneous_Collection
-   is
-      position : Positive;
-      shape_id : Positive;
-      endpoint : Positive := 1;
-   begin
-      check_collection_index (collection, index);
-      case collection.contents is
-         when single_polygon =>
-            declare
-               LL : Natural := collection.polygon'Length;
-               HC : Heterogeneous_Collection (1 .. LL);
-            begin
-               for x in collection.polygon'Range loop
-                  HC (x).shape     := polygon_shape;
-                  HC (x).point     := collection.polygon (x);
-                  HC (x).shape_id  := 1;
-                  HC (x).component := 1;
-               end loop;
-               return HC;
-            end;
-         when multi_polygon  =>
-            position := outer_polygon_position (collection, index);
-            shape_id := collection.set_polygons (position).shape_id;
-            for x in position .. collection.set_polygons'Last loop
-               exit when collection.set_polygons (x).shape_id /= shape_id;
-               endpoint := x;
-            end loop;
-            return collection.set_polygons (position .. endpoint);
-         when heterogeneous =>
-            raise CONVERSION_FAILED
-              with "Requested full polygon from mixed collection. " &
-              "(Extract using retrieve_subcollection instead)";
-         when others =>
-            raise CONVERSION_FAILED
-              with "Requested polygon, but shape is " &
-              collection_item_shape (collection, index)'Img;
-      end case;
-   end retrieve_full_polygon;
-
-
-   ---------------------
-   --  retrieve_hole  --
-   ---------------------
-   function retrieve_hole (collection : Geometry; index : Positive := 1;
-                           hole_index : Positive) return Geometric_Polygon
-   is
-      position  : Positive;
-      data_size : Positive;
-   begin
-      check_collection_index (collection, index);
-      case collection.contents is
-         when multi_polygon  =>
-            position  := inner_polygon_position (collection,
-                                                 index, hole_index);
-            data_size := polygon_ring_size (collection, position);
-            declare
-               LNS : Geometric_Polygon (1 .. data_size);
-            begin
-               for x in Positive range 1 .. data_size loop
-                  LNS (x) := collection.set_polygons (position + x - 1).point;
-               end loop;
-               return LNS;
-            end;
-         when heterogeneous =>
-            raise CONVERSION_FAILED
-              with "Requested polygon hole from mixed collection. " &
-              "(Extract using retrieve_subcollection instead)";
-         when others =>
-            raise CONVERSION_FAILED with "Requested polygon hole#" &
-              hole_index'Img & ", but shape is " &
-              collection_item_shape (collection, index)'Img;
-      end case;
-   end retrieve_hole;
-
-
-   --------------------------------------------
-   --  retrieve_two_points_of_infinite_line  --
-   --------------------------------------------
-   function retrieve_two_points_of_infinite_line (collection : Geometry)
-                                                  return Geometric_Line is
-   begin
-      case collection.contents is
-         when single_infinite_line => return collection.infinite_line;
-         when others =>
-            raise CONVERSION_FAILED
-              with "Requested infinite_line, but shape is " &
-              collection_item_shape (collection, 1)'Img;
-      end case;
-   end retrieve_two_points_of_infinite_line;
 
 
    --------------------------------
@@ -1721,7 +973,7 @@ package body Spatial_Data is
    function mysql_text (collection : Geometry) return String is
       function format_point (pt    : Geometric_Point;
                              first : Boolean := False) return String;
-      function format_polygon (poly  : Heterogeneous_Collection;
+      function format_polygon (poly  : Geometric_Polygon;
                                first : Boolean := False) return String;
       function format_line_string (LNS   : Geometric_Line_String;
                                    first : Boolean := False) return String;
@@ -1743,32 +995,34 @@ package body Spatial_Data is
          end if;
       end format_point;
 
-      function format_polygon (poly  : Heterogeneous_Collection;
+      function format_polygon (poly  : Geometric_Polygon;
                                first : Boolean := False) return String
       is
          lead   : constant String := "Polygon(";
          work   : CT.Text;
-         inner1 : Boolean;
          lastsc : Natural := 0;
+         inner1 : Boolean;
+         nrings : Natural := number_of_rings (poly);
       begin
          if first then
             CT.SU.Append (work, lead);
          else
             CT.SU.Append (work, sep & lead);
          end if;
-         for x in poly'Range loop
-            inner1 := (poly (x).component /= lastsc);
-            lastsc := poly (x).component;
-            if inner1 then
-               if x /= poly'First then
-                  CT.SU.Append (work, pclose & sep);
-               end if;
-               CT.SU.Append (work, "Linestring(");
+         for ring in 1 .. nrings loop
+            if ring > 1 then
+               CT.SU.Append (work, sep);
             end if;
-            CT.SU.Append (work, format_point (poly (x).point, inner1));
-            if x = poly'Last then
-               CT.SU.Append (work, pclose);
-            end if;
+            CT.SU.Append (work, "Linestring(");
+            declare
+               GR : Geometric_Ring := retrieve_ring (poly, ring);
+            begin
+               for pt in GR'Range loop
+                  inner1 := (pt = GR'First);
+                  CT.SU.Append (work, format_point (GR (pt), inner1));
+               end loop;
+            end;
+            CT.SU.Append (work, pclose);
          end loop;
          CT.SU.Append (work, pclose);
          return CT.USS (work);
@@ -1796,32 +1050,22 @@ package body Spatial_Data is
    begin
       case classification is
          when unset        => return "";
-         when single_point => return format_point (collection.point, True);
+         when single_point =>
+            return format_point (retrieve_point (collection), True);
          when single_line_string =>
-            return format_line_string (collection.line_string, True);
-         when single_infinite_line =>
-            --  Infinite lines are not supported by MySQL so this is not
-            --  actually correct
-            return format_line_string (collection.infinite_line, True);
-         when single_circle =>
-            --  Circles are unique to postgresql, so this is nonsense for
-            --  MySQL.  It's better than exception though, I guess.
-            return "Circle(" &
-              format_point (collection.circle.center_point, True) & sep &
-              format_real (collection.circle.radius) & pclose;
+            return format_line_string (retrieve_line (collection), True);
          when single_polygon =>
-            return format_polygon (retrieve_full_polygon (collection, 1),
-                                   True);
+            return format_polygon (retrieve_polygon (collection), True);
          when multi_point =>
             declare
                product : CT.Text := CT.SUS ("MultiPoint(");
                first   : Boolean;
             begin
-               for x in collection.set_points'Range loop
-                  first := (x = collection.set_points'First);
+               for x in collection.points_set'Range loop
+                  first := (x = collection.points_set'First);
                   CT.SU.Append
                     (product, format_point
-                       (collection.set_points (x), first));
+                       (collection.points_set (x), first));
                end loop;
                return CT.USS (product) & pclose;
             end;
@@ -1834,7 +1078,7 @@ package body Spatial_Data is
                   first := (ls = 1);
                   CT.SU.Append
                     (product, format_line_string
-                       (retrieve_line_string (collection, ls), first));
+                       (retrieve_line (collection, ls), first));
                end loop;
                return CT.USS (product) & pclose;
             end;
@@ -1850,7 +1094,7 @@ package body Spatial_Data is
                   first := (ls = 1);
                   CT.SU.Append
                     (product, format_polygon
-                       (retrieve_full_polygon (collection, ls), first));
+                       (retrieve_polygon (collection, ls), first));
                end loop;
                if collection.units > 1 then
                   CT.SU.Append (product, pclose);
@@ -1874,13 +1118,11 @@ package body Spatial_Data is
                      when line_string_shape =>
                         CT.SU.Append
                           (product, format_line_string
-                             (retrieve_line_string (collection, ls), first));
+                             (retrieve_line (collection, ls), first));
                      when polygon_shape =>
                         CT.SU.Append
                           (product, format_polygon
-                             (retrieve_full_polygon (collection, ls), first));
-                     when circle_shape        => null;
-                     when infinite_line_shape => null;
+                             (retrieve_polygon (collection, ls), first));
                      when mixture =>
                         raise CONVERSION_FAILED with "TO BE IMPLEMENTED";
                   end case;
@@ -1901,7 +1143,7 @@ package body Spatial_Data is
       function format_point (pt    : Geometric_Point;
                              first : Boolean := False;
                              label : Boolean := False) return String;
-      function format_polygon (poly  : Heterogeneous_Collection;
+      function format_polygon (poly  : Geometric_Polygon;
                                first : Boolean := False;
                                label : Boolean := False) return String;
       function format_line_string (LNS   : Geometric_Line_String;
@@ -1945,7 +1187,7 @@ package body Spatial_Data is
          end if;
       end format_point;
 
-      function format_polygon (poly  : Heterogeneous_Collection;
+      function format_polygon (poly  : Geometric_Polygon;
                                first : Boolean := False;
                                label : Boolean := False) return String
       is
@@ -1953,6 +1195,7 @@ package body Spatial_Data is
          work   : CT.Text;
          inner1 : Boolean;
          lastsc : Natural := 0;
+         nrings : Natural := number_of_rings (poly);
       begin
          if label then
             if first then
@@ -1967,19 +1210,20 @@ package body Spatial_Data is
                CT.SU.Append (work, sep & popen);
             end if;
          end if;
-         for x in poly'Range loop
-            inner1 := (poly (x).component /= lastsc);
-            lastsc := poly (x).component;
-            if inner1 then
-               if x /= poly'First then
-                  CT.SU.Append (work, pclose & sep);
-               end if;
-               CT.SU.Append (work, popen);
+         for ring in 1 .. nrings loop
+            if ring > 1 then
+               CT.SU.Append (work, sep);
             end if;
-            CT.SU.Append (work, format_point (poly (x).point, inner1));
-            if x = poly'Last then
-               CT.SU.Append (work, pclose);
-            end if;
+            CT.SU.Append (work, popen);
+            declare
+               GR : Geometric_Ring := retrieve_ring (poly, ring);
+            begin
+               for pt in GR'Range loop
+                  inner1 := (pt = GR'First);
+                  CT.SU.Append (work, format_point (GR (pt), inner1));
+               end loop;
+            end;
+            CT.SU.Append (work, pclose);
          end loop;
          CT.SU.Append (work, pclose);
          return CT.USS (work);
@@ -2021,29 +1265,22 @@ package body Spatial_Data is
          when unset =>
             return "";
          when single_point =>
-            return format_point (collection.point, top_first, True);
+            return format_point (retrieve_point (collection), top_first, True);
          when single_line_string =>
-            return format_line_string (collection.line_string, top_first, True);
-         when single_infinite_line =>
-            --  Infinite lines are not supported by WKT so this is wrong
-            return format_line_string (collection.infinite_line, top_first, True);
-         when single_circle =>
-            --  No circles in WKT, so using this output will result in error
-            return "CIRCLE (" &
-              format_point (collection.circle.center_point, top_first) & sep &
-              format_real (collection.circle.radius) & pclose;
+            return format_line_string (retrieve_line (collection),
+                                       top_first, True);
          when single_polygon =>
-            return format_polygon (retrieve_full_polygon (collection, 1),
+            return format_polygon (retrieve_polygon (collection, 1),
                                    top_first, True);
          when multi_point =>
             declare
                product : CT.Text := initialize_title ("MULTIPOINT(");
                first   : Boolean := True;
             begin
-               for x in collection.set_points'Range loop
+               for x in collection.points_set'Range loop
                   CT.SU.Append
                     (product, format_point
-                       (collection.set_points (x), first));
+                       (collection.points_set (x), first));
                   first := False;
                end loop;
                return CT.USS (product) & pclose;
@@ -2056,7 +1293,7 @@ package body Spatial_Data is
                for ls in 1 .. collection.units loop
                   CT.SU.Append
                     (product, format_line_string
-                       (retrieve_line_string (collection, ls), first));
+                       (retrieve_line (collection, ls), first));
                   first := False;
                end loop;
                return CT.USS (product) & pclose;
@@ -2069,7 +1306,7 @@ package body Spatial_Data is
                for ls in 1 .. collection.units loop
                   CT.SU.Append
                     (product, format_polygon
-                       (retrieve_full_polygon (collection, ls), first));
+                       (retrieve_polygon (collection, ls), first));
                   first := False;
                end loop;
                CT.SU.Append (product, pclose);
