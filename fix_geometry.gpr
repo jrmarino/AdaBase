@@ -1,0 +1,23 @@
+project Fix_Geometry is
+
+   for Source_Dirs use ("src/**");
+   for Object_Dir use "obj";
+   for Library_Name use "adabase";
+   for Library_Kind use "static";
+   for Source_Files use (
+      "spatial_data.ads", "spatial_data.adb", 
+      "spatial_data-well_known_binary.ads","spatial_data-well_known_binary.adb");
+   for Library_Dir use "lib";
+   for Library_Ali_Dir use "lib";
+   for Library_Version use "1.0";
+
+   package Compiler is
+      for Default_Switches ("ada") use ("-gnatyaAbBcdefhiIklnOprsStx", "-gnat12");
+   end Compiler;
+
+   package Pretty_Printer is
+      for Default_Switches ("ada") use ("-aU");
+   end Pretty_Printer;
+
+end Fix_Geometry;
+

@@ -6,51 +6,59 @@ package body Spatial_Data is
    ---------------------------
    --  initialize_as_point  --
    ---------------------------
-   function initialize_as_point (point : Geometric_Point) return Geometry is
+   function initialize_as_point (point : Geometric_Point) return Geometry
+   is
+      metadata : Ring_Structure := (Item_ID     => 1,
+                                    Ring_ID     => 1,
+                                    Ring_Size   => 1,
+                                    Point_Index => 1);
    begin
-      return (single_point, 1, 1, point);
+      return (contents => single_point,
+              units      => 1,
+              subunits   => 1,
+              points     => 1,
+              structures => (1 => metadata),
+              points_set => (1 => point));
    end initialize_as_point;
 
 
-   ----------------------------
-   --  initialize_as_circle  --
-   ----------------------------
-   function initialize_as_circle (circle : Geometric_Circle) return Geometry is
+   ---------------------------------
+   --  initialize_as_multi_point  --
+   ---------------------------------
+   function initialize_as_multi_point (point : Geometric_Point) return Geometry
+   is
+      metadata : Ring_Structure := (Item_ID     => 1,
+                                    Ring_ID     => 1,
+                                    Ring_Size   => 1,
+                                    Point_Index => 1);
    begin
-      return (single_circle, 1, 1, circle);
-   end initialize_as_circle;
+      return (contents => multi_point,
+              units      => 1,
+              subunits   => 1,
+              points     => 1,
+              structures => (1 => metadata),
+              points_set => (1 => point));
+   end initialize_as_multi_point;
 
 
    --------------------------
    --  initialize_as_line  --
    --------------------------
-   function initialize_as_line (line : Geometric_Line) return Geometry is
+   function initialize_as_line (line_string : Geometric_Line_String)
+                                return Geometry
+   is
+      metadata : Ring_Structure := (Item_ID     => 1,
+                                    Ring_ID     => 1,
+                                    Ring_Size   => line_string'Length,
+                                    Point_Index => 1);
    begin
-      return (single_line_string, line'Length, 1, line);
+      return (contents => single_line_string,
+              units      => 1,
+              subunits   => 1,
+              points     => line_string'Length,
+              structures => (1 => metadata),
+              points_set => line_string);
    end initialize_as_line;
-
-
-   ---------------------------------
-   --  initialize_as_line_string  --
-   ---------------------------------
-   function initialize_as_line_string (line_string : Geometric_Line_String)
-                                       return Geometry is
-   begin
-      return (single_line_string, line_string'Length, 1, line_string);
-   end initialize_as_line_string;
-
-
-   -----------------------------------
-   --  initialize_as_infinite_line  --
-   -----------------------------------
-   function initialize_as_infinite_line (two_points_on_line : Geometric_Line)
-                                         return Geometry is
-   begin
-      return  (single_infinite_line,
-               two_points_on_line'Length,
-               1,
-               two_points_on_line);
-   end initialize_as_infinite_line;
 
 
    --------------------------------
@@ -59,18 +67,76 @@ package body Spatial_Data is
    function initialize_as_multi_line (line_string : Geometric_Line_String)
                                       return Geometry
    is
-      LL : constant Natural := line_string'Length;
-      HC : Homogeneous_Collection (1 .. LL);
+      metadata : Ring_Structure := (Item_ID     => 1,
+                                    Ring_ID     => 1,
+                                    Ring_Size   => line_string'Length,
+                                    Point_Index => 1);
    begin
-      for pt in line_string'Range loop
-         HC (pt).point    := line_string (pt);
-         HC (pt).shape_id := 1;
-      end loop;
       return (contents => multi_line_string,
-              points   => LL,
-              units    => 1,
-              set_line_strings => HC);
+              units      => 1,
+              subunits   => 1,
+              points     => line_string'Length,
+              structures => (1 => metadata),
+              points_set => line_string);
    end initialize_as_multi_line;
+
+
+   ---------------------
+   --  start_polygon  --
+   ---------------------
+   function start_polygon (outer_ring : Geometric_Ring)
+                           return Geometric_Polygon
+   is
+      num_points : constant Natural := outer_ring'Length;
+      PG : Geometric_Polygon (rings  => 1, points => num_points);
+      metadata : Ring_Structure := (Item_ID     => 1,
+                                    Ring_ID     => 1,
+                                    Ring_Size   => num_points,
+                                    Point_Index => 1);
+   begin
+      if num_points < 4 then
+         raise LACKING_POINTS
+           with "polygon rings must have at least 4 points (found only" &
+           num_points'Img & ")";
+      end if;
+      PG.structures := (1 => metadata);
+      PG.points_set := outer_ring;
+      return PG;
+   end start_polygon;
+
+
+   -------------------------
+   --  append_inner_ring  --
+   -------------------------
+   procedure append_inner_ring (polygon    : in out Geometric_Polygon;
+                                inner_ring : Geometric_Ring)
+   is
+      num_points   : constant Natural := inner_ring'Length;
+      last_ring    : constant Natural := polygon.rings + 1;
+      total_points : constant Natural := polygon.points + num_points;
+      PG : Geometric_Polygon (rings  => last_ring, points => total_points);
+      metadata : Ring_Structure := (Item_ID     => 1,
+                                    Ring_ID     => last_ring,
+                                    Ring_Size   => num_points,
+                                    Point_Index => polygon.points + 1);
+   begin
+      if num_points < 4 then
+         raise LACKING_POINTS
+           with "polygon rings must have at least 4 points (found only" &
+           num_points'Img & ")";
+      end if;
+      for ring in 1 .. polygon.rings loop
+         PG.structures (ring) := polygon.structures (ring);
+      end loop;
+      PG.structures (last_ring) := metadata;
+
+      for pt in 1 .. polygon.points loop
+         PG.points_set (pt) := polygon.points_set (pt);
+      end loop;
+      for pt in 1 .. num_points loop
+         PG.points_set (polygon.points + pt) := inner_ring (pt);
+      end loop;
+   end append_inner_ring;
 
 
    -----------------------------
@@ -372,6 +438,7 @@ package body Spatial_Data is
                HC : Homogeneous_Collection (1 .. point_count);
             begin
                HC (collection.set_points'Range) := collection.set_line_strings;
+               num_units := collection.units;
                for x in line_string'Range loop
                   HC (x + LL).shape_id := num_units;
                   HC (x + LL).point    := line_string (x);
@@ -764,6 +831,7 @@ package body Spatial_Data is
          point_count : Natural := exist_cnt + fresh_cnt;
          HC : Heterogeneous_Collection (1 .. point_count);
          next_gr : Positive;
+         last_shape_id : Natural;
       begin
          case collection.contents is
             when unset | single_circle | single_infinite_line => null;
@@ -815,23 +883,28 @@ package body Spatial_Data is
             when heterogeneous =>
                HC (1 .. exist_cnt) := collection.set_heterogeneous;
          end case;
+         if LL = 0 then
+            last_shape_id := 0;
+         else
+            last_shape_id := HC (LL).shape_id;
+         end if;
          case classification is
             when multi_point =>
                for x in subcollection.set_points'Range loop
-                  next_gr := collection.units + x;
+                  next_gr := collection.units + 1;
                   HC (x + LL).group_id   := next_gr;
                   HC (x + LL).group_type := multi_point;
-                  HC (x + LL).shape_id   := x;
+                  HC (x + LL).shape_id   := last_shape_id + x;
                   HC (x + LL).shape      := point_shape;
                   HC (x + LL).component  := 1;
                   HC (x + LL).point      := subcollection.set_points (x);
                end loop;
             when multi_line_string =>
                for x in subcollection.set_line_strings'Range loop
-                  next_gr := collection.units + subcollection.set_line_strings (x).shape_id;
+                  next_gr := collection.units + 1;
                   HC (x + LL).group_id   := next_gr;
                   HC (x + LL).group_type := multi_line_string;
-                  HC (x + LL).shape_id   := subcollection.set_line_strings (x).shape_id;
+                  HC (x + LL).shape_id   := last_shape_id + subcollection.set_line_strings (x).shape_id;
                   HC (x + LL).shape      := line_string_shape;
                   HC (x + LL).component  := 1;
                   HC (x + LL).point      := subcollection.set_line_strings (x).point;
