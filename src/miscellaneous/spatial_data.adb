@@ -416,7 +416,7 @@ package body Spatial_Data is
                last_unit     : Geo_Units  := collection.units + 1;
                first_subunit : Geo_Units  := collection.subunits + 1;
                last_subunit  : Geo_Units  := collection.subunits +
-                                             anything.units;
+                                             anything.subunits;
                marker        : Positive   := anything.structures'First;
                ptmr          : Geo_Points := first_point;
                ppsm          : Geo_Points := anything.points_set'First;
@@ -432,7 +432,7 @@ package body Spatial_Data is
                for ring in first_subunit .. last_subunit loop
                   GM.structures (ring) :=
                     (Item_Type   => anything.contents,
-                     Item_ID     => ring,
+                     Item_ID     => last_unit,
                      Ring_ID     => anything.structures (marker).Ring_ID,
                      Ring_Size   => anything.structures (marker).Ring_Size,
                      Point_Index => ptmr,
@@ -715,8 +715,8 @@ package body Spatial_Data is
                     multi_polygon     |
                     multi_line_string =>
                   declare
-                     CS : Ring_Structure renames
-                       collection.structures (F_subunit);
+                     RS : Ring_Structures renames collection.structures;
+                     CS : Ring_Structure renames RS (F_subunit);
                      FP : Geo_Points := CS.Point_Index;
                      LP : Geo_Points := FP + num_points - 1;
                      GM : Geometry := single_canvas (coltype,
@@ -730,12 +730,12 @@ package body Spatial_Data is
                        collection.points_set (FP .. LP);
                      for S in F_subunit .. L_subunit loop
                         GM.structures (marker) :=
-                          (Item_Type   => GM.structures (S).Item_Type,
-                           Item_ID     => GM.structures (S).Item_ID - diff,
-                           Ring_ID     => GM.structures (S).Ring_ID,
-                           Ring_Size   => GM.structures (S).Ring_Size,
-                           Point_Index => GM.structures (S).Point_Index - ptdiff,
-                           mix_level   => GM.structures (S).mix_level - 1);
+                          (Item_Type   => RS (S).Item_Type,
+                           Item_ID     => RS (S).Item_ID - diff,
+                           Ring_ID     => RS (S).Ring_ID,
+                           Ring_Size   => RS (S).Ring_Size,
+                           Point_Index => RS (S).Point_Index - ptdiff,
+                           mix_level   => RS (S).mix_level - 1);
                         marker := marker + 1;
                      end loop;
                      return GM;
