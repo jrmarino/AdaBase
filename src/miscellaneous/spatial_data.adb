@@ -148,6 +148,7 @@ package body Spatial_Data is
       for pt in 1 .. num_points loop
          PG.points_set (polygon.points + pt) := inner_ring (pt);
       end loop;
+      polygon := PG;
    end append_inner_ring;
 
 
@@ -970,7 +971,8 @@ package body Spatial_Data is
    ------------------
    --  mysql_text  --
    ------------------
-   function mysql_text (collection : Geometry) return String is
+   function mysql_text (collection : Geometry; top_first : Boolean := True)
+                        return String is
       function format_point (pt    : Geometric_Point;
                              first : Boolean := False) return String;
       function format_polygon (poly  : Geometric_Polygon;
@@ -1051,50 +1053,50 @@ package body Spatial_Data is
       case classification is
          when unset        => return "";
          when single_point =>
-            return format_point (retrieve_point (collection), True);
+            return format_point (retrieve_point (collection), top_first);
          when single_line_string =>
-            return format_line_string (retrieve_line (collection), True);
+            return format_line_string (retrieve_line (collection), top_first);
          when single_polygon =>
-            return format_polygon (retrieve_polygon (collection), True);
+            return format_polygon (retrieve_polygon (collection), top_first);
          when multi_point =>
             declare
                product : CT.Text := CT.SUS ("MultiPoint(");
-               first   : Boolean;
+               first   : Boolean := top_first;
             begin
                for x in collection.points_set'Range loop
-                  first := (x = collection.points_set'First);
                   CT.SU.Append
                     (product, format_point
                        (collection.points_set (x), first));
+                  first := False;
                end loop;
                return CT.USS (product) & pclose;
             end;
          when multi_line_string =>
             declare
                product : CT.Text := CT.SUS ("MultiLineString(");
-               first   : Boolean;
+               first   : Boolean := top_first;
             begin
                for ls in 1 .. collection.units loop
-                  first := (ls = 1);
                   CT.SU.Append
                     (product, format_line_string
                        (retrieve_line (collection, ls), first));
+                  first := False;
                end loop;
                return CT.USS (product) & pclose;
             end;
          when multi_polygon =>
             declare
                product : CT.Text := CT.SUS ("MultiPolygon(");
-               first   : Boolean;
+               first   : Boolean := top_first;
             begin
                if collection.units = 1 then
                   product := CT.blank;
                end if;
                for ls in 1 .. collection.units loop
-                  first := (ls = 1);
                   CT.SU.Append
                     (product, format_polygon
                        (retrieve_polygon (collection, ls), first));
+                  first := False;
                end loop;
                if collection.units > 1 then
                   CT.SU.Append (product, pclose);
@@ -1104,28 +1106,13 @@ package body Spatial_Data is
          when heterogeneous =>
             declare
                product : CT.Text := CT.SUS ("GeometryCollection(");
-               first   : Boolean;
-               flavor  : Geometric_Shape;
+               first   : Boolean := top_first;
+               GM      : Geometry;
             begin
                for ls in 1 .. collection.units loop
-                  first := (ls = 1);
-                  flavor := collection_item_shape (collection, ls);
-                  case flavor is
-                     when point_shape =>
-                        CT.SU.Append
-                          (product, format_point
-                             (retrieve_point (collection, ls), first));
-                     when line_string_shape =>
-                        CT.SU.Append
-                          (product, format_line_string
-                             (retrieve_line (collection, ls), first));
-                     when polygon_shape =>
-                        CT.SU.Append
-                          (product, format_polygon
-                             (retrieve_polygon (collection, ls), first));
-                     when mixture =>
-                        raise CONVERSION_FAILED with "TO BE IMPLEMENTED";
-                  end case;
+                  GM := retrieve_subcollection (collection, ls);
+                  CT.SU.Append (product, mysql_text (GM, first));
+                  first := False;
                end loop;
                return CT.USS (product) & pclose;
             end;
@@ -1275,7 +1262,7 @@ package body Spatial_Data is
          when multi_point =>
             declare
                product : CT.Text := initialize_title ("MULTIPOINT(");
-               first   : Boolean := True;
+               first   : Boolean := top_first;
             begin
                for x in collection.points_set'Range loop
                   CT.SU.Append
@@ -1288,7 +1275,7 @@ package body Spatial_Data is
          when multi_line_string =>
             declare
                product : CT.Text := initialize_title ("MULTILINESTRING(");
-               first   : Boolean := True;
+               first   : Boolean := top_first;
             begin
                for ls in 1 .. collection.units loop
                   CT.SU.Append
@@ -1301,7 +1288,7 @@ package body Spatial_Data is
          when multi_polygon =>
             declare
                product : CT.Text := initialize_title ("MULTIPOLYGON(");
-               first   : Boolean := True;
+               first   : Boolean := top_first;
             begin
                for ls in 1 .. collection.units loop
                   CT.SU.Append
@@ -1315,7 +1302,7 @@ package body Spatial_Data is
          when heterogeneous =>
             declare
                product : CT.Text := initialize_title ("GEOMETRYCOLLECTION(");
-               first   : Boolean := True;
+               first   : Boolean := top_first;
                GM      : Geometry;
             begin
                for ls in 1 .. collection.units loop

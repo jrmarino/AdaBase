@@ -165,7 +165,8 @@ package Spatial_Data is
    ---------------------------
    --  Text Representation  --
    ---------------------------
-   function mysql_text (collection : Geometry) return String;
+   function mysql_text      (collection : Geometry;
+                             top_first  : Boolean := True) return String;
    function Well_Known_Text (collection : Geometry;
                              top_first  : Boolean := True) return String;
 
