@@ -4,7 +4,7 @@ with Spatial_Data; Use Spatial_Data;
 procedure Spatial1 is
 
    package TIO renames Ada.Text_IO;
-   
+
    procedure print (shape : Geometry; label : String);
    procedure print (shape : Geometry; label : String) is
    begin
@@ -16,171 +16,215 @@ procedure Spatial1 is
 
    magic_point   : constant Geometric_Point := (18.2, -3.4);
    magic_linestr : constant Geometric_Line_String := ((0.5, 2.0), (11.0, 4.4), (12.0, 8.1));
-   magic_polygon : constant Geometric_Polygon := ((0.5, 2.0), (11.0, 4.4), (12.0, 8.1), (0.005, 2.0));
+   magic_polygon : constant Geometric_Polygon := start_polygon (((0.5, 2.0), (11.0, 4.4), (12.0, 8.1), (0.005, 2.0)));
 
    my_point   : Geometry := initialize_as_point (magic_point);
-   my_line    : Geometry := initialize_as_line (((4.0, 2.23), (0.25, 5.1)));
-   my_linestr : Geometry := initialize_as_line_string (magic_linestr);
+   my_linestr : Geometry := initialize_as_line (magic_linestr);
    my_polygon : Geometry := initialize_as_polygon (magic_polygon);
 
-   my_circle  : Geometry := initialize_as_circle (((2.0, 1.0), 4.5));
-   my_infline : Geometry := initialize_as_infinite_line (((0.0, 0.0), (2.0, 2.0)));
+   pt1 : Geometric_Point := (9.2, 4.773);
+   pt2 : Geometric_Point := (-7.01, -4.9234);
+   pt3 : Geometric_Point := (4.5, 6.0);
+   altpoly : Geometric_Ring := ((1.0, 2.0), (3.2, 4.5), (8.8, 7.7), (1.0, 2.0));
+   polyhole : Geometric_Polygon;
 
-begin   
+begin
 
    --  critical checklist
    --  =========================================================
-   --  single point                                           61
-   --  single line (converts to line string)                  62
-   --  single infinite line (!)                               66
-   --  single line_string                                     63
-   --  single polygon                                         64
-   --  single polygon with 1 hole                          91-94
-   --  single polygon with 2 holes                         95-98
-   --  single circle (!)                                      67
-   --  point + point = multipoint                          76-78
-   --  point + line_string = collection                  106-108
-   --  point + polygon = collection                      110-112
-   --  point + polygon with 1 hole = 2 item collection   114-115
-   --  point + polygon hole = EXCEPTION                  117-126
-   --  line_string + line_string = multiline               80-81
-   --  line_string + point + point = collection          128-130
-   --  line_string + polygon = collection                132-135
-   --  line_string + polygon + hole = 2 item collection  136-137
-   --  polygon + point = 2 item collection               139-142
-   --  polygon + line_string = 2 item collection         143-146
-   --  polygon + hole + point + point = 3 item collection    147-151
-   --  polygon + hole + polygon = 2 item multipolygon        153-156
-   --  polygon + hole + polygon + point = 3 item collection  158-159
-   --  polygon + polygon + hole = 2 item multipolygon        161-165
-   --  polygon + polygon + hole + line_string = 3 item col.  166-167
-   --  polygon + hole + polygon + hole = 2 item multipolygon 169-174
-   --  polygon + hole + point = 2 item collection            175-179
-   --  polygon + hole + line_string = 2 item collection
+   --  single point                                           59
+   --  single line_string                                     60
+   --  single polygon                                         61
+   --  single polygon with 1 hole                          71-74
+   --  single polygon with 2 holes                         66-70
+   --  point + point = multipoint                          72-77
+   --  point + line_string = collection                   94-100
+   --  point + point(s) = collection                     102-108
+   --  point + polygon = collection                      110-115
+   --  point + polygon with 2 holex = 2 item collection  117-122
+   --  line_string + line_string = multiline               87-92
+   --  line_string + point + point = collection          124-130
+   --  line_string + polygon = collection                132-137
+   --  line_string + polygon w/holes = 2 item collection 139-144
+   --  polygon + point = 2 item collection                   146-151
+   --  polygon + line_string = 2 item collection             153-158
+   --  polygon + hole + point + point = 3 item collection    160-167
+   --  polygon + hole + polygon + point = 3 item collection  169-176
+   --  polygon + polygon + hole = 2 item multipolygon        178-182
+   --  polygon + polygon + hole + line_string = 3 item col.  178-185
+   --  polygon + hole + polygon + hole = 2 item multipolygon 187-196
+   --  polygon + hole + point = 2 item collection            198-204
+   --  polygon + hole + line_string = 2 item collection      206-212
 
    print (my_point,   "SINGLE POINT");
-   print (my_line,    "SINGLE LINE");
    print (my_linestr, "SINGLE LINE STRING (THREE POINT)");
    print (my_polygon, "SINGLE POLYGON (3 SIDES)");
-   print (my_circle,  "SINGLE CIRCLE (not legal for MySQL or WKT)");
-   print (my_infline, "INFINITE LINE (converted to regular line on MySQL or WKT)");
-   
+
+   polyhole := magic_polygon;
+   append_inner_ring (polyhole, altpoly);
+
    declare
-      pt1 : Geometric_Point := (9.2, 4.773);
-      pt2 : Geometric_Point := (-7.01, -4.9234);
-      pt3 : Geometric_Point := (4.5, 6.0);
-      altpoly : Geometric_Polygon := ((1.0, 2.0), (3.2, 4.5), (8.8, 7.7), (1.0, 2.0));
-      polyhole1 : Geometry;
-      polyhole2 : Geometry;
+      shape : Geometry := initialize_as_polygon (polyhole);
    begin
-      append_point (my_point, pt1);
-      append_point (my_point, pt2);
-      print (my_point, "MULTIPOINT COLLECTION");
-
-      append_line_string (my_linestr, ((pt3, pt1, pt2)));
-      print (my_linestr, "MULTILINESTRING COLLECTION");      
-
-      append_point (my_linestr, pt1);
-      append_point (my_linestr, pt2);
-      print (my_linestr, "MIXED COLLECTION #1");
-
-      append_point (my_line, pt1);
-      append_point (my_line, pt2);
-      print (my_line, "MIXED COLLECTION #2");
-
-      append_polygon_hole  (my_polygon, (altpoly));
-      polyhole1 := my_polygon;
-      print (polyhole1, "STILL SINGLE POLYGON #1");
-
-      polyhole2 := polyhole1;
-      append_polygon_hole (polyhole2, ((13.5, 15.35), (98.1, 11.7), (-13.75, 0.0004), (13.5, 15.35)));
-      print (polyhole2, "STILL SINGLE POLYGON #2");
-
-      append_polygon (my_polygon, ((5.0, 6.0), (1.4, 2.2), (18.1, 24.0), (5.0, 6.0)));
-      print (my_polygon, "POLYGON COLLECTION #1");
-
-      append_point (my_polygon, pt1);
-      append_point (my_polygon, pt2);
-      print (my_polygon, "MIXED COLLECTION #3");
-
-      my_point := initialize_as_point (magic_point);
-      append_line_string (my_point, magic_linestr);
-      print (my_point, "MIXED COLLECTION #4");
-
-      my_point := initialize_as_point (magic_point);
-      append_polygon (my_point, magic_polygon);
-      print (my_point, "MIXED COLLECTION #5");
-
-      append_polygon_hole (my_point, altpoly);
-      print (my_point, "MIXED COLLECTION #5 ENHANCED");
-
-      my_point := initialize_as_point (magic_point);
-      begin
-         append_polygon_hole (my_point, altpoly);
-      print (my_point, "MIXED COLLECTION #5 NEVER SEE THIS");
-      exception
-         when others =>
-            TIO.Put_Line ("You can't add a polygon hole before adding " & 
-                          "a polygon");
-            TIO.Put_Line ("");
-      end;
-
-      my_linestr := initialize_as_line_string (magic_linestr);
-      append_point (my_linestr, pt1);
-      print (my_linestr, "MIXED COLLECTION #6");
-
-      my_linestr := initialize_as_line_string (magic_linestr);
-      append_polygon (my_linestr, magic_polygon);
-      print (my_linestr, "MIXED COLLECTION #7");
-
-      append_polygon_hole (my_linestr, altpoly);
-      print (my_linestr, "MIXED COLLECTION #7 ENHANCED");
-
-      my_polygon := initialize_as_polygon (magic_polygon);
-      append_point (my_polygon, pt2);
-      print (my_polygon, "MIXED COLLECTION #8");
-
-      my_polygon := initialize_as_polygon (magic_polygon);
-      append_line_string (my_polygon, magic_linestr);
-      print (my_polygon, "MIXED COLLECTION #9");
-
-      my_polygon := initialize_as_polygon (magic_polygon);
-      append_polygon_hole (my_polygon, altpoly);
-      append_point (my_polygon, pt1);
-      append_point (my_polygon, pt2);
-      print (my_polygon, "MIXED COLLECTION #10");
-
-      my_polygon := initialize_as_polygon (magic_polygon);
-      append_polygon_hole (my_polygon, altpoly);
-      append_polygon (my_polygon, ((5.0, 6.0), (1.4, 2.2), (18.1, 24.0), (5.0, 6.0)));
-      print (my_polygon, "POLYGON COLLECTION #2");
-
-      append_point (my_polygon, pt2);
-      print (my_polygon, "MIXED COLLECTION #11");
-
-      my_polygon := initialize_as_polygon (magic_polygon);
-      append_polygon (my_polygon, ((5.0, 6.0), (1.4, 2.2), (18.1, 24.0), (5.0, 6.0)));
-      append_polygon_hole (my_polygon, altpoly);
-      print (my_polygon, "POLYGON COLLECTION #3");
-
-      append_line_string (my_polygon, magic_linestr);
-      print (my_polygon, "MIXED COLLECTION #12");
-
-      my_polygon := initialize_as_polygon (magic_polygon);
-      append_polygon_hole (my_polygon, altpoly);
-      append_polygon (my_polygon, ((5.0, 6.0), (1.4, 2.2), (18.1, 24.0), (5.0, 6.0)));
-      append_polygon_hole (my_polygon, ((13.5, 15.35), (98.1, 11.7), (-13.75, 0.0004), (13.5, 15.35)));
-      print (my_polygon, "POLYGON COLLECTION #4");
-      
-      my_polygon := initialize_as_polygon (magic_polygon);
-      append_polygon_hole (my_polygon, altpoly);
-      append_point (my_polygon, pt3);
-      print (my_polygon, "MIXED COLLECTION #13");
-
-      my_polygon := initialize_as_polygon (magic_polygon);
-      append_polygon_hole (my_polygon, altpoly);
-      append_line_string (my_polygon, magic_linestr);
-      print (my_polygon, "MIXED COLLECTION #14");
+      print (shape, "STILL SINGLE POLYGON #1");
    end;
-   
+
+   append_inner_ring (polyhole, ((13.5, 15.35), (98.1, 11.7), (-13.75, 0.0004), (13.5, 15.35)));
+   declare
+      shape : Geometry := initialize_as_polygon (polyhole);
+   begin
+      print (shape, "STILL SINGLE POLYGON #2");
+   end;
+
+   declare
+      MP : Geometry := initialize_as_multi_point (magic_point);
+   begin
+      augment_multi_point (MP, pt1);
+      augment_multi_point (MP, pt2);
+      print (MP, "MULTIPOINT COLLECTION");
+   end;
+
+   declare
+      MLS : Geometry := initialize_as_multi_line (magic_linestr);
+   begin
+      augment_multi_line (MLS, ((pt3, pt1, pt2)));
+      print (MLS, "MULTILINESTRING COLLECTION");
+   end;
+
+   declare
+      shape : Geometry :=
+        initialize_as_collection (initialize_as_point (pt1));
+   begin
+      augment_collection (shape, my_linestr);
+      print (shape, "MIXED COLLECTION #1 (PT + LINE)");
+   end;
+
+   declare
+      shape : Geometry := initialize_as_collection (my_point);
+   begin
+      augment_collection (shape, initialize_as_point (pt1));
+      augment_collection (shape, initialize_as_point (pt2));
+      print (shape, "MIXED COLLECTION #2 (ALL POINTS)");
+   end;
+
+   declare
+      shape : Geometry := initialize_as_collection (my_point);
+   begin
+      augment_collection (shape, my_polygon);
+      print (shape, "MIXED COLLECTION #3 (PT + POLY)");
+   end;
+
+   declare
+      shape : Geometry := initialize_as_collection (my_point);
+   begin
+      augment_collection (shape, initialize_as_polygon (polyhole));
+      print (shape, "MIXED COLLECTION #4 (PT + CMPLX POLY)");
+   end;
+
+   declare
+      shape : Geometry := initialize_as_collection (my_linestr);
+   begin
+      augment_collection (shape, initialize_as_point (pt1));
+      augment_collection (shape, initialize_as_point (pt2));
+      print (shape, "MIXED COLLECTION #5 (LINE + 2 PT)");
+   end;
+
+   declare
+      shape : Geometry := initialize_as_collection (my_linestr);
+   begin
+      augment_collection (shape, my_polygon);
+      print (shape, "MIXED COLLECTION #6 (LINE + POLY)");
+   end;
+
+   declare
+      shape : Geometry := initialize_as_collection (my_linestr);
+   begin
+      augment_collection (shape, initialize_as_polygon (polyhole));
+      print (shape, "MIXED COLLECTION #6 ENHANCED (LINE + CMPLX POLY)");
+   end;
+
+   declare
+      shape : Geometry := initialize_as_collection (my_polygon);
+   begin
+      augment_collection (shape, initialize_as_point (pt2));
+      print (shape, "MIXED COLLECTION #7 (POLY + PT)");
+   end;
+
+   declare
+      shape : Geometry := initialize_as_collection (my_polygon);
+   begin
+      augment_collection (shape, my_linestr);
+      print (shape, "MIXED COLLECTION #7 (POLY + LINE)");
+   end;
+
+   declare
+      shape : Geometry :=
+        initialize_as_collection (initialize_as_polygon (polyhole));
+   begin
+      augment_collection (shape, initialize_as_point (pt1));
+      augment_collection (shape, initialize_as_point (pt2));
+      print (shape, "MIXED COLLECTION #8 (CMPLX POLY + 2 PT)");
+   end;
+
+   declare
+      shape : Geometry :=
+        initialize_as_collection (initialize_as_polygon (polyhole));
+   begin
+      augment_collection (shape, my_polygon);
+      augment_collection (shape, initialize_as_point (pt2));
+      print (shape, "MIXED COLLECTION #9 (CMPLX POLY + POLY + PT)");
+   end;
+
+   declare
+      shape : Geometry := initialize_as_collection (my_polygon);
+   begin
+      augment_collection (shape, initialize_as_polygon (polyhole));
+      print (shape, "MIXED COLLECTION #10 (POLY + CMPLX POLY)");
+      augment_collection (shape, my_linestr);
+      print (shape, "MIXED COLLECTION #11 (POLY + CMPLX POLY + LINE)");
+   end;
+
+   declare
+      shape : Geometry :=
+        initialize_as_collection (initialize_as_polygon (polyhole));
+      new_poly : Geometric_Polygon;
+   begin
+      new_poly := start_polygon (((5.0, 6.0), (1.4, 2.2), (18.1, 24.0), (5.0, 6.0)));
+      append_inner_ring (new_poly, ((5.0, 6.0), (1.4, 2.2), (18.1, 24.0), (5.0, 6.0)));
+      augment_collection (shape, initialize_as_polygon (new_poly));
+      print (shape, "MIXED COLLECTION #12 (2 CMPLX POLY)");
+   end;
+
+   declare
+      shape : Geometry :=
+        initialize_as_collection (initialize_as_polygon (polyhole));
+   begin
+      augment_collection (shape, initialize_as_point (pt3));
+      print (shape, "MIXED COLLECTION #13 (CMPLX POLY + PT)");
+   end;
+
+   declare
+      shape : Geometry :=
+        initialize_as_collection (initialize_as_polygon (polyhole));
+   begin
+      augment_collection (shape, my_linestr);
+      print (shape, "MIXED COLLECTION #13 (CMPLX POLY + Line)");
+   end;
+
+   -----------------------------------
+   --  Additional collection tests  --
+   -----------------------------------
+
+   --  Have a collection inside a collection
+
+   declare
+      shape  : Geometry := initialize_as_collection (my_point);
+      shape2 : geometry :=
+        initialize_as_collection (initialize_as_point (pt3));
+   begin
+      augment_collection (shape2, my_linestr);
+      augment_collection (shape, shape2);
+--      print (shape, "COLLECTION THAT CONTAINS ANOTHER COLLECTION");
+   end;
+
 end Spatial1;
