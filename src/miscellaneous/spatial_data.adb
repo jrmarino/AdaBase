@@ -1,7 +1,11 @@
 --  This file is covered by the Internet Software Consortium (ISC) License
 --  Reference: ../../License.txt
 
+with Ada.Characters.Latin_1;
+
 package body Spatial_Data is
+
+   package LAT renames Ada.Characters.Latin_1;
 
    ---------------------------
    --  initialize_as_point  --
@@ -30,7 +34,7 @@ package body Spatial_Data is
    ---------------------------------
    function initialize_as_multi_point (point : Geometric_Point) return Geometry
    is
-      metadata : Ring_Structure := (Item_Type   => single_point,
+      metadata : Ring_Structure := (Item_Type   => multi_point,
                                     Item_ID     => 1,
                                     Ring_ID     => 1,
                                     Ring_Size   => 1,
@@ -76,7 +80,7 @@ package body Spatial_Data is
    function initialize_as_multi_line (line_string : Geometric_Line_String)
                                       return Geometry
    is
-      metadata : Ring_Structure := (Item_Type   => single_line_string,
+      metadata : Ring_Structure := (Item_Type   => multi_line_string,
                                     Item_ID     => 1,
                                     Ring_ID     => 1,
                                     Ring_Size   => line_string'Length,
@@ -226,6 +230,7 @@ package body Spatial_Data is
    begin
       for ring in 1 .. polygon.rings loop
          GM.structures (ring) := polygon.structures (ring);
+         GM.structures (ring).Item_Type := multi_polygon;
       end loop;
 
       for pt in 1 .. polygon.points loop
@@ -970,6 +975,45 @@ package body Spatial_Data is
          return trim_sides (canvas);
       end if;
    end format_real;
+
+
+   ------------
+   --  dump  --
+   ------------
+   function dump (collection : Geometry) return String
+   is
+      res : CT.Text;
+   begin
+      CT.SU.Append (res, "contents : " & collection.contents'Img & LAT.LF);
+      CT.SU.Append (res, "units    : " & collection.units'Img & LAT.LF);
+      CT.SU.Append (res, "subunits : " & collection.subunits'Img & LAT.LF);
+      CT.SU.Append (res, "points   : " & collection.points'Img & LAT.LF);
+      for R in 1 .. collection.subunits loop
+         CT.SU.Append (res, LAT.LF & "Ring #" & CT.int2str (R) & LAT.LF);
+         declare
+            CS : Ring_Structure renames collection.structures (R);
+         begin
+            CT.SU.Append (res, "  Type     : " & CS.Item_Type'Img & LAT.LF);
+            CT.SU.Append (res, "  Item_ID  : " & CS.Item_ID'Img & LAT.LF);
+            CT.SU.Append (res, "  Ring_ID  : " & CS.Ring_ID'Img & LAT.LF);
+            CT.SU.Append (res, "  Size     : " & CS.Ring_Size'Img & LAT.LF);
+            CT.SU.Append (res, "  Pt Index : " & CS.Point_Index'Img & LAT.LF);
+            CT.SU.Append (res, "  Level    : " & CS.Mix_Level'Img & LAT.LF);
+            CT.SU.Append (res, "  Group ID : " & CS.Group_ID'Img & LAT.LF);
+         end;
+      end loop;
+      CT.SU.Append (res, LAT.LF & "Serialized Points" & LAT.LF);
+      for PI in 1 .. collection.points loop
+         declare
+            coord : Geometric_Point renames collection.points_set (PI);
+            line : String := CT.zeropad (PI, 2) & ": " &
+              format_real (coord.X) & ", " & format_real (coord.Y);
+         begin
+            CT.SU.Append (res, line & LAT.LF);
+         end;
+      end loop;
+      return CT.USS (res);
+   end dump;
 
 
    ------------------

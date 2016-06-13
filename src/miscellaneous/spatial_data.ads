@@ -169,6 +169,7 @@ package Spatial_Data is
                              top_first  : Boolean := True) return String;
    function Well_Known_Text (collection : Geometry;
                              top_first  : Boolean := True) return String;
+   function dump            (collection : Geometry) return String;
 
 
    CONVERSION_FAILED       : exception;

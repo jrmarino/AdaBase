@@ -1,5 +1,5 @@
 with Ada.Text_IO;
-with Spatial_Data; Use Spatial_Data;
+with Spatial_Data; use Spatial_Data;
 
 procedure Spatial1 is
 
@@ -219,12 +219,33 @@ begin
 
    declare
       shape  : Geometry := initialize_as_collection (my_point);
-      shape2 : geometry :=
-        initialize_as_collection (initialize_as_point (pt3));
+      shape2 : Geometry := initialize_as_collection (initialize_as_point
+                                                     (pt3));
    begin
       augment_collection (shape2, my_linestr);
+      augment_collection (shape2, my_polygon);
       augment_collection (shape, shape2);
       print (shape, "COLLECTION THAT CONTAINS ANOTHER COLLECTION");
+   end;
+
+   --  Have a collection two levels deep
+
+   declare
+      shape  : Geometry := initialize_as_collection (my_point);
+      shape2 : Geometry := initialize_as_collection (initialize_as_point
+                                                     (pt3));
+      shape3 : Geometry := initialize_as_collection (initialize_as_polygon
+                                                     (polyhole));
+   begin
+      augment_collection (shape, initialize_as_point ((3.25, 5.0)));
+      augment_collection (shape2, my_linestr);
+      augment_collection (shape3, initialize_as_point (pt2));
+      augment_collection (shape3, initialize_as_multi_point (pt1));
+      augment_collection (shape2, shape3);
+      augment_collection (shape, shape2);
+
+      print (shape, "COLLECTION THAT CONTAINS 2 LEVELS OF COLLECTIONS");
+      Ada.Text_IO.Put_Line (dump (shape));
    end;
 
 end Spatial1;
