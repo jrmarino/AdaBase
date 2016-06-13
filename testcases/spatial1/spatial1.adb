@@ -224,7 +224,7 @@ begin
    begin
       augment_collection (shape2, my_linestr);
       augment_collection (shape, shape2);
---      print (shape, "COLLECTION THAT CONTAINS ANOTHER COLLECTION");
+      print (shape, "COLLECTION THAT CONTAINS ANOTHER COLLECTION");
    end;
 
 end Spatial1;

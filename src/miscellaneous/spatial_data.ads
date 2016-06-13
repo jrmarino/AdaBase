@@ -23,7 +23,7 @@ package Spatial_Data is
 
    --  The range limits are necessary to avoid storage error warnings
    subtype Geo_Points is Positive range 1 .. 2 ** 20;
-   subtype Geo_Units  is Natural  range 0 .. 2 ** 20;
+   subtype Geo_Units  is Natural  range 0 .. 2 ** 12;
 
    --  Mutable variant records must be limited if tagged
    --  However, limited geometry cannot work.  We must be able to change the
@@ -180,15 +180,18 @@ package Spatial_Data is
 private
 
    subtype Geometric_Point_Collection is Geometric_Point_set;
+   type Mix_Level_type is mod 2 ** 5;
+   subtype Item_ID_type is Positive range 1 .. 2 ** 10;  -- 1024 shapes
 
    type Ring_Structure is
       record
          Item_Type   : Collection_Type;
-         Item_ID     : Positive;
-         Ring_ID     : Positive;
-         Ring_Size   : Positive;
-         Point_Index : Positive;
-         mix_level   : Natural;
+         Item_ID     : Item_ID_type;
+         Ring_ID     : Geo_Units;
+         Ring_Size   : Geo_Points;
+         Point_Index : Geo_Points;
+         Mix_Level   : Mix_Level_type;
+         Group_ID    : Item_ID_type;
       end record;
 
    type Ring_Structures is array (Positive range <>) of Ring_Structure;
@@ -214,8 +217,6 @@ private
          end case;
       end record;
 
-   blank_structure : constant Ring_Structure := (single_point, 1, 1, 1, 1, 0);
-
    --  returns a trimmed floating point image
    function format_real (value : Geometric_Real) return String;
 
@@ -223,6 +224,7 @@ private
    procedure check_collection_index (collection : Geometry; index : Positive);
 
    function single_canvas (gm_type  : Collection_Type;
+                           items    : Item_ID_type;
                            subunits : Geo_Units;
                            points   : Geo_Points) return Geometry;
 

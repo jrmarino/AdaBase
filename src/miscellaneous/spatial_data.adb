@@ -13,9 +13,10 @@ package body Spatial_Data is
                                     Ring_ID     => 1,
                                     Ring_Size   => 1,
                                     Point_Index => 1,
-                                    mix_level   => 0);
+                                    Mix_Level   => 0,
+                                    Group_ID    => 1);
    begin
-      return (contents => single_point,
+      return (contents   => single_point,
               units      => 1,
               subunits   => 1,
               points     => 1,
@@ -34,9 +35,10 @@ package body Spatial_Data is
                                     Ring_ID     => 1,
                                     Ring_Size   => 1,
                                     Point_Index => 1,
-                                    mix_level   => 0);
+                                    Mix_Level   => 0,
+                                    Group_ID    => 1);
    begin
-      return (contents => multi_point,
+      return (contents   => multi_point,
               units      => 1,
               subunits   => 1,
               points     => 1,
@@ -56,7 +58,8 @@ package body Spatial_Data is
                                     Ring_ID     => 1,
                                     Ring_Size   => line_string'Length,
                                     Point_Index => 1,
-                                    mix_level   => 0);
+                                    Mix_Level   => 0,
+                                    Group_ID    => 1);
    begin
       return (contents   => single_line_string,
               units      => 1,
@@ -78,9 +81,10 @@ package body Spatial_Data is
                                     Ring_ID     => 1,
                                     Ring_Size   => line_string'Length,
                                     Point_Index => 1,
-                                    mix_level   => 0);
+                                    Mix_Level   => 0,
+                                    Group_ID    => 1);
    begin
-      return (contents => multi_line_string,
+      return (contents   => multi_line_string,
               units      => 1,
               subunits   => 1,
               points     => line_string'Length,
@@ -102,7 +106,8 @@ package body Spatial_Data is
                                     Ring_ID     => 1,
                                     Ring_Size   => num_points,
                                     Point_Index => 1,
-                                    mix_level   => 0);
+                                    Mix_Level   => 0,
+                                    Group_ID    => 1);
    begin
       if num_points < 4 then
          raise LACKING_POINTS
@@ -122,7 +127,7 @@ package body Spatial_Data is
                                 inner_ring : Geometric_Ring)
    is
       num_points   : constant Natural := inner_ring'Length;
-      last_ring    : constant Natural := polygon.rings + 1;
+      last_ring    : constant Positive := polygon.rings + 1;
       total_points : constant Natural := polygon.points + num_points;
       PG : Geometric_Polygon (rings  => last_ring, points => total_points);
       metadata : Ring_Structure := (Item_Type   => single_polygon,
@@ -130,7 +135,8 @@ package body Spatial_Data is
                                     Ring_ID     => last_ring,
                                     Ring_Size   => num_points,
                                     Point_Index => polygon.points + 1,
-                                    mix_level   => 0);
+                                    Mix_Level   => 0,
+                                    Group_ID    => 1);
    begin
       if num_points < 4 then
          raise LACKING_POINTS
@@ -244,7 +250,7 @@ package body Spatial_Data is
       GM.structures := anything.structures;
       GM.points_set := anything.points_set;
       for ring in 1 .. anything.subunits loop
-         GM.structures (ring).mix_level := GM.structures (ring).mix_level + 1;
+         GM.structures (ring).Mix_Level := GM.structures (ring).Mix_Level + 1;
       end loop;
       return GM;
    end initialize_as_collection;
@@ -294,7 +300,8 @@ package body Spatial_Data is
                                              Ring_ID     => 1,
                                              Ring_Size   => 1,
                                              Point_Index => last_point,
-                                             mix_level   => 0);
+                                             Mix_Level   => 0,
+                                             Group_ID    => 1);
                GM.points_set (last_point) := point;
                collection := GM;
             end;
@@ -333,7 +340,8 @@ package body Spatial_Data is
                                              Ring_ID     => 1,
                                              Ring_Size   => LL,
                                              Point_Index => first_point,
-                                             mix_level   => 0);
+                                             Mix_Level   => 0,
+                                             Group_ID    => 1);
                for pt in first_point .. last_point loop
                   GM.points_set (pt) := line (marker);
                   marker := marker + 1;
@@ -383,7 +391,8 @@ package body Spatial_Data is
                      Ring_ID     => polygon.structures (marker).Ring_ID,
                      Ring_Size   => polygon.structures (marker).Ring_Size,
                      Point_Index => ptmr,
-                     mix_level   => 0);
+                     Mix_Level   => 0,
+                     Group_ID    => 1);
                   ptmr := ptmr + polygon.structures (marker).Ring_Size;
                   marker := marker + 1;
                end loop;
@@ -420,6 +429,8 @@ package body Spatial_Data is
                marker        : Positive   := anything.structures'First;
                ptmr          : Geo_Points := first_point;
                ppsm          : Geo_Points := anything.points_set'First;
+               next_group    : Positive   :=
+                 collection.structures (collection.subunits).Group_ID + 1;
                GM : Geometry (contents   => heterogeneous,
                               units      => last_unit,
                               subunits   => last_subunit,
@@ -431,12 +442,14 @@ package body Spatial_Data is
 
                for ring in first_subunit .. last_subunit loop
                   GM.structures (ring) :=
-                    (Item_Type   => anything.contents,
-                     Item_ID     => last_unit,
+                    (Item_Type   => anything.structures (marker).Item_Type,
+                     Item_ID     => anything.structures (marker).Item_ID +
+                                    collection.units,
                      Ring_ID     => anything.structures (marker).Ring_ID,
                      Ring_Size   => anything.structures (marker).Ring_Size,
                      Point_Index => ptmr,
-                     mix_level   => anything.structures (marker).mix_level + 1);
+                     Mix_Level   => anything.structures (marker).Mix_Level + 1,
+                     Group_ID    => next_group);
                   ptmr := ptmr + anything.structures (marker).Ring_Size;
                   marker := marker + 1;
                end loop;
@@ -587,31 +600,33 @@ package body Spatial_Data is
    --  single_canvas  --
    ---------------------
    function single_canvas (gm_type  : Collection_Type;
+                           items    : Item_ID_type;
                            subunits : Geo_Units;
                            points   : Geo_Points) return Geometry
    is
       p_set : Geometric_Point_Collection (1 .. points) :=
                     (others => Origin_Point);
-      s_set : Ring_Structures (1 .. subunits) := (others => blank_structure);
+      s_set : Ring_Structures (1 .. subunits) :=
+              (others => (single_point, 1, 1, 1, 1, 0, 1));
    begin
       case gm_type is
          when unset =>
             return (unset, 1, 1, 1);
          when single_point =>
-            return (single_point, 1, 1, 1, s_set, p_set);
+            return (single_point, items, 1, 1, s_set, p_set);
          when single_line_string =>
-            return (single_line_string, 1, 1, points, s_set, p_set);
+            return (single_line_string, items, 1, points, s_set, p_set);
          when single_polygon =>
-            return (single_polygon, 1, subunits, points, s_set, p_set);
+            return (single_polygon, items, subunits, points, s_set, p_set);
          when multi_point =>
-            return (multi_point, 1, subunits, points, s_set, p_set);
+            return (multi_point, items, subunits, points, s_set, p_set);
          when multi_line_string =>
-            return (multi_line_string, 1, subunits, points, s_set, p_set);
+            return (multi_line_string, items, subunits, points, s_set, p_set);
          when multi_polygon =>
-            return (multi_polygon, 1, subunits, points, s_set, p_set);
+            return (multi_polygon, items, subunits, points, s_set, p_set);
          when heterogeneous =>
             return (contents => heterogeneous,
-                    units    => 1,
+                    units    => items,
                     subunits => subunits,
                     points   => points,
                     structures => s_set,
@@ -629,9 +644,11 @@ package body Spatial_Data is
       found      : Boolean := False;
       num_points : Natural := 0;
       num_sunits : Geo_Units := 0;
+      num_items  : Natural := 0;
+      base_unit  : Natural := 0;
       F_subunit  : Geo_Units;
       L_subunit  : Geo_Units;
-      MFactor    : Natural;
+      MFactor    : Mix_Level_type;
       coltype    : Collection_Type;
    begin
       case collection.contents is
@@ -661,10 +678,10 @@ package body Spatial_Data is
             end;
          when heterogeneous =>
             for subunit in 1 .. collection.subunits loop
-               if collection.structures (subunit).Item_ID = index then
+               if collection.structures (subunit).Group_ID = index then
                   if not found then
                      F_subunit := subunit;
-                     MFactor := collection.structures (subunit).mix_level;
+                     MFactor := collection.structures (subunit).Mix_Level;
                      coltype := collection.structures (subunit).Item_Type;
                   end if;
                   L_subunit := subunit;
@@ -672,6 +689,10 @@ package body Spatial_Data is
                   num_sunits := num_sunits + 1;
                   num_points := num_points +
                                 collection.structures (subunit).Ring_Size;
+                  if base_unit /= collection.structures (subunit).Item_ID then
+                     num_items := num_items + 1;
+                  end if;
+                  base_unit := collection.structures (subunit).Item_ID;
                end if;
             end loop;
             if not found then
@@ -682,60 +703,43 @@ package body Spatial_Data is
                --  The element is also heterogenous
                coltype := heterogeneous;
             end if;
-            case collection.structures (F_subunit).Item_Type is
+            case coltype is
                when unset =>
                   raise CONVERSION_FAILED
                     with "Illegal heterogenous type (unset)";
-               when single_point =>
-                  declare
-                     CS : Ring_Structure renames
-                       collection.structures (F_subunit);
-                     sndx : Positive := CS.Point_Index;
-                  begin
-                     return initialize_as_point (collection.points_set (sndx));
-                  end;
-               when single_line_string =>
-                  declare
-                     CS : Ring_Structure renames
-                       collection.structures (F_subunit);
-                     sndx      : Positive := CS.Point_Index;
-                     data_size : Positive := CS.Ring_Size;
-                     LNS : Geometric_Line_String (1 .. data_size);
-                     marker : Positive := 1;
-                  begin
-                     for pt in sndx .. sndx + data_size - 1 loop
-                        LNS (marker) := collection.points_set (pt);
-                        marker := marker + 1;
-                     end loop;
-                     return initialize_as_line (LNS);
-                  end;
-               when heterogeneous     |
-                    single_polygon    |
-                    multi_point       |
-                    multi_polygon     |
-                    multi_line_string =>
+               when others =>
                   declare
                      RS : Ring_Structures renames collection.structures;
                      CS : Ring_Structure renames RS (F_subunit);
                      FP : Geo_Points := CS.Point_Index;
                      LP : Geo_Points := FP + num_points - 1;
                      GM : Geometry := single_canvas (coltype,
+                                                     num_items,
                                                      num_sunits,
                                                      num_points);
                      marker : Geo_Units := 1;
                      diff   : Natural := CS.Item_ID - 1;
                      ptdiff : Natural := CS.Point_Index - 1;
+                     group  : Positive := 1;
+                     baseID : Positive := CS.Item_ID;
                   begin
                      GM.points_set (1 .. num_points) :=
                        collection.points_set (FP .. LP);
                      for S in F_subunit .. L_subunit loop
+                        if coltype = heterogeneous and then
+                          baseID /= RS (S).Item_ID
+                        then
+                           group := group + 1;
+                        end if;
+                        baseID := RS (S).Item_ID;
                         GM.structures (marker) :=
                           (Item_Type   => RS (S).Item_Type,
                            Item_ID     => RS (S).Item_ID - diff,
                            Ring_ID     => RS (S).Ring_ID,
                            Ring_Size   => RS (S).Ring_Size,
                            Point_Index => RS (S).Point_Index - ptdiff,
-                           mix_level   => RS (S).mix_level - 1);
+                           Mix_Level   => RS (S).Mix_Level - 1,
+                           Group_ID    => group);
                         marker := marker + 1;
                      end loop;
                      return GM;
@@ -973,6 +977,7 @@ package body Spatial_Data is
    ------------------
    function mysql_text (collection : Geometry; top_first : Boolean := True)
                         return String is
+      function initialize_title (title : String) return CT.Text;
       function format_point (pt    : Geometric_Point;
                              first : Boolean := False) return String;
       function format_polygon (poly  : Geometric_Polygon;
@@ -1048,6 +1053,15 @@ package body Spatial_Data is
          end if;
       end format_line_string;
 
+      function initialize_title (title : String) return CT.Text is
+      begin
+         if top_first then
+            return CT.SUS (title);
+         else
+            return CT.SUS (sep & title);
+         end if;
+      end initialize_title;
+
       classification : Collection_Type := collection.contents;
    begin
       case classification is
@@ -1060,9 +1074,15 @@ package body Spatial_Data is
             return format_polygon (retrieve_polygon (collection), top_first);
          when multi_point =>
             declare
-               product : CT.Text := CT.SUS ("MultiPoint(");
-               first   : Boolean := top_first;
+               lead    : constant String := "MultiPoint(";
+               first   : Boolean := True;
+               product : CT.Text;
             begin
+               if top_first then
+                  CT.SU.Append (product, lead);
+               else
+                  CT.SU.Append (product, sep & lead);
+               end if;
                for x in collection.points_set'Range loop
                   CT.SU.Append
                     (product, format_point
@@ -1073,8 +1093,8 @@ package body Spatial_Data is
             end;
          when multi_line_string =>
             declare
-               product : CT.Text := CT.SUS ("MultiLineString(");
-               first   : Boolean := top_first;
+               product : CT.Text := initialize_title ("MultiLineString(");
+               first   : Boolean := True;
             begin
                for ls in 1 .. collection.units loop
                   CT.SU.Append
@@ -1086,11 +1106,20 @@ package body Spatial_Data is
             end;
          when multi_polygon =>
             declare
-               product : CT.Text := CT.SUS ("MultiPolygon(");
-               first   : Boolean := top_first;
+               lead    : constant String := "MultiPolygon(";
+               first   : Boolean := True;
+               product : CT.Text;
             begin
-               if collection.units = 1 then
-                  product := CT.blank;
+               if top_first then
+                  if collection.units > 1 then
+                     CT.SU.Append (product, lead);
+                  end if;
+               else
+                  if collection.units > 1 then
+                     CT.SU.Append (product, sep & lead);
+                  else
+                     CT.SU.Append (product, sep);
+                  end if;
                end if;
                for ls in 1 .. collection.units loop
                   CT.SU.Append
@@ -1105,8 +1134,8 @@ package body Spatial_Data is
             end;
          when heterogeneous =>
             declare
-               product : CT.Text := CT.SUS ("GeometryCollection(");
-               first   : Boolean := top_first;
+               product : CT.Text := initialize_title ("GeometryCollection(");
+               first   : Boolean := True;
                GM      : Geometry;
             begin
                for ls in 1 .. collection.units loop
@@ -1262,7 +1291,7 @@ package body Spatial_Data is
          when multi_point =>
             declare
                product : CT.Text := initialize_title ("MULTIPOINT(");
-               first   : Boolean := top_first;
+               first   : Boolean := True;
             begin
                for x in collection.points_set'Range loop
                   CT.SU.Append
@@ -1275,7 +1304,7 @@ package body Spatial_Data is
          when multi_line_string =>
             declare
                product : CT.Text := initialize_title ("MULTILINESTRING(");
-               first   : Boolean := top_first;
+               first   : Boolean := True;
             begin
                for ls in 1 .. collection.units loop
                   CT.SU.Append
@@ -1288,7 +1317,7 @@ package body Spatial_Data is
          when multi_polygon =>
             declare
                product : CT.Text := initialize_title ("MULTIPOLYGON(");
-               first   : Boolean := top_first;
+               first   : Boolean := True;
             begin
                for ls in 1 .. collection.units loop
                   CT.SU.Append
@@ -1302,7 +1331,7 @@ package body Spatial_Data is
          when heterogeneous =>
             declare
                product : CT.Text := initialize_title ("GEOMETRYCOLLECTION(");
-               first   : Boolean := top_first;
+               first   : Boolean := True;
                GM      : Geometry;
             begin
                for ls in 1 .. collection.units loop
