@@ -246,6 +246,9 @@ begin
 
       print (shape, "COLLECTION THAT CONTAINS 2 LEVELS OF COLLECTIONS");
       Ada.Text_IO.Put_Line (dump (shape));
+
+      Ada.Text_IO.Put_Line ("Dump shape 3");
+      Ada.Text_IO.Put_Line (dump (retrieve_subcollection (shape, 3)));
    end;
 
 end Spatial1;
