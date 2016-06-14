@@ -56,14 +56,16 @@ package body Spatial_Data.Well_Known_Binary is
                  multi_point |
                  multi_line_string |
                  multi_polygon =>
-               handle_unit_collection (payload    => binary,
+               handle_unit_collection (flavor     => col_type,
+                                       payload    => binary,
                                        marker     => marker,
                                        collection => product);
             when heterogeneous =>
                entities := entity_count;
                marker := marker + 9;
                for entity in 1 .. entities loop
-                  handle_unit_collection (payload    => binary,
+                  handle_unit_collection (flavor     => col_type,
+                                          payload    => binary,
                                           marker     => marker,
                                           collection => product);
                end loop;
@@ -85,11 +87,13 @@ package body Spatial_Data.Well_Known_Binary is
    ------------------------------
    --  handle_unit_collection  --
    ------------------------------
-   procedure handle_unit_collection (payload : WKB_Chain;
+   procedure handle_unit_collection (flavor  : Collection_Type;
+                                     payload : WKB_Chain;
                                      marker : in out Natural;
                                      collection : in out Geometry)
    is
       function entity_count return Natural;
+      procedure attach (anything : Geometry);
       endianness : constant WKB_Endianness :=
                    decode_endianness (payload (marker));
       ID_chain   : constant WKB_Identifier_Chain :=
@@ -100,12 +104,22 @@ package body Spatial_Data.Well_Known_Binary is
       col_type   : constant Collection_Type :=
                    get_collection_type (Identity);
       entities   : Natural;
+      initialize_first : constant Boolean := (collection.contents = unset);
 
       function entity_count return Natural is
       begin
          return Natural (decode_hex32 (endianness,
                          payload (marker + 5 .. marker + 8)));
       end entity_count;
+
+      procedure attach (anything : Geometry) is
+      begin
+         if initialize_first then
+            collection := anything;
+         else
+            augment_collection (collection, anything);
+         end if;
+      end attach;
    begin
       case col_type is
          when unset =>
@@ -115,7 +129,7 @@ package body Spatial_Data.Well_Known_Binary is
             declare
                pt : Geometric_Point := handle_new_point (payload, marker);
             begin
-               augment_collection (collection, initialize_as_point (pt));
+               attach (initialize_as_point (pt));
             end;
          when multi_point =>
             entities := entity_count;
@@ -129,14 +143,14 @@ package body Spatial_Data.Well_Known_Binary is
                   augment_multi_point (element,
                                        handle_new_point (payload, marker));
                end loop;
-               augment_collection (collection, element);
+               attach (element);
             end;
          when single_line_string =>
             declare
                LS : Geometric_Line_String :=
                     handle_linestring (payload, marker);
             begin
-               augment_collection (collection, initialize_as_line (LS));
+               attach (initialize_as_line (LS));
             end;
          when multi_line_string =>
             entities := entity_count;
@@ -151,13 +165,13 @@ package body Spatial_Data.Well_Known_Binary is
                   augment_multi_line (element,
                                       handle_linestring (payload, marker));
                end loop;
-               augment_collection (collection, element);
+               attach (element);
             end;
          when single_polygon =>
             declare
                PG : Geometric_Polygon := handle_polygon (payload, marker);
             begin
-               augment_collection (collection, initialize_as_polygon (PG));
+               attach (initialize_as_polygon (PG));
             end;
          when multi_polygon =>
             entities := entity_count;
@@ -171,8 +185,7 @@ package body Spatial_Data.Well_Known_Binary is
                   augment_multi_polygon (element,
                                          handle_polygon (payload, marker));
                end loop;
-
-               augment_collection (collection, element);
+               attach (element);
             end;
          when heterogeneous =>
             raise WKB_INVALID

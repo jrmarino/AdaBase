@@ -58,7 +58,8 @@ private
                             marker : in out Natural)
                             return Geometric_Polygon;
 
-   procedure handle_unit_collection (payload : WKB_Chain;
+   procedure handle_unit_collection (flavor  : Collection_Type;
+                                     payload : WKB_Chain;
                                      marker : in out Natural;
                                      collection : in out Geometry);
 
