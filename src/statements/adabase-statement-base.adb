@@ -1767,7 +1767,8 @@ package body AdaBase.Statement.Base is
          when ft_bits      => param.a20.all :=
                               ARC.convert ("", param.a20.all'Length);
          when ft_utf8      => param.a21.all := AR.PARAM_IS_TEXT_UTF8;
-         when ft_geometry  => param.a22.all := GEO.Blank_Geometry;
+         when ft_geometry  => param.a22.all := GEO.initialize_as_point
+                                               (GEO.Origin_Point);
       end case;
    end set_as_null;
 

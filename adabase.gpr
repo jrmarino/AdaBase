@@ -123,7 +123,8 @@ project AdaBase is
 
    package Compiler is
       for Default_Switches ("ada")
-         use ("-gnatyaAbBcdefhiIklnOprsStx", "-gnat12") & Extra_Flags;
+         use ("-gnatyaAbBcdefhiIklnOprsStx", "-gnat12", "-fstack-check") 
+              & Extra_Flags;
    end Compiler;
 
    package Pretty_Printer is
