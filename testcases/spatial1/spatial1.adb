@@ -215,6 +215,15 @@ begin
    --  Additional collection tests  --
    -----------------------------------
 
+   --  repeat double polygon test, but multipolygon instead of collection
+
+   declare
+      shape : Geometry := initialize_as_multi_polygon (magic_polygon);
+   begin
+      augment_multi_polygon (shape, polyhole);
+      print (shape, "MULTI-POLYGON (POLY + CMPLX POLY)");
+   end;
+
    --  Have a collection inside a collection
 
    declare

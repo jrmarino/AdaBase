@@ -394,7 +394,7 @@ package body Spatial_Data is
                for ring in first_subunit .. last_subunit loop
                   GM.structures (ring) :=
                     (Item_Type   => multi_polygon,
-                     Item_ID     => ring,
+                     Item_ID     => last_unit,
                      Ring_ID     => polygon.structures (marker).Ring_ID,
                      Ring_Size   => polygon.structures (marker).Ring_Size,
                      Point_Index => ptmr,

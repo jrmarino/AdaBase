@@ -90,6 +90,10 @@ MySQL: GeometryCollection(Polygon(Linestring(Point(0.5, 2), Point(11, 4.4), Poin
 MySQL: GeometryCollection(Polygon(Linestring(Point(0.5, 2), Point(11, 4.4), Point(12, 8.1), Point(0.005, 2)), Linestring(Point(1, 2), Point(3.2, 4.5), Point(8.8, 7.7), Point(1, 2)), Linestring(Point(13.5, 15.35), Point(98.1, 11.7), Point(-13.75, 0.0004), Point(13.5, 15.35))), LineString(Point(0.5, 2), Point(11, 4.4), Point(12, 8.1)))
   WKT: GEOMETRYCOLLECTION(POLYGON((0.5 2,11 4.4,12 8.1,0.005 2),(1 2,3.2 4.5,8.8 7.7,1 2),(13.5 15.35,98.1 11.7,-13.75 0.0004,13.5 15.35)),LINESTRING(0.5 2,11 4.4,12 8.1))
 
+===== MULTI-POLYGON (POLY + CMPLX POLY) =====
+MySQL: MultiPolygon(Polygon(Linestring(Point(0.5, 2), Point(11, 4.4), Point(12, 8.1), Point(0.005, 2))), Polygon(Linestring(Point(0.5, 2), Point(11, 4.4), Point(12, 8.1), Point(0.005, 2)), Linestring(Point(1, 2), Point(3.2, 4.5), Point(8.8, 7.7), Point(1, 2)), Linestring(Point(13.5, 15.35), Point(98.1, 11.7), Point(-13.75, 0.0004), Point(13.5, 15.35))))
+  WKT: MULTIPOLYGON(((0.5 2,11 4.4,12 8.1,0.005 2)),((0.5 2,11 4.4,12 8.1,0.005 2),(1 2,3.2 4.5,8.8 7.7,1 2),(13.5 15.35,98.1 11.7,-13.75 0.0004,13.5 15.35)))
+
 ===== COLLECTION THAT CONTAINS ANOTHER COLLECTION =====
 MySQL: GeometryCollection(Point(18.2, -3.4), GeometryCollection(Point(4.5, 6), LineString(Point(0.5, 2), Point(11, 4.4), Point(12, 8.1)), Polygon(Linestring(Point(0.5, 2), Point(11, 4.4), Point(12, 8.1), Point(0.005, 2)))))
   WKT: GEOMETRYCOLLECTION(POINT(18.2 -3.4),GEOMETRYCOLLECTION(POINT(4.5 6),LINESTRING(0.5 2,11 4.4,12 8.1),POLYGON((0.5 2,11 4.4,12 8.1,0.005 2))))
