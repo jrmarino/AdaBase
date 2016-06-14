@@ -52,16 +52,11 @@ private
    function handle_polyrings  (direction : WKB_Endianness;
                                payload   : WKB_Chain;
                                marker    : in out Natural)
-                               return Geometric_Polygon;
+                               return Geometric_Ring;
 
    function handle_polygon (payload : WKB_Chain;
-                            marker : in out Natural;
-                            force_multi : Boolean)
-                            return Geometry;
-
-   procedure handle_extra_multipolygon (payload : WKB_Chain;
-                                        marker : in out Natural;
-                                        canvas : in out Geometry);
+                            marker : in out Natural)
+                            return Geometric_Polygon;
 
    procedure handle_unit_collection (payload : WKB_Chain;
                                      marker : in out Natural;
