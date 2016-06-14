@@ -181,8 +181,8 @@ package Spatial_Data is
 private
 
    subtype Geometric_Point_Collection is Geometric_Point_set;
-   type Mix_Level_type is mod 2 ** 5;
    subtype Item_ID_type is Positive range 1 .. 2 ** 10;  -- 1024 shapes
+   type collection_flags is mod 2 ** 24;
 
    type Ring_Structure is
       record
@@ -191,7 +191,7 @@ private
          Ring_ID     : Geo_Units;
          Ring_Size   : Geo_Points;
          Point_Index : Geo_Points;
-         Mix_Level   : Mix_Level_type;
+         Level_Flags : collection_flags;
          Group_ID    : Item_ID_type;
       end record;
 
@@ -220,6 +220,9 @@ private
 
    --  returns a trimmed floating point image
    function format_real (value : Geometric_Real) return String;
+
+   --  returns the highest value for Level Flags found
+   function highest_level (collection : Geometry) return collection_flags;
 
    --  raises exception if index is out of range
    procedure check_collection_index (collection : Geometry; index : Positive);
