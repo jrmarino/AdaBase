@@ -115,7 +115,11 @@ package body Spatial_Data.Well_Known_Binary is
       procedure attach (anything : Geometry) is
       begin
          if initialize_first then
-            collection := anything;
+            if flavor = heterogeneous then
+               collection := initialize_as_collection (anything);
+            else
+               collection := anything;
+            end if;
          else
             augment_collection (collection, anything);
          end if;
