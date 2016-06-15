@@ -199,9 +199,20 @@ package body Spatial_Data.Well_Known_Binary is
                attach (element);
             end;
          when heterogeneous =>
-            --  Currently impossible with MySQL
-            raise WKB_INVALID
-              with "collection inside collection not yet implemented";
+            --  Currently impossible with MySQL, but supported by PostGIS
+            entities := entity_count;
+            marker := marker + 9;
+            declare
+               mega_element : Geometry;
+            begin
+               for entity in 1 .. entities loop
+                  handle_unit_collection (flavor     => heterogeneous,
+                                          payload    => payload,
+                                          marker     => marker,
+                                          collection => mega_element);
+               end loop;
+               attach (mega_element);
+            end;
       end case;
    end handle_unit_collection;
 
