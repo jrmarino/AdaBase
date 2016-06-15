@@ -1,0 +1,21 @@
+MySQL does not support Geometry collections that contain other Geometry
+collections despite it being specified by GIS.  PostGIS, the extension to
+PostgreSQL, does support it though.  To fully test it's capability, the
+PostgreSQL version of spatial_plus table has a much more complex
+sp_coll2 value, so the diff between the MySQL and PgSQL output is shown
+here for informational reasons.
+
+--- mysql/testcases/spatial2/output.txt
++++ pgsql/testcases/spatial2/output.txt
+@@ -35,9 +35,9 @@ LINESTRING(0.5 2,11 4.4,12 8.1)
+     column : tx_geometry : FT_UTF8
+ LINESTRING(0.5 2,11 4.4,12 8.1)
+     column : sp_coll2 : FT_GEOMETRY
+-GEOMETRYCOLLECTION(POINT(18.2 -3.4),LINESTRING(0.5 2,11 4.4,12 8.1),POINT(3.25 7),MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,3 2,3 3,2 3,2 2)),((3 3,6 2,6 4,3 3))),MULTIPOINT(3.5 5.6,4.8 10.6),POLYGON((35 10,45 45,15 40,10 20,35 10),(20 30,35 35,30 20,20 30)))
++GEOMETRYCOLLECTION(POINT(18.2 -3.4),LINESTRING(0.5 2,11 4.4,12 8.1),POINT(3.25 7),MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,3 2,3 3,2 3,2 2)),((3 3,6 2,6 4,3 3))),GEOMETRYCOLLECTION(GEOMETRYCOLLECTION(POINT(3.25 5),MULTIPOINT(0.5 2,11 4.4,12 8.1),MULTIPOINT(-0.7 0.7,1.2 -1.2,2.2 2.995,-9.99 -9.00001),MULTIPOLYGON(((40 40,20 45,45 30,40 40)),((20 35,10 30,10 10,30 5,45 20,20 35),(30 20,20 15,20 25,30 20)))),POINT(9.99 5.55),POINT(-7.01 -4.9234)),MULTIPOINT(3.5 5.6,4.8 10.6),POLYGON((35 10,45 45,15 40,10 20,35 10),(20 30,35 35,30 20,20 30)),MULTILINESTRING((10 10,20 20,10 40),(40 40,30 30,40 20,30 10)))
+     column : tx_coll2 : FT_UTF8
+-GEOMETRYCOLLECTION(POINT(18.2 -3.4),LINESTRING(0.5 2,11 4.4,12 8.1),POINT(3.25 7),MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,3 2,3 3,2 3,2 2)),((3 3,6 2,6 4,3 3))),MULTIPOINT(3.5 5.6,4.8 10.6),POLYGON((35 10,45 45,15 40,10 20,35 10),(20 30,35 35,30 20,20 30)))
++GEOMETRYCOLLECTION(POINT(18.2 -3.4),LINESTRING(0.5 2,11 4.4,12 8.1),POINT(3.25 7),MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,3 2,3 3,2 3,2 2)),((3 3,6 2,6 4,3 3))),GEOMETRYCOLLECTION(GEOMETRYCOLLECTION(POINT(3.25 5),MULTIPOINT(0.5 2,11 4.4,12 8.1),MULTIPOINT(-0.7 0.7,1.2 -1.2,2.2 2.995,-9.99 -9.00001),MULTIPOLYGON(((40 40,20 45,45 30,40 40)),((20 35,10 30,10 10,30 5,45 20,20 35),(30 20,20 15,20 25,30 20)))),POINT(9.99 5.55),POINT(-7.01 -4.9234)),MULTIPOINT(3.5 5.6,4.8 10.6),POLYGON((35 10,45 45,15 40,10 20,35 10),(20 30,35 35,30 20,20 30)),MULTILINESTRING((10 10,20 20,10 40),(40 40,30 30,40 20,30 10)))
+     column : sp_geometry2 : FT_GEOMETRY
+ 
+     column : tx_geometry2 : FT_UTF8
