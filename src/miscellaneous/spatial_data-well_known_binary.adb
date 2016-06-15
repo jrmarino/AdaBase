@@ -23,6 +23,13 @@ package body Spatial_Data.Well_Known_Binary is
       chainlen : Natural := binary'Length;
    begin
       if chainlen < 21 then
+         if chainlen = 0 then
+            declare
+               dummy : Geometry;  -- unset
+            begin
+               return dummy;
+            end;
+         end if;
          raise WKB_INVALID
            with "Chain is smaller than required to accommodate a point)";
       end if;
@@ -192,6 +199,7 @@ package body Spatial_Data.Well_Known_Binary is
                attach (element);
             end;
          when heterogeneous =>
+            --  Currently impossible with MySQL
             raise WKB_INVALID
               with "collection inside collection not yet implemented";
       end case;

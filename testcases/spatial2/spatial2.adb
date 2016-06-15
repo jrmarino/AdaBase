@@ -34,6 +34,12 @@ begin
             ", ST_AsText (sp_multi_polygon) as tx_multi_polygon" &
             ", sp_geo_collection" &
             ", ST_AsText (sp_geo_collection) as tx_geo_collection" &
+            ", sp_geometry" &
+            ", ST_AsText (sp_geometry) as tx_geometry" &
+            ", sp_coll2" &
+            ", ST_AsText (sp_coll2) as tx_coll2" &
+            ", sp_geometry2" &
+            ", ST_AsText (sp_geometry2) as tx_geometry2" &
          " FROM spatial_plus";
       stmt : CON.Stmt_Type := CON.DR.query (sql);
       row  : ARS.Datarow;
