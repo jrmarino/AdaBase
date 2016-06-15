@@ -190,6 +190,7 @@ private
          Item_ID     : Item_ID_type;
          Ring_ID     : Geo_Units;
          Ring_Size   : Geo_Points;
+         Ring_Count  : Geo_Units;
          Point_Index : Geo_Points;
          Level_Flags : collection_flags;
          Group_ID    : Item_ID_type;
