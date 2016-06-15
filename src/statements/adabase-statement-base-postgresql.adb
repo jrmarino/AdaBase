@@ -589,8 +589,9 @@ package body AdaBase.Statement.Base.PostgreSQL is
                   when ft_supertext => dossier.a15.all := convert (ST);
                   when ft_enumtype  => dossier.a18.all := ARC.convert (ST);
                   when ft_utf8      => dossier.a21.all := ST;
-                  when ft_geometry  => dossier.a22.all :=
-                                       WKB.Translate_WKB (ST);
+                  when ft_geometry  =>
+                     dossier.a22.all :=
+                       WKB.Translate_WKB (postgis_to_WKB (ST));
                   when ft_timestamp =>
                      begin
                         dossier.a16.all := ARC.convert (ST);
@@ -1105,7 +1106,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
                when ft_utf8 =>
                   dvariant := (datatype => ft_utf8, v21 => CT.SUS (ST));
                when ft_geometry =>
-                  dvariant := (datatype => ft_geometry, v22 => CT.SUS (ST));
+                  dvariant := (datatype => ft_geometry,
+                               v22 => CT.SUS (postgis_to_WKB (ST)));
                when ft_timestamp =>
                   begin
                      dvariant := (datatype => ft_timestamp,
@@ -1409,6 +1411,72 @@ package body AdaBase.Statement.Base.PostgreSQL is
          end;
       end if;
    end push_result_references;
+
+
+   ----------------------
+   --  postgis_to_WKB  --
+   ----------------------
+   function postgis_to_WKB (postgis : String) return String
+   is
+      subtype hex_type is String (1 .. 2);
+      function hex2char (hex : hex_type) return Character;
+      --  Postgis is a string of hexidecimal values (e.g. 0 .. F)
+      --  position 01-02 = endian  (1 byte)
+      --  position 03-04 = WKB type (1 byte, not 4 bytes)
+      --  position 05-10 - internal, ignore (3 bytes)
+      --  position 11-18 - SRID, ignore, 4 bytes
+      --  position 19+ is stock WKB.
+      --  Must always be evenly numbered (2 digits per byte)
+
+      function hex2char (hex : hex_type) return Character
+      is
+         sixt : Character renames hex (1);
+         ones : Character renames hex (2);
+         zero  : Natural := Character'Pos ('0');
+         alpha : Natural := Character'Pos ('A');
+         val : Natural;
+      begin
+         case sixt is
+            when '0' .. '9' =>
+               val := 16 * (Character'Pos (sixt) - zero);
+            when 'A' .. 'F' =>
+               val := 16 * (10 + Character'Pos (sixt) - alpha);
+            when others =>
+               raise POSTGIS_READ_ERROR
+                 with "hex (1) invalid character: " & sixt;
+         end case;
+         case ones is
+            when '0' .. '9' =>
+               val := val + (Character'Pos (ones) - zero);
+            when 'A' .. 'F' =>
+               val := val + (10 + Character'Pos (ones) - alpha);
+            when others =>
+               raise POSTGIS_READ_ERROR
+                 with "hex (2) invalid character: " & ones;
+         end case;
+         return Character'Val (val);
+      end hex2char;
+
+      output_size : constant Natural := (postgis'Length / 2) - 4;
+      wkb_string  : String (1 .. output_size) := (others => ASCII.NUL);
+      canvas      : String (1 .. postgis'Length) := postgis;
+      endian_sign : constant hex_type := canvas (1 .. 2);
+      geom_type   : constant hex_type := canvas (3 .. 4);
+   begin
+      wkb_string (1) := hex2char (endian_sign);
+      if Character'Pos (wkb_string (1)) = 1 then
+         --  little endian
+         wkb_string (2) := hex2char (geom_type);
+      else
+         --  big endian
+         wkb_string (5) := hex2char (geom_type);
+      end if;
+      for chunk in 6 .. output_size loop
+         wkb_string (chunk) :=
+           hex2char (canvas ((chunk * 2) + 7 .. (chunk * 2) + 8));
+      end loop;
+      return wkb_string;
+   end postgis_to_WKB;
 
 
 end AdaBase.Statement.Base.PostgreSQL;

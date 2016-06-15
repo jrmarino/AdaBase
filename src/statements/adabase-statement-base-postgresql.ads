@@ -83,6 +83,8 @@ package AdaBase.Statement.Base.PostgreSQL is
    function returned_refcursors (Stmt : PostgreSQL_statement)
                                  return Boolean;
 
+   POSTGIS_READ_ERROR : exception;
+
 private
 
    type column_info is record
@@ -155,5 +157,7 @@ private
 
    procedure push_result_references (Stmt  : out PostgreSQL_statement;
                                      calls : String);
+
+   function postgis_to_WKB (postgis : String) return String;
 
 end AdaBase.Statement.Base.PostgreSQL;

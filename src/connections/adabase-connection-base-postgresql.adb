@@ -1201,12 +1201,18 @@ package body AdaBase.Connection.Base.PostgreSQL is
          when 'C' => return ft_textual;  --  No support for composites yet
          when 'D' => return ft_timestamp;
          when 'E' => return ft_enumtype;
-         when 'G' => return ft_textual;  --  IMPLEMENT GEOMETRY LATER
+         when 'G' => return ft_textual;  --  unsupp native geom, not postgis!
          when 'I' => return ft_textual;
          when 'N' => null;               --  Let numerics fall through
          when 'S' => return string_type;
          when 'T' => return ft_textual;  --  Huge, 4/12/16 bytes
-         when 'U' => return ft_textual;
+         when 'U' =>
+            if pg_type = "geometry" then
+               --  PostGIS
+               return ft_geometry;
+            else
+               return ft_textual;
+            end if;
          when 'V' => return ft_bits;     --  String of 1/0 for now
 
          when 'X' => raise METADATA_FAIL
