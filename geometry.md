@@ -544,7 +544,114 @@ Element 7 type : MULTI_LINE_STRING
 Element 7 size : 1
 Element 7 wkt  : POLYGON((30 10,40 40,20 40,10 20,30 10))
 </pre>
+<p class="caption">Output using the MySQL or PostgreSQL driver</p>
+<br/>
+<pre class="code">
+with AdaBase;
+with Connect;
+with CommonText;
+with Ada.Text_IO;
+with AdaBase.Results.Sets;
+with Spatial_Data;
 
+procedure Spatial4 is
+
+   package CON renames Connect;
+   package TIO renames Ada.Text_IO;
+   package ARS renames AdaBase.Results.Sets;
+   package CT  renames CommonText;
+   package SD  renames Spatial_Data;
+
+begin
+
+   CON.connect_database;
+
+   declare
+      use type SD.Geometric_Real;
+      my_point   : SD.Geometry := SD.initialize_as_point ((3.2, 4.775));
+      my_linestr : SD.Geometry := SD.initialize_as_line
+                   (((-0.034, 14.993), (5.0, 6.0), (-3.0, 19.0), (0.0, -7.1000009)));
+      wrk_poly   : SD.Geometric_Polygon := SD.start_polygon
+                   (((35.0, 10.0), (45.0, 45.0), (15.0, 40.0), (10.0, 20.0), (35.0, 10.0)));
+      my_polygon : SD.Geometry;
+      my_mpoly   : SD.Geometry;
+      my_mpoint  : SD.Geometry := SD.initialize_as_multi_point ((10.0, 10.0));
+      my_mline   : SD.Geometry := SD.initialize_as_multi_line
+                   (((5.0, 5.0), (0.0, 2.0), (-7.0, 13.0), (99.0, -1.0), (50.0, 50.0)));
+      my_mixture : SD.Geometry := SD.initialize_as_collection (my_linestr);
+   begin
+      SD.append_inner_ring (wrk_poly, ((20.0, 30.0), (35.0, 35.0), (30.0, 20.0), (20.0, 30.0)));
+      my_polygon := SD.initialize_as_polygon (wrk_poly);
+      SD.augment_multi_point (my_mpoint, (100.0, 200.0));
+      SD.augment_multi_point (my_mpoint, (-52.0, 250.0));
+      SD.augment_multi_line  (my_mline, ((20.0, 10.0), (87.0, 88.0)));
+      my_mpoly := SD.initialize_as_multi_polygon (wrk_poly);
+      SD.augment_collection (my_mixture, my_polygon);
+      SD.augment_collection (my_mixture, my_mpoint);
+      SD.augment_collection (my_mixture, my_point);
+      SD.augment_collection (my_mixture, my_mline);
+      declare
+         template : String := "INSERT INTO spatial_plus " &
+            "(id, sp_point, sp_linestring, sp_polygon, sp_multi_point," &
+            " sp_multi_line_string, sp_multi_polygon, sp_geo_collection)" &
+            " VALUES (10, ST_GeomFromText (:pt, 4326)," &
+            " ST_GeomFromText (:line, 4326)," &
+            " ST_GeomFromText (:poly, 4326)," &
+            " ST_GeomFromText(:mpoint, 4326)," &
+            " ST_GeomFromText(:mline, 4326)," &
+            " ST_GeomFromText(:mpoly, 4326)," &
+            " ST_GeomFromText(:collset, 4326))";
+         stmt : CON.Stmt_Type := CON.DR.prepare (template);
+      begin
+         stmt.assign ("pt",      SD.Well_Known_Text (my_point));
+         stmt.assign ("line",    SD.Well_Known_Text (my_linestr));
+         stmt.assign ("poly",    SD.Well_Known_Text (my_polygon));
+         stmt.assign ("mpoint",  SD.Well_Known_Text (my_mpoint));
+         stmt.assign ("mline",   SD.Well_Known_Text (my_mline));
+         stmt.assign ("mpoly",   SD.Well_Known_Text (my_mpoly));
+         stmt.assign ("collset", SD.Well_Known_Text (my_mixture));
+         if not stmt.execute then
+            TIO.Put_Line (stmt.last_driver_message);
+            CON.DR.rollback;
+            return;
+         end if;
+         declare
+            row : ARS.Datarow;
+            s2  : CON.Stmt_Type := CON.DR.query
+                  ("SELECT * FROM spatial_plus WHERE id=10");
+         begin
+            loop
+               row := s2.fetch_next;
+               exit when row.data_exhausted;
+               for x in Natural range 1 .. row.count loop
+                  TIO.Put (s2.column_name (x) & " : ");
+                  TIO.Put_Line (row.column (x).as_string);
+               end loop;
+            end loop;
+         end;
+         CON.DR.rollback;
+      end;
+   end;
+   CON.DR.disconnect;
+
+end Spatial4;
+</pre>
+<p class="caption">Example code: testcases/spatial3/spatial3.adb</p>
+<br/>
+<pre class="output">
+id : 10
+sp_point : POINT(3.2 4.775)
+sp_linestring : LINESTRING(-0.034 14.993,5 6,-3 19,0 -7.1000009)
+sp_polygon : POLYGON((35 10,45 45,15 40,10 20,35 10),(20 30,35 35,30 20,20 30))
+sp_multi_point : MULTIPOINT(10 10,100 200,-52 250)
+sp_multi_line_string : MULTILINESTRING((5 5,0 2,-7 13,99 -1,50 50),(20 10,87 88))
+sp_multi_polygon : MULTIPOLYGON(((35 10,45 45,15 40,10 20,35 10),(20 30,35 35,30 20,20 30)))
+sp_geo_collection : GEOMETRYCOLLECTION(LINESTRING(-0.034 14.993,5 6,-3 19,0 -7.1000009),POLYGON((35 10,45 45,15 40,10 20,35 10),(20 30,35 35,30 20,20 30)),MULTIPOINT(10 10,100 200,-52 250),POINT(3.2 4.775),MULTILINESTRING((5 5,0 2,-7 13,99 -1,50 50),(20 10,87 88)))
+sp_geometry : 
+sp_outer_ring : 
+sp_coll2 : 
+sp_geometry2 : 
+</pre>
 <p class="caption">Output using the MySQL or PostgreSQL driver</p>
 <br/>
 <p>[DB] is "MySQL.MySQL_Driver" or "PostgreSQL.PostgreSQL_Driver"</p>
