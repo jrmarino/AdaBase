@@ -890,7 +890,7 @@ package body Spatial_Data is
          when multi_polygon => return single_polygon;
          when heterogeneous =>
             for subunit in 1 .. collection.subunits loop
-               if collection.structures (subunit).Item_ID = index then
+               if collection.structures (subunit).Group_ID = index then
                   return collection.structures (subunit).Item_Type;
                end if;
             end loop;
