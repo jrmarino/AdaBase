@@ -532,15 +532,15 @@ Element 4 type : MULTI_POLYGON
 Element 4 size : 2
 Element 4 wkt  : MULTIPOLYGON(((30 20,45 40,10 40,30 20)),((15 5,40 10,10 20,5 10,15 5)))
 
-Element 5 type : MULTI_POLYGON
+Element 5 type : MULTI_LINE_STRING
 Element 5 size : 2
 Element 5 wkt  : MULTILINESTRING((10 10,20 20,10 40),(40 40,30 30,40 20,30 10))
 
-Element 6 type : MULTI_LINE_STRING
+Element 6 type : MULTI_POINT
 Element 6 size : 4
 Element 6 wkt  : MULTIPOINT(11.2 42.4,45.1 30,20.25 20,30.9 10.117)
 
-Element 7 type : MULTI_LINE_STRING
+Element 7 type : SINGLE_POLYGON
 Element 7 size : 1
 Element 7 wkt  : POLYGON((30 10,40 40,20 40,10 20,30 10))
 </pre>
