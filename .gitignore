@@ -7,3 +7,4 @@ src/
 testcases/
 Makefile
 private_adabase.gpr
+fix_geometry.gpr

@@ -7,9 +7,9 @@ title: Result Column functions (field handlers)
 package AdaBase is
    type field_types is (ft_nbyte0, ft_nbyte1, ft_nbyte2, ft_nbyte3, ft_nbyte4,
                         ft_nbyte8, ft_byte1, ft_byte2, ft_byte3, ft_byte4,
-                        ft_byte8, ft_real9, ft_real18, ft_textual,
-                        ft_widetext, ft_supertext, ft_timestamp,
-                        ft_chain, ft_enumtype, ft_settype);
+                        ft_byte8, ft_real9, ft_real18, ft_textual, ft_widetext,
+                        ft_supertext, ft_timestamp, ft_chain, ft_enumtype,
+                        ft_settype, ft_bits, ft_utf8, ft_geometry);
 end AdaBase;
 
 package AdaBase.Results is
@@ -45,6 +45,12 @@ package AdaBase.Results is
 
    --  #20 set type (array of enumerations)
    type Settype is array (Positive range <>) of Enumtype;
+   
+   --  #21 bitflags, implemented similar to chain
+   type Bits is array (Natural range <>)  of Bit1;
+   
+   --  Also #22 is standard Ada2012 UTF_8_String
+   --  Also #23 is the private Geometry type from Spatial_Data package
 
 end AdaBase.Results;
 
