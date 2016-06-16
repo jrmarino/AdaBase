@@ -3,6 +3,7 @@ title: Geometry support
 ---
 
 <div class="leftside">
+<h3>Spatial and Geographic Object Support</h3>
 <p>
 AdaBase provides natural support for Spatial Data using <i>OpenGIS</i>
 concepts.  Support is specifically provided for MySQL (Spatial Data extensions)
@@ -181,7 +182,7 @@ related to holes (e.g. they can't touch, must be enclosed, etc.), so a polygon i
 an array of an array of points.  One extracts polygons as the type <b>Geometric_Polygon</b>
 using the <i>retrieve_polygon</i> by passing that function a geometry of type
 <b>single_polygon</b> or <b>multi_polygon</b>.  The polygon is a private type, so to
-determine how many rings it has (1 or more), use the <i>number_of_rings<i> function.
+determine how many rings it has (1 or more), use the <i>number_of_rings</i> function.
 To obtain a ring of type <b>Geometric_Ring</b>, which is similar to a line string, use
 the <i>retrieve_ring</i> function.
 </p>
@@ -194,7 +195,72 @@ geometry which can be further broken down with <i>retrieve_polygon</i> function.
 PostGIS, the PostgreSQL GIS extensions, the extracted geometry may well be another
 heterogenous collection which has to have its own subcollections extracted as well.
 </p>
-
+<h3>How to create geometries</h3>
+<p>
+For various reasons, such as desiring Well-Known-Text as a product for the purposes
+of supporting an insert or update query, it may be desirable to create geometries which
+is generally accomplished by building it up.
+</p>
+<h3>How to create a single-point geometry</h3>
+<p>
+This is easy.  Just pass a variable of type <b>Geometric_Point</b> to the
+<i>initialize_as_point</i>function, and a geometry containing that point will be
+returned.
+</p>
+<h3>How to create a multi-point geometry</h3>
+<p>
+This is done exactly the same way as a single point, but instead the
+<i>initialize_as_multi_point</i> function is used.  This geometry is only required
+to hold a single point, so the difference between a single-point and a multi-point
+geometry is in classification only when a single point is involved.
+</p>
+<h3>How to create a single-line-string geometry</h3>
+<p>
+First create a <b>Geometric_Line_String</b> variable (an array of points) or
+just pass an array of points directly to the <i>initialize_as_line</i> function,
+and the proper geometry is returned.
+</p>
+<h3>How to create a multiple-line-string geometry</h3>
+<p>
+The process is identical to the single-line-string except that the
+<i>initialize_as_multi_line</i> function is used instead.  This geometry is
+only required to hold a single string.
+</p>
+<h3>How to create polygon geometry</h3>
+<p>
+A polygon can only be constructed one ring at a time, and the geometry has to
+constructed in two steps.  The first step is to create the private
+<b>Geometric_Polygon</b> type by passing a <b>Geometric_Ring</b> (an array of
+points) to the <i>start_polygon</i> function.  If the polygon has holes, these
+need to be defined using the append_inner_ring procedure using the existing
+polygon and another ring.  When the polygon is fully constructed, a geometry
+can be created using the <i>initialize_as_polygon</i> or
+<i>initialize_as_multi_polygon</i> functions.
+</p>
+<h3>How to add points to multi-point geometry</h3>
+<p>
+The <i>augment_multi_point</i> procedure is used to append additional points
+to existing multi-point geometries.
+</p>
+<h3>How to add lines to multi-line-string geometry</h3>
+<p>
+The <i>augment_multi_line</i> procedure is used to append additional line
+strings to existing multi-line-string geometries.
+</p>
+<h3>How to add lines to multi-polygon geometry</h3>
+<p>
+The <i>augment_multi_polygon</i> procedure is used to append additional
+polygons to existing multi-polygon geometries.
+</p>
+<h3>How to create heterogenous geometries</h3>
+<p>
+To construct geometry collections, you must first obtain a geometry through
+one of the previously mentioned methods, and then initialize a new
+collection with it using the <i>initialize_as_collection<i>.  Additional
+geometries are added by using the <i>augment_collection</i> procedure as
+often as necessary.
+</p>
+<br/>
 <pre class="code">
 with AdaBase;
 with Connect;
