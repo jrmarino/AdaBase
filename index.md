@@ -133,6 +133,7 @@ title: AdaBase by jrmarino
 <li>{{ page.f_field_as_bits }}</li>
 <li>{{ page.f_field_as_utf8 }}</li>
 <li>{{ page.f_field_is_null }}</li>
+<li>{{ page.f_field_as_geometry }}</li>
 <li>{{ page.f_field_native_type }}</li>
 <li>{{ page.f_spawn_field }}</li>
 </ul>

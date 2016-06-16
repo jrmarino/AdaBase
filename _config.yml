@@ -176,6 +176,8 @@ defaults:
        f_field_is_null: '<a href="res_std_field.html">func is_null</a>'
        f_field_native_type: '<a href="res_std_field.html">func native_type</a>'
 
+       f_field_as_geometry: '<a href="geometry.html">func as_geometry</a>'
+
        res_spawn_field: '<a href="res_spawn_field.html">result spawn field</a>'
        f_spawn_field: '<a href="res_spawn_field.html">func spawn_field (x3)</a>'
 
