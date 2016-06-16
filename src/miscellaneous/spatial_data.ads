@@ -120,9 +120,6 @@ package Spatial_Data is
                                     return Collection_Type;
    function size_of_collection     (collection : Geometry)
                                     return Positive;
-   function collection_item_shape  (collection : Geometry;
-                                    index      : Positive := 1)
-                                    return Geometric_Shape;
    function collection_item_type   (collection : Geometry;
                                     index      : Positive := 1)
                                     return Collection_Type;
@@ -232,5 +229,9 @@ private
                            items    : Item_ID_type;
                            subunits : Geo_Units;
                            points   : Geo_Points) return Geometry;
+
+   function collection_item_shape  (collection : Geometry;
+                                    index      : Positive := 1)
+                                    return Geometric_Shape;
 
 end Spatial_Data;
