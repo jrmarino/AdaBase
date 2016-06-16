@@ -256,7 +256,7 @@ polygons to existing multi-polygon geometries.
 <p>
 To construct geometry collections, you must first obtain a geometry through
 one of the previously mentioned methods, and then initialize a new
-collection with it using the <i>initialize_as_collection<i>.  Additional
+collection with it using the <i>initialize_as_collection</i>.  Additional
 geometries are added by using the <i>augment_collection</i> procedure as
 often as necessary.
 </p>
