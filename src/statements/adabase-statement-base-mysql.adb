@@ -1969,9 +1969,9 @@ package body AdaBase.Statement.Base.MySQL is
             end if;
          when ft_geometry =>
             if zone.a22 = null then
-               set_binary_buffer (CT.USS (zone.v22));
+               set_binary_buffer (WKB.produce_WKT (zone.v22));
             else
-               set_binary_buffer (WKB.Construct_WKB (zone.a22.all));
+               set_binary_buffer (Spatial_Data.Well_Known_Text (zone.a22.all));
             end if;
          when ft_timestamp =>
             struct.buffer := canvas.buffer_time'Address;

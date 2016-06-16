@@ -1599,13 +1599,12 @@ package body AdaBase.Statement.Base is
                      index : Positive;
                      vaxx  : Spatial_Data.Geometry)
    is
-      shape : String := WKB.Construct_WKB (vaxx);
+      shape : String := Spatial_Data.Well_Known_Text (vaxx);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_geometry, a22 => null,
                  v22 => CT.SUS (shape), bound => True, null_data => False));
    end assign;
-
 
 
    ------------------

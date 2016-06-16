@@ -1080,12 +1080,12 @@ package body AdaBase.Statement.Base.SQLite is
                end if;
             when ft_geometry =>
                if zone.a22 = null then
-                  okay := conn.marker_is_blob (Stmt.stmt_handle, marker,
-                                               ARC.convert (zone.v22), BB);
+                  okay := conn.marker_is_text
+                    (Stmt.stmt_handle, marker, WKB.produce_WKT (zone.v22), BT);
                else
-                  okay := conn.marker_is_blob
+                  okay := conn.marker_is_text
                     (Stmt.stmt_handle, marker,
-                     WKB.Construct_WKB (zone.a22.all), BB);
+                     Spatial_Data.Well_Known_Text (zone.a22.all), BT);
                end if;
 
          end case;

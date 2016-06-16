@@ -1331,9 +1331,9 @@ package body AdaBase.Statement.Base.PostgreSQL is
             end if;
          when ft_geometry =>
             if zone.a22 = null then
-               hold := zone.v22;
+               hold := CT.SUS (WKB.produce_WKT (zone.v22));
             else
-               hold := CT.SUS (WKB.Construct_WKB (zone.a22.all));
+               hold := CT.SUS (Spatial_Data.Well_Known_Text (zone.a22.all));
             end if;
       end case;
       return hold;
