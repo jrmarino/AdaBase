@@ -636,7 +636,7 @@ begin
 
 end Spatial4;
 </pre>
-<p class="caption">Example code: testcases/spatial3/spatial3.adb</p>
+<p class="caption">Example code: testcases/spatial4/spatial4.adb</p>
 <br/>
 <pre class="output">
 id : 10
