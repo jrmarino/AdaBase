@@ -1007,10 +1007,11 @@ package body Spatial_Data is
    function format_real (value : Geometric_Real) return String
    is
       function trim_sides (S : String) return String;
-      raw    : constant String := CT.trim (Geometric_Real'Image (value));
+      raw    : constant String := CT.trim (Geometric_Real'Image (abs (value)));
       last3  : constant String := raw (raw'Last - 2 .. raw'Last);
       posend : constant Natural := raw'Last - 4;
       shift  : constant Integer := Integer'Value (last3);
+      is_neg : constant Boolean := value < 0.0;
       canvas : String (1 .. 26) := (others => '0');
       dot    : Natural;
 
@@ -1036,8 +1037,8 @@ package body Spatial_Data is
          if S (right) = '.' then
             right := right - 1;
          end if;
-         if S (left .. left + 1) = "-." then
-            return "-0" & S (left + 1 .. right);
+         if is_neg then
+            return "-" & S (left .. right);
          else
             return S (left .. right);
          end if;
