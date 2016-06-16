@@ -24,12 +24,177 @@ may contain up to 23 other collections.  On MySQL, this is not supported, and th
 geometry collection type may only contain 6 types (three single types and the analogous
 multiple types).
 </p>
+<pre class="code">
+package Spatial_Data is
 
-<h3>AdaBase.Results.Sets.Datarow function<br/>
-AdaBase.Statement.Base.[STMT].fetch_next ()</h3>
+   type Collection_Type is (unset,
+                            single_point,
+                            single_line_string,
+                            single_polygon,
+                            multi_point,
+                            multi_line_string,
+                            multi_polygon,
+                            heterogeneous);
+
+   subtype Geo_Points is Positive range 1 .. 2 ** 20;
+   subtype Geo_Units  is Natural  range 0 .. 2 ** 12;
+
+   type Geometry is private;
+
+   type Geometric_Real is digits 18;
+
+   type Geometric_Point is
+      record
+         X : Geometric_Real;
+         Y : Geometric_Real;
+      end record;
+
+   type Geometric_Point_set is array (Positive range <>) of Geometric_Point;
+   subtype Geometric_Ring        is Geometric_Point_set;
+   subtype Geometric_Line_String is Geometric_Point_set;
+   type Geometric_Polygon (rings  : Geo_Units := Geo_Units'First;
+                           points : Geo_Points := Geo_Points'First) is private;
+
+   Origin_Point   : constant Geometric_Point := (0.0, 0.0);
+
+
+   --------------------------------
+   --  Initialization functions  --
+   --------------------------------
+   function start_polygon               (outer_ring : Geometric_Ring)
+                                         return Geometric_Polygon;
+   procedure append_inner_ring          (polygon    : in out Geometric_Polygon;
+                                         inner_ring : Geometric_Ring);
+
+   function initialize_as_point         (point : Geometric_Point)
+                                         return Geometry;
+   function initialize_as_multi_point   (point : Geometric_Point)
+                                         return Geometry;
+
+   function initialize_as_line          (line_string : Geometric_Line_String)
+                                         return Geometry;
+   function initialize_as_multi_line    (line_string : Geometric_Line_String)
+                                         return Geometry;
+
+   function initialize_as_polygon       (polygon : Geometric_Polygon)
+                                         return Geometry;
+   function initialize_as_multi_polygon (polygon : Geometric_Polygon)
+                                         return Geometry;
+
+   function initialize_as_collection    (anything : Geometry) return Geometry;
+
+
+   -----------------------------------
+   --  Build collections functions  --
+   -----------------------------------
+   procedure augment_multi_point   (collection : in out Geometry;
+                                    point      : Geometric_Point);
+
+   procedure augment_multi_line    (collection : in out Geometry;
+                                    line       : Geometric_Line_String);
+
+   procedure augment_multi_polygon (collection : in out Geometry;
+                                    polygon    : Geometric_Polygon);
+
+   procedure augment_collection    (collection : in out Geometry;
+                                    anything   : Geometry);
+
+
+   ---------------------------
+   --  Retrieval functions  --
+   ---------------------------
+   function type_of_collection     (collection : Geometry)
+                                    return Collection_Type;
+   function size_of_collection     (collection : Geometry)
+                                    return Positive;
+   function collection_item_type   (collection : Geometry;
+                                    index      : Positive := 1)
+                                    return Collection_Type;
+
+   function retrieve_subcollection (collection : Geometry;
+                                    index : Positive := 1)
+                                    return Geometry;
+
+   function retrieve_point         (collection : Geometry;
+                                    index : Positive := 1)
+                                    return Geometric_Point;
+   function retrieve_line          (collection : Geometry;
+                                    index : Positive := 1)
+                                    return Geometric_Line_String;
+
+   function retrieve_polygon       (collection : Geometry;
+                                    index      : Positive := 1)
+                                    return Geometric_Polygon;
+   function number_of_rings        (polygon : Geometric_Polygon)
+                                    return Natural;
+   function retrieve_ring          (polygon : Geometric_Polygon;
+                                    ring_index : Positive)
+                                    return Geometric_Ring;
+
+   ---------------------------
+   --  Text Representation  --
+   ---------------------------
+   function mysql_text      (collection : Geometry;
+                             top_first  : Boolean := True) return String;
+   function Well_Known_Text (collection : Geometry;
+                             top_first  : Boolean := True) return String;
+
+end Spatial_Data;
+</pre>
+
+<h3>To retrieve and manipulate geometry data</h3>
 <p>
-TBD
+After fetching a row, use the standard field conversion "as_geometry" to
+return a private <b>geometry</b> type.  To retrieve the Well-Known-Text
+representation of the geometry, either use the standard field conversion
+"as_string", or pass the geometry to the <i>Well_Known_Text</i> function,
+both of which return standard strings.
 </p>
+<p>
+You may already know what type of geometry is in the field, but it is possible
+the database table is constructed to allow any shape.  To determine the
+<b>Collection_Type</b> of the geometry, pass it to the <i>type_of_collection</i>
+function.  To determine how many components are contained in the geometry, use
+the <i>size_of_collection</i> function.  The single geometries (point, line string,
+polygon) always return 1 for this function.  If the <b>Collection_Type</b> is
+heterogeneous, it may be desirable to know what kind of geometry each collection
+element is.  For this information, use the <i>collection_item_type</i> function.
+</p>
+<p>
+Every geometry can be broken down to it's most basic element, the 2-dimensional point.
+While points consist of X, Y coordinates of <b>Geometric_Real</b> 18-digit type,
+conversions will round the value to 16 significant digits.  To retrieve a point from
+the <b>single_point</b> or <b>multi_point</b> geometries, use the <i>retrieve_point</i>
+function.
+</p>
+<p>
+Similarly, a line string is just an array of points.  To obtain a line string (type
+<b>Geometric_Line_String</b>, use the <i>retrieve_line</i> function on
+<b>single_line_string</b> and <b>multi_line_string</b> geometry types.
+</p>
+<p>
+The polygons are more complex.  Structurally, they are similar to line strings, but the
+first and last point must be identical (so the shape is closed) and their structural
+elements are known as rings.  The first one is the outer ring.  A polygon may have zero
+to an indefinitely number of "inner" rings also known as holes.  There are certain rules
+related to holes (e.g. they can't touch, must be enclosed, etc.), so a polygon is basically
+an array of an array of points.  One extracts polygons as the type <b>Geometric_Polygon</b>
+using the <i>retrieve_polygon</i> by passing that function a geometry of type
+<b>single_polygon</b> or <b>multi_polygon</b>.  The polygon is a private type, so to
+determine how many rings it has (1 or more), use the <i>number_of_rings<i> function.
+To obtain a ring of type <b>Geometric_Ring</b>, which is similar to a line string, use
+the <i>retrieve_ring</i> function.
+</p>
+<p>
+The geometry collections are geometries of type <b>heterogeneous</b>.  After determining
+how many elements are contained within, use the <i>retrieve_subcollection</i> function
+to peel off the collection element as a new geometry.  For example, if the third element
+of a collection is a polygon, then use the retrieval function to extract the polygon
+geometry which can be further broken down with <i>retrieve_polygon</i> function.  On
+PostGIS, the PostgreSQL GIS extensions, the extracted geometry may well be another
+heterogenous collection which has to have its own subcollections extracted as well.
+</p>
+
 <pre class="code">
 with AdaBase;
 with Connect;
