@@ -9,7 +9,6 @@ package Spatial_Data.Well_Known_Binary is
    WKB_INVALID : exception;
 
    function Translate_WKB (WKBinary : String) return Geometry;
-   function Construct_WKB (shape : Geometry) return String;
    function produce_WKT (WKBinary : CT.Text) return String;
 
 private

@@ -82,15 +82,6 @@ package body Spatial_Data.Well_Known_Binary is
    end Translate_WKB;
 
 
-   ---------------------
-   --  Construct_WKB  --
-   ---------------------
-   function Construct_WKB (shape : Geometry) return String is
-   begin
-      return "IMPLEMENT, PLEASE";
-   end Construct_WKB;
-
-
    ------------------------------
    --  handle_unit_collection  --
    ------------------------------
