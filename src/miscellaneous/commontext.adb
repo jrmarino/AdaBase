@@ -273,36 +273,45 @@ package body CommonText is
    ---------------------
    function redact_quotes (sql : String) return String
    is
-      --  This block will mask anything between quotes (single or double)
+      --  This block will mask matching quotes (single or double)
       --  These are considered to be literal and not suitable for binding
+      --  It also will mask "::" which is used by postgresql for casting
       type seeking is (none, single, double);
       redacted    : String := sql;
       seek_status : seeking := none;
       arrow       : Positive := 1;
+      mask        : constant Character := '#';
+      cast        : constant String := "::";
+      ndx         : Natural;
    begin
       if IsBlank (sql) then
          return "";
       end if;
+      loop
+         ndx := AS.Fixed.Index (Source => redacted, Pattern => cast);
+         exit when ndx = 0;
+         redacted (ndx .. ndx + 1) := "##";
+      end loop;
       loop
          case sql (arrow) is
             when ''' =>
                case seek_status is
                   when none =>
                      seek_status := single;
-                     redacted (arrow) := '#';
+                     redacted (arrow) := mask;
                   when single =>
                      seek_status := none;
-                     redacted (arrow) := '#';
+                     redacted (arrow) := mask;
                   when double => null;
                end case;
             when ASCII.Quotation =>
                case seek_status is
                   when none =>
                      seek_status := double;
-                     redacted (arrow) := '#';
+                     redacted (arrow) := mask;
                   when double =>
                      seek_status := none;
-                     redacted (arrow) := '#';
+                     redacted (arrow) := mask;
                   when single => null;
                end case;
             when others => null;

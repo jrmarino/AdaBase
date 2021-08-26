@@ -76,6 +76,7 @@ package body AdaBase.Statement.Base is
          --  1) finds "?" and increments the replacement index
          --  2) finds ":[A-Za-z0-9_]*", replaces with "?", increments the
          --     replacement index, and pushes the string into alpha markers
+         --     Avoid replacing "::" which is casting on postgresql (in redact)
          --  Normally ? and : aren't mixed but we will support it.
          procedure replace_alias;
          procedure lock_and_advance (symbol : Character);
