@@ -14,8 +14,8 @@ package body AdaBase.Driver.Base.MySQL is
    function execute (driver : MySQL_Driver; sql : String)
                      return Affected_Rows
    is
-      trsql   : String := CT.trim_sql (sql);
-      nquery  : Natural := CT.count_queries (trsql);
+      trsql   : constant String := CT.trim_sql (sql);
+      nquery  : constant Natural := CT.count_queries (trsql);
       aborted : constant Affected_Rows := 0;
       err1    : constant CT.Text :=
                  CT.SUS ("ACK! Execution attempted on inactive connection");
@@ -360,7 +360,7 @@ package body AdaBase.Driver.Base.MySQL is
                           limit      : Trax_ID := 0;
                           offset     : Trax_ID := 0) return String
    is
-      vanilla   : String := assembly_common_select
+      vanilla   : constant String := assembly_common_select
         (distinct, tables, columns, conditions, groupby, having, order);
    begin
       if null_sort /= native then
@@ -388,7 +388,7 @@ package body AdaBase.Driver.Base.MySQL is
                                    proc_arguments   : String)
                                    return ASM.MySQL_statement
    is
-      SQL : String := "CALL " & stored_procedure & " (" & proc_arguments & ")";
+      SQL : constant String := "CALL " & stored_procedure & " (" & proc_arguments & ")";
    begin
       return driver.query (SQL);
    end call_stored_procedure;

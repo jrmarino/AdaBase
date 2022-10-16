@@ -24,9 +24,9 @@ package body AdaBase.Logger.Base is
       drv       : String (1 .. 11);
       timestamp : constant AC.Time := AC.Clock;
       TS        : constant String  := ACF.Image (Date => timestamp);
-      error     : CT.Text := CT.SUS (error_code'Img &  " : SQLSTATE[" &
+      error     : constant CT.Text := CT.SUS (error_code'Img &  " : SQLSTATE[" &
                                      sqlstate & "] : ");
-      err_label : CT.Text := CT.SUS (" : Driver code :");
+      err_label : constant CT.Text := CT.SUS (" : Driver code :");
       composite : CT.Text := CT.blank;
    begin
       listener.prop_timestamp  := timestamp;

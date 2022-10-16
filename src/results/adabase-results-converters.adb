@@ -1,13 +1,11 @@
 --  This file is covered by the Internet Software Consortium (ISC) License
 --  Reference: ../../License.txt
 
-with Ada.Strings;
 with Ada.Characters.Conversions;
 with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
 
 package body AdaBase.Results.Converters is
 
-   package AS  renames Ada.Strings;
    package ACC renames Ada.Characters.Conversions;
 
    ---------------------------
@@ -1241,7 +1239,7 @@ package body AdaBase.Results.Converters is
          longvs : String (1 .. num_bits) := (others => '0');
          result : Bits (0 .. num_bits - 1) := (others => 0);
          arrow  : Natural := result'First;
-         rfirst : Natural := 1 + longvs'Length - nv'Length;
+         rfirst : constant Natural := 1 + longvs'Length - nv'Length;
       begin
          longvs (rfirst .. longvs'Last) := nv;
          for x in longvs'Range loop
@@ -1337,7 +1335,7 @@ package body AdaBase.Results.Converters is
    function convert (nv : Textwide) return Enumtype
    is
       result : Enumtype;
-      enum : String := convert (nv);
+      enum : constant String := convert (nv);
    begin
       result.enumeration := CT.SUS (enum);
       return result;
@@ -1395,7 +1393,7 @@ package body AdaBase.Results.Converters is
    function convert (nv : Textsuper) return Enumtype
    is
       result : Enumtype;
-      enum : String := convert (nv);
+      enum : constant String := convert (nv);
    begin
       result.enumeration := CT.SUS (enum);
       return result;
@@ -1482,21 +1480,21 @@ package body AdaBase.Results.Converters is
 
    function convert (nv : Chain) return Wide_String
    is
-      preview : String := convert (nv);
+      preview : constant String := convert (nv);
    begin
       return ACC.To_Wide_String (preview);
    end convert;
 
    function convert (nv : Chain) return Wide_Wide_String
    is
-      preview : String := convert (nv);
+      preview : constant String := convert (nv);
    begin
       return ACC.To_Wide_Wide_String (preview);
    end convert;
 
    function convert (nv : Chain) return Bits
    is
-      num_bits : Natural := nv'Length * 8;
+      num_bits : constant Natural := nv'Length * 8;
       result   : Bits (0 .. num_bits - 1) := (others => 0);
       counter  : Natural := 0;
       submask  : constant array (0 .. 7) of NByte1 := (2 ** 0, 2 ** 1,
@@ -1522,7 +1520,7 @@ package body AdaBase.Results.Converters is
    function convert (nv : Settype) return String
    is
       len    : Natural := 0;
-      nvlen  : Natural := nv'Length;
+      nvlen  : constant Natural := nv'Length;
    begin
       if nvlen = 0 then
          return blankstring;
@@ -1546,14 +1544,14 @@ package body AdaBase.Results.Converters is
 
    function convert (nv : Settype) return Wide_String
    is
-      preview : String := convert (nv);
+      preview : constant String := convert (nv);
    begin
       return ACC.To_Wide_String (preview);
    end convert;
 
    function convert (nv : Settype) return Wide_Wide_String
    is
-      preview : String := convert (nv);
+      preview : constant String := convert (nv);
    begin
       return ACC.To_Wide_Wide_String (preview);
    end convert;
@@ -1681,7 +1679,7 @@ package body AdaBase.Results.Converters is
 
    function convert (nv : Bits) return Chain
    is
-      num_segments : Positive := 1 + ((nv'Length - 1) / 8);
+      num_segments : constant Positive := 1 + ((nv'Length - 1) / 8);
       result  : Chain (1 .. num_segments) := (others => 0);
       link    : Positive := 1;
       counter : Natural := 0;
@@ -1719,140 +1717,140 @@ package body AdaBase.Results.Converters is
    ----------------------------------------
    function convert (nv : NByte0) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : NByte1) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : NByte2) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : NByte3) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : NByte4) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : NByte8) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : Byte1) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : Byte2) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : Byte3) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : Byte4) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : Byte8) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : Real9) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : Real18) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : Textwide) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : Textsuper) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : AC.Time) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : Enumtype) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : Bits) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : Chain) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
 
    function convert (nv : Settype) return Textual
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return CT.SUS (hold);
    end convert;
@@ -1862,21 +1860,21 @@ package body AdaBase.Results.Converters is
    ---------------------------------------
    function cv2utf8 (nv : String) return Text_UTF8
    is
-      WWS : Wide_Wide_String := ACC.To_Wide_Wide_String (nv);
+      WWS : constant Wide_Wide_String := ACC.To_Wide_Wide_String (nv);
    begin
       return SUTF.Wide_Wide_Strings.Encode (Item => WWS);
    end cv2utf8;
 
    function cvu2str (nv : Text_UTF8) return String
    is
-      WWS : Wide_Wide_String := SUTF.Wide_Wide_Strings.Decode (Item => nv);
+      WWS : constant  Wide_Wide_String := SUTF.Wide_Wide_Strings.Decode (Item => nv);
    begin
       return ACC.To_String (WWS);
    end cvu2str;
 
    function cvu2str (nv : Text_UTF8) return Wide_String
    is
-      WWS : Wide_Wide_String := SUTF.Wide_Wide_Strings.Decode (Item => nv);
+      WWS : constant Wide_Wide_String := SUTF.Wide_Wide_Strings.Decode (Item => nv);
    begin
       return ACC.To_Wide_String (WWS);
    end cvu2str;
@@ -1888,50 +1886,50 @@ package body AdaBase.Results.Converters is
 
    function cvu2str (nv : Textual) return Textual
    is
-      holdutf8 : Text_UTF8 := CT.USS (nv);
-      holdstr  : String := cvu2str (holdutf8);
+      holdutf8 : constant Text_UTF8 := CT.USS (nv);
+      holdstr  : constant String := cvu2str (holdutf8);
    begin
       return CT.SUS (holdstr);
    end cvu2str;
 
    function cv2utf8 (nv : Textual) return Text_UTF8
    is
-      hold : String := CT.USS (nv);
+      hold : constant String := CT.USS (nv);
    begin
       return cv2utf8 (hold);
    end cv2utf8;
 
    function cv2utf8 (nv : Textwide) return Text_UTF8
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return cv2utf8 (hold);
    end cv2utf8;
 
    function cv2utf8 (nv : Textsuper) return Text_UTF8
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return cv2utf8 (hold);
    end cv2utf8;
 
    function cv2utf8 (nv : AC.Time) return Text_UTF8
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return cv2utf8 (hold);
    end cv2utf8;
 
    function cv2utf8 (nv : Enumtype) return Text_UTF8
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return cv2utf8 (hold);
    end cv2utf8;
 
    function cv2utf8 (nv : Settype) return Text_UTF8
    is
-      hold : String := convert (nv);
+      hold : constant String := convert (nv);
    begin
       return cv2utf8 (hold);
    end cv2utf8;

@@ -2,13 +2,11 @@
 --  Reference: ../../License.txt
 
 with Ada.Exceptions;
-with Ada.Calendar.Time_Zones;
 with Ada.Unchecked_Conversion;
 
 package body AdaBase.Statement.Base.MySQL is
 
    package EX  renames Ada.Exceptions;
-   package CTZ renames Ada.Calendar.Time_Zones;
 
    --------------------
    --  discard_rest  --
@@ -227,7 +225,6 @@ package body AdaBase.Statement.Base.MySQL is
 
       declare
          index : Natural := 1;
-         arrow : Natural := parameters'First;
          scans : Boolean := False;
          start : Natural := 1;
          stop  : Natural := 0;
@@ -289,9 +286,9 @@ package body AdaBase.Statement.Base.MySQL is
                Object.mysql_conn.initialize_and_prepare_statement
                  (stmt => Object.stmt_handle, sql => Object.sql_final.all);
                declare
-                  params : Natural := Object.mysql_conn.prep_markers_found
+                  params : constant Natural := Object.mysql_conn.prep_markers_found
                     (stmt => Object.stmt_handle);
-                  errmsg : String := "marker mismatch," &
+                  errmsg : constant String := "marker mismatch," &
                     Object.realmccoy.Length'Img & " expected but" &
                     params'Img & " found by MySQL";
                begin
@@ -603,11 +600,10 @@ package body AdaBase.Statement.Base.MySQL is
    overriding
    function fetch_all (Stmt : out MySQL_statement) return ARS.Datarow_Set
    is
-      maxrows : Natural := Natural (Stmt.rows_returned);
+      maxrows : constant Natural := Natural (Stmt.rows_returned);
       tmpset  : ARS.Datarow_Set (1 .. maxrows + 1);
       nullset : ARS.Datarow_Set (1 .. 0);
       index   : Natural := 1;
-      row     : ARS.Datarow;
    begin
       if (Stmt.delivery = completed) or else (maxrows = 0) then
          return nullset;
@@ -668,9 +664,8 @@ package body AdaBase.Statement.Base.MySQL is
    function internal_fetch_row (Stmt : out MySQL_statement)
                                 return ARS.Datarow
    is
-      use type ABM.ICS.chars_ptr;
       use type ABM.MYSQL_ROW_access;
-      rptr : ABM.MYSQL_ROW_access :=
+      rptr : constant ABM.MYSQL_ROW_access :=
         Stmt.mysql_conn.fetch_row (Stmt.result_handle);
    begin
       if rptr = null then
@@ -875,8 +870,6 @@ package body AdaBase.Statement.Base.MySQL is
    function internal_ps_fetch_row (Stmt : out MySQL_statement)
                                    return ARS.Datarow
    is
-      use type ABM.ICS.chars_ptr;
-      use type ABM.MYSQL_ROW_access;
       use type ACM.fetch_status;
       status : ACM.fetch_status;
    begin
@@ -916,7 +909,7 @@ package body AdaBase.Statement.Base.MySQL is
                datalen  : constant Natural := Natural (cv.length);
                heading  : constant String := CT.USS (colinfo.field_name);
                isnull   : constant Boolean := (Natural (cv.is_null) = 1);
-               mtype    : ABM.enum_field_types := colinfo.mysql_type;
+               mtype    : constant ABM.enum_field_types := colinfo.mysql_type;
 
                function binary_string return String is
                begin
@@ -998,8 +991,8 @@ package body AdaBase.Statement.Base.MySQL is
                      --  MySQL internal geometry format is SRID + WKB
                      --  Remove the first 4 bytes and save only the WKB
                      declare
-                        ST : String := binary_string;
-                        wkbstring  : String := ST (ST'First + 4 .. ST'Last);
+                        ST : constant String := binary_string;
+                        wkbstring  : constant String := ST (ST'First + 4 .. ST'Last);
                      begin
                         dvariant := (datatype => ft_geometry,
                                      v22 => CT.SUS (wkbstring));
@@ -1080,7 +1073,6 @@ package body AdaBase.Statement.Base.MySQL is
    function internal_ps_fetch_bound (Stmt : out MySQL_statement)
                                      return Boolean
    is
-      use type ABM.ICS.chars_ptr;
       use type ACM.fetch_status;
       status : ACM.fetch_status;
    begin
@@ -1121,7 +1113,7 @@ package body AdaBase.Statement.Base.MySQL is
                datalen : constant Natural := Natural (cv.length);
                Tout    : constant field_types := param.output_type;
                Tnative : constant field_types := colinfo.field_type;
-               mtype   : ABM.enum_field_types := colinfo.mysql_type;
+               mtype   : constant ABM.enum_field_types := colinfo.mysql_type;
                errmsg  : constant String  := "native type : " &
                          field_types'Image (Tnative) & " binding type : " &
                          field_types'Image (Tout);
@@ -1252,8 +1244,8 @@ package body AdaBase.Statement.Base.MySQL is
                      --  MySQL internal geometry format is SRID + WKB
                      --  Remove the first 4 bytes and translate WKB
                      declare
-                        ST : String := binary_string;
-                        wkbstring  : String := ST (ST'First + 4 .. ST'Last);
+                        ST : constant String := binary_string;
+                        wkbstring  : constant String := ST (ST'First + 4 .. ST'Last);
                      begin
                         param.a22.all := WKB.Translate_WKB (wkbstring);
                      end;
@@ -1299,10 +1291,10 @@ package body AdaBase.Statement.Base.MySQL is
                         param.a17.all'Length);
                   when ft_bits =>
                      declare
-                        strval : String := bincopy (cv.buffer_binary, datalen,
+                        strval : constant String := bincopy (cv.buffer_binary, datalen,
                                                     Stmt.con_max_blob);
-                        FL    : Natural := param.a20.all'Length;
-                        DVLEN : Natural := strval'Length * 8;
+                        FL    : constant Natural := param.a20.all'Length;
+                        DVLEN : constant Natural := strval'Length * 8;
                      begin
                         if FL < DVLEN then
                            raise BINDING_SIZE_MISMATCH with "native size : " &
@@ -1345,9 +1337,8 @@ package body AdaBase.Statement.Base.MySQL is
    -----------------------------------
    function internal_fetch_bound (Stmt : out MySQL_statement) return Boolean
    is
-      use type ABM.ICS.chars_ptr;
       use type ABM.MYSQL_ROW_access;
-      rptr : ABM.MYSQL_ROW_access :=
+      rptr : constant ABM.MYSQL_ROW_access :=
         Stmt.mysql_conn.fetch_row (Stmt.result_handle);
    begin
       if rptr = null then
@@ -1395,10 +1386,8 @@ package body AdaBase.Statement.Base.MySQL is
          row := Convert (rptr);
          for F in 1 .. maxlen loop
             declare
-               use type ABM.enum_field_types;
                dossier  : bindrec renames Stmt.crate.Element (F);
                colinfo  : column_info renames Stmt.column_info.Element (F);
-               mtype    : ABM.enum_field_types := colinfo.mysql_type;
                isnull   : constant Boolean := (row (F) = null);
                sz       : constant Natural := field_lengths (F);
                ST       : constant String  := db_convert (row (F), sz);
@@ -1522,7 +1511,7 @@ package body AdaBase.Statement.Base.MySQL is
                      --  MySQL internal geometry format is SRID + WKB
                      --  Remove the first 4 bytes and translate WKB
                      declare
-                        wkbstring  : String := ST (ST'First + 4 .. ST'Last);
+                        wkbstring  : constant String := ST (ST'First + 4 .. ST'Last);
                      begin
                         dossier.a22.all := WKB.Translate_WKB (wkbstring);
                      end;
@@ -1535,8 +1524,8 @@ package body AdaBase.Statement.Base.MySQL is
                      end;
                   when ft_chain =>
                      declare
-                        FL    : Natural := dossier.a17.all'Length;
-                        DVLEN : Natural := ST'Length;
+                        FL    : constant Natural := dossier.a17.all'Length;
+                        DVLEN : constant Natural := ST'Length;
                      begin
                         if DVLEN > FL then
                            raise BINDING_SIZE_MISMATCH with "native size : " &
@@ -1547,8 +1536,8 @@ package body AdaBase.Statement.Base.MySQL is
                      end;
                   when ft_bits =>
                      declare
-                        FL    : Natural := dossier.a20.all'Length;
-                        DVLEN : Natural := ST'Length * 8;
+                        FL    : constant Natural := dossier.a20.all'Length;
+                        DVLEN : constant Natural := ST'Length * 8;
                      begin
                         if DVLEN > FL then
                            raise BINDING_SIZE_MISMATCH with "native size : " &
@@ -1560,7 +1549,7 @@ package body AdaBase.Statement.Base.MySQL is
                      end;
                   when ft_settype =>
                      declare
-                        FL    : Natural := dossier.a19.all'Length;
+                        FL    : constant Natural := dossier.a19.all'Length;
                         items : constant Natural := CT.num_set_items (ST);
                      begin
                         if items > FL then
@@ -1636,7 +1625,6 @@ package body AdaBase.Statement.Base.MySQL is
    -------------------------------
    procedure internal_post_prep_stmt (Stmt : out MySQL_statement)
    is
-      use type mysql_canvases_Access;
    begin
       Stmt.delivery := completed;  --  default for early returns
       if Stmt.num_columns = 0 then

@@ -302,28 +302,28 @@ package body AdaBase.Connection.Base.MySQL is
 
       declare
          --  populate client version information
-         result : ABM.my_ulong := ABM.mysql_get_client_version;
+         result : constant ABM.my_ulong := ABM.mysql_get_client_version;
       begin
          conn.info_client_version := convert_version (Positive (result));
       end;
 
       declare
          --  populate client information
-         result : ABM.ICS.chars_ptr := ABM.mysql_get_client_info;
+         result : constant ABM.ICS.chars_ptr := ABM.mysql_get_client_info;
       begin
          conn.info_client := CT.SUS (ABM.ICS.Value (Item => result));
       end;
 
       declare
          --  populate server version information
-         result : ABM.my_ulong := ABM.mysql_get_server_version (conn.handle);
+         result : constant ABM.my_ulong := ABM.mysql_get_server_version (conn.handle);
       begin
          conn.info_server_version := convert_version (Positive (result));
       end;
 
       declare
          --  populate server information
-         result : ABM.ICS.chars_ptr := ABM.mysql_get_server_info (conn.handle);
+         result : constant ABM.ICS.chars_ptr := ABM.mysql_get_server_info (conn.handle);
       begin
          conn.info_server := CT.SUS (ABM.ICS.Value (Item => result));
       end;
@@ -394,7 +394,6 @@ package body AdaBase.Connection.Base.MySQL is
    procedure setTransactionIsolation (conn      : out MySQL_Connection;
                                       isolation : Trax_Isolation)
    is
-      use type Trax_Isolation;
       sql : constant String := "SET SESSION TRANSACTION ISOLATION LEVEL " &
                                ISO_Keywords (isolation);
    begin
@@ -644,7 +643,6 @@ package body AdaBase.Connection.Base.MySQL is
               ABM.MYSQL_TYPE_VAR_STRING  |
               ABM.MYSQL_TYPE_STRING      =>
             declare
-               use type ABM.MY_CHARSET_INFO;
                chsetnr  : constant Natural := Natural (field.charsetnr);
                bin_set  : constant Natural := 63;
                binary   : constant Boolean := (chsetnr = bin_set);
@@ -770,7 +768,7 @@ package body AdaBase.Connection.Base.MySQL is
 
       result  : fldlen (1 .. num_columns) := (others => 0);
       naccess : cres_access;
-      MLA : ABM.my_ulong_access := ABM.mysql_fetch_lengths
+      MLA     : constant ABM.my_ulong_access := ABM.mysql_fetch_lengths
         (result => result_handle);
 
    begin
@@ -1111,8 +1109,8 @@ package body AdaBase.Connection.Base.MySQL is
    procedure establish_uniform_encoding (conn : out MySQL_Connection)
    is
       use type ABM.my_int;
-      result : ABM.my_int;
-      charset : String := CT.USS (conn.character_set);
+      result  : ABM.my_int;
+      charset : constant String := CT.USS (conn.character_set);
       csname  : ABM.ICS.chars_ptr := ABM.ICS.New_String (charset);
    begin
       if conn.prop_active then
@@ -1153,9 +1151,9 @@ package body AdaBase.Connection.Base.MySQL is
       if conn.prop_active then
          --  conn.dummy := True;
          declare
-            set    : ABM.ICS.chars_ptr :=
+            set    : constant ABM.ICS.chars_ptr :=
                      ABM.mysql_character_set_name (handle => conn.handle);
-            setstr : String := ABM.ICS.Value (Item => set);
+            setstr : constant String := ABM.ICS.Value (Item => set);
          begin
             return ACH.To_Upper (setstr);
          end;
@@ -1170,8 +1168,8 @@ package body AdaBase.Connection.Base.MySQL is
    ---------------------------------
    procedure retrieve_uniform_encoding (conn : out MySQL_Connection)
    is
-      charset   : String := character_set (conn => conn);
-      charsetuc : String := ACH.To_Upper (charset);
+      charset   : constant String := character_set (conn => conn);
+      charsetuc : constant String := ACH.To_Upper (charset);
    begin
       conn.encoding_is_utf8 := (charsetuc = "UTF8");
       conn.character_set := CT.SUS (charset);

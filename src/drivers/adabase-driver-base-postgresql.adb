@@ -104,7 +104,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
                           offset     : Trax_ID := 0) return String
    is
       rockyroad : CT.Text;
-      vanilla   : String := assembly_common_select
+      vanilla   : constant String := assembly_common_select
         (distinct, tables, columns, conditions, groupby, having, order);
    begin
       rockyroad := CT.SUS (vanilla);
@@ -186,8 +186,8 @@ package body AdaBase.Driver.Base.PostgreSQL is
    function execute (driver : PostgreSQL_Driver; sql : String)
                      return Affected_Rows
    is
-      trsql   : String := CT.trim_sql (sql);
-      nquery  : Natural := CT.count_queries (trsql);
+      trsql   : constant String := CT.trim_sql (sql);
+      nquery  : constant Natural := CT.count_queries (trsql);
       aborted : constant Affected_Rows := 0;
       err1    : constant CT.Text :=
                  CT.SUS ("ACK! Execution attempted on inactive connection");
@@ -297,7 +297,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
             end if;
             return statement;
          exception
-            when RES : others =>
+            when others =>
                --  Fatal attempt to prepare a statement
                --  Logged already by stmt initialization
                --  Should be internally marked as unsuccessful
@@ -350,7 +350,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
                                    proc_arguments   : String)
                                    return SMT.PostgreSQL_statement
    is
-      SQL : String := "SELECT " & stored_procedure &
+      SQL : constant String := "SELECT " & stored_procedure &
                       " (" & proc_arguments & ")";
       stmt : SMT.PostgreSQL_statement :=
         driver.private_statement (sql => SQL, prepared => False);
@@ -362,7 +362,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
               "mode must be OFF (it is currently ON).";
          end if;
          declare
-            fullset  : ARS.Datarow_Set := stmt.fetch_all;
+            fullset  : constant ARS.Datarow_Set := stmt.fetch_all;
             nextcall : constant String := fullset (1).column (1).as_string;
             calls    : CT.Text;
          begin
@@ -373,7 +373,7 @@ package body AdaBase.Driver.Base.PostgreSQL is
                CT.SU.Append (calls, fullset (x).column (1).as_string);
             end loop;
             declare
-               SQL2 : String := "FETCH ALL IN " &
+               SQL2 : constant String := "FETCH ALL IN " &
                                  ASCII.Quotation & nextcall & ASCII.Quotation;
             begin
                return driver.private_statement (sql      => SQL2,

@@ -28,7 +28,7 @@ package body AdaBase.Results.Sets is
       use type heading_map.Cursor;
       cursor : heading_map.Cursor;
       index  : Positive;
-      headup : String := ACH.To_Upper (heading);
+      headup : constant String := ACH.To_Upper (heading);
    begin
       cursor := row.map.Find (Key => headup);
       if cursor = heading_map.No_Element then

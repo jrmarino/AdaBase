@@ -97,7 +97,7 @@ package body AdaBase.Connection.Base.SQLite is
       --  immediately after connection, COMMIT and ROLLBACK to ensure we're
       --  always in a transaction when autocommit is off;
 
-      previous_state : Boolean := conn.prop_auto_commit;
+      previous_state : constant Boolean := conn.prop_auto_commit;
    begin
       conn.prop_auto_commit := auto;
 
@@ -134,7 +134,7 @@ package body AdaBase.Connection.Base.SQLite is
    ---------------
    function PUTF82S (cstr : BND.ICS.chars_ptr) return String
    is
-      rawstr : CT.UTF8 := BND.ICS.Value (cstr);
+      rawstr : constant CT.UTF8 := BND.ICS.Value (cstr);
    begin
       return CT.UTF8S (rawstr);
    end PUTF82S;
@@ -146,7 +146,7 @@ package body AdaBase.Connection.Base.SQLite is
    overriding
    function driverMessage (conn : SQLite_Connection) return String
    is
-      result : BND.ICS.chars_ptr := BND.sqlite3_errmsg (db => conn.handle);
+      result : constant BND.ICS.chars_ptr := BND.sqlite3_errmsg (db => conn.handle);
    begin
       return PUTF82S (result);
    end driverMessage;
@@ -158,7 +158,7 @@ package body AdaBase.Connection.Base.SQLite is
    overriding
    function driverCode (conn : SQLite_Connection) return Driver_Codes
    is
-      result : BND.IC.int := BND.sqlite3_errcode (db => conn.handle);
+      result : constant BND.IC.int := BND.sqlite3_errcode (db => conn.handle);
    begin
       return Driver_Codes (result);
    end driverCode;
@@ -184,7 +184,7 @@ package body AdaBase.Connection.Base.SQLite is
    function rows_affected_by_execution (conn : SQLite_Connection)
                                         return Affected_Rows
    is
-      result : BND.IC.int := BND.sqlite3_changes (db => conn.handle);
+      result : constant BND.IC.int := BND.sqlite3_changes (db => conn.handle);
    begin
       return Affected_Rows (result);
    end rows_affected_by_execution;
@@ -298,7 +298,7 @@ package body AdaBase.Connection.Base.SQLite is
    is
       use type BND.IC.int;
       result : BND.IC.int;
-      sql8   : CT.UTF8 := CT.SUTF8 (sql);
+      sql8   : constant CT.UTF8 := CT.SUTF8 (sql);
       query  : BND.ICS.chars_ptr := BND.ICS.New_String (Str => sql8);
    begin
       result := BND.sqlite3_exec (db       => conn.handle,
@@ -322,9 +322,9 @@ package body AdaBase.Connection.Base.SQLite is
                                sql  : String) return Boolean
    is
       use type BND.IC.int;
-      sql8   : CT.UTF8 := CT.SUTF8 (sql);
+      sql8   : constant CT.UTF8 := CT.SUTF8 (sql);
       query  : BND.ICS.chars_ptr := BND.ICS.New_String (Str => sql8);
-      nbyte  : BND.IC.int := BND.IC.int (sql8'Length + 1);
+      nbyte  : constant BND.IC.int := BND.IC.int (sql8'Length + 1);
       result : BND.IC.int;
       dummy  : aliased BND.ICS.chars_ptr;
    begin
@@ -354,7 +354,7 @@ package body AdaBase.Connection.Base.SQLite is
       pragma Unreferenced (username, password, hostname, socket, port);
       use type BND.IC.int;
 
-      dbname   : CT.UTF8 := CT.SUTF8 (database);
+      dbname   : constant CT.UTF8 := CT.SUTF8 (database);
       filename : BND.ICS.chars_ptr := BND.ICS.New_String (dbname);
       result   : BND.IC.int;
    begin
@@ -373,13 +373,13 @@ package body AdaBase.Connection.Base.SQLite is
       conn.info_server_version := conn.info_server;
 
       declare
-         result : BND.ICS.chars_ptr := BND.sqlite3_sourceid;
+         result : constant BND.ICS.chars_ptr := BND.sqlite3_sourceid;
       begin
          conn.info_client := CT.SUS (BND.ICS.Value (Item => result));
       end;
 
       declare
-         result : BND.ICS.chars_ptr := BND.sqlite3_libversion;
+         result : constant BND.ICS.chars_ptr := BND.sqlite3_libversion;
       begin
          conn.info_client_version := CT.SUS (BND.ICS.Value (Item => result));
       end;
@@ -443,7 +443,7 @@ package body AdaBase.Connection.Base.SQLite is
    function prep_markers_found (conn : SQLite_Connection;
                                 stmt : BND.sqlite3_stmt_Access) return Natural
    is
-      result : BND.IC.int := BND.sqlite3_bind_parameter_count (stmt);
+      result : constant BND.IC.int := BND.sqlite3_bind_parameter_count (stmt);
    begin
       return Natural (result);
    end prep_markers_found;
@@ -455,7 +455,7 @@ package body AdaBase.Connection.Base.SQLite is
    function fields_in_result (conn : SQLite_Connection;
                               stmt : BND.sqlite3_stmt_Access) return Natural
    is
-      result : BND.IC.int := BND.sqlite3_column_count (stmt);
+      result : constant BND.IC.int := BND.sqlite3_column_count (stmt);
    begin
       return Natural (result);
    end fields_in_result;
@@ -468,8 +468,8 @@ package body AdaBase.Connection.Base.SQLite is
                               stmt  : BND.sqlite3_stmt_Access;
                               index : Natural) return String
    is
-      col : BND.IC.int := BND.IC.int (index);
-      res : BND.ICS.chars_ptr := BND.sqlite3_column_table_name (stmt, col);
+      col : constant BND.IC.int := BND.IC.int (index);
+      res : constant BND.ICS.chars_ptr := BND.sqlite3_column_table_name (stmt, col);
       str : constant String := CT.UTF8S (BND.ICS.Value (res));
    begin
       return str;
@@ -483,8 +483,8 @@ package body AdaBase.Connection.Base.SQLite is
                         stmt  : BND.sqlite3_stmt_Access;
                         index : Natural) return String
    is
-      col : BND.IC.int := BND.IC.int (index);
-      res : BND.ICS.chars_ptr := BND.sqlite3_column_name (stmt, col);
+      col : constant BND.IC.int := BND.IC.int (index);
+      res : constant BND.ICS.chars_ptr := BND.sqlite3_column_name (stmt, col);
       str : constant String := CT.UTF8S (BND.ICS.Value (res));
    begin
       return str;
@@ -498,8 +498,8 @@ package body AdaBase.Connection.Base.SQLite is
                         stmt  : BND.sqlite3_stmt_Access;
                         index : Natural) return String
    is
-      col : BND.IC.int := BND.IC.int (index);
-      res : BND.ICS.chars_ptr := BND.sqlite3_column_origin_name (stmt, col);
+      col : constant BND.IC.int := BND.IC.int (index);
+      res : constant BND.ICS.chars_ptr := BND.sqlite3_column_origin_name (stmt, col);
       str : constant String := CT.UTF8S (BND.ICS.Value (res));
    begin
       return str;
@@ -513,8 +513,8 @@ package body AdaBase.Connection.Base.SQLite is
                             stmt  : BND.sqlite3_stmt_Access;
                             index : Natural) return String
    is
-      col : BND.IC.int := BND.IC.int (index);
-      res : BND.ICS.chars_ptr := BND.sqlite3_column_database_name (stmt, col);
+      col : constant BND.IC.int := BND.IC.int (index);
+      res : constant BND.ICS.chars_ptr := BND.sqlite3_column_database_name (stmt, col);
       str : constant String := CT.UTF8S (BND.ICS.Value (res));
    begin
       return str;
@@ -568,10 +568,10 @@ package body AdaBase.Connection.Base.SQLite is
       --  tweaks and additional types.
 
       declare
-         raw : String := ACH.To_Upper (BND.ICS.Value (c_dtype));
-         pt1 : String := CT.part_1 (raw, "(");
+         raw : constant String := ACH.To_Upper (BND.ICS.Value (c_dtype));
+         pt1 : constant String := CT.part_1 (raw, "(");
          typelen : constant Natural := pt1'Length;
-         dtype : String (1 .. typelen) := pt1;
+         dtype : constant String (1 .. typelen) := pt1;
       begin
          if CT.contains (dtype, "INT") or else
            dtype = "YEAR" or else
@@ -614,7 +614,7 @@ package body AdaBase.Connection.Base.SQLite is
                               stmt  : BND.sqlite3_stmt_Access)
    is
       use type BND.IC.int;
-      result : BND.IC.int := BND.sqlite3_reset (stmt);
+      result : constant BND.IC.int := BND.sqlite3_reset (stmt);
    begin
       if result /= BND.SQLITE_OK then
          raise STMT_RESET_FAIL with "SQLite3 Reset error code" & result'Img;
@@ -662,7 +662,7 @@ package body AdaBase.Connection.Base.SQLite is
       use type BND.IC.int;
       result    : BND.IC.int;
       col_index : constant BND.IC.int := BND.IC.int (index);
-      null_type : BND.IC.int := 5;  --  enum_field_types : SQLITE_NULL => 5
+      null_type : constant BND.IC.int := 5;  --  enum_field_types : SQLITE_NULL => 5
    begin
       result := BND.sqlite3_column_type (stmt, col_index);
       return (result = null_type);
@@ -685,7 +685,7 @@ package body AdaBase.Connection.Base.SQLite is
          return CT.blank;
       end if;
       declare
-         asString : CT.UTF8 := BND.ICS.Value (result);
+         asString : constant CT.UTF8 := BND.ICS.Value (result);
       begin
          return CT.SUS (asString);
       end;
@@ -701,7 +701,7 @@ package body AdaBase.Connection.Base.SQLite is
                            maxsz : Natural) return String
    is
       col_index : constant BND.IC.int := BND.IC.int (index);
-      data_size : BND.IC.int := BND.sqlite3_column_bytes (stmt, col_index);
+      data_size : constant BND.IC.int := BND.sqlite3_column_bytes (stmt, col_index);
       str_size  : Natural := Natural (data_size);
    begin
       if maxsz < str_size then
@@ -745,7 +745,7 @@ package body AdaBase.Connection.Base.SQLite is
                              stmt : BND.sqlite3_stmt_Access) return Boolean
    is
       use type BND.IC.int;
-      step_result : BND.IC.int := BND.sqlite3_step (stmt);
+      step_result : constant BND.IC.int := BND.sqlite3_step (stmt);
    begin
       if step_result = BND.SQLITE_DONE then
          return False;
@@ -764,7 +764,7 @@ package body AdaBase.Connection.Base.SQLite is
                            stmt : BND.sqlite3_stmt_Access) return Boolean
    is
       use type BND.IC.int;
-      result : BND.IC.int := BND.sqlite3_finalize (stmt);
+      result : constant BND.IC.int := BND.sqlite3_finalize (stmt);
    begin
       return (result = BND.SQLITE_OK);
    end prep_finalize;
@@ -776,7 +776,7 @@ package body AdaBase.Connection.Base.SQLite is
    function within_transaction (conn : SQLite_Connection) return Boolean
    is
       use type BND.IC.int;
-      result : BND.IC.int := BND.sqlite3_get_autocommit (db => conn.handle);
+      result : constant BND.IC.int := BND.sqlite3_get_autocommit (db => conn.handle);
    begin
       return (result = 0);
    end within_transaction;
@@ -809,7 +809,7 @@ package body AdaBase.Connection.Base.SQLite is
       use type BND.IC.int;
       result    : BND.IC.int;
       col_index : constant BND.IC.int := BND.IC.int (index);
-      SL_value  : BND.sql64 := BND.sql64 (value);
+      SL_value  : constant BND.sql64 := BND.sql64 (value);
    begin
       result := BND.sqlite3_bind_int64 (stmt, col_index, SL_value);
       return (result = BND.SQLITE_OK);
@@ -827,7 +827,7 @@ package body AdaBase.Connection.Base.SQLite is
       use type BND.IC.int;
       result    : BND.IC.int;
       col_index : constant BND.IC.int := BND.IC.int (index);
-      SL_value  : BND.IC.double := BND.IC.double (value);
+      SL_value  : constant BND.IC.double := BND.IC.double (value);
    begin
       result := BND.sqlite3_bind_double (stmt, col_index, SL_value);
       return (result = BND.SQLITE_OK);
@@ -846,8 +846,8 @@ package body AdaBase.Connection.Base.SQLite is
       use type BND.IC.int;
       result    : BND.IC.int;
       col_index : constant BND.IC.int := BND.IC.int (index);
-      SL_value  : BND.ICS.chars_ptr := BND.ICS.New_String (value);
-      SL_length : BND.IC.int := BND.IC.int (BND.ICS.Strlen (SL_value));
+      SL_value  : constant BND.ICS.chars_ptr := BND.ICS.New_String (value);
+      SL_length : constant BND.IC.int := BND.IC.int (BND.ICS.Strlen (SL_value));
    begin
       result := BND.sqlite3_bind_text (Handle     => stmt,
                                        Index      => col_index,
@@ -873,8 +873,8 @@ package body AdaBase.Connection.Base.SQLite is
       result    : BND.IC.int;
       col_index : constant BND.IC.int := BND.IC.int (index);
       len       : constant BND.IC.size_t := BND.IC.size_t (value'Length);
-      SL_length : BND.IC.int := BND.IC.int (len);
-      SL_value  : BND.ICS.char_array_access :=
+      SL_length : constant BND.IC.int := BND.IC.int (len);
+      SL_value  : constant BND.ICS.char_array_access :=
                   new BND.IC.char_array (1 .. len);
    begin
       SL_value.all := BND.IC.To_C (value, False);
@@ -895,7 +895,7 @@ package body AdaBase.Connection.Base.SQLite is
    overriding
    procedure set_character_set (conn : out SQLite_Connection; charset : String)
    is
-      charsetuc : String := ACH.To_Upper (charset);
+      charsetuc : constant  String := ACH.To_Upper (charset);
    begin
       if charsetuc /= "UTF8" and then not CT.IsBlank (charsetuc) then
          raise UNSUPPORTED_BY_SQLITE
@@ -913,7 +913,6 @@ package body AdaBase.Connection.Base.SQLite is
    is
       stmt_handle : aliased BND.sqlite3_stmt_Access;
       field       : CT.Text;
-      final_res   : Boolean;
    begin
       if conn.prop_active then
          if conn.prepare_statement (stmt => stmt_handle,
@@ -924,13 +923,17 @@ package body AdaBase.Connection.Base.SQLite is
             else
                field := CT.SUS ("Error: Charset empty");
             end if;
-            final_res := conn.prep_finalize (stmt => stmt_handle);
+            if conn.prep_finalize (stmt => stmt_handle) then
+               null;
+            end if;
             return CT.USS (field);
          else
             declare
-               msg : String := conn.driverMessage;
+               msg : constant String := conn.driverMessage;
             begin
-               final_res := conn.prep_finalize (stmt => stmt_handle);
+               if conn.prep_finalize (stmt => stmt_handle) then
+                  null;
+               end if;
                return "Charset retrieval error : " & msg;
             end;
          end if;

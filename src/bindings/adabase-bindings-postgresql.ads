@@ -5,7 +5,6 @@
 --  http://forge.ada-ru.org/matreshka
 --  Used with permission from Vadim Godunko <vgodunko@gmail.com>
 
-with System;
 with Interfaces.C.Strings;
 
 package AdaBase.Bindings.PostgreSQL is

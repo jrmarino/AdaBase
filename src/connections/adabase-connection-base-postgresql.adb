@@ -55,7 +55,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    overriding
    function driverMessage (conn : PostgreSQL_Connection) return String
    is
-      result : BND.ICS.chars_ptr := BND.PQerrorMessage (conn.handle);
+      result : constant BND.ICS.chars_ptr := BND.PQerrorMessage (conn.handle);
    begin
       return BND.ICS.Value (result);
    end driverMessage;
@@ -67,7 +67,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    function driverMessage (conn : PostgreSQL_Connection;
                            res : BND.PGresult_Access) return String
    is
-      result : BND.ICS.chars_ptr := BND.PQresultErrorMessage (res);
+      result : constant BND.ICS.chars_ptr := BND.PQresultErrorMessage (res);
    begin
       return BND.ICS.Value (result);
    end driverMessage;
@@ -134,7 +134,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
          return stateless;
       end if;
       declare
-         SS : String := BND.ICS.Value (detail);
+         SS : constant String := BND.ICS.Value (detail);
       begin
          return SQL_State (SS);
       end;
@@ -178,7 +178,6 @@ package body AdaBase.Connection.Base.PostgreSQL is
    -----------------------
    procedure private_execute (conn : out PostgreSQL_Connection; sql : String)
    is
-      use type BND.ExecStatusType;
       pgres   : BND.PGresult_Access;
       query   : BND.ICS.chars_ptr := BND.ICS.New_String (Str => sql);
       success : Boolean;
@@ -234,7 +233,6 @@ package body AdaBase.Connection.Base.PostgreSQL is
    function private_select (conn : PostgreSQL_Connection; sql : String)
                             return BND.PGresult_Access
    is
-      use type BND.ExecStatusType;
       pgres   : BND.PGresult_Access;
       query   : BND.ICS.chars_ptr := BND.ICS.New_String (Str => sql);
       selcmd  : Boolean := True;
@@ -287,7 +285,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
                             return Affected_Rows
    is
       use type BND.IC.int;
-      result : BND.IC.int := BND.PQntuples (res);
+      result : constant BND.IC.int := BND.PQntuples (res);
    begin
       if result < 0 then
          --  overflowed (e.g. > 2 ** 31 on 32-bit system)
@@ -304,7 +302,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
                            res  : BND.PGresult_Access)
                            return Affected_Rows
    is
-      result  : BND.ICS.chars_ptr := BND.PQcmdTuples (res);
+      result  : constant BND.ICS.chars_ptr := BND.PQcmdTuples (res);
       resstr  : constant String := BND.ICS.Value (result);
    begin
       if CT.IsBlank (resstr) then
@@ -405,7 +403,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
       --  the adabase level.   A "BEGIN" command is issued immediately after
       --  connection, COMMIT and ROLLBACK to ensure we're always in a
       --  transaction when autocommit is off.
-      previous_state : Boolean := conn.prop_auto_commit;
+      previous_state : constant Boolean := conn.prop_auto_commit;
    begin
       conn.prop_auto_commit := auto;
 
@@ -449,7 +447,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    function fields_count (conn : PostgreSQL_Connection;
                           res  : BND.PGresult_Access) return Natural
    is
-      result : BND.IC.int := BND.PQnfields (res);
+      result : constant BND.IC.int := BND.PQnfields (res);
    begin
       return Natural (result);
    end fields_count;
@@ -559,7 +557,6 @@ package body AdaBase.Connection.Base.PostgreSQL is
    procedure setTransactionIsolation (conn : out PostgreSQL_Connection;
                                       isolation : Trax_Isolation)
    is
-      use type Trax_Isolation;
       sql : constant String :=
         "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL " &
         ISO_Keywords (isolation);
@@ -612,8 +609,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    --------------------------
    function get_server_version (conn : PostgreSQL_Connection) return Natural
    is
-      use type BND.IC.int;
-      version : BND.IC.int := BND.PQserverVersion (conn.handle);
+      version : constant BND.IC.int := BND.PQserverVersion (conn.handle);
    begin
       return Natural (version);
    end get_server_version;
@@ -624,8 +620,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    ---------------------------
    function get_library_version return Natural
    is
-      use type BND.IC.int;
-      version : BND.IC.int := BND.PQlibVersion;
+      version : constant BND.IC.int := BND.PQlibVersion;
    begin
       return Natural (version);
    end get_library_version;
@@ -636,8 +631,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    -----------------------
    function get_server_info (conn : PostgreSQL_Connection) return CT.Text
    is
-      use type BND.IC.int;
-      protocol : BND.IC.int := BND.PQprotocolVersion (conn.handle);
+      protocol : constant BND.IC.int := BND.PQprotocolVersion (conn.handle);
    begin
       return CT.SUS ("Protocol " & CT.int2str (Integer (protocol)) & ".0");
    end get_server_info;
@@ -668,18 +662,18 @@ package body AdaBase.Connection.Base.PostgreSQL is
    begin
       if num_dots = 3 then
          declare
-            P1A : String := CT.part_1 (teststr, dot);
-            P1B : String := CT.part_2 (teststr, dot);
+            P1A : constant String := CT.part_1 (teststr, dot);
+            P1B : constant String := CT.part_2 (teststr, dot);
          begin
             if is_byte (P1A) then
                declare
-                  P2A : String := CT.part_1 (P1B, dot);
-                  P2B : String := CT.part_2 (P1B, dot);
+                  P2A : constant String := CT.part_1 (P1B, dot);
+                  P2B : constant String := CT.part_2 (P1B, dot);
                begin
                   if is_byte (P2A) then
                      declare
-                        P3A : String := CT.part_1 (P2B, dot);
-                        P3B : String := CT.part_2 (P2B, dot);
+                        P3A : constant String := CT.part_1 (P2B, dot);
+                        P3B : constant String := CT.part_2 (P2B, dot);
                      begin
                         if is_byte (P3A) and then is_byte (P3B) then
                            return True;
@@ -753,7 +747,6 @@ package body AdaBase.Connection.Base.PostgreSQL is
       end if;
 
       declare
-         use type BND.PGconn_Access;
          conninfo : BND.ICS.chars_ptr := BND.ICS.New_String (CT.USS (constr));
       begin
          conn.tables.Clear;
@@ -786,7 +779,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
            "Reconnection attempted during an active connection";
       when CONNECT_FAILED =>
          declare
-            msg : String := "connection failure: " & conn.driverMessage;
+            msg : constant String := "connection failure: " & conn.driverMessage;
          begin
             conn.disconnect;
             raise CONNECT_FAILED with msg;
@@ -816,7 +809,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
                         column_number : Natural) return String
    is
       colnum : constant BND.IC.int := BND.IC.int (column_number);
-      result : BND.ICS.chars_ptr := BND.PQfname (res, colnum);
+      result : constant BND.ICS.chars_ptr := BND.PQfname (res, colnum);
    begin
       return BND.ICS.Value (result);
    end field_name;
@@ -832,7 +825,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    is
       rownum : constant BND.IC.int := BND.IC.int (row_number);
       colnum : constant BND.IC.int := BND.IC.int (column_number);
-      result : BND.ICS.chars_ptr := BND.PQgetvalue (res, rownum, colnum);
+      result : constant BND.ICS.chars_ptr := BND.PQgetvalue (res, rownum, colnum);
    begin
       return BND.ICS.Value (result);
    end field_string;
@@ -915,7 +908,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
          declare
             s_oid   : constant String := conn.field_string (pgres, x, 0);
             s_table : constant String := conn.field_string (pgres, x, 1);
-            payload : table_cell := (column_1 => CT.SUS (s_table));
+            payload : constant table_cell := (column_1 => CT.SUS (s_table));
          begin
             conn.tables.Insert (Key      => Integer'Value (s_oid),
                                 New_Item => payload);
@@ -934,7 +927,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    is
       use type BND.Oid;
       colnum : constant BND.IC.int := BND.IC.int (column_number);
-      pg_oid : BND.Oid := BND.PQftable (res, colnum);
+      pg_oid : constant BND.Oid := BND.PQftable (res, colnum);
       pg_key : Integer := Integer (pg_oid);
    begin
       if pg_oid = BND.InvalidOid then
@@ -957,8 +950,8 @@ package body AdaBase.Connection.Base.PostgreSQL is
                         column_number : Natural) return field_types
    is
       colnum : constant BND.IC.int := BND.IC.int (column_number);
-      pg_oid : BND.Oid := BND.PQftype (res, colnum);
-      pg_key : Positive := Positive (pg_oid);
+      pg_oid : constant BND.Oid := BND.PQftype (res, colnum);
+      pg_key : constant Positive := Positive (pg_oid);
    begin
       if conn.data_types.Contains (Key => pg_key) then
          return conn.data_types.Element (pg_key).data_type;
@@ -1035,11 +1028,10 @@ package body AdaBase.Connection.Base.PostgreSQL is
                                stmt : aliased out BND.PGresult_Access;
                                sql  : String) return Boolean
    is
-      use type BND.ExecStatusType;
       query   : BND.ICS.chars_ptr := BND.ICS.New_String (Str => sql);
       success : Boolean;
-      msg     : CT.Text;
       ins_cmd : Boolean := False;
+      --  msg : CT.Text;
    begin
       if sql'Length > 12 and then
         ACH.To_Upper (sql (sql'First .. sql'First + 6)) = "INSERT "
@@ -1059,7 +1051,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
             conn.cmd_insert_return := ins_cmd;
          when failed =>
             success := False;
-            msg := CT.SUS (conn.driverMessage (stmt));
+            --  msg := CT.SUS (conn.driverMessage (stmt));
       end case;
       conn.insert_return_val := 0;
       conn.cmd_sql_state := conn.SqlState (stmt);
@@ -1284,10 +1276,9 @@ package body AdaBase.Connection.Base.PostgreSQL is
             s_name  : constant String := conn.field_string (pgres, x, 1);
             s_tlen  : constant String := conn.field_string (pgres, x, 2);
             s_cat   : constant String := conn.field_string (pgres, x, 3);
-            s_cons  : constant String := "";
             typcat  : constant Character := s_cat (s_cat'First);
             typelen : constant Integer := Integer'Value (s_tlen);
-            payload : data_type_rec :=
+            payload : constant data_type_rec :=
               (data_type => convert_data_type
                  (s_name, typcat, typelen, conn.encoding_is_utf8));
          begin
@@ -1308,10 +1299,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
                            column_number : Natural;
                            max_length    : Natural) return String
    is
-      rownum : constant BND.IC.int := BND.IC.int (row_number);
-      colnum : constant BND.IC.int := BND.IC.int (column_number);
-      result : BND.ICS.chars_ptr := BND.PQgetvalue (res, rownum, colnum);
-      len    : Natural := conn.field_length (res, row_number, column_number);
+      len    : constant Natural := conn.field_length (res, row_number, column_number);
    begin
       declare
          bufmax : constant BND.IC.size_t := BND.IC.size_t (max_length);
@@ -1352,11 +1340,11 @@ package body AdaBase.Connection.Base.PostgreSQL is
                           max_length    : Natural) return String
    is
       --  raw expected in format "/x[hex-byte][hex-byte]...[hex-byte]"
-      raw      : String := conn.field_string (res, row_number, column_number);
-      maxlen   : Natural := raw'Length / 2;
+      raw      : constant String := conn.field_string (res, row_number, column_number);
+      maxlen   : constant Natural := raw'Length / 2;
       staged   : String (1 .. maxlen) := (others => '_');
       arrow    : Natural := raw'First;
-      terminus : Natural := raw'Last;
+      terminus : constant Natural := raw'Last;
       marker   : Natural := 0;
    begin
       if CT.len (raw) < 4 then
@@ -1450,7 +1438,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
                need_free (x) := True;
                declare
                   Str : constant String := CT.USS (data (x).payload);
-                  bsz : BND.IC.size_t := BND.IC.size_t (datalen);
+                  bsz : constant BND.IC.size_t := BND.IC.size_t (datalen);
                begin
                   paramValues (x).buffer := new BND.IC.char_array (1 .. bsz);
                   paramValues (x).buffer.all := BND.IC.To_C (Str, False);
@@ -1465,7 +1453,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
                declare
                   use type BND.IC.size_t;
                   Str : constant String := CT.USS (data (x).payload);
-                  bsz : BND.IC.size_t := BND.IC.size_t (datalen) + 1;
+                  bsz : constant BND.IC.size_t := BND.IC.size_t (datalen) + 1;
                begin
                   paramValues (x).buffer := new BND.IC.char_array (1 .. bsz);
                   paramValues (x).buffer.all := BND.IC.To_C (Str, True);
@@ -1540,7 +1528,7 @@ package body AdaBase.Connection.Base.PostgreSQL is
    is
       use type BND.Oid;
       colnum : constant BND.IC.int := BND.IC.int (column_number);
-      pg_oid : BND.Oid := BND.PQftype (res, colnum);
+      pg_oid : constant BND.Oid := BND.PQftype (res, colnum);
    begin
       return (pg_oid = BND.PG_TYPE_refcursor);
    end holds_refcursor;
@@ -1670,8 +1658,8 @@ package body AdaBase.Connection.Base.PostgreSQL is
    ---------------------------------
    procedure retrieve_uniform_encoding (conn : out PostgreSQL_Connection)
    is
-      charset   : String := character_set (conn => conn);
-      charsetuc : String := ACH.To_Upper (charset);
+      charset   : constant String := character_set (conn => conn);
+      charsetuc : constant String := ACH.To_Upper (charset);
    begin
       conn.encoding_is_utf8 := (charsetuc = "UTF8");
       conn.character_set := CT.SUS (charset);

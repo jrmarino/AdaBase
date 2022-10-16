@@ -126,8 +126,8 @@ package body AdaBase.Statement.Base.SQLite is
       if Object.type_of_statement = prepared_statement then
          --  Check that we have as many markers as expected
          declare
-            params : Natural := conn.prep_markers_found (Object.stmt_handle);
-            errmsg : String := "marker mismatch," &
+            params : constant Natural := conn.prep_markers_found (Object.stmt_handle);
+            errmsg : constant String := "marker mismatch," &
               Object.realmccoy.Length'Img & " expected but" &
               params'Img & " found by SQLite";
          begin
@@ -194,10 +194,10 @@ package body AdaBase.Statement.Base.SQLite is
          declare
             info  : column_info;
             brec  : bindrec;
-            name  : String := conn.field_name (Stmt.stmt_handle, index);
-            tname : String := conn.field_true_name (Stmt.stmt_handle, index);
-            table : String := conn.field_table (Stmt.stmt_handle, index);
-            dbase : String := conn.field_database (Stmt.stmt_handle, index);
+            name  : constant String := conn.field_name (Stmt.stmt_handle, index);
+            tname : constant String := conn.field_true_name (Stmt.stmt_handle, index);
+            table : constant String := conn.field_table (Stmt.stmt_handle, index);
+            dbase : constant String := conn.field_database (Stmt.stmt_handle, index);
          begin
             brec.v00          := False;   --  placeholder
             info.field_name   := fn (name);
@@ -445,7 +445,6 @@ package body AdaBase.Statement.Base.SQLite is
 
       declare
          index : Natural := 1;
-         arrow : Natural := parameters'First;
          scans : Boolean := False;
          start : Natural := 1;
          stop  : Natural := 0;
@@ -521,7 +520,7 @@ package body AdaBase.Statement.Base.SQLite is
                         v12 => conn.retrieve_double (Stmt.stmt_handle, scol));
                   when ft_utf8 =>
                      declare
-                        datatext : AR.Textual :=
+                        datatext : constant AR.Textual :=
                           conn.retrieve_text (Stmt.stmt_handle, scol);
                      begin
                         if seems_like_bit_string (datatext) then
@@ -613,7 +612,7 @@ package body AdaBase.Statement.Base.SQLite is
                         v21 => conn.retrieve_text (Stmt.stmt_handle, scol));
                   when ft_chain =>
                      declare
-                        bin : String :=
+                        bin : constant String :=
                           conn.retrieve_blob
                             (stmt  => Stmt.stmt_handle,
                              index => scol,
@@ -684,8 +683,8 @@ package body AdaBase.Statement.Base.SQLite is
                   Tout = ft_bits)
                then
                   declare
-                     STU : String := ARC.convert (dvariant.v21);
-                     STA : String := ARC.cvu2str (CT.USS (dvariant.v21));
+                     STU : constant String := ARC.convert (dvariant.v21);
+                     STA : constant String := ARC.cvu2str (CT.USS (dvariant.v21));
                   begin
                      case Tout is
                      when ft_textual   => dossier.a13.all := CT.SUS (STA);
@@ -696,7 +695,7 @@ package body AdaBase.Statement.Base.SQLite is
                      when ft_utf8      => dossier.a21.all := STU;
                      when ft_settype =>
                         declare
-                           FL    : Natural := dossier.a19.all'Length;
+                           FL    : constant Natural := dossier.a19.all'Length;
                            items : constant Natural := CT.num_set_items (STU);
                         begin
                            if items > FL then
@@ -708,8 +707,8 @@ package body AdaBase.Statement.Base.SQLite is
                         end;
                      when ft_bits =>
                         declare
-                           FL    : Natural := dossier.a20.all'Length;
-                           DVLEN : Natural := STA'Length;
+                           FL    : constant Natural := dossier.a20.all'Length;
+                           DVLEN : constant Natural := STA'Length;
                         begin
                            if DVLEN > FL then
                               raise BINDING_SIZE_MISMATCH with "native size : " &
@@ -723,9 +722,9 @@ package body AdaBase.Statement.Base.SQLite is
                   end;
                elsif Tnative = ft_chain and then Tout = ft_chain then
                   declare
-                     ST    : String := ARC.convert (dvariant.v17);
-                     FL    : Natural := dossier.a17.all'Length;
-                     DVLEN : Natural := ST'Length;
+                     ST    : constant String := ARC.convert (dvariant.v17);
+                     FL    : constant Natural := dossier.a17.all'Length;
+                     DVLEN : constant Natural := ST'Length;
                   begin
                      if DVLEN > FL then
                         raise BINDING_SIZE_MISMATCH with "native size : " &
@@ -1151,7 +1150,7 @@ package body AdaBase.Statement.Base.SQLite is
    ------------------
    function seems_like_bit_string (candidate : CT.Text) return Boolean
    is
-      canstr : String := CT.USS (candidate);
+      canstr : constant String := CT.USS (candidate);
    begin
       if canstr'Length > 64 then
          return False;

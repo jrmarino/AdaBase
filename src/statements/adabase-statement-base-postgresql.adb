@@ -8,7 +8,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
    ------------------------
    function reformat_markers (parameterized_sql : String) return String
    is
-      masked : String := CT.redact_quotes (parameterized_sql);
+      masked : constant String := CT.redact_quotes (parameterized_sql);
       cvslen : Natural := masked'Length;
    begin
       for x in masked'Range loop
@@ -27,7 +27,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
             if masked (x) = ASCII.Query then
                param := param + 1;
                declare
-                  marker : String := ASCII.Dollar & CT.int2str (param);
+                  marker : constant String := ASCII.Dollar & CT.int2str (param);
                begin
                   for y in marker'Range loop
                      polaris := polaris + 1;
@@ -133,7 +133,6 @@ package body AdaBase.Statement.Base.PostgreSQL is
    is
       conn : CON.PostgreSQL_Connection_Access renames Stmt.pgsql_conn;
       markers : constant Natural := Natural (Stmt.realmccoy.Length);
-      status_successful : Boolean := True;
       data_present : Boolean := False;
    begin
       if Stmt.type_of_statement = direct_statement then
@@ -162,7 +161,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
          --  Now bind the actual values to the markers
          declare
             canvas : CON.parameter_block (1 .. markers);
-            msg : String := "Exec with" & markers'Img & " bound parameters";
+            msg : constant String := "Exec with" & markers'Img & " bound parameters";
          begin
             for x in canvas'Range loop
                canvas (x).payload := Stmt.bind_text_value (x);
@@ -248,7 +247,6 @@ package body AdaBase.Statement.Base.PostgreSQL is
 
       declare
          index : Natural := 1;
-         arrow : Natural := parameters'First;
          scans : Boolean := False;
          start : Natural := 1;
          stop  : Natural := 0;
@@ -363,18 +361,14 @@ package body AdaBase.Statement.Base.PostgreSQL is
    overriding
    function fetch_all (Stmt : out PostgreSQL_statement) return ARS.Datarow_Set
    is
-      maxrows : Natural := Natural (Stmt.rows_returned);
-      tmpset  : ARS.Datarow_Set (1 .. maxrows + 1);
       nullset : ARS.Datarow_Set (1 .. 0);
-      index   : Natural := 1;
-      row     : ARS.Datarow;
    begin
       if Stmt.result_arrow >= Stmt.size_of_rowset then
          return nullset;
       end if;
 
       declare
-         remaining_rows : Trax_ID := Stmt.size_of_rowset - Stmt.result_arrow;
+         remaining_rows : constant Trax_ID := Stmt.size_of_rowset - Stmt.result_arrow;
          return_set     : ARS.Datarow_Set (1 .. Natural (remaining_rows));
       begin
          for index in return_set'Range loop
@@ -601,8 +595,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
                      end;
                   when ft_chain =>
                      declare
-                        FL    : Natural := dossier.a17.all'Length;
-                        DVLEN : Natural := ST'Length;
+                        FL    : constant Natural := dossier.a17.all'Length;
+                        DVLEN : constant Natural := ST'Length;
                      begin
                         if DVLEN > FL then
                            raise BINDING_SIZE_MISMATCH with "native size : " &
@@ -613,7 +607,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
                      end;
                   when ft_settype =>
                      declare
-                        FL    : Natural := dossier.a19.all'Length;
+                        FL    : constant Natural := dossier.a19.all'Length;
                         items : constant Natural := CT.num_set_items (ST);
                      begin
                         if items > FL then
@@ -625,8 +619,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
                      end;
                   when ft_bits =>
                      declare
-                        FL    : Natural := dossier.a20.all'Length;
-                        DVLEN : Natural := ST'Length;
+                        FL    : constant Natural := dossier.a20.all'Length;
+                        DVLEN : constant Natural := ST'Length;
                      begin
                         if DVLEN > FL then
                            raise BINDING_SIZE_MISMATCH with "native size : " &
@@ -729,7 +723,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
       conn   : CON.PostgreSQL_Connection_Access renames Object.pgsql_conn;
       logcat : Log_Category;
       params : Natural;
-      stmt_name   : String := Object.show_statement_name;
+      stmt_name   : constant String := Object.show_statement_name;
       hold_result : aliased BND.PGresult_Access;
    begin
 
@@ -761,7 +755,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
       --  Detect INSERT commands (for INSERT .. RETURNING)  --
       --------------------------------------------------------
       declare
-         sql : String := Object.initial_sql.all;
+         sql : constant String := Object.initial_sql.all;
       begin
          if sql'Length > 12 and then
            ACH.To_Upper (sql (sql'First .. sql'First + 6)) = "INSERT "
@@ -818,7 +812,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
          --  Check that we have as many markers as expected  --
          ------------------------------------------------------
          declare
-            errmsg : String := "marker mismatch," &
+            errmsg : constant String := "marker mismatch," &
               Object.realmccoy.Length'Img & " expected but" &
               params'Img & " found by PostgreSQL";
          begin
@@ -903,8 +897,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
          declare
             info  : column_info;
             brec  : bindrec;
-            name  : String := conn.field_name (pgresult, index);
-            table : String := conn.field_table (pgresult, index);
+            name  : constant String := conn.field_name (pgresult, index);
+            table : constant String := conn.field_table (pgresult, index);
          begin
             brec.v00           := False;   --  placeholder
             info.field_name    := fn (name);
@@ -1364,7 +1358,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
          return "";
       end if;
       declare
-         answer : String := CT.USS (Stmt.refcursors.First_Element.payload);
+         answer : constant String := CT.USS (Stmt.refcursors.First_Element.payload);
       begin
          Stmt.refcursors.Delete_First;
          return answer;
@@ -1393,8 +1387,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
             for y in Natural range base .. calls'Last loop
                if calls (y) = ',' then
                   declare
-                     len : Natural := y - base;
-                     Str : String (1 .. len) := calls (base .. y - 1);
+                     len : constant Natural := y - base;
+                     Str : constant String (1 .. len) := calls (base .. y - 1);
                   begin
                      Stmt.refcursors.Append ((payload => CT.SUS (Str)));
                      base := y + 1;
@@ -1404,8 +1398,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
             end loop;
          end loop;
          declare
-            len : Natural := calls'Last + 1 - base;
-            Str : String (1 .. len) := calls (base .. calls'Last);
+            len : constant Natural := calls'Last + 1 - base;
+            Str : constant String (1 .. len) := calls (base .. calls'Last);
          begin
             Stmt.refcursors.Append ((payload => CT.SUS (Str)));
          end;
@@ -1432,8 +1426,8 @@ package body AdaBase.Statement.Base.PostgreSQL is
       is
          sixt : Character renames hex (1);
          ones : Character renames hex (2);
-         zero  : Natural := Character'Pos ('0');
-         alpha : Natural := Character'Pos ('A');
+         zero  : constant Natural := Character'Pos ('0');
+         alpha : constant Natural := Character'Pos ('A');
          val : Natural;
       begin
          case sixt is
@@ -1459,7 +1453,7 @@ package body AdaBase.Statement.Base.PostgreSQL is
 
       output_size : constant Natural := (postgis'Length / 2) - 4;
       wkb_string  : String (1 .. output_size) := (others => ASCII.NUL);
-      canvas      : String (1 .. postgis'Length) := postgis;
+      canvas      : constant String (1 .. postgis'Length) := postgis;
       endian_sign : constant hex_type := canvas (1 .. 2);
       geom_type   : constant hex_type := canvas (3 .. 4);
    begin

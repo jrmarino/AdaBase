@@ -37,13 +37,13 @@ package body AdaBase.Results.Field is
          when ft_utf8      => return ARC.convert (field.native.v21);  --  [1]
          when ft_chain     =>
             declare
-               cadena : Chain := ARC.convert (field.native.v17);
+               cadena : constant Chain := ARC.convert (field.native.v17);
             begin
                return ARC.convert (cadena);
             end;
          when ft_bits      =>
             declare
-               cadena : Bits := ARC.convert (field.native.v20);
+               cadena : constant Bits := ARC.convert (field.native.v20);
             begin
                return ARC.convert (cadena);
             end;
@@ -80,13 +80,13 @@ package body AdaBase.Results.Field is
          when ft_utf8      => return ARC.convert (field.native.v21);  --  [1]
          when ft_chain     =>
             declare
-               cadena : Chain := ARC.convert (field.native.v17);
+               cadena : constant Chain := ARC.convert (field.native.v17);
             begin
                return ARC.convert (cadena);
             end;
          when ft_bits    =>
             declare
-               cadena : Bits := ARC.convert (field.native.v20);
+               cadena : constant Bits := ARC.convert (field.native.v20);
             begin
                return ARC.convert (cadena);
             end;
@@ -124,13 +124,13 @@ package body AdaBase.Results.Field is
          when ft_utf8      => return ARC.convert (field.native.v21);  --  [1]
          when ft_chain     =>
             declare
-               cadena : Chain := ARC.convert (field.native.v17);
+               cadena : constant Chain := ARC.convert (field.native.v17);
             begin
                return ARC.convert (cadena);
             end;
          when ft_bits    =>
             declare
-               cadena : Bits := ARC.convert (field.native.v20);
+               cadena : constant Bits := ARC.convert (field.native.v20);
             begin
                return ARC.convert (cadena);
             end;
@@ -168,13 +168,13 @@ package body AdaBase.Results.Field is
          when ft_utf8      => return ARC.convert (field.native.v21);  --  [1]
          when ft_chain     =>
             declare
-               cadena : Chain := ARC.convert (field.native.v17);
+               cadena : constant Chain := ARC.convert (field.native.v17);
             begin
                return ARC.convert (cadena);
             end;
          when ft_bits    =>
             declare
-               cadena : Bits := ARC.convert (field.native.v20);
+               cadena : constant Bits := ARC.convert (field.native.v20);
             begin
                return ARC.convert (cadena);
             end;
@@ -212,13 +212,13 @@ package body AdaBase.Results.Field is
          when ft_utf8      => return ARC.convert (field.native.v21);  --  [1]
          when ft_chain     =>
             declare
-               cadena : Chain := ARC.convert (field.native.v17);
+               cadena : constant Chain := ARC.convert (field.native.v17);
             begin
                return ARC.convert (cadena);
             end;
          when ft_bits    =>
             declare
-               cadena : Bits := ARC.convert (field.native.v20);
+               cadena : constant Bits := ARC.convert (field.native.v20);
             begin
                return ARC.convert (cadena);
             end;
@@ -256,13 +256,13 @@ package body AdaBase.Results.Field is
          when ft_utf8      => return ARC.convert (field.native.v21);  --  [1]
          when ft_chain     =>
             declare
-               cadena : Chain := ARC.convert (field.native.v17);
+               cadena : constant Chain := ARC.convert (field.native.v17);
             begin
                return ARC.convert (cadena);
             end;
          when ft_bits    =>
             declare
-               cadena : Bits := ARC.convert (field.native.v20);
+               cadena : constant Bits := ARC.convert (field.native.v20);
             begin
                return ARC.convert (cadena);
             end;
@@ -669,7 +669,7 @@ package body AdaBase.Results.Field is
          when ft_geometry  => return ARC.convert (field.native.v22);
          when ft_bits      =>
             declare
-               target_bits : Bits := ARC.convert (field.native.v20);
+               target_bits : constant Bits := ARC.convert (field.native.v20);
             begin
                return ARC.convert (target_bits);
             end;
@@ -701,7 +701,7 @@ package body AdaBase.Results.Field is
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_utf8      =>
             declare
-               txt : Textual := ARC.cvu2str (field.native.v21);  --  [2]
+               txt : constant Textual := ARC.cvu2str (field.native.v21);  --  [2]
             begin
                return ARC.convert (txt);
             end;
@@ -721,12 +721,7 @@ package body AdaBase.Results.Field is
          when ft_widetext  => return ARC.convert (field.native.v14);
          when ft_supertext => return ARC.convert (field.native.v15);
          when ft_settype   => return ARC.convert (field.native.v19);
-         when ft_utf8      =>
-            declare
-               txt : Textual := ARC.cvu2str (field.native.v21);  --  [2]
-            begin
-               return ARC.convert (field.native.v21);
-            end;
+         when ft_utf8      => return ARC.convert (field.native.v21);
          when others => raise UNSUPPORTED_CONVERSION;
       end case;
    end as_settype;

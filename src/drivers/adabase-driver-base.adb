@@ -240,9 +240,14 @@ package body AdaBase.Driver.Base is
    procedure query_clear_table (driver : Base_Driver; table  : String)
    is
       sql : constant String := "TRUNCATE " & table;
-      AR  : Affected_Rows;
    begin
-      AR := execute (driver => Base_Driver'Class (driver), sql => sql);
+      pragma Warnings (Off, "*ARSILENT*");
+      declare
+         ARSILENT : Affected_Rows;
+      begin
+         ARSILENT := execute (driver => Base_Driver'Class (driver), sql => sql);
+      end;
+      pragma Warnings (On, "*ARSILENT*");
    end query_clear_table;
 
 
@@ -256,13 +261,11 @@ package body AdaBase.Driver.Base is
                                cascade     : Boolean := False)
 
    is
-      use type Driver_Type;
       --  MySQL accepts CASCADE but ignores it
       --  MySQL and PostgreSQL can use this versions, but Firebird
       --  needs if_exists implementation and doesn't know CASCADE, so it
       --  needs an overriding implementation.
       sql : CT.Text;
-      AR  : Affected_Rows;
    begin
       if cascade and then driver.dialect = driver_mysql
       then
@@ -276,8 +279,14 @@ package body AdaBase.Driver.Base is
       if cascade then
          CT.SU.Append (Source => sql, New_Item => " CASCADE");
       end if;
-      AR := execute (driver => Base_Driver'Class (driver),
-                     sql    => CT.USS (sql));
+      pragma Warnings (Off, "*ARSILENT*");
+      declare
+         ARSILENT : Affected_Rows;
+      begin
+         ARSILENT := execute (driver => Base_Driver'Class (driver),
+                              sql    => CT.USS (sql));
+      end;
+      pragma Warnings (On, "*ARSILENT*");
    end query_drop_table;
 
 
@@ -312,7 +321,6 @@ package body AdaBase.Driver.Base is
    overriding
    procedure rollback (driver : Base_Driver)
    is
-      use type Trax_Isolation;
       err1 : constant CT.Text :=
              CT.SUS ("ACK! Rollback attempted on inactive connection");
       err2 : constant CT.Text :=
@@ -349,7 +357,6 @@ package body AdaBase.Driver.Base is
    overriding
    procedure commit (driver : Base_Driver)
    is
-      use type Trax_Isolation;
       err1 : constant CT.Text :=
              CT.SUS ("ACK! Commit attempted on inactive connection");
       err2 : constant CT.Text :=

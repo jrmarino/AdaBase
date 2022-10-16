@@ -8,7 +8,7 @@ package body Spatial_Data.Well_Known_Binary is
    -------------------
    function produce_WKT (WKBinary : CT.Text) return String
    is
-      shape : Geometry := Translate_WKB (CT.USS (WKBinary));
+      shape : constant Geometry := Translate_WKB (CT.USS (WKBinary));
    begin
       return Well_Known_Text (shape);
    end produce_WKT;
@@ -19,8 +19,8 @@ package body Spatial_Data.Well_Known_Binary is
    ---------------------
    function Translate_WKB (WKBinary : String) return Geometry
    is
-      binary   : WKB_Chain := convert (WKBinary);
-      chainlen : Natural := binary'Length;
+      binary   : constant WKB_Chain := convert (WKBinary);
+      chainlen : constant Natural := binary'Length;
    begin
       if chainlen < 21 then
          if chainlen = 0 then
@@ -129,7 +129,7 @@ package body Spatial_Data.Well_Known_Binary is
               with "Handle_Unit_collection: Should never happen";
          when single_point =>
             declare
-               pt : Geometric_Point := handle_new_point (payload, marker);
+               pt : constant Geometric_Point := handle_new_point (payload, marker);
             begin
                attach (initialize_as_point (pt));
             end;
@@ -138,7 +138,7 @@ package body Spatial_Data.Well_Known_Binary is
             marker := marker + 9;
             declare
                --  required to have at least one point
-               pt1 : Geometric_Point := handle_new_point (payload, marker);
+               pt1 : constant Geometric_Point := handle_new_point (payload, marker);
                element : Geometry := initialize_as_multi_point (pt1);
             begin
                for x in 2 .. entities loop
@@ -149,7 +149,7 @@ package body Spatial_Data.Well_Known_Binary is
             end;
          when single_line_string =>
             declare
-               LS : Geometric_Line_String :=
+               LS : constant Geometric_Line_String :=
                     handle_linestring (payload, marker);
             begin
                attach (initialize_as_line (LS));
@@ -159,7 +159,7 @@ package body Spatial_Data.Well_Known_Binary is
             marker := marker + 9;
             --  Required to have at least one linestring
             declare
-               LS : Geometric_Line_String :=
+               LS : constant Geometric_Line_String :=
                     handle_linestring (payload, marker);
                element : Geometry := initialize_as_multi_line (LS);
             begin
@@ -171,7 +171,7 @@ package body Spatial_Data.Well_Known_Binary is
             end;
          when single_polygon =>
             declare
-               PG : Geometric_Polygon := handle_polygon (payload, marker);
+               PG : constant Geometric_Polygon := handle_polygon (payload, marker);
             begin
                attach (initialize_as_polygon (PG));
             end;
@@ -180,7 +180,7 @@ package body Spatial_Data.Well_Known_Binary is
             marker := marker + 9;
             --  Required to have at least one polygon
             declare
-               PG : Geometric_Polygon := handle_polygon (payload, marker);
+               PG : constant Geometric_Polygon := handle_polygon (payload, marker);
                element : Geometry := initialize_as_multi_polygon (PG);
             begin
                for additional_Poly in 2 .. entities loop
@@ -230,7 +230,7 @@ package body Spatial_Data.Well_Known_Binary is
    function handle_new_point (payload : WKB_Chain;
                               marker : in out Natural) return Geometric_Point
    is
-      pt_endian : WKB_Endianness := decode_endianness (payload (marker));
+      pt_endian : constant WKB_Endianness := decode_endianness (payload (marker));
       X : Geometric_Real;
       Y : Geometric_Real;
    begin
@@ -247,8 +247,8 @@ package body Spatial_Data.Well_Known_Binary is
    function handle_linestring (payload : WKB_Chain; marker : in out Natural)
                                return Geometric_Line_String
    is
-      ls_endian : WKB_Endianness := decode_endianness (payload (marker));
-      num_points : Natural :=  Natural (decode_hex32 (ls_endian,
+      ls_endian  : constant WKB_Endianness := decode_endianness (payload (marker));
+      num_points : constant Natural :=  Natural (decode_hex32 (ls_endian,
                                         payload (marker + 5 .. marker + 8)));
       LS : Geometric_Line_String (1 .. num_points);
       X : Geometric_Real;
@@ -272,7 +272,7 @@ package body Spatial_Data.Well_Known_Binary is
                                marker    : in out Natural)
                                return Geometric_Ring
    is
-      num_points : Natural :=  Natural (decode_hex32 (direction,
+      num_points : constant Natural :=  Natural (decode_hex32 (direction,
                                         payload (marker .. marker + 3)));
       ring : Geometric_Ring (1 .. num_points);
       X : Geometric_Real;
@@ -296,8 +296,8 @@ package body Spatial_Data.Well_Known_Binary is
                             return Geometric_Polygon
    is
       midway_polygon : Geometric_Polygon;
-      poly_endian : WKB_Endianness := decode_endianness (payload (marker));
-      num_rings : Natural := Natural (decode_hex32 (poly_endian,
+      poly_endian : constant WKB_Endianness := decode_endianness (payload (marker));
+      num_rings : constant Natural := Natural (decode_hex32 (poly_endian,
                                       payload (marker + 5 .. marker + 8)));
       --  There must be at least one ring (exterior
    begin
@@ -340,7 +340,7 @@ package body Spatial_Data.Well_Known_Binary is
                           value : WKB_Identifier_Chain) return WKB_Hex32
    is
       result : WKB_Hex32 := 0;
-      mask : array (1 .. 4) of WKB_Hex32 := (2 ** 0, 2 ** 8, 2 ** 16, 2 ** 24);
+      mask : constant array (1 .. 4) of WKB_Hex32 := (2 ** 0, 2 ** 8, 2 ** 16, 2 ** 24);
    begin
       case direction is
          when little_endian =>
@@ -365,7 +365,7 @@ package body Spatial_Data.Well_Known_Binary is
                                value : WKB_Identifier_Chain)
                                return WKB_Identifier
    is
-      result : WKB_Hex32 := decode_hex32 (direction, value);
+      result : constant WKB_Hex32 := decode_hex32 (direction, value);
    begin
       if result > WKB_Hex32 (WKB_Identifier'Last) then
          raise WKB_INVALID
@@ -626,10 +626,10 @@ package body Spatial_Data.Well_Known_Binary is
       type Int64 is range -2 ** 63 .. 2 ** 63 - 1;
       --  Image always in form:
       --  [sign/space][digit][dot][17 digits]E[sign][2..3 digits]
-      resimage : String := Geometric_Real'Image (FP);
-      dot : Natural := CT.pinpoint (resimage, ".");
-      exp : Natural := CT.pinpoint (resimage, "E");
-      dec : String := resimage (resimage'First .. dot - 1) &
+      resimage : constant String := Geometric_Real'Image (FP);
+      dot : constant Natural := CT.pinpoint (resimage, ".");
+      exp : constant Natural := CT.pinpoint (resimage, "E");
+      dec : constant String := resimage (resimage'First .. dot - 1) &
                       resimage (dot + 1 .. exp - 1);
       nagative : constant Boolean := (resimage (resimage'First) = '-');
       halfpump : constant Int64 := 50;
@@ -641,7 +641,7 @@ package body Spatial_Data.Well_Known_Binary is
          vessel := Int64'Value (dec) + halfpump;
       end if;
       declare
-         decimage : String := Int64'Image (vessel);
+         decimage : constant String := Int64'Image (vessel);
       begin
          return Geometric_Real'Value
            (decimage (decimage'First .. decimage'First + 1) & '.' &
@@ -656,7 +656,7 @@ package body Spatial_Data.Well_Known_Binary is
    ---------------
    function convert (nv : String) return WKB_Chain
    is
-      Chainlen : Natural := nv'Length;
+      Chainlen : constant Natural := nv'Length;
       result : WKB_Chain (1 .. Chainlen) := (others => 0);
       arrow  : Natural := result'First;
    begin

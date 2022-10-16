@@ -176,7 +176,7 @@ package body CommonText is
    --------------
    function part_1 (S : String; separator : String := "/") return String
    is
-      slash : Integer := AS.Fixed.Index (S, separator);
+      slash : constant Integer := AS.Fixed.Index (S, separator);
    begin
       if slash = 0 then
          return S;
@@ -190,7 +190,7 @@ package body CommonText is
    --------------
    function part_2 (S : String; separator : String := "/") return String
    is
-      slash : Integer := AS.Fixed.Index (S, separator);
+      slash : constant Integer := AS.Fixed.Index (S, separator);
    begin
       if slash = 0 then
          return S;
@@ -327,8 +327,8 @@ package body CommonText is
    --  trim_sql  --
    ----------------
    function trim_sql (sql : String) return String is
-      pass1 : String := trim (sql);
-      pass2 : String (1 .. pass1'Length) := pass1;
+      pass1 : constant String := trim (sql);
+      pass2 : constant String (1 .. pass1'Length) := pass1;
    begin
       if pass2 (pass2'Last) = ASCII.Semicolon then
          return pass2 (1 .. pass2'Length - 1);
@@ -343,7 +343,7 @@ package body CommonText is
    ---------------------
    function count_queries (trimmed_sql : String) return Natural
    is
-      mask : String := redact_quotes (trimmed_sql);
+      mask : constant String := redact_quotes (trimmed_sql);
    begin
       return count_char (S => mask, focus => ASCII.Semicolon) + 1;
    end count_queries;
@@ -354,7 +354,7 @@ package body CommonText is
    ----------------
    function subquery (trimmed_sql : String; index : Positive) return String
    is
-      mask     : String := redact_quotes (trimmed_sql);
+      mask     : constant String := redact_quotes (trimmed_sql);
       start    : Natural := trimmed_sql'First;
       segment  : Natural := 1;
       scanning : Boolean := (index = segment);

@@ -2,8 +2,6 @@
 --  Reference: ../../License.txt
 
 with Ada.Strings.Fixed;
-with Ada.Strings.Wide_Fixed;
-with Ada.Strings.Wide_Wide_Fixed;
 with Ada.Characters.Conversions;
 with Ada.Strings.UTF_Encoding.Strings;
 
@@ -220,8 +218,8 @@ package body AdaBase.Results.Generic_Converters is
    function convert2chain (nv : ModType) return Chain
    is
       bitwidth : constant Natural := (width * 8) - 1;
-      result : Chain (1 .. width) := (others => 0);
-      asbits  : Bits (0 .. bitwidth) := (others => 0);
+      result  : Chain (1 .. width) := (others => 0);
+      asbits  : constant Bits (0 .. bitwidth) := (others => 0);
       arrow   : Natural := 0;
       mask    : ModType;
       submask : constant array (0 .. 7) of NByte1 := (2 ** 0, 2 ** 1,
@@ -254,9 +252,9 @@ package body AdaBase.Results.Generic_Converters is
    --------------------
    function convert_bits (nv : Bits) return ModType
    is
-      numbits : Natural := nv'Length;
-      asbits : Bits (0 .. numbits - 1) := nv;
-      result : ModType := 0;
+      numbits : constant Natural := nv'Length;
+      asbits  : constant Bits (0 .. numbits - 1) := nv;
+      result  : ModType := 0;
    begin
       if asbits'Last > MSB then
          raise TARGET_TYPE_TOO_NARROW;

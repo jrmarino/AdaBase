@@ -53,7 +53,7 @@ package body AdaBase.Statement.Base is
    is
       procedure reserve_marker;
 
-      sql_mask : String := CT.redact_quotes (sql);
+      sql_mask : constant String := CT.redact_quotes (sql);
 
       procedure reserve_marker
       is
@@ -98,8 +98,8 @@ package body AdaBase.Statement.Base is
          end lock_and_advance;
 
          procedure replace_alias is
-            len    : Natural := final - start;
-            alias  : String (1 .. len) := sql_mask (start + 1 .. final);
+            len    : constant Natural := final - start;
+            alias  : constant String (1 .. len) := sql_mask (start + 1 .. final);
          begin
             if Stmt.alpha_markers.Contains (Key => alias) then
                raise ILLEGAL_BIND_SQL with "multiple instances of " & alias;
@@ -251,7 +251,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.NByte0_Access)
    is
       use type AR.NByte0_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -266,7 +266,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.NByte1_Access)
    is
       use type AR.NByte1_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -281,7 +281,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.NByte2_Access)
    is
       use type AR.NByte2_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -296,7 +296,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.NByte3_Access)
    is
       use type AR.NByte3_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -311,7 +311,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.NByte4_Access)
    is
       use type AR.NByte4_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -326,7 +326,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.NByte8_Access)
    is
       use type AR.NByte8_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -341,7 +341,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.Byte1_Access)
    is
       use type AR.Byte1_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -356,7 +356,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.Byte2_Access)
    is
       use type AR.Byte2_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -371,7 +371,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.Byte3_Access)
    is
       use type AR.Byte3_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -386,7 +386,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.Byte4_Access)
    is
       use type AR.Byte4_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -401,7 +401,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.Byte8_Access)
    is
       use type AR.Byte8_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -416,7 +416,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.Real9_Access)
    is
       use type AR.Real9_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -431,7 +431,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.Real18_Access)
    is
       use type AR.Real18_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -446,7 +446,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.Str1_Access)
    is
       use type AR.Str1_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -461,7 +461,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.Str2_Access)
    is
       use type AR.Str2_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -476,7 +476,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.Str4_Access)
    is
       use type AR.Str4_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -491,7 +491,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.Time_Access)
    is
       use type AR.Time_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -506,7 +506,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.Chain_Access)
    is
       use type AR.Chain_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -521,7 +521,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.Enum_Access)
    is
       use type AR.Enum_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -536,7 +536,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.Settype_Access)
    is
       use type AR.Settype_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -551,7 +551,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.Bits_Access)
    is
       use type AR.Bits_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -566,7 +566,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.S_UTF8_Access)
    is
       use type AR.S_UTF8_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -581,7 +581,7 @@ package body AdaBase.Statement.Base is
                    vaxx  : AR.Geometry_Access)
    is
       use type AR.Geometry_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       check_bound_column_access (absent);
       if Stmt.bind_proceed (index => index) then
@@ -1114,7 +1114,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.NByte0_Access)
    is
       use type AR.NByte0_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte0, a00 => vaxx, v00 => False,
@@ -1135,7 +1135,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.NByte1_Access)
    is
       use type AR.NByte1_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte1, a01 => vaxx, v01 => 0,
@@ -1156,7 +1156,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.NByte2_Access)
    is
       use type AR.NByte2_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte2, a02 => vaxx, v02 => 0,
@@ -1177,7 +1177,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.NByte3_Access)
    is
       use type AR.NByte3_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte3, a03 => vaxx, v03 => 0,
@@ -1198,7 +1198,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.NByte4_Access)
    is
       use type AR.NByte4_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte4, a04 => vaxx, v04 => 0,
@@ -1219,7 +1219,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.NByte8_Access)
    is
       use type AR.NByte8_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_nbyte8, a05 => vaxx, v05 => 0,
@@ -1240,7 +1240,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.Byte1_Access)
    is
       use type AR.Byte1_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte1, a06 => vaxx, v06 => 0,
@@ -1261,7 +1261,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.Byte2_Access)
    is
       use type AR.Byte2_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte2, a07 => vaxx, v07 => 0,
@@ -1282,7 +1282,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.Byte3_Access)
    is
       use type AR.Byte3_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte3, a08 => vaxx, v08 => 0,
@@ -1303,7 +1303,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.Byte4_Access)
    is
       use type AR.Byte4_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte4, a09 => vaxx,  v09 => 0,
@@ -1324,7 +1324,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.Byte8_Access)
    is
       use type AR.Byte8_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_byte8, a10 => vaxx,  v10 => 0,
@@ -1345,7 +1345,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.Real9_Access)
    is
       use type AR.Real9_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_real9, a11 => vaxx, v11 => 0.0,
@@ -1366,7 +1366,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.Real18_Access)
    is
       use type AR.Real18_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_real18, a12 => vaxx, v12 => 0.0,
@@ -1387,7 +1387,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.Str1_Access)
    is
       use type AR.Str1_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_textual, a13 => vaxx, v13 => CT.blank,
@@ -1408,7 +1408,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.Str2_Access)
    is
       use type AR.Str2_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_widetext, a14 => vaxx,
@@ -1429,7 +1429,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.Str4_Access)
    is
       use type AR.Str4_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_supertext, a15 => vaxx, bound => True,
@@ -1450,7 +1450,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.Time_Access)
    is
       use type AR.Time_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_timestamp, a16 => vaxx,
@@ -1471,7 +1471,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.Chain_Access)
    is
       use type AR.Chain_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_chain, a17 => vaxx,
@@ -1494,7 +1494,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.Enum_Access)
    is
       use type AR.Enum_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_enumtype, a18 => vaxx,
@@ -1515,7 +1515,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.Settype_Access)
    is
       use type AR.Settype_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_settype, a19 => vaxx,
@@ -1544,7 +1544,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.Bits_Access)
    is
       use type AR.Bits_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_bits, a20 => vaxx,
@@ -1567,7 +1567,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.S_UTF8_Access)
    is
       use type AR.S_UTF8_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_utf8, a21 => vaxx,
@@ -1589,7 +1589,7 @@ package body AdaBase.Statement.Base is
                      vaxx  : AR.Geometry_Access)
    is
       use type AR.Geometry_Access;
-      absent : Boolean := (vaxx = null);
+      absent : constant Boolean := (vaxx = null);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_geometry, a22 => vaxx,
@@ -1600,7 +1600,7 @@ package body AdaBase.Statement.Base is
                      index : Positive;
                      vaxx  : Spatial_Data.Geometry)
    is
-      shape : String := Spatial_Data.Well_Known_Text (vaxx);
+      shape : constant String := Spatial_Data.Well_Known_Text (vaxx);
    begin
       Stmt.realmccoy.Replace_Element
         (index, (output_type => ft_geometry, a22 => null,
@@ -1632,7 +1632,7 @@ package body AdaBase.Statement.Base is
    begin
       loop
          declare
-            local_row : ARS.Datarow :=
+            local_row : constant ARS.Datarow :=
                         fetch_next (Stmt => Base_Statement'Class (Stmt));
          begin
             exit when local_row.data_exhausted;
@@ -1714,19 +1714,19 @@ package body AdaBase.Statement.Base is
          when ft_geometry  => Stmt.assign (index, hold.v22);
          when ft_chain     =>
             declare
-               my_chain : AR.Chain := ARC.convert (value);
+               my_chain : constant AR.Chain := ARC.convert (value);
             begin
                Stmt.assign (index, my_chain);
             end;
          when ft_settype   =>
             declare
-               set : AR.Settype := ARC.convert (value);
+               set : constant AR.Settype := ARC.convert (value);
             begin
                Stmt.assign (index, set);
             end;
          when ft_bits =>
             declare
-               bitchain : AR.Bits := ARC.convert (value);
+               bitchain : constant AR.Bits := ARC.convert (value);
             begin
                Stmt.assign (index, bitchain);
             end;
@@ -1739,7 +1739,7 @@ package body AdaBase.Statement.Base is
    -------------------
    procedure set_as_null (param : bindrec)
    is
-      data_type : field_types := param.output_type;
+      data_type : constant field_types := param.output_type;
    begin
       case data_type is
          when ft_nbyte0    => param.a00.all := AR.PARAM_IS_BOOLEAN;

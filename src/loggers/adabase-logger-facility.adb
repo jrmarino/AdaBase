@@ -162,7 +162,6 @@ package body AdaBase.Logger.Facility is
       sqlstate   : SQL_State     := stateless;
       break      : Boolean       := False)
    is
-      use type Error_Modes;
       use type AL.Screen.Screen_Logger_access;
       use type AL.File.File_Logger_access;
       use type AL.BaseClass_Logger_access;

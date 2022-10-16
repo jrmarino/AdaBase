@@ -4,7 +4,6 @@
 with AdaBase.Interfaces.Driver;
 with AdaBase.Statement.Base.PostgreSQL;
 with AdaBase.Connection.Base.PostgreSQL;
-with Ada.Containers.Vectors;
 
 package AdaBase.Driver.Base.PostgreSQL is
 

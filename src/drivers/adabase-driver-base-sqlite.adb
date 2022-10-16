@@ -10,8 +10,8 @@ package body AdaBase.Driver.Base.SQLite is
    function execute (driver : SQLite_Driver; sql : String)
                      return Affected_Rows
    is
-      trsql   : String := CT.trim_sql (sql);
-      nquery  : Natural := CT.count_queries (trsql);
+      trsql   : constant String := CT.trim_sql (sql);
+      nquery  : constant Natural := CT.count_queries (trsql);
       aborted : constant Affected_Rows := 0;
       err1    : constant CT.Text :=
                  CT.SUS ("ACK! Execution attempted on inactive connection");
@@ -241,7 +241,7 @@ package body AdaBase.Driver.Base.SQLite is
             end if;
             return statement;
          exception
-            when RES : others =>
+            when others =>
                --  Fatal attempt to prepare a statement
                --  Logged already by stmt initialization
                --  Should be internally marked as unsuccessful
@@ -270,7 +270,6 @@ package body AdaBase.Driver.Base.SQLite is
 
    is
       sql : CT.Text;
-      AR  : Affected_Rows;
    begin
       if CT.contains (tables, ",") then
          driver.log_problem
@@ -288,7 +287,13 @@ package body AdaBase.Driver.Base.SQLite is
            (category => note,
             message => CT.SUS ("Requested CASCADE has no effect on SQLite"));
       end if;
-      AR := driver.execute (sql => CT.USS (sql));
+      pragma Warnings (Off, "*ARSILENT*");
+      declare
+         ARSILENT  : Affected_Rows;
+      begin
+         ARSILENT := driver.execute (sql => CT.USS (sql));
+      end;
+      pragma Warnings (On, "*ARSILENT*");
    exception
       when ACS.QUERY_FAIL =>
          driver.log_problem (category   => execution,
@@ -306,14 +311,19 @@ package body AdaBase.Driver.Base.SQLite is
    is
       --  SQLite has no "truncate" commands
       sql : constant String := "DELETE FROM " & table;
-      AR  : Affected_Rows;
    begin
-      AR := driver.execute (sql => sql);
-   exception
-      when ACS.QUERY_FAIL =>
-         driver.log_problem (category   => execution,
-                             message    => CT.SUS (sql),
-                             pull_codes => True);
+      pragma Warnings (Off, "*ARSILENT*");
+      declare
+         ARSILENT  : Affected_Rows;
+      begin
+         ARSILENT := driver.execute (sql => sql);
+      exception
+         when ACS.QUERY_FAIL =>
+            driver.log_problem (category   => execution,
+                                message    => CT.SUS (sql),
+                                pull_codes => True);
+      end;
+      pragma Warnings (On, "*ARSILENT*");
    end query_clear_table;
 
 
@@ -332,7 +342,7 @@ package body AdaBase.Driver.Base.SQLite is
                           limit      : Trax_ID := 0;
                           offset     : Trax_ID := 0) return String
    is
-      vanilla   : String := assembly_common_select
+      vanilla   : constant String := assembly_common_select
         (distinct, tables, columns, conditions, groupby, having, order);
    begin
       if null_sort /= native then
